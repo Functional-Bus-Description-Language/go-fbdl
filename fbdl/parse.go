@@ -243,9 +243,10 @@ func parseElementAnonymousInstantiation(n Node) (Element, error) {
 	}
 
 	var props map[string]Property
+	var symbols map[string]Symbol
 	last_node := n.LastChild()
 	if last_node.Type() == "element_body" {
-		props, err = parseElementBody(last_node)
+		props, symbols, err = parseElementBody(last_node)
 		if err != nil {
 			return Element{}, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
 		}
@@ -280,28 +281,66 @@ func parseElementAnonymousInstantiation(n Node) (Element, error) {
 		Type:              type_,
 		InstantiationType: Anonymous,
 		Properties:        props,
+		Symbols:           symbols,
 	}, nil
 }
 
-func parseElementBody(n Node) (map[string]Property, error) {
+func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
+	var err error
 	props := make(map[string]Property)
+	symbols := make(map[string]Symbol)
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
-		if nc.Type() == "property_assignment" {
+		t := nc.Type()
+		switch t {
+		case "property_assignment":
 			name := nc.Child(0).Content()
 			if _, ok := props[name]; ok {
-				return props, fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
+				return props,
+					symbols,
+					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
 			}
 			expr, err := MakeExpression(nc.Child(2))
 			if err != nil {
-				return props, fmt.Errorf("line %d: property assignment: %v", nc.LineNumber(), err)
+				return props,
+					symbols,
+					fmt.Errorf("line %d: property assignment: %v", nc.LineNumber(), err)
 			}
 			props[name] = Property{LineNumber: nc.LineNumber(), Value: expr}
+		default:
+			var s Symbol
+			switch t {
+			case "element_type_definition":
+				panic("not yer implemented")
+			case "element_anonymous_instantiation":
+				panic("not yer implemented")
+			case "element_definitive_instantiation":
+				panic("not yer implemented")
+			case "single_constant_definition":
+				s, err = parseSingleConstantDefinition(nc)
+			case "multi_constant_definition":
+				panic("not yer implemented")
+			default:
+				panic("this should never happen")
+			}
+
+			if err != nil {
+				return props,
+					symbols,
+					fmt.Errorf("element body: %v", err)
+			}
+
+			if _, exist := symbols[s.Name()]; exist {
+				return props,
+					symbols,
+					fmt.Errorf("line %d: symbol '%s' defined at least twice in the same element body", nc.LineNumber(), s.Name())
+			}
+			symbols[s.Name()] = s
 		}
 	}
 
-	return props, nil
+	return props, symbols, nil
 }
 
 func parseSingleConstantDefinition(n Node) (Constant, error) {

@@ -147,4 +147,5 @@ type Element struct {
 	Type              ElementType
 	InstantiationType ElementInstantiationType
 	Properties        map[string]Property
+	Symbols           map[string]Symbol
 }
