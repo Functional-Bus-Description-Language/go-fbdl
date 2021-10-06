@@ -19,6 +19,47 @@ func init() {
 	parser.SetLanguage(fbdl.GetLanguage())
 }
 
+// Node is a wrapper for tree-sitter node.
+type Node struct {
+	n    *ts.Node
+	code []byte
+}
+
+func (n Node) Content() string {
+	return n.n.Content(n.code)
+}
+
+func (n Node) Type() string {
+	return n.n.Type()
+}
+
+func (n Node) Child(idx int) Node {
+	tsn := n.n.Child(idx)
+	if tsn == nil {
+		panic("can't get child")
+	}
+
+	return Node{n: tsn, code: n.code}
+}
+
+func (n Node) LineNumber() uint32 {
+	return n.n.StartPoint().Row + 1
+}
+
+func (n Node) HasNextSibling() bool {
+	tsn := n.n.NextSibling()
+
+	if tsn == nil {
+		return false
+	}
+
+	return true
+}
+
+func (n Node) NextSibling() Node {
+	return Node{n: n.n.NextSibling(), code: n.code}
+}
+
 func ParsePackages(packages Packages) {
 	var wg sync.WaitGroup
 	defer wg.Wait()
@@ -132,17 +173,18 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	tree := parser.Parse(nil, []byte(code_bytes))
 	root := tree.RootNode()
-	node := root.Child(0)
-	if node == nil {
+	tsnode := root.Child(0)
+	if tsnode == nil {
 		panic("TODO")
 	}
+	node := Node{n: tsnode, code: code_bytes}
 
 	file := File{Path: path, Pkg: pkg, Symbols: make(map[string]Symbol)}
 
 	var symbol Symbol
 	for {
 		if node.Type() == "single_constant_definition" {
-			symbol, err = parseSingleConstantDefinition(node, code_bytes)
+			symbol, err = parseSingleConstantDefinition(node)
 		}
 
 		if err != nil {
@@ -154,26 +196,28 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			log.Fatalf("%s: %v", path, err)
 		}
 
-		node = node.NextSibling()
-		if node == nil {
+		if node.HasNextSibling() == false {
 			break
 		}
+		node = node.NextSibling()
 	}
 
 	pkg.AddFile(file)
 }
 
-func getLineNumber(node *ts.Node) uint32 {
-	return node.StartPoint().Row + 1
-}
+func parseSingleConstantDefinition(n Node) (Constant, error) {
+	v, err := MakeExpression(n.Child(3))
+	if err != nil {
+		return Constant{}, fmt.Errorf("%d: single constant definition: %v", n.LineNumber(), err)
+	}
 
-func parseSingleConstantDefinition(node *ts.Node, code_bytes []byte) (Constant, error) {
 	constant := Constant{
 		common: common{
 			Id:         generateId(),
-			lineNumber: getLineNumber(node),
-			name:       node.Child(1).Content(code_bytes),
+			lineNumber: n.LineNumber(),
+			name:       n.Child(1).Content(),
 		},
+		value: v,
 	}
 
 	return constant, nil

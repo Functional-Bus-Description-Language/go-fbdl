@@ -22,6 +22,7 @@ func (c common) LineNumber() uint32 {
 
 type Constant struct {
 	common
+	value Expression
 }
 
 //type ElementInstantiationType uint8

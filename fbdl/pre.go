@@ -18,10 +18,9 @@ func DiscoverPackages(main string) Packages {
 
 	cwdfbd := path.Join(cwd, "fbd")
 	_, err = os.Stat(cwdfbd)
-	if err != nil {
-		panic(err)
+	if err == nil {
+		paths_to_look = append(paths_to_look, cwdfbd)
 	}
-	paths_to_look = append(paths_to_look, cwdfbd)
 
 	fbdpath := os.Getenv("FBDPATH")
 	if len(fbdpath) != 0 {
