@@ -33,6 +33,14 @@ func (n Node) Type() string {
 	return n.n.Type()
 }
 
+func (n Node) ChildCount() uint32 {
+	return n.n.ChildCount()
+}
+
+func (n Node) LastChild() Node {
+	return n.Child(int(n.ChildCount() - 1))
+}
+
 func (n Node) Child(idx int) Node {
 	tsn := n.n.Child(idx)
 	if tsn == nil {
@@ -231,21 +239,37 @@ func parseElementAnonymousInstantiation(n Node) (Element, error) {
 		type_, err = ToElementType(n.Child(4).Content())
 	}
 	if err != nil {
-		return Element{}, fmt.Errorf("%d: element anonymous instantiation: %v", n.LineNumber(), err)
+		return Element{}, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
 	}
 
-	//if parser.node.children[-1].type == 'element_body':
-	//    properties, symbols = parse_element_body(
-	//        ParserFromNode(parser, parser.node.children[-1]), symbol
-	//    )
-	//    if properties:
-	//        symbol['Properties'] = properties
-	//    if symbols:
-	//        for _, sym in symbols.items():
-	//            sym['Parent'] = RefDict(symbol)
-	//        symbol['Symbols'] = symbols
+	var props map[string]Property
+	last_node := n.LastChild()
+	if last_node.Type() == "element_body" {
+		props, err = parseElementBody(last_node)
+		if err != nil {
+			return Element{}, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
+		}
 
-	element := Element{
+		for prop, v := range props {
+			if IsValidProperty(type_, prop) == false {
+				return Element{},
+					fmt.Errorf(
+						"line %d: element anonymous instantiation: "+
+							"line %d: invalid property '%s' for element of type '%v'",
+						n.LineNumber(), v.LineNumber, prop, type_,
+					)
+			}
+		}
+
+		//if properties:
+		//	symbol['Properties'] = properties
+		//	if symbols:
+		//		for _, sym in symbols.items():
+		//			sym['Parent'] = RefDict(symbol)
+		//		symbol['Symbols'] = symbols
+	}
+
+	return Element{
 		common: common{
 			Id:         generateId(),
 			lineNumber: n.LineNumber(),
@@ -255,25 +279,43 @@ func parseElementAnonymousInstantiation(n Node) (Element, error) {
 		Count:             count,
 		Type:              type_,
 		InstantiationType: Anonymous,
+		Properties:        props,
+	}, nil
+}
+
+func parseElementBody(n Node) (map[string]Property, error) {
+	props := make(map[string]Property)
+
+	for i := 0; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		if nc.Type() == "property_assignment" {
+			name := nc.Child(0).Content()
+			if _, ok := props[name]; ok {
+				return props, fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
+			}
+			expr, err := MakeExpression(nc.Child(2))
+			if err != nil {
+				return props, fmt.Errorf("line %d: property assignment: %v", nc.LineNumber(), err)
+			}
+			props[name] = Property{LineNumber: nc.LineNumber(), Value: expr}
+		}
 	}
 
-	return element, nil
+	return props, nil
 }
 
 func parseSingleConstantDefinition(n Node) (Constant, error) {
 	v, err := MakeExpression(n.Child(3))
 	if err != nil {
-		return Constant{}, fmt.Errorf("%d: single constant definition: %v", n.LineNumber(), err)
+		return Constant{}, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
 	}
 
-	constant := Constant{
+	return Constant{
 		common: common{
 			Id:         generateId(),
 			lineNumber: n.LineNumber(),
 			name:       n.Child(1).Content(),
 		},
 		value: v,
-	}
-
-	return constant, nil
+	}, nil
 }

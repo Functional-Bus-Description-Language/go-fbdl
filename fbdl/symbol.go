@@ -73,6 +73,49 @@ func ToElementType(s string) (ElementType, error) {
 	return t, nil
 }
 
+func (e ElementType) String() string {
+	switch e {
+	case Block:
+		return "block"
+	case Bus:
+		return "bus"
+	case Config:
+		return "config"
+	case Func:
+		return "func"
+	case Mask:
+		return "mask"
+	case Param:
+		return "param"
+	case Status:
+		return "status"
+	default:
+		panic("invalid element type")
+	}
+}
+
+func IsValidProperty(e ElementType, p string) bool {
+	validProps := map[ElementType][]string{
+		Block:  []string{"doc"},
+		Bus:    []string{"doc", "masters", "width"},
+		Config: []string{"atomic", "default", "doc", "groups", "range", "once", "width"},
+		Func:   []string{"doc"},
+		Mask:   []string{"atomic", "default", "doc", "groups", "width"},
+		Param:  []string{"default", "doc", "range", "width"},
+		Status: []string{"atomic", "doc", "groups", "once", "width"},
+	}
+
+	if list, ok := validProps[e]; ok {
+		for i, _ := range list {
+			if p == list[i] {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 /*
 func IsValidElementName(s string) error {
 	switch s {
@@ -91,6 +134,11 @@ func IsValidElementName(s string) error {
 }
 */
 
+type Property struct {
+	LineNumber uint32
+	Value      Expression
+}
+
 type Element struct {
 	common
 	IsArray           bool
@@ -98,4 +146,5 @@ type Element struct {
 	Parent            *Symbol
 	Type              ElementType
 	InstantiationType ElementInstantiationType
+	Properties        map[string]Property
 }
