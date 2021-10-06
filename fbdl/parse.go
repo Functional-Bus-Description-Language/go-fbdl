@@ -183,8 +183,13 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	var symbol Symbol
 	for {
-		if node.Type() == "single_constant_definition" {
+		switch node.Type() {
+		case "single_constant_definition":
 			symbol, err = parseSingleConstantDefinition(node)
+		case "element_anonymous_instantiation":
+			symbol, err = parseElementAnonymousInstantiation(node)
+		default:
+			log.Fatalf("parsing %s not yet supported", node.Type())
 		}
 
 		if err != nil {
@@ -203,6 +208,56 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	}
 
 	pkg.AddFile(file)
+}
+
+func parseElementAnonymousInstantiation(n Node) (Element, error) {
+	var err error
+
+	isArray := false
+	var count Expression
+	if n.Child(1).Type() == "[" {
+		isArray = true
+		expr, err := MakeExpression(n.Child(2))
+		if err != nil {
+			return Element{}, fmt.Errorf(": %v", err)
+		}
+		count = expr
+	}
+
+	var type_ ElementType
+	if n.Child(1).Type() == "element_type" {
+		type_, err = ToElementType(n.Child(1).Content())
+	} else {
+		type_, err = ToElementType(n.Child(4).Content())
+	}
+	if err != nil {
+		return Element{}, fmt.Errorf("%d: element anonymous instantiation: %v", n.LineNumber(), err)
+	}
+
+	//if parser.node.children[-1].type == 'element_body':
+	//    properties, symbols = parse_element_body(
+	//        ParserFromNode(parser, parser.node.children[-1]), symbol
+	//    )
+	//    if properties:
+	//        symbol['Properties'] = properties
+	//    if symbols:
+	//        for _, sym in symbols.items():
+	//            sym['Parent'] = RefDict(symbol)
+	//        symbol['Symbols'] = symbols
+
+	element := Element{
+		common: common{
+			Id:         generateId(),
+			lineNumber: n.LineNumber(),
+			name:       n.Child(0).Content(),
+		},
+		IsArray:           isArray,
+		Count:             count,
+		Type:              type_,
+		InstantiationType: Anonymous,
+	}
+
+	return element, nil
 }
 
 func parseSingleConstantDefinition(n Node) (Constant, error) {
