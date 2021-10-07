@@ -141,6 +141,13 @@ type Parameter struct {
 	DefaultValue    Expression
 }
 
+// Argument represents argument in the argument list.
+type Argument struct {
+	HasName bool
+	Name    string
+	Value   Expression
+}
+
 type Property struct {
 	LineNumber uint32
 	Value      Expression

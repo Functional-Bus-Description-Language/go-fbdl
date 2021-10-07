@@ -218,6 +218,59 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	pkg.AddFile(file)
 }
 
+func parseArgumentList(n Node) ([]Argument, error) {
+	args := []Argument{}
+
+	names := []string{}
+	var err error
+	var hasName = true
+	var name string
+	var val Expression
+	for i := 0; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		t := nc.Type()
+
+		if t == "(" || t == "," || t == "=" || t == ")" {
+			continue
+		}
+
+		if t == "identifier" {
+			name = nc.Content()
+		} else {
+			val, err = MakeExpression(nc)
+			if err != nil {
+				return args, fmt.Errorf("argument list: %v", err)
+			}
+		}
+
+		next_node_type := n.Child(i + 1).Type()
+		if next_node_type == "," || next_node_type == ")" {
+			for i, _ := range names {
+				if name == names[i] {
+					return args, fmt.Errorf("argument '%s' assigned at least twice in argument list", name)
+				}
+			}
+
+			args = append(args, Argument{HasName: hasName, Name: name, Value: val})
+			hasName = false
+		}
+	}
+
+	// Check if arguments without name precede arguments with name.
+	with_name := false
+	for _, a := range args {
+		if with_name && a.HasName == false {
+			return args, fmt.Errorf("arguments without name must precede the ones with name")
+		}
+
+		if a.HasName {
+			with_name = true
+		}
+	}
+
+	return args, nil
+}
+
 func parseElementAnonymousInstantiation(n Node) (Element, error) {
 	var err error
 
