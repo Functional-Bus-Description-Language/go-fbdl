@@ -183,6 +183,7 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	tree := parser.Parse(nil, []byte(code_bytes))
 	root := tree.RootNode()
+	//fmt.Println(root)
 	tsnode := root.Child(0)
 	if tsnode == nil {
 		panic("TODO")
@@ -196,6 +197,8 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		switch node.Type() {
 		case "element_anonymous_instantiation":
 			symbol, err = parseElementAnonymousInstantiation(node)
+		case "element_definitive_instantiation":
+			symbol, err = parseElementDefinitiveInstantiation(node)
 		case "element_type_definition":
 			symbol, err = parseElementTypeDefinition(node)
 		case "single_constant_definition":
@@ -348,6 +351,96 @@ func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 	return &elem, nil
 }
 
+func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
+	var err error
+
+	isArray := false
+	var count Expression
+	if n.Child(1).Type() == "[" {
+		isArray = true
+		count, err = MakeExpression(n.Child(2))
+		if err != nil {
+			return &Element{}, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
+		}
+	}
+
+	var type_ string
+	if n.Child(1).Type() == "identifier" || n.Child(1).Type() == "qualified_identifier" {
+		type_ = n.Child(1).Content()
+	} else {
+		type_ = n.Child(4).Content()
+	}
+
+	if strings.Contains(type_, ".") {
+		aux := strings.Split(type_, ".")
+		pkg := aux[0]
+		id := aux[1]
+		if unicode.IsUpper([]rune(id)[0]) == false {
+			return &Element{},
+				fmt.Errorf(
+					"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
+					n.LineNumber(), id, pkg,
+				)
+		}
+	}
+
+	args := []Argument{}
+	if n.Child(int(n.ChildCount()-2)).Type() == "argument_list" {
+		args, err = parseArgumentList(n.Child(int(n.ChildCount() - 2)))
+		if err != nil {
+			return &Element{}, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
+		}
+	}
+
+	last_child := n.LastChild()
+	if last_child.Type() == "argument_list" {
+		args, err = parseArgumentList(last_child)
+		if err != nil {
+			return &Element{}, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
+		}
+	}
+
+	props := make(map[string]Property)
+	symbols := make(map[string]Symbol)
+	if last_child.Type() == "element_body" {
+		props, symbols, err = parseElementBody(last_child)
+		if err != nil {
+			return &Element{}, fmt.Errorf("line %d: element definitve instantiation: %v", n.LineNumber(), err)
+		}
+	}
+
+	name := n.Child(0).Content()
+	if IsBaseType(name) {
+		return &Element{},
+			fmt.Errorf("line %d: invalid instance name '%s', element instance can not have the same name as base type",
+				n.LineNumber(), name,
+			)
+	}
+
+	elem := Element{
+		common: common{
+			Id:         generateId(),
+			lineNumber: n.LineNumber(),
+			name:       name,
+		},
+		IsArray:           isArray,
+		Count:             count,
+		Type:              type_,
+		InstantiationType: Definitive,
+		Properties:        props,
+		Symbols:           symbols,
+		Arguments:         args,
+	}
+
+	if len(elem.Symbols) > 0 {
+		for name, _ := range elem.Symbols {
+			elem.Symbols[name].SetParent(&elem)
+		}
+	}
+
+	return &elem, nil
+}
+
 func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 	var err error
 	props := make(map[string]Property)
@@ -379,13 +472,13 @@ func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 			case "element_anonymous_instantiation":
 				s, err = parseElementAnonymousInstantiation(nc)
 			case "element_definitive_instantiation":
-				panic("not yet implemented")
+				s, err = parseElementDefinitiveInstantiation(nc)
 			case "single_constant_definition":
 				s, err = parseSingleConstantDefinition(nc)
 			case "multi_constant_definition":
 				panic("not yet implemented")
 			default:
-				panic("this should never happen")
+				panic("this should never happen %s")
 			}
 
 			if err != nil {

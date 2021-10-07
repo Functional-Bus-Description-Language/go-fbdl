@@ -21,7 +21,7 @@ type Value interface {
 }
 
 type Bool struct {
-	v bool
+	V bool
 }
 
 func (b Bool) IsValue() bool {
@@ -57,12 +57,13 @@ func MakeExpression(n Node) (Expression, error) {
 		expr, err = MakeBinaryOperation(n)
 	case "decimal_literal":
 		expr, err = MakeDecimalLiteral(n)
+	case "false":
+		expr = MakeFalse()
 	case "primary_expression":
 		expr, err = MakePrimaryExpression(n)
 	case "zero_literal":
-		expr = MakeZeroLiteral(n)
+		expr = MakeZeroLiteral()
 	default:
-		//var dummy DecimalLiteral
 		return DecimalLiteral{}, fmt.Errorf("unsupported expression type '%s'", t)
 	}
 
@@ -150,6 +151,18 @@ func MakeDecimalLiteral(n Node) (DecimalLiteral, error) {
 	return DecimalLiteral{v: int32(v)}, nil
 }
 
+type False struct {
+	v bool
+}
+
+func (f False) Value() (Value, error) {
+	return Bool{V: false}, nil
+}
+
+func MakeFalse() False {
+	return False{v: false}
+}
+
 type PrimaryExpression struct {
 	v Expression
 }
@@ -180,6 +193,6 @@ func (zl ZeroLiteral) Value() (Value, error) {
 	return Integer{V: zl.v}, nil
 }
 
-func MakeZeroLiteral(n Node) ZeroLiteral {
+func MakeZeroLiteral() ZeroLiteral {
 	return ZeroLiteral{v: 0}
 }

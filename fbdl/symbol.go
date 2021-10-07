@@ -132,6 +132,7 @@ type Element struct {
 	InstantiationType ElementInstantiationType
 	Properties        map[string]Property
 	Symbols           map[string]Symbol
+	Arguments         []Argument
 }
 
 type Type struct {
