@@ -343,6 +343,53 @@ func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 	return props, symbols, nil
 }
 
+func parseParameterList(n Node) ([]Parameter, error) {
+	params := []Parameter{}
+
+	var err error
+	var name string
+	var hasDefaultValue bool
+	var defaultValue Expression
+
+	for i := 0; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		t := nc.Type()
+
+		// TODO: check if switch case works as expected here.
+		if t == "(" || t == "=" || t == "," || t == ")" {
+			continue
+		}
+
+		hasDefaultValue = false
+
+		if t == "identifier" {
+			name = nc.Content()
+		} else {
+			defaultValue, err = MakeExpression(nc)
+			if err != nil {
+				return params, fmt.Errorf("parameter list: %v", err)
+			}
+
+			hasDefaultValue = true
+		}
+
+		next_node_type := n.Child(i + 1).Type()
+		if next_node_type == "," || next_node_type == ")" {
+			for i, _ := range params {
+				if name == params[i].Name {
+					return params, fmt.Errorf("parameter '%s' defined at least twice", name)
+				}
+			}
+			params = append(
+				params,
+				Parameter{Name: name, HasDefaultValue: hasDefaultValue, DefaultValue: defaultValue},
+			)
+		}
+	}
+
+	return params, nil
+}
+
 func parseSingleConstantDefinition(n Node) (Constant, error) {
 	v, err := MakeExpression(n.Child(3))
 	if err != nil {

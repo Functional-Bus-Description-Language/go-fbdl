@@ -134,6 +134,13 @@ func IsValidElementName(s string) error {
 }
 */
 
+// Parameter represents parameter in the parameter list, not 'param' element.
+type Parameter struct {
+	Name            string
+	HasDefaultValue bool
+	DefaultValue    Expression
+}
+
 type Property struct {
 	LineNumber uint32
 	Value      Expression
