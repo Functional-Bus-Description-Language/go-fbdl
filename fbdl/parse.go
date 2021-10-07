@@ -190,7 +190,7 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	}
 	node := Node{n: tsnode, code: code_bytes}
 
-	file := File{Path: path, Pkg: pkg, Symbols: make(map[string]Symbol)}
+	file := File{Path: path, Pkg: pkg, Symbols: make(map[string]Symbol), Imports: make(map[string]Import)}
 
 	var symbol Symbol
 	for {
@@ -203,6 +203,16 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			symbol, err = parseElementTypeDefinition(node)
 		case "single_constant_definition":
 			symbol, err = parseSingleConstantDefinition(node)
+		case "single_import_statement":
+			i := parseSingleImportStatement(node)
+			if _, exist := file.Imports[i.ImportName]; exist {
+				log.Fatalf(
+					"%s: line %d: at least two packages imported as '%s'",
+					path, node.LineNumber(), i.ImportName,
+				)
+			}
+			file.Imports[i.ImportName] = i
+			goto nextNode
 		default:
 			log.Fatalf("parsing %s not yet supported", node.Type())
 		}
@@ -216,6 +226,7 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			log.Fatalf("%s: %v", path, err)
 		}
 
+	nextNode:
 		if node.HasNextSibling() == false {
 			break
 		}
@@ -632,4 +643,24 @@ func parseSingleConstantDefinition(n Node) (*Constant, error) {
 		},
 		value: v,
 	}, nil
+}
+
+func parseSingleImportStatement(n Node) Import {
+	var path string
+	var import_name string
+
+	if n.ChildCount() == 2 {
+		path = n.Child(1).Content()
+		path = path[1 : len(path)-1]
+		import_name = strings.Split(path, "/")[0]
+		if len(import_name) > 4 && import_name[0:3] == "fbd-" {
+			import_name = import_name[4:]
+		}
+	} else {
+		path = n.Child(2).Content()
+		path = path[1 : len(path)-2]
+		import_name = n.Child(1).Content()
+	}
+
+	return Import{Path: path, ImportName: import_name}
 }

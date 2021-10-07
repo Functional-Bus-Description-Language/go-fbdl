@@ -11,6 +11,7 @@ type File struct {
 	Path    string
 	Pkg     *Package
 	Symbols map[string]Symbol
+	Imports map[string]Import
 }
 
 func (f *File) AddSymbol(s Symbol) error {

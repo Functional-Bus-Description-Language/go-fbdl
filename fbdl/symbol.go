@@ -105,23 +105,11 @@ func IsValidElementName(s string) error {
 }
 */
 
-// Parameter represents parameter in the parameter list, not 'param' element.
-type Parameter struct {
-	Name            string
-	HasDefaultValue bool
-	DefaultValue    Expression
-}
-
 // Argument represents argument in the argument list.
 type Argument struct {
 	HasName bool
 	Name    string
 	Value   Expression
-}
-
-type Property struct {
-	LineNumber uint32
-	Value      Expression
 }
 
 type Element struct {
@@ -133,6 +121,24 @@ type Element struct {
 	Properties        map[string]Property
 	Symbols           map[string]Symbol
 	Arguments         []Argument
+}
+
+type Import struct {
+	Path       string
+	ImportName string
+	Package    *Package
+}
+
+// Parameter represents parameter in the parameter list, not 'param' element.
+type Parameter struct {
+	Name            string
+	HasDefaultValue bool
+	DefaultValue    Expression
+}
+
+type Property struct {
+	LineNumber uint32
+	Value      Expression
 }
 
 type Type struct {
