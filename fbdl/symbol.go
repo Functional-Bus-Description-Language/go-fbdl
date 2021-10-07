@@ -1,12 +1,14 @@
 package fbdl
 
 import (
-	"fmt"
+	_ "fmt"
 )
 
 type Symbol interface {
 	Name() string
 	LineNumber() uint32
+	SetParent(s Symbol)
+	Parent() Symbol
 }
 
 type common struct {
@@ -14,6 +16,7 @@ type common struct {
 	Id         uint32
 	lineNumber uint32
 	name       string
+	parent     Symbol
 }
 
 func (c common) Name() string {
@@ -22,6 +25,18 @@ func (c common) Name() string {
 
 func (c common) LineNumber() uint32 {
 	return c.lineNumber
+}
+
+func (c *common) SetParent(s Symbol) {
+	if c.parent == nil {
+		c.parent = s
+	} else {
+		panic("should never happen")
+	}
+}
+
+func (c common) Parent() Symbol {
+	return c.parent
 }
 
 type Constant struct {
@@ -36,81 +51,37 @@ const (
 	Definitive
 )
 
-type ElementType uint8
+func IsBaseType(t string) bool {
+	base_types := [...]string{"block", "bus", "config", "func", "mask", "param", "status"}
 
-const (
-	Block ElementType = iota
-	Bus
-	Config
-	Func
-	Mask
-	Param
-	Status
-)
-
-func ToElementType(s string) (ElementType, error) {
-	var t ElementType
-
-	switch s {
-	case "block":
-		t = Block
-	case "bus":
-		t = Bus
-	case "config":
-		t = Config
-	case "func":
-		t = Func
-	case "mask":
-		t = Mask
-	case "param":
-		t = Param
-	case "status":
-		t = Status
-	default:
-		return Block, fmt.Errorf("invalid element type %s", s)
+	for i, _ := range base_types {
+		if t == base_types[i] {
+			return true
+		}
 	}
 
-	return t, nil
+	return false
 }
 
-func (e ElementType) String() string {
-	switch e {
-	case Block:
-		return "block"
-	case Bus:
-		return "bus"
-	case Config:
-		return "config"
-	case Func:
-		return "func"
-	case Mask:
-		return "mask"
-	case Param:
-		return "param"
-	case Status:
-		return "status"
-	default:
-		panic("invalid element type")
-	}
-}
-
-func IsValidProperty(e ElementType, p string) bool {
-	validProps := map[ElementType][]string{
-		Block:  []string{"doc"},
-		Bus:    []string{"doc", "masters", "width"},
-		Config: []string{"atomic", "default", "doc", "groups", "range", "once", "width"},
-		Func:   []string{"doc"},
-		Mask:   []string{"atomic", "default", "doc", "groups", "width"},
-		Param:  []string{"default", "doc", "range", "width"},
-		Status: []string{"atomic", "doc", "groups", "once", "width"},
+func IsValidProperty(t string, p string) bool {
+	validProps := map[string][]string{
+		"block":  []string{"doc"},
+		"bus":    []string{"doc", "masters", "width"},
+		"config": []string{"atomic", "default", "doc", "groups", "range", "once", "width"},
+		"func":   []string{"doc"},
+		"mask":   []string{"atomic", "default", "doc", "groups", "width"},
+		"param":  []string{"default", "doc", "range", "width"},
+		"status": []string{"atomic", "doc", "groups", "once", "width"},
 	}
 
-	if list, ok := validProps[e]; ok {
+	if list, ok := validProps[t]; ok {
 		for i, _ := range list {
 			if p == list[i] {
 				return true
 			}
 		}
+	} else {
+		panic("should never happen")
 	}
 
 	return false
@@ -157,9 +128,17 @@ type Element struct {
 	common
 	IsArray           bool
 	Count             Expression
-	Parent            *Symbol
-	Type              ElementType
+	Type              string
 	InstantiationType ElementInstantiationType
 	Properties        map[string]Property
 	Symbols           map[string]Symbol
+}
+
+type Type struct {
+	common
+	Parameters []Parameter
+	Arguments  []Argument
+	Type       string
+	Properties map[string]Property
+	Symbols    map[string]Symbol
 }

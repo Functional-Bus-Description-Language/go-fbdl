@@ -9,7 +9,9 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 	"sync"
+	"unicode"
 )
 
 var parser *ts.Parser
@@ -192,10 +194,12 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	var symbol Symbol
 	for {
 		switch node.Type() {
-		case "single_constant_definition":
-			symbol, err = parseSingleConstantDefinition(node)
 		case "element_anonymous_instantiation":
 			symbol, err = parseElementAnonymousInstantiation(node)
+		case "element_type_definition":
+			symbol, err = parseElementTypeDefinition(node)
+		case "single_constant_definition":
+			symbol, err = parseSingleConstantDefinition(node)
 		default:
 			log.Fatalf("parsing %s not yet supported", node.Type())
 		}
@@ -271,7 +275,7 @@ func parseArgumentList(n Node) ([]Argument, error) {
 	return args, nil
 }
 
-func parseElementAnonymousInstantiation(n Node) (Element, error) {
+func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 	var err error
 
 	isArray := false
@@ -280,19 +284,24 @@ func parseElementAnonymousInstantiation(n Node) (Element, error) {
 		isArray = true
 		expr, err := MakeExpression(n.Child(2))
 		if err != nil {
-			return Element{}, fmt.Errorf(": %v", err)
+			return &Element{}, fmt.Errorf(": %v", err)
 		}
 		count = expr
 	}
 
-	var type_ ElementType
+	var type_ string
 	if n.Child(1).Type() == "element_type" {
-		type_, err = ToElementType(n.Child(1).Content())
+		type_ = n.Child(1).Content()
 	} else {
-		type_, err = ToElementType(n.Child(4).Content())
+		type_ = n.Child(4).Content()
 	}
-	if err != nil {
-		return Element{}, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
+
+	if IsBaseType(type_) == false {
+		return &Element{},
+			fmt.Errorf(
+				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
+				n.LineNumber(), type_,
+			)
 	}
 
 	var props map[string]Property
@@ -301,12 +310,12 @@ func parseElementAnonymousInstantiation(n Node) (Element, error) {
 	if last_node.Type() == "element_body" {
 		props, symbols, err = parseElementBody(last_node)
 		if err != nil {
-			return Element{}, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
+			return &Element{}, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
 		}
 
 		for prop, v := range props {
 			if IsValidProperty(type_, prop) == false {
-				return Element{},
+				return &Element{},
 					fmt.Errorf(
 						"line %d: element anonymous instantiation: "+
 							"line %d: invalid property '%s' for element of type '%v'",
@@ -323,7 +332,7 @@ func parseElementAnonymousInstantiation(n Node) (Element, error) {
 		//		symbol['Symbols'] = symbols
 	}
 
-	return Element{
+	return &Element{
 		common: common{
 			Id:         generateId(),
 			lineNumber: n.LineNumber(),
@@ -365,15 +374,15 @@ func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 			var s Symbol
 			switch t {
 			case "element_type_definition":
-				panic("not yer implemented")
+				s, err = parseElementTypeDefinition(nc)
 			case "element_anonymous_instantiation":
-				panic("not yer implemented")
+				s, err = parseElementAnonymousInstantiation(nc)
 			case "element_definitive_instantiation":
-				panic("not yer implemented")
+				panic("not yet implemented")
 			case "single_constant_definition":
 				s, err = parseSingleConstantDefinition(nc)
 			case "multi_constant_definition":
-				panic("not yer implemented")
+				panic("not yet implemented")
 			default:
 				panic("this should never happen")
 			}
@@ -394,6 +403,78 @@ func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 	}
 
 	return props, symbols, nil
+}
+
+func parseElementTypeDefinition(n Node) (*Type, error) {
+	args := []Argument{}
+	params := []Parameter{}
+	props := make(map[string]Property)
+	symbols := make(map[string]Symbol)
+
+	var err error
+	var type_ string
+
+	for i := 2; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		t := nc.Type()
+
+		switch t {
+		case "parameter_list":
+			params, err = parseParameterList(nc)
+		case "identifier":
+			type_ = nc.Content()
+		case "qualified_identifier":
+			type_ = nc.Content()
+			aux := strings.Split(type_, ".")
+			pkg := aux[0]
+			id := aux[1]
+			if unicode.IsUpper([]rune(id)[0]) == false {
+				return &Type{},
+					fmt.Errorf(
+						"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
+						nc.LineNumber(), id, pkg,
+					)
+			}
+		case "argument_list":
+			args, err = parseArgumentList(nc)
+		case "element_body":
+			props, symbols, err = parseElementBody(nc)
+		default:
+			panic("should never happen")
+		}
+
+		if err != nil {
+			return &Type{}, fmt.Errorf("line %d: element type definition: %v", n.LineNumber(), err)
+		}
+	}
+
+	if len(args) > 0 {
+		if IsBaseType(type_) {
+			return &Type{},
+				fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), type_)
+		}
+	}
+
+	type__ := Type{
+		common: common{
+			Id:         generateId(),
+			lineNumber: n.LineNumber(),
+			name:       n.Child(1).Content(),
+		},
+		Parameters: params,
+		Arguments:  args,
+		Type:       type_,
+		Properties: props,
+		Symbols:    symbols,
+	}
+
+	if len(type__.Symbols) > 0 {
+		for name, _ := range type__.Symbols {
+			type__.Symbols[name].SetParent(&type__)
+		}
+	}
+
+	return &type__, nil
 }
 
 func parseParameterList(n Node) ([]Parameter, error) {
@@ -443,13 +524,13 @@ func parseParameterList(n Node) ([]Parameter, error) {
 	return params, nil
 }
 
-func parseSingleConstantDefinition(n Node) (Constant, error) {
+func parseSingleConstantDefinition(n Node) (*Constant, error) {
 	v, err := MakeExpression(n.Child(3))
 	if err != nil {
-		return Constant{}, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
+		return &Constant{}, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
 	}
 
-	return Constant{
+	return &Constant{
 		common: common{
 			Id:         generateId(),
 			lineNumber: n.LineNumber(),
