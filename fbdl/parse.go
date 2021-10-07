@@ -323,16 +323,9 @@ func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 					)
 			}
 		}
-
-		//if properties:
-		//	symbol['Properties'] = properties
-		//	if symbols:
-		//		for _, sym in symbols.items():
-		//			sym['Parent'] = RefDict(symbol)
-		//		symbol['Symbols'] = symbols
 	}
 
-	return &Element{
+	elem := Element{
 		common: common{
 			Id:         generateId(),
 			lineNumber: n.LineNumber(),
@@ -344,7 +337,15 @@ func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 		InstantiationType: Anonymous,
 		Properties:        props,
 		Symbols:           symbols,
-	}, nil
+	}
+
+	if len(elem.Symbols) > 0 {
+		for name, _ := range elem.Symbols {
+			elem.Symbols[name].SetParent(&elem)
+		}
+	}
+
+	return &elem, nil
 }
 
 func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
