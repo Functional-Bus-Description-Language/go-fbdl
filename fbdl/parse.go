@@ -192,17 +192,19 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	file := File{Path: path, Pkg: pkg, Symbols: make(map[string]Symbol), Imports: make(map[string]Import)}
 
-	var symbol Symbol
+	var symbols []Symbol
 	for {
 		switch node.Type() {
 		case "element_anonymous_instantiation":
-			symbol, err = parseElementAnonymousInstantiation(node)
+			symbols, err = parseElementAnonymousInstantiation(node)
 		case "element_definitive_instantiation":
-			symbol, err = parseElementDefinitiveInstantiation(node)
+			symbols, err = parseElementDefinitiveInstantiation(node)
 		case "element_type_definition":
-			symbol, err = parseElementTypeDefinition(node)
+			symbols, err = parseElementTypeDefinition(node)
+		case "multi_constant_definition":
+			symbols, err = parseMultiConstantDefinition(node)
 		case "single_constant_definition":
-			symbol, err = parseSingleConstantDefinition(node)
+			symbols, err = parseSingleConstantDefinition(node)
 		case "single_import_statement":
 			i := parseSingleImportStatement(node)
 			if _, exist := file.Imports[i.ImportName]; exist {
@@ -221,9 +223,11 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			log.Fatalf("%s: %v", path, err)
 		}
 
-		err = file.AddSymbol(symbol)
-		if err != nil {
-			log.Fatalf("%s: %v", path, err)
+		for i := 0; i < len(symbols); i++ {
+			err = file.AddSymbol(symbols[i])
+			if err != nil {
+				log.Fatalf("%s: %v", path, err)
+			}
 		}
 
 	nextNode:
@@ -289,7 +293,7 @@ func parseArgumentList(n Node) ([]Argument, error) {
 	return args, nil
 }
 
-func parseElementAnonymousInstantiation(n Node) (*Element, error) {
+func parseElementAnonymousInstantiation(n Node) ([]Symbol, error) {
 	var err error
 
 	isArray := false
@@ -359,10 +363,10 @@ func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 		}
 	}
 
-	return &elem, nil
+	return []Symbol{&elem}, nil
 }
 
-func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
+func parseElementDefinitiveInstantiation(n Node) ([]Symbol, error) {
 	var err error
 
 	isArray := false
@@ -449,7 +453,7 @@ func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
 		}
 	}
 
-	return &elem, nil
+	return []Symbol{&elem}, nil
 }
 
 func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
@@ -476,16 +480,16 @@ func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 			}
 			props[name] = Property{LineNumber: nc.LineNumber(), Value: expr}
 		default:
-			var s Symbol
+			var ss []Symbol
 			switch t {
 			case "element_type_definition":
-				s, err = parseElementTypeDefinition(nc)
+				ss, err = parseElementTypeDefinition(nc)
 			case "element_anonymous_instantiation":
-				s, err = parseElementAnonymousInstantiation(nc)
+				ss, err = parseElementAnonymousInstantiation(nc)
 			case "element_definitive_instantiation":
-				s, err = parseElementDefinitiveInstantiation(nc)
+				ss, err = parseElementDefinitiveInstantiation(nc)
 			case "single_constant_definition":
-				s, err = parseSingleConstantDefinition(nc)
+				ss, err = parseSingleConstantDefinition(nc)
 			case "multi_constant_definition":
 				panic("not yet implemented")
 			default:
@@ -498,19 +502,23 @@ func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 					fmt.Errorf("element body: %v", err)
 			}
 
-			if _, exist := symbols[s.Name()]; exist {
-				return props,
-					symbols,
-					fmt.Errorf("line %d: symbol '%s' defined at least twice in the same element body", nc.LineNumber(), s.Name())
+			for i := 0; i < len(ss); i++ {
+				if _, exist := symbols[ss[i].Name()]; exist {
+					return props,
+						symbols,
+						fmt.Errorf(
+							"line %d: symbol '%s' defined at least twice in the same element body", nc.LineNumber(), ss[i].Name(),
+						)
+				}
+				symbols[ss[i].Name()] = ss[i]
 			}
-			symbols[s.Name()] = s
 		}
 	}
 
 	return props, symbols, nil
 }
 
-func parseElementTypeDefinition(n Node) (*Type, error) {
+func parseElementTypeDefinition(n Node) ([]Symbol, error) {
 	args := []Argument{}
 	params := []Parameter{}
 	props := make(map[string]Property)
@@ -579,7 +587,31 @@ func parseElementTypeDefinition(n Node) (*Type, error) {
 		}
 	}
 
-	return &type__, nil
+	return []Symbol{&type__}, nil
+}
+
+func parseMultiConstantDefinition(n Node) ([]Symbol, error) {
+	var symbols []Symbol
+
+	for i := 0; i < (int(n.ChildCount()) - 1) / 3; i++ {
+		expr, err := MakeExpression(n.Child(i * 3 + 3))
+		if err != nil {
+			return nil, fmt.Errorf("line %d: %v", n.Child(i * 3 + 1).LineNumber(), err)
+		}
+
+		symbols = append(symbols,
+			&Constant{
+				common: common{
+					Id:         generateId(),
+					lineNumber: n.Child(i * 3 + 1).LineNumber(),
+					name:       n.Child(i * 3 + 1).Content(),
+				},
+				value: expr,
+			},
+		)
+	}
+
+	return symbols, nil
 }
 
 func parseParameterList(n Node) ([]Parameter, error) {
@@ -629,20 +661,20 @@ func parseParameterList(n Node) ([]Parameter, error) {
 	return params, nil
 }
 
-func parseSingleConstantDefinition(n Node) (*Constant, error) {
+func parseSingleConstantDefinition(n Node) ([]Symbol, error) {
 	v, err := MakeExpression(n.Child(3))
 	if err != nil {
-		return &Constant{}, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
+		return nil, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
 	}
 
-	return &Constant{
+	return []Symbol{&Constant{
 		common: common{
 			Id:         generateId(),
 			lineNumber: n.LineNumber(),
 			name:       n.Child(1).Content(),
 		},
 		value: v,
-	}, nil
+	}}, nil
 }
 
 func parseSingleImportStatement(n Node) Import {
