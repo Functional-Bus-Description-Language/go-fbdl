@@ -1,4 +1,4 @@
-package python
+package tsfbdl
 
 //#include "parser.h"
 //TSLanguage *tree_sitter_fbdl();

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./fbdl"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/fbdl"
 	"fmt"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jessevdk/go-flags"

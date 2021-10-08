@@ -1,7 +1,7 @@
 package fbdl
 
 import (
-	fbdl "./ts"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/fbdl/tsfbdl"
 	"bufio"
 	"fmt"
 	ts "github.com/smacker/go-tree-sitter"
@@ -18,7 +18,7 @@ var parser *ts.Parser
 
 func init() {
 	parser = ts.NewParser()
-	parser.SetLanguage(fbdl.GetLanguage())
+	parser.SetLanguage(tsfbdl.GetLanguage())
 }
 
 // Node is a wrapper for tree-sitter node.
