@@ -1,9 +1,9 @@
 package fbdl
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/fbdl/tsfbdl"
 	"bufio"
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/fbdl/tsfbdl"
 	ts "github.com/smacker/go-tree-sitter"
 	"io/ioutil"
 	"log"
