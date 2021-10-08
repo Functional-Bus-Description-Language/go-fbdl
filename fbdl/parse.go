@@ -298,7 +298,7 @@ func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 		isArray = true
 		expr, err := MakeExpression(n.Child(2))
 		if err != nil {
-			return &Element{}, fmt.Errorf(": %v", err)
+			return nil, fmt.Errorf(": %v", err)
 		}
 		count = expr
 	}
@@ -311,7 +311,7 @@ func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 	}
 
 	if IsBaseType(type_) == false {
-		return &Element{},
+		return nil,
 			fmt.Errorf(
 				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
 				n.LineNumber(), type_,
@@ -324,12 +324,12 @@ func parseElementAnonymousInstantiation(n Node) (*Element, error) {
 	if last_node.Type() == "element_body" {
 		props, symbols, err = parseElementBody(last_node)
 		if err != nil {
-			return &Element{}, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
 		}
 
 		for prop, v := range props {
 			if IsValidProperty(type_, prop) == false {
-				return &Element{},
+				return nil,
 					fmt.Errorf(
 						"line %d: element anonymous instantiation: "+
 							"line %d: invalid property '%s' for element of type '%v'",
@@ -371,7 +371,7 @@ func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
 		isArray = true
 		count, err = MakeExpression(n.Child(2))
 		if err != nil {
-			return &Element{}, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
 		}
 	}
 
@@ -387,7 +387,7 @@ func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
 		pkg := aux[0]
 		id := aux[1]
 		if unicode.IsUpper([]rune(id)[0]) == false {
-			return &Element{},
+			return nil,
 				fmt.Errorf(
 					"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
 					n.LineNumber(), id, pkg,
@@ -399,7 +399,7 @@ func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
 	if n.Child(int(n.ChildCount()-2)).Type() == "argument_list" {
 		args, err = parseArgumentList(n.Child(int(n.ChildCount() - 2)))
 		if err != nil {
-			return &Element{}, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
 		}
 	}
 
@@ -407,7 +407,7 @@ func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
 	if last_child.Type() == "argument_list" {
 		args, err = parseArgumentList(last_child)
 		if err != nil {
-			return &Element{}, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
 		}
 	}
 
@@ -416,13 +416,13 @@ func parseElementDefinitiveInstantiation(n Node) (*Element, error) {
 	if last_child.Type() == "element_body" {
 		props, symbols, err = parseElementBody(last_child)
 		if err != nil {
-			return &Element{}, fmt.Errorf("line %d: element definitve instantiation: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf("line %d: element definitve instantiation: %v", n.LineNumber(), err)
 		}
 	}
 
 	name := n.Child(0).Content()
 	if IsBaseType(name) {
-		return &Element{},
+		return nil,
 			fmt.Errorf("line %d: invalid instance name '%s', element instance can not have the same name as base type",
 				n.LineNumber(), name,
 			)
@@ -534,7 +534,7 @@ func parseElementTypeDefinition(n Node) (*Type, error) {
 			pkg := aux[0]
 			id := aux[1]
 			if unicode.IsUpper([]rune(id)[0]) == false {
-				return &Type{},
+				return nil,
 					fmt.Errorf(
 						"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
 						nc.LineNumber(), id, pkg,
@@ -549,13 +549,13 @@ func parseElementTypeDefinition(n Node) (*Type, error) {
 		}
 
 		if err != nil {
-			return &Type{}, fmt.Errorf("line %d: element type definition: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf("line %d: element type definition: %v", n.LineNumber(), err)
 		}
 	}
 
 	if len(args) > 0 {
 		if IsBaseType(type_) {
-			return &Type{},
+			return nil,
 				fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), type_)
 		}
 	}
