@@ -13,10 +13,6 @@ const VERSION string = "0.0.0"
 
 type logWriter struct{}
 
-func (writer logWriter) Write(bytes []byte) (int, error) {
-	return fmt.Print(string(bytes))
-}
-
 type Options struct {
 	Version           bool   `short:"v" long:"version" description:"Display version."`
 	DumpPackages      string `short:"p" description:"Dump packages to a file." optional:"true" optional-value:"pkgs.txt"`
@@ -33,7 +29,6 @@ type Options struct {
 
 func main() {
 	log.SetFlags(0)
-	log.SetOutput(new(logWriter))
 
 	spew.Config.Indent = "  "
 	spew.Config.DisablePointerAddresses = true

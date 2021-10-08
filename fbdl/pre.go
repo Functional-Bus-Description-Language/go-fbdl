@@ -74,7 +74,7 @@ func DiscoverPackages(main string) Packages {
 
 	// Add main file.
 	var tmp []*Package
-	tmp = append(tmp, &Package{Name: "main", Path: path.Join(cwd, main)})
+	tmp = append(tmp, &Package{Name: "main", Path: main})
 	packages["main"] = tmp
 
 	return packages

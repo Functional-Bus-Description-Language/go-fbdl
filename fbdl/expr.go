@@ -59,6 +59,8 @@ func MakeExpression(n Node) (Expression, error) {
 		expr, err = MakeDecimalLiteral(n)
 	case "false":
 		expr = MakeFalse()
+	case "identifier":
+		expr = MakeIdentifier(n)
 	case "primary_expression":
 		expr, err = MakePrimaryExpression(n)
 	case "zero_literal":
@@ -161,6 +163,19 @@ func (f False) Value() (Value, error) {
 
 func MakeFalse() False {
 	return False{v: false}
+}
+
+type Identifier struct {
+	v string
+}
+
+func (i Identifier) Value() (Value, error) {
+	// TODO: implement
+	return Bool{V: false}, nil
+}
+
+func MakeIdentifier(n Node) Identifier {
+	return Identifier{v: n.Content()}
 }
 
 type PrimaryExpression struct {

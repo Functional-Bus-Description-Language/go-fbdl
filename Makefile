@@ -15,9 +15,13 @@ help:
 	@echo "  fmt      Format files with go fmt."
 	@echo "  help     Print help message."
 	@echo "  vet      Examine go sources with go vet."
+	@echo "  test-parsing  Run parsing tests."
 
 fmt:
 	go fmt ./...
 
 vet:
 	go vet ./...
+
+test-parsing:
+	./scripts/test-parsing.sh

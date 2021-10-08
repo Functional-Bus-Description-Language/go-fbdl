@@ -1,0 +1,2 @@
+type my_mask mask
+    width = 1

@@ -246,7 +246,7 @@ func parseArgumentList(n Node) ([]Argument, error) {
 	names := []string{}
 	var err error
 	var hasName = true
-	var name string
+	name := ""
 	var val Expression
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
@@ -267,14 +267,18 @@ func parseArgumentList(n Node) ([]Argument, error) {
 
 		next_node_type := n.Child(i + 1).Type()
 		if next_node_type == "," || next_node_type == ")" {
-			for i, _ := range names {
-				if name == names[i] {
-					return args, fmt.Errorf("argument '%s' assigned at least twice in argument list", name)
+			if name != "" {
+				for i, _ := range names {
+					if name == names[i] {
+						return args, fmt.Errorf("argument '%s' assigned at least twice in argument list", name)
+					}
 				}
 			}
 
+			names = append(names, name)
 			args = append(args, Argument{HasName: hasName, Name: name, Value: val})
 			hasName = false
+			name = ""
 		}
 	}
 
@@ -638,7 +642,7 @@ func parseParameterList(n Node) ([]Parameter, error) {
 		} else {
 			defaultValue, err = MakeExpression(nc)
 			if err != nil {
-				return params, fmt.Errorf("parameter list: %v", err)
+				return nil, fmt.Errorf("parameter list: %v", err)
 			}
 
 			hasDefaultValue = true
@@ -648,13 +652,25 @@ func parseParameterList(n Node) ([]Parameter, error) {
 		if next_node_type == "," || next_node_type == ")" {
 			for i, _ := range params {
 				if name == params[i].Name {
-					return params, fmt.Errorf("parameter '%s' defined at least twice", name)
+					return nil, fmt.Errorf("parameter '%s' defined at least twice", name)
 				}
 			}
 			params = append(
 				params,
 				Parameter{Name: name, HasDefaultValue: hasDefaultValue, DefaultValue: defaultValue},
 			)
+		}
+	}
+
+	// Check if parameters without default value precede parameters with default value.
+	with_default := false
+	for i, p := range params {
+		if with_default && p.HasDefaultValue == false {
+			return nil, fmt.Errorf("parameters without default value must precede the ones with default value")
+		}
+
+		if params[i].HasDefaultValue {
+			with_default = true
 		}
 	}
 
