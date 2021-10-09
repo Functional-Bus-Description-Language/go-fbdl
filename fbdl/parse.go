@@ -597,18 +597,18 @@ func parseElementTypeDefinition(n Node) ([]Symbol, error) {
 func parseMultiConstantDefinition(n Node) ([]Symbol, error) {
 	var symbols []Symbol
 
-	for i := 0; i < (int(n.ChildCount()) - 1) / 3; i++ {
-		expr, err := MakeExpression(n.Child(i * 3 + 3))
+	for i := 0; i < (int(n.ChildCount())-1)/3; i++ {
+		expr, err := MakeExpression(n.Child(i*3 + 3))
 		if err != nil {
-			return nil, fmt.Errorf("line %d: %v", n.Child(i * 3 + 1).LineNumber(), err)
+			return nil, fmt.Errorf("line %d: %v", n.Child(i*3+1).LineNumber(), err)
 		}
 
 		symbols = append(symbols,
 			&Constant{
 				common: common{
 					Id:         generateId(),
-					lineNumber: n.Child(i * 3 + 1).LineNumber(),
-					name:       n.Child(i * 3 + 1).Content(),
+					lineNumber: n.Child(i*3 + 1).LineNumber(),
+					name:       n.Child(i*3 + 1).Content(),
 				},
 				value: expr,
 			},
