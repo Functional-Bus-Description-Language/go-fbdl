@@ -28,6 +28,6 @@ vet:
 	go vet ./...
 
 test-parsing:
-	./scripts/test-parsing.sh
+	@./scripts/test-parsing.sh
 
 test: test-parsing
