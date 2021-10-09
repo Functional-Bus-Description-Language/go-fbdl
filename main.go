@@ -19,14 +19,6 @@ type Options struct {
 	DumpInstantiation string `short:"i" description:"Dump instantiation to a file." optional:"true" optional-value:"inst.txt"`
 }
 
-//func foo() {
-//	fmt.Println(
-//		`Functional Bus Description Language compiler front-end.
-//Version`, VERSION)
-//
-//	flag.PrintDefaults()
-//}
-
 func main() {
 	log.SetFlags(0)
 
@@ -39,11 +31,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	//flag.Usage = foo
-	//versionFlag := flag.Bool("v", false, "Display version.")
-	//dumpPackages := flag.String("p", "pkgs.txt", "Dump packages to a file.")
-	//flag.Parse()
 
 	if opts.Version {
 		fmt.Println(VERSION)
