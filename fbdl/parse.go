@@ -572,11 +572,16 @@ func parseElementTypeDefinition(n Node) ([]Symbol, error) {
 		}
 	}
 
+	name := n.Child(1).Content()
+	if IsBaseType(name) {
+		return nil, fmt.Errorf("line %d: invalid type name '%s', type name can not be the same as base type", n.LineNumber(), name)
+	}
+
 	type__ := Type{
 		common: common{
 			Id:         generateId(),
 			lineNumber: n.LineNumber(),
-			name:       n.Child(1).Content(),
+			name:       name,
 		},
 		Parameters: params,
 		Arguments:  args,
