@@ -3,7 +3,7 @@ package fbdl
 import (
 	"bufio"
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/fbdl/tsfbdl"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tsfbdl"
 	ts "github.com/smacker/go-tree-sitter"
 	"io/ioutil"
 	"log"
