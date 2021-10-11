@@ -16,8 +16,9 @@ help:
 	@echo "  fmt  Format files with go fmt."
 	@echo "  vet  Examine go sources with go vet."
 	@echo "Test related targets:"
-	@echo "  test          Run all tests."
-	@echo "  test-parsing  Run parsing tests."
+	@echo "  test                Run all tests."
+	@echo "  test-instantiating  Run instantiating tests."
+	@echo "  test-parsing        Run parsing tests."
 	@echo "Other targets:"
 	@echo "  help  Print help message."
 
@@ -27,6 +28,9 @@ fmt:
 vet:
 	go vet ./...
 
+test-instantiating:
+	@./scripts/test-instantiating.sh
+	
 test-parsing:
 	@./scripts/test-parsing.sh
 

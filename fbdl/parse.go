@@ -91,6 +91,7 @@ func ParsePackage(pkg *Package, wg *sync.WaitGroup) {
 	if pkg.Name == "main" {
 		files_wg.Add(1)
 		ParseFile(pkg.Path, pkg, &files_wg)
+		checkInstantiations(pkg)
 		return
 	}
 
@@ -109,6 +110,30 @@ func ParsePackage(pkg *Package, wg *sync.WaitGroup) {
 
 		files_wg.Add(1)
 		ParseFile(path.Join(pkg.Path, file.Name()), pkg, &files_wg)
+	}
+
+	checkInstantiations(pkg)
+}
+
+func checkInstantiations(pkg *Package) {
+	for _, f := range pkg.Files {
+		for _, symbol := range f.Symbols {
+			if e, ok := symbol.(*Element); ok{
+				if e.Type != "bus" && IsBaseType(e.Type) {
+					log.Fatalf(
+						"%s: line %d: element of type '%s' can not be instantiated at package level",
+						f.Path, e.LineNumber(), e.Type,
+					)
+				} else if e.Type == "bus" {
+					if e.Name() != "main" || pkg.Name != "main" {
+						log.Fatalf(
+							"%s: line %d: bus instantiation must be named 'main' and must be placed in 'main' package",
+							f.Path, e.LineNumber(),
+						)
+					}
+				}
+			}
+		}
 	}
 }
 
