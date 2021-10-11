@@ -30,8 +30,8 @@ vet:
 
 test-instantiating:
 	@./scripts/test-instantiating.sh
-	
+
 test-parsing:
 	@./scripts/test-parsing.sh
 
-test: test-parsing
+test: test-parsing test-instantiating
