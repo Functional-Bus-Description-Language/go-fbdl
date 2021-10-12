@@ -14,7 +14,7 @@ func MakeRootNode(code_bytes []byte) Node {
 	parser := gots.NewParser()
 	parser.SetLanguage(GetLanguage())
 
-//	tree := parser.Parse(nil, []byte(code_bytes))
+	//	tree := parser.Parse(nil, []byte(code_bytes))
 	tree := parser.Parse(nil, code_bytes)
 	root := tree.RootNode()
 	tsnode := root.Child(0)
@@ -67,4 +67,3 @@ func (n Node) HasNextSibling() bool {
 func (n Node) NextSibling() Node {
 	return Node{n: n.n.NextSibling(), code: n.code}
 }
-

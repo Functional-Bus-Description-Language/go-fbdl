@@ -13,7 +13,6 @@ type Symbol interface {
 
 type common struct {
 	File       *File
-	Id         uint32
 	lineNumber uint32
 	name       string
 	parent     Symbol

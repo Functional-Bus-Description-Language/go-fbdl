@@ -61,7 +61,7 @@ func ParsePackage(pkg *Package, wg *sync.WaitGroup) {
 func checkInstantiations(pkg *Package) {
 	for _, f := range pkg.Files {
 		for _, symbol := range f.Symbols {
-			if e, ok := symbol.(*Element); ok{
+			if e, ok := symbol.(*Element); ok {
 				if e.Type != "bus" && IsBaseType(e.Type) {
 					log.Fatalf(
 						"%s: line %d: element of type '%s' can not be instantiated at package level",
@@ -310,7 +310,6 @@ func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 
 	elem := Element{
 		common: common{
-			Id:         generateId(),
 			lineNumber: n.LineNumber(),
 			name:       n.Child(0).Content(),
 		},
@@ -399,7 +398,6 @@ func parseElementDefinitiveInstantiation(n ts.Node) ([]Symbol, error) {
 
 	elem := Element{
 		common: common{
-			Id:         generateId(),
 			lineNumber: n.LineNumber(),
 			name:       name,
 		},
@@ -540,7 +538,6 @@ func parseElementTypeDefinition(n ts.Node) ([]Symbol, error) {
 
 	type__ := Type{
 		common: common{
-			Id:         generateId(),
 			lineNumber: n.LineNumber(),
 			name:       name,
 		},
@@ -572,7 +569,6 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 		symbols = append(symbols,
 			&Constant{
 				common: common{
-					Id:         generateId(),
 					lineNumber: n.Child(i*3 + 1).LineNumber(),
 					name:       n.Child(i*3 + 1).Content(),
 				},
@@ -651,7 +647,6 @@ func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
 
 	return []Symbol{&Constant{
 		common: common{
-			Id:         generateId(),
 			lineNumber: n.LineNumber(),
 			name:       n.Child(1).Content(),
 		},
