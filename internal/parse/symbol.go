@@ -1,4 +1,4 @@
-package fbdl
+package parse
 
 import (
 	_ "fmt"
