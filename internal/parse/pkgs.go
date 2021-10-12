@@ -31,12 +31,29 @@ type Package struct {
 	Path         string
 	addFileMutex sync.Mutex
 	Files        []File
+	addSymbolMutex sync.Mutex
+	Symbols      map[string]Symbol
 }
 
 func (p *Package) AddFile(f File) {
 	p.addFileMutex.Lock()
 	p.Files = append(p.Files, f)
 	p.addFileMutex.Unlock()
+}
+
+func (p *Package) addSymbol(s Symbol) error {
+	p.addSymbolMutex.Lock()
+	defer p.addSymbolMutex.Unlock()
+
+	name := s.Name()
+
+	if _, ok := p.Symbols[name]; ok {
+		msg := `symbol '%s' defined at least twice in package '%s', first occurence line %d, second line %d`
+		return fmt.Errorf(msg, name, p.Name, p.Symbols[name].LineNumber(), s.LineNumber())
+	}
+	p.Symbols[name] = s
+
+	return nil
 }
 
 type Packages map[string][]*Package

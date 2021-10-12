@@ -189,6 +189,11 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			if err != nil {
 				log.Fatalf("%s: %v", path, err)
 			}
+
+			err = pkg.addSymbol(symbols[i])
+			if err != nil {
+				log.Fatalf("%s: %v", path, err)
+			}
 		}
 
 	nextNode:

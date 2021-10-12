@@ -3,39 +3,12 @@ package parse
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/value"
 	"strconv"
 )
 
-type Value interface {
-	IsValue() bool
-}
-
-type Bool struct {
-	V bool
-}
-
-func (b Bool) IsValue() bool {
-	return true
-}
-
-type Integer struct {
-	V int32
-}
-
-func (i Integer) IsValue() bool {
-	return true
-}
-
-type String struct {
-	v string
-}
-
-func (s String) IsValue() bool {
-	return true
-}
-
 type Expression interface {
-	Value() (Value, error)
+	Value() (value.Value, error)
 }
 
 func MakeExpression(n ts.Node) (Expression, error) {
@@ -82,28 +55,28 @@ type BinaryOperation struct {
 	operator    BinaryOperator
 }
 
-func (bo BinaryOperation) Value() (Value, error) {
+func (bo BinaryOperation) Value() (value.Value, error) {
 	left, err := bo.left.Value()
 	if err != nil {
-		return Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
+		return value.Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
 	}
 	right, err := bo.right.Value()
 	if err != nil {
-		return Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
+		return value.Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
 	}
 
-	if left, ok := left.(Integer); ok {
-		if right, ok := right.(Integer); ok {
+	if left, ok := left.(value.Integer); ok {
+		if right, ok := right.(value.Integer); ok {
 			switch bo.operator {
 			case Add:
-				return Integer{V: left.V + right.V}, nil
+				return value.Integer{V: left.V + right.V}, nil
 			default:
 				panic("operator not yet supported")
 			}
 		}
 	}
 
-	return Bool{}, fmt.Errorf("unknown operand type")
+	return value.Bool{}, fmt.Errorf("unknown operand type")
 }
 
 func MakeBinaryOperation(n ts.Node) (BinaryOperation, error) {
@@ -132,8 +105,8 @@ type DecimalLiteral struct {
 	v int32
 }
 
-func (dl DecimalLiteral) Value() (Value, error) {
-	return Integer{V: dl.v}, nil
+func (dl DecimalLiteral) Value() (value.Value, error) {
+	return value.Integer{V: dl.v}, nil
 }
 
 func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
@@ -147,8 +120,8 @@ func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
 
 type False struct{}
 
-func (f False) Value() (Value, error) {
-	return Bool{V: false}, nil
+func (f False) Value() (value.Value, error) {
+	return value.Bool{V: false}, nil
 }
 
 func MakeFalse() False {
@@ -159,9 +132,9 @@ type Identifier struct {
 	v string
 }
 
-func (i Identifier) Value() (Value, error) {
+func (i Identifier) Value() (value.Value, error) {
 	// TODO: implement
-	return Bool{V: false}, nil
+	return value.Bool{V: false}, nil
 }
 
 func MakeIdentifier(n ts.Node) Identifier {
@@ -172,10 +145,10 @@ type PrimaryExpression struct {
 	v Expression
 }
 
-func (pe PrimaryExpression) Value() (Value, error) {
+func (pe PrimaryExpression) Value() (value.Value, error) {
 	v, err := pe.v.Value()
 	if err != nil {
-		return Bool{}, fmt.Errorf("primary expression: %v", err)
+		return value.Bool{}, fmt.Errorf("primary expression: %v", err)
 	}
 
 	return v, nil
@@ -192,8 +165,8 @@ func MakePrimaryExpression(n ts.Node) (PrimaryExpression, error) {
 
 type True struct{}
 
-func (t True) Value() (Value, error) {
-	return Bool{V: true}, nil
+func (t True) Value() (value.Value, error) {
+	return value.Bool{V: true}, nil
 }
 
 func MakeTrue() True {
@@ -204,8 +177,8 @@ type ZeroLiteral struct {
 	v int32
 }
 
-func (zl ZeroLiteral) Value() (Value, error) {
-	return Integer{V: zl.v}, nil
+func (zl ZeroLiteral) Value() (value.Value, error) {
+	return value.Integer{V: zl.v}, nil
 }
 
 func MakeZeroLiteral() ZeroLiteral {
