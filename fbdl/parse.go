@@ -20,12 +20,12 @@ func ParsePackages(packages Packages) {
 	for name, _ := range packages {
 		for i, _ := range packages[name] {
 			wg.Add(1)
-			go ParsePackage(packages[name][i], &wg)
+			go parsePackage(packages[name][i], &wg)
 		}
 	}
 }
 
-func ParsePackage(pkg *Package, wg *sync.WaitGroup) {
+func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var files_wg sync.WaitGroup
@@ -33,7 +33,7 @@ func ParsePackage(pkg *Package, wg *sync.WaitGroup) {
 
 	if pkg.Name == "main" {
 		files_wg.Add(1)
-		ParseFile(pkg.Path, pkg, &files_wg)
+		parseFile(pkg.Path, pkg, &files_wg)
 		checkInstantiations(pkg)
 		return
 	}
@@ -52,7 +52,7 @@ func ParsePackage(pkg *Package, wg *sync.WaitGroup) {
 		}
 
 		files_wg.Add(1)
-		ParseFile(path.Join(pkg.Path, file.Name()), pkg, &files_wg)
+		parseFile(path.Join(pkg.Path, file.Name()), pkg, &files_wg)
 	}
 
 	checkInstantiations(pkg)
@@ -132,7 +132,7 @@ func readFile(path string) []string {
 	return code
 }
 
-func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
+func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var err error
 

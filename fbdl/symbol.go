@@ -86,24 +86,6 @@ func IsValidProperty(t string, p string) bool {
 	return false
 }
 
-/*
-func IsValidElementName(s string) error {
-	switch s {
-	case
-		"block",
-		"bus",
-		"config",
-		"func",
-		"mask",
-		"param",
-		"status":
-		return fmt.Errorf("element name can not be the same as element type keyword")
-	}
-
-	return nil
-}
-*/
-
 // Argument represents argument in the argument list.
 type Argument struct {
 	HasName bool
