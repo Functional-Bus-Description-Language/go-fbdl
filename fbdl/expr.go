@@ -2,19 +2,9 @@ package fbdl
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
 	"strconv"
 )
-
-/*
-type ValueType uint8
-
-const (
-	Bool ValueType = iota
-	Integer
-	Real
-	String
-)
-*/
 
 type Value interface {
 	IsValue() bool
@@ -48,7 +38,7 @@ type Expression interface {
 	Value() (Value, error)
 }
 
-func MakeExpression(n Node) (Expression, error) {
+func MakeExpression(n ts.Node) (Expression, error) {
 	var err error = nil
 	var expr Expression
 
@@ -116,7 +106,7 @@ func (bo BinaryOperation) Value() (Value, error) {
 	return Bool{}, fmt.Errorf("unknown operand type")
 }
 
-func MakeBinaryOperation(n Node) (BinaryOperation, error) {
+func MakeBinaryOperation(n ts.Node) (BinaryOperation, error) {
 	left, err := MakeExpression(n.Child(0))
 	if err != nil {
 		return BinaryOperation{}, fmt.Errorf("make binary operation: left operand: %v", err)
@@ -146,7 +136,7 @@ func (dl DecimalLiteral) Value() (Value, error) {
 	return Integer{V: dl.v}, nil
 }
 
-func MakeDecimalLiteral(n Node) (DecimalLiteral, error) {
+func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
 	v, err := strconv.ParseInt(n.Content(), 10, 32)
 	if err != nil {
 		return DecimalLiteral{}, fmt.Errorf("make decimal literal: %v", err)
@@ -174,7 +164,7 @@ func (i Identifier) Value() (Value, error) {
 	return Bool{V: false}, nil
 }
 
-func MakeIdentifier(n Node) Identifier {
+func MakeIdentifier(n ts.Node) Identifier {
 	return Identifier{v: n.Content()}
 }
 
@@ -191,7 +181,7 @@ func (pe PrimaryExpression) Value() (Value, error) {
 	return v, nil
 }
 
-func MakePrimaryExpression(n Node) (PrimaryExpression, error) {
+func MakePrimaryExpression(n ts.Node) (PrimaryExpression, error) {
 	v, err := MakeExpression(n.Child(0))
 	if err != nil {
 		return PrimaryExpression{}, fmt.Errorf("make primary expression: %v", err)

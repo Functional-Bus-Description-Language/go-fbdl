@@ -1,4 +1,4 @@
-package tsfbdl
+package ts
 
 //#include "parser.h"
 //TSLanguage *tree_sitter_fbdl();

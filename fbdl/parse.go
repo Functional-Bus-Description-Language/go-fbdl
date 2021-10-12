@@ -3,8 +3,7 @@ package fbdl
 import (
 	"bufio"
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tsfbdl"
-	ts "github.com/smacker/go-tree-sitter"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,62 +12,6 @@ import (
 	"sync"
 	"unicode"
 )
-
-var parser *ts.Parser
-
-func init() {
-	parser = ts.NewParser()
-	parser.SetLanguage(tsfbdl.GetLanguage())
-}
-
-// Node is a wrapper for tree-sitter node.
-type Node struct {
-	n    *ts.Node
-	code []byte
-}
-
-func (n Node) Content() string {
-	return n.n.Content(n.code)
-}
-
-func (n Node) Type() string {
-	return n.n.Type()
-}
-
-func (n Node) ChildCount() uint32 {
-	return n.n.ChildCount()
-}
-
-func (n Node) LastChild() Node {
-	return n.Child(int(n.ChildCount() - 1))
-}
-
-func (n Node) Child(idx int) Node {
-	tsn := n.n.Child(idx)
-	if tsn == nil {
-		panic("can't get child")
-	}
-
-	return Node{n: tsn, code: n.code}
-}
-
-func (n Node) LineNumber() uint32 {
-	return n.n.StartPoint().Row + 1
-}
-
-func (n Node) HasNextSibling() bool {
-	tsn := n.n.NextSibling()
-
-	if tsn == nil {
-		return false
-	}
-
-	return true
-}
-
-func (n Node) NextSibling() Node {
-	return Node{n: n.n.NextSibling(), code: n.code}
-}
 
 func ParsePackages(packages Packages) {
 	var wg sync.WaitGroup
@@ -206,14 +149,7 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		code_bytes = append(code_bytes, byte('\n'))
 	}
 
-	tree := parser.Parse(nil, []byte(code_bytes))
-	root := tree.RootNode()
-	//fmt.Println(root)
-	tsnode := root.Child(0)
-	if tsnode == nil {
-		panic("TODO")
-	}
-	node := Node{n: tsnode, code: code_bytes}
+	node := ts.MakeRootNode(code_bytes)
 
 	file := File{Path: path, Pkg: pkg, Symbols: make(map[string]Symbol), Imports: make(map[string]Import)}
 
@@ -265,7 +201,7 @@ func ParseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	pkg.AddFile(file)
 }
 
-func parseArgumentList(n Node) ([]Argument, error) {
+func parseArgumentList(n ts.Node) ([]Argument, error) {
 	args := []Argument{}
 
 	names := []string{}
@@ -322,7 +258,7 @@ func parseArgumentList(n Node) ([]Argument, error) {
 	return args, nil
 }
 
-func parseElementAnonymousInstantiation(n Node) ([]Symbol, error) {
+func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 	var err error
 
 	isArray := false
@@ -395,7 +331,7 @@ func parseElementAnonymousInstantiation(n Node) ([]Symbol, error) {
 	return []Symbol{&elem}, nil
 }
 
-func parseElementDefinitiveInstantiation(n Node) ([]Symbol, error) {
+func parseElementDefinitiveInstantiation(n ts.Node) ([]Symbol, error) {
 	var err error
 
 	isArray := false
@@ -485,7 +421,7 @@ func parseElementDefinitiveInstantiation(n Node) ([]Symbol, error) {
 	return []Symbol{&elem}, nil
 }
 
-func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
+func parseElementBody(n ts.Node) (map[string]Property, map[string]Symbol, error) {
 	var err error
 	props := make(map[string]Property)
 	symbols := make(map[string]Symbol)
@@ -547,7 +483,7 @@ func parseElementBody(n Node) (map[string]Property, map[string]Symbol, error) {
 	return props, symbols, nil
 }
 
-func parseElementTypeDefinition(n Node) ([]Symbol, error) {
+func parseElementTypeDefinition(n ts.Node) ([]Symbol, error) {
 	args := []Argument{}
 	params := []Parameter{}
 	props := make(map[string]Property)
@@ -624,7 +560,7 @@ func parseElementTypeDefinition(n Node) ([]Symbol, error) {
 	return []Symbol{&type__}, nil
 }
 
-func parseMultiConstantDefinition(n Node) ([]Symbol, error) {
+func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	var symbols []Symbol
 
 	for i := 0; i < (int(n.ChildCount())-1)/3; i++ {
@@ -648,7 +584,7 @@ func parseMultiConstantDefinition(n Node) ([]Symbol, error) {
 	return symbols, nil
 }
 
-func parseParameterList(n Node) ([]Parameter, error) {
+func parseParameterList(n ts.Node) ([]Parameter, error) {
 	params := []Parameter{}
 
 	var err error
@@ -707,7 +643,7 @@ func parseParameterList(n Node) ([]Parameter, error) {
 	return params, nil
 }
 
-func parseSingleConstantDefinition(n Node) ([]Symbol, error) {
+func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
 	v, err := MakeExpression(n.Child(3))
 	if err != nil {
 		return nil, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
@@ -723,7 +659,7 @@ func parseSingleConstantDefinition(n Node) ([]Symbol, error) {
 	}}, nil
 }
 
-func parseSingleImportStatement(n Node) Import {
+func parseSingleImportStatement(n ts.Node) Import {
 	var path string
 	var import_name string
 
