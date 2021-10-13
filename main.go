@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/inst"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
 
 	"github.com/davecgh/go-spew/spew"
@@ -50,5 +51,16 @@ func main() {
 		}
 		defer f.Close()
 		spew.Fdump(f, packages)
+	}
+
+	bus := inst.Instantiate(packages)
+
+	if opts.DumpInstantiation != "" {
+		f, err := os.Create(opts.DumpInstantiation)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		spew.Fdump(f, bus)
 	}
 }

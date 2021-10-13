@@ -27,4 +27,3 @@ type String struct {
 func (s String) IsValue() bool {
 	return true
 }
-

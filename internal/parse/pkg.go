@@ -3,36 +3,18 @@ package parse
 import (
 	"fmt"
 	"path"
-	_ "strings"
 	"sync"
 )
 
-type File struct {
-	Path    string
-	Pkg     *Package
-	Symbols map[string]Symbol
-	Imports map[string]Import
-}
-
-func (f *File) AddSymbol(s Symbol) error {
-	name := s.Name()
-
-	if _, ok := f.Symbols[name]; ok {
-		msg := `symbol '%s' defined at least twice in file, first occurence line %d, second line %d`
-		return fmt.Errorf(msg, name, f.Symbols[name].LineNumber(), s.LineNumber())
-	}
-	f.Symbols[name] = s
-
-	return nil
-}
+type Packages map[string][]*Package
 
 type Package struct {
-	Name         string
-	Path         string
-	addFileMutex sync.Mutex
-	Files        []File
+	Name           string
+	Path           string
+	addFileMutex   sync.Mutex
+	Files          []File
 	addSymbolMutex sync.Mutex
-	Symbols      map[string]Symbol
+	Symbols        map[string]Symbol
 }
 
 func (p *Package) AddFile(f File) {
@@ -41,7 +23,7 @@ func (p *Package) AddFile(f File) {
 	p.addFileMutex.Unlock()
 }
 
-func (p *Package) addSymbol(s Symbol) error {
+func (p *Package) AddSymbol(s Symbol) error {
 	p.addSymbolMutex.Lock()
 	defer p.addSymbolMutex.Unlock()
 
@@ -56,7 +38,13 @@ func (p *Package) addSymbol(s Symbol) error {
 	return nil
 }
 
-type Packages map[string][]*Package
+func (p *Package) GetSymbol(s string) (Symbol, error) {
+	if sym, ok := p.Symbols[s]; ok {
+		return sym, nil
+	}
+
+	return nil, fmt.Errorf("symbol '%s' not found in package '%s'", s, p.Name)
+}
 
 func GetName(path_ string) string {
 	name := path.Base(path_)

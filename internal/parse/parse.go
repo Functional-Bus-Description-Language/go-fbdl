@@ -3,7 +3,9 @@ package parse
 import (
 	"bufio"
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/expr"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"io/ioutil"
 	"log"
 	"os"
@@ -61,13 +63,13 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 func checkInstantiations(pkg *Package) {
 	for _, f := range pkg.Files {
 		for _, symbol := range f.Symbols {
-			if e, ok := symbol.(*Element); ok {
-				if e.Type != "bus" && IsBaseType(e.Type) {
+			if e, ok := symbol.(*ElementDefinition); ok {
+				if e.type_ != "bus" && util.IsBaseType(e.type_) {
 					log.Fatalf(
-						"%s: line %d: element of type '%s' can not be instantiated at package level",
-						f.Path, e.LineNumber(), e.Type,
+						"%s: line %d: element of type '%s' cannot be instantiated at package level",
+						f.Path, e.LineNumber(), e.Type(),
 					)
-				} else if e.Type == "bus" {
+				} else if e.type_ == "bus" {
 					if e.Name() != "main" || pkg.Name != "main" {
 						log.Fatalf(
 							"%s: line %d: bus instantiation must be named 'main' and must be placed in 'main' package",
@@ -190,7 +192,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 				log.Fatalf("%s: %v", path, err)
 			}
 
-			err = pkg.addSymbol(symbols[i])
+			err = pkg.AddSymbol(symbols[i])
 			if err != nil {
 				log.Fatalf("%s: %v", path, err)
 			}
@@ -213,7 +215,7 @@ func parseArgumentList(n ts.Node) ([]Argument, error) {
 	var err error
 	var hasName = true
 	name := ""
-	var val Expression
+	var val expr.Expression
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
 		t := nc.Type()
@@ -225,7 +227,7 @@ func parseArgumentList(n ts.Node) ([]Argument, error) {
 		if t == "identifier" {
 			name = nc.Content()
 		} else {
-			val, err = MakeExpression(nc)
+			val, err = expr.MakeExpression(nc)
 			if err != nil {
 				return args, fmt.Errorf("argument list: %v", err)
 			}
@@ -267,10 +269,10 @@ func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 	var err error
 
 	isArray := false
-	var count Expression
+	var count expr.Expression
 	if n.Child(1).Type() == "[" {
 		isArray = true
-		expr, err := MakeExpression(n.Child(2))
+		expr, err := expr.MakeExpression(n.Child(2))
 		if err != nil {
 			return nil, fmt.Errorf(": %v", err)
 		}
@@ -284,7 +286,7 @@ func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 		type_ = n.Child(4).Content()
 	}
 
-	if IsBaseType(type_) == false {
+	if util.IsBaseType(type_) == false {
 		return nil,
 			fmt.Errorf(
 				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
@@ -302,7 +304,7 @@ func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 		}
 
 		for prop, v := range props {
-			if IsValidProperty(type_, prop) == false {
+			if util.IsValidProperty(type_, prop) == false {
 				return nil,
 					fmt.Errorf(
 						"line %d: element anonymous instantiation: "+
@@ -313,22 +315,22 @@ func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 		}
 	}
 
-	elem := Element{
-		common: common{
+	elem := ElementDefinition{
+		base: base{
 			lineNumber: n.LineNumber(),
 			name:       n.Child(0).Content(),
 		},
 		IsArray:           isArray,
 		Count:             count,
-		Type:              type_,
+		type_:             type_,
 		InstantiationType: Anonymous,
-		Properties:        props,
-		Symbols:           symbols,
+		properties:        props,
+		symbols:           symbols,
 	}
 
-	if len(elem.Symbols) > 0 {
-		for name, _ := range elem.Symbols {
-			elem.Symbols[name].SetParent(&elem)
+	if len(elem.symbols) > 0 {
+		for name, _ := range elem.symbols {
+			elem.symbols[name].SetParent(&elem)
 		}
 	}
 
@@ -339,10 +341,10 @@ func parseElementDefinitiveInstantiation(n ts.Node) ([]Symbol, error) {
 	var err error
 
 	isArray := false
-	var count Expression
+	var count expr.Expression
 	if n.Child(1).Type() == "[" {
 		isArray = true
-		count, err = MakeExpression(n.Child(2))
+		count, err = expr.MakeExpression(n.Child(2))
 		if err != nil {
 			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
 		}
@@ -393,31 +395,23 @@ func parseElementDefinitiveInstantiation(n ts.Node) ([]Symbol, error) {
 		}
 	}
 
-	name := n.Child(0).Content()
-	if IsBaseType(name) {
-		return nil,
-			fmt.Errorf("line %d: invalid instance name '%s', element instance can not have the same name as base type",
-				n.LineNumber(), name,
-			)
-	}
-
-	elem := Element{
-		common: common{
+	elem := ElementDefinition{
+		base: base{
 			lineNumber: n.LineNumber(),
-			name:       name,
+			name:       n.Child(0).Content(),
 		},
 		IsArray:           isArray,
 		Count:             count,
-		Type:              type_,
+		type_:             type_,
 		InstantiationType: Definitive,
-		Properties:        props,
-		Symbols:           symbols,
-		Arguments:         args,
+		properties:        props,
+		symbols:           symbols,
+		args:              args,
 	}
 
-	if len(elem.Symbols) > 0 {
-		for name, _ := range elem.Symbols {
-			elem.Symbols[name].SetParent(&elem)
+	if len(elem.symbols) > 0 {
+		for name, _ := range elem.symbols {
+			elem.symbols[name].SetParent(&elem)
 		}
 	}
 
@@ -440,7 +434,7 @@ func parseElementBody(n ts.Node) (map[string]Property, map[string]Symbol, error)
 					symbols,
 					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
 			}
-			expr, err := MakeExpression(nc.Child(2))
+			expr, err := expr.MakeExpression(nc.Child(2))
 			if err != nil {
 				return props,
 					symbols,
@@ -530,32 +524,32 @@ func parseElementTypeDefinition(n ts.Node) ([]Symbol, error) {
 	}
 
 	if len(args) > 0 {
-		if IsBaseType(type_) {
+		if util.IsBaseType(type_) {
 			return nil,
 				fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), type_)
 		}
 	}
 
 	name := n.Child(1).Content()
-	if IsBaseType(name) {
-		return nil, fmt.Errorf("line %d: invalid type name '%s', type name can not be the same as base type", n.LineNumber(), name)
+	if util.IsBaseType(name) {
+		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
 	}
 
-	type__ := Type{
-		common: common{
+	type__ := TypeDefinition{
+		base: base{
 			lineNumber: n.LineNumber(),
 			name:       name,
 		},
-		Parameters: params,
-		Arguments:  args,
-		Type:       type_,
-		Properties: props,
-		Symbols:    symbols,
+		type_:      type_,
+		properties: props,
+		symbols:    symbols,
+		params:     params,
+		args:       args,
 	}
 
-	if len(type__.Symbols) > 0 {
-		for name, _ := range type__.Symbols {
-			type__.Symbols[name].SetParent(&type__)
+	if len(type__.symbols) > 0 {
+		for name, _ := range type__.symbols {
+			type__.symbols[name].SetParent(&type__)
 		}
 	}
 
@@ -566,14 +560,14 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	var symbols []Symbol
 
 	for i := 0; i < (int(n.ChildCount())-1)/3; i++ {
-		expr, err := MakeExpression(n.Child(i*3 + 3))
+		expr, err := expr.MakeExpression(n.Child(i*3 + 3))
 		if err != nil {
 			return nil, fmt.Errorf("line %d: %v", n.Child(i*3+1).LineNumber(), err)
 		}
 
 		symbols = append(symbols,
 			&Constant{
-				common: common{
+				base: base{
 					lineNumber: n.Child(i*3 + 1).LineNumber(),
 					name:       n.Child(i*3 + 1).Content(),
 				},
@@ -591,7 +585,7 @@ func parseParameterList(n ts.Node) ([]Parameter, error) {
 	var err error
 	var name string
 	var hasDefaultValue bool
-	var defaultValue Expression
+	var defaultValue expr.Expression
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
@@ -607,7 +601,7 @@ func parseParameterList(n ts.Node) ([]Parameter, error) {
 		if t == "identifier" {
 			name = nc.Content()
 		} else {
-			defaultValue, err = MakeExpression(nc)
+			defaultValue, err = expr.MakeExpression(nc)
 			if err != nil {
 				return nil, fmt.Errorf("parameter list: %v", err)
 			}
@@ -645,13 +639,13 @@ func parseParameterList(n ts.Node) ([]Parameter, error) {
 }
 
 func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
-	v, err := MakeExpression(n.Child(3))
+	v, err := expr.MakeExpression(n.Child(3))
 	if err != nil {
 		return nil, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
 	}
 
 	return []Symbol{&Constant{
-		common: common{
+		base: base{
 			lineNumber: n.LineNumber(),
 			name:       n.Child(1).Content(),
 		},

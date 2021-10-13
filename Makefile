@@ -5,8 +5,8 @@ default: build
 all: fmt vet build
 
 build:
-	go build -v -o $(PROJECT_NAME).bin .
-	
+	go build -v -o $(PROJECT_NAME) .
+
 help:
 	@echo "Build related targets:"
 	@echo "  all      Run fmt vet build."

@@ -1,132 +1,42 @@
 package parse
 
-import (
-	_ "fmt"
-)
-
 type Symbol interface {
 	Name() string
 	LineNumber() uint32
 	SetParent(s Symbol)
 	Parent() Symbol
+	GetSymbol(s string) (Symbol, error)
+	//Parameters() []Parameter
+	SetFile(f *File)
 }
 
-type common struct {
-	File       *File
+type base struct {
+	file       *File
 	lineNumber uint32
 	name       string
 	parent     Symbol
 }
 
-func (c common) Name() string {
-	return c.name
+func (b base) Name() string {
+	return b.name
 }
 
-func (c common) LineNumber() uint32 {
-	return c.lineNumber
+func (b base) LineNumber() uint32 {
+	return b.lineNumber
 }
 
-func (c *common) SetParent(s Symbol) {
-	if c.parent == nil {
-		c.parent = s
-	} else {
-		panic("should never happen")
-	}
+func (b base) SetParent(s Symbol) {
+	b.parent = s
 }
 
-func (c common) Parent() Symbol {
-	return c.parent
+func (b base) Parent() Symbol {
+	return b.parent
 }
 
-type Constant struct {
-	common
-	value Expression
-}
-
-type ElementInstantiationType uint8
-
-const (
-	Anonymous ElementInstantiationType = iota
-	Definitive
-)
-
-func IsBaseType(t string) bool {
-	base_types := [...]string{"block", "bus", "config", "func", "mask", "param", "status"}
-
-	for i, _ := range base_types {
-		if t == base_types[i] {
-			return true
-		}
-	}
-
-	return false
-}
-
-func IsValidProperty(t string, p string) bool {
-	validProps := map[string][]string{
-		"block":  []string{"doc"},
-		"bus":    []string{"doc", "masters", "width"},
-		"config": []string{"atomic", "default", "doc", "groups", "range", "once", "width"},
-		"func":   []string{"doc"},
-		"mask":   []string{"atomic", "default", "doc", "groups", "width"},
-		"param":  []string{"default", "doc", "range", "width"},
-		"status": []string{"atomic", "doc", "groups", "once", "width"},
-	}
-
-	if list, ok := validProps[t]; ok {
-		for i, _ := range list {
-			if p == list[i] {
-				return true
-			}
-		}
-	} else {
+func (b *base) SetFile(f *File) {
+	if b.file != nil {
 		panic("should never happen")
 	}
 
-	return false
-}
-
-// Argument represents argument in the argument list.
-type Argument struct {
-	HasName bool
-	Name    string
-	Value   Expression
-}
-
-type Element struct {
-	common
-	IsArray           bool
-	Count             Expression
-	Type              string
-	InstantiationType ElementInstantiationType
-	Properties        map[string]Property
-	Symbols           map[string]Symbol
-	Arguments         []Argument
-}
-
-type Import struct {
-	Path       string
-	ImportName string
-	Package    *Package
-}
-
-// Parameter represents parameter in the parameter list, not 'param' element.
-type Parameter struct {
-	Name            string
-	HasDefaultValue bool
-	DefaultValue    Expression
-}
-
-type Property struct {
-	LineNumber uint32
-	Value      Expression
-}
-
-type Type struct {
-	common
-	Parameters []Parameter
-	Arguments  []Argument
-	Type       string
-	Properties map[string]Property
-	Symbols    map[string]Symbol
+	b.file = f
 }

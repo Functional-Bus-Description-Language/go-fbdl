@@ -28,7 +28,7 @@ for dir in $(find invalid/ -maxdepth 1 -mindepth 1 -type d);
 do
 	echo "Running test $dir"
 	cd $dir
-	 ../../../../fbdl.bin bus.fbd > /dev/null 2>stderr || true
+	 ../../../../fbdl bus.fbd > /dev/null 2>stderr || true
 	diff stderr.golden stderr
 	rm stderr
 	cd ../..
