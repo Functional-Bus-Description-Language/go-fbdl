@@ -8,6 +8,7 @@ type Symbol interface {
 	GetSymbol(s string) (Symbol, error)
 	//Parameters() []Parameter
 	SetFile(f *File)
+	FilePath() string
 }
 
 type base struct {
@@ -25,7 +26,7 @@ func (b base) LineNumber() uint32 {
 	return b.lineNumber
 }
 
-func (b base) SetParent(s Symbol) {
+func (b *base) SetParent(s Symbol) {
 	b.parent = s
 }
 
@@ -39,4 +40,12 @@ func (b *base) SetFile(f *File) {
 	}
 
 	b.file = f
+}
+
+func (b base) FilePath() string {
+	if b.file != nil {
+		return b.file.Path
+	}
+
+	return b.parent.FilePath()
 }

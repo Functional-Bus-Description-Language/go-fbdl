@@ -32,7 +32,10 @@ func setBusWidth(main parse.Symbol) error {
 	if v, ok := v.(value.Integer); ok {
 		busWidth = uint(v.V)
 	} else {
-		panic("FIX ME")
+		log.Fatalf(
+			"%s: line %d: 'main' bus 'width' property must be of type 'integer'",
+			main.FilePath(), prop.LineNumber,
+		)
 	}
 
 	return nil
@@ -79,7 +82,13 @@ func Instantiate(packages parse.Packages) *Element {
 
 func instantiateElement(e parse.Element) *Element {
 	typeChain := resolveToBaseType(e)
-	instance := instantiateTypeChain(typeChain)
+	instance, err := instantiateTypeChain(typeChain)
+	if err != nil {
+		log.Fatalf(
+			"%s: line %d: instantiating element '%s': %v",
+			e.FilePath(), e.LineNumber(), e.Name(), err,
+		)
+	}
 
 	return instance
 }
@@ -103,7 +112,7 @@ func resolveToBaseType(e parse.Element) []parse.Element {
 	return typeChain
 }
 
-func instantiateTypeChain(tc []parse.Element) *Element {
+func instantiateTypeChain(tc []parse.Element) (*Element, error) {
 	inst := &Element{
 		Properties: map[string]value.Value{},
 		Constants:  map[string]value.Value{},
@@ -115,8 +124,11 @@ func instantiateTypeChain(tc []parse.Element) *Element {
 		if (i+1) < len(tc) && tc[i+1].ResolvedArgs() != nil {
 			resolvedArgs = tc[i+1].ResolvedArgs()
 		}
-		inst.applyType(t, resolvedArgs)
+		err := inst.applyType(t, resolvedArgs)
+		if err != nil {
+			return nil, fmt.Errorf("%v", err)
+		}
 	}
 
-	return inst
+	return inst, nil
 }

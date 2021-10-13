@@ -21,10 +21,10 @@ func checkProperty(name string, prop parse.Property) error {
 	case "width":
 		v, ok := val.(value.Integer)
 		if !ok {
-			return fmt.Errorf("'%s' must be of type 'integer'", name)
+			return fmt.Errorf("'%s' property must be of type 'integer', current type '%s'", name, val.Type())
 		}
 		if v.V < 0 {
-			return fmt.Errorf("'width' property cannot have negative value")
+			return fmt.Errorf("'width' property cannot have negative value (%d)", v.V)
 		}
 	default:
 		return fmt.Errorf("unknown property name '%s'", name)

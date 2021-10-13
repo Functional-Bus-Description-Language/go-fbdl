@@ -12,6 +12,7 @@ func IsBaseType(t string) bool {
 	return false
 }
 
+// IsValidProperty returns true if given property is valid for given type.
 func IsValidProperty(t string, p string) bool {
 	validProps := map[string][]string{
 		"block":  []string{"doc"},
@@ -26,6 +27,31 @@ func IsValidProperty(t string, p string) bool {
 	if list, ok := validProps[t]; ok {
 		for i, _ := range list {
 			if p == list[i] {
+				return true
+			}
+		}
+	} else {
+		panic("should never happen")
+	}
+
+	return false
+}
+
+// IsValidType returns true if given inner type is valid for given outter type.
+func IsValidType(ot string, it string) bool {
+	validTypes := map[string][]string{
+		"block":  []string{"block", "config", "func", "mask", "status"},
+		"bus":    []string{"block", "config", "func", "mask", "status"},
+		"config": []string{},
+		"func":   []string{"param"},
+		"mask":   []string{},
+		"param":  []string{},
+		"status": []string{},
+	}
+
+	if list, ok := validTypes[ot]; ok {
+		for i, _ := range list {
+			if it == list[i] {
 				return true
 			}
 		}

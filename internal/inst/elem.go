@@ -15,32 +15,32 @@ type Element struct {
 	Elements   map[string]*Element
 }
 
-func (e *Element) applyType(t parse.Element, resolvedArgs map[string]value.Value) error {
-	if e.baseType == "" {
-		if !util.IsBaseType(t.Type()) {
-			return fmt.Errorf("cannot start element instantiation from non base type '%s'", t.Type())
+func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]value.Value) error {
+	if elem.baseType == "" {
+		if !util.IsBaseType(type_.Type()) {
+			return fmt.Errorf("cannot start element instantiation from non base type '%s'", type_.Type())
 		}
 
-		e.baseType = t.Type()
+		elem.baseType = type_.Type()
 	}
 
-	if def, ok := t.(*parse.ElementDefinition); ok {
-		e.name = def.Name()
+	if def, ok := type_.(*parse.ElementDefinition); ok {
+		elem.name = def.Name()
 	}
 
 	if resolvedArgs != nil {
-		t.SetResolvedArgs(resolvedArgs)
+		type_.SetResolvedArgs(resolvedArgs)
 	}
 
-	for name, prop := range t.Properties() {
-		if util.IsValidProperty(e.baseType, name) == false {
+	for name, prop := range type_.Properties() {
+		if util.IsValidProperty(elem.baseType, name) == false {
 			panic("implement me")
 		}
 		err := checkProperty(name, prop)
 		if err != nil {
-			return fmt.Errorf("some message: %v", err)
+			return fmt.Errorf("\n  %s: line %d: %v", type_.FilePath(), prop.LineNumber, err)
 		}
-		if _, exist := e.Properties[name]; exist {
+		if _, exist := elem.Properties[name]; exist {
 			return fmt.Errorf(
 				"cannot set property '%s', property is already set in one of ancestor types",
 				name,
@@ -50,7 +50,32 @@ func (e *Element) applyType(t parse.Element, resolvedArgs map[string]value.Value
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
-		e.Properties[name] = v
+		elem.Properties[name] = v
+	}
+
+	for _, s := range type_.Symbols() {
+		pe, ok := s.(*parse.ElementDefinition)
+		if !ok {
+			continue
+		}
+
+		e := instantiateElement(pe)
+
+		if util.IsValidType(elem.baseType, e.baseType) == false {
+			return fmt.Errorf(
+				"element '%s' of base type '%s' cannot be instantiated in element of base type '%s'",
+				e.name, e.baseType, elem.baseType,
+			)
+		}
+
+		if _, ok := elem.Elements[e.name]; ok {
+			return fmt.Errorf(
+				"cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types",
+				e.name,
+			)
+		}
+
+		elem.Elements[e.name] = e
 	}
 
 	return nil

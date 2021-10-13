@@ -1,29 +1,29 @@
 package value
 
 type Value interface {
-	IsValue() bool
+	Type() string
 }
 
 type Bool struct {
 	V bool
 }
 
-func (b Bool) IsValue() bool {
-	return true
+func (b Bool) Type() string {
+	return "bool"
 }
 
 type Integer struct {
 	V int32
 }
 
-func (i Integer) IsValue() bool {
-	return true
+func (i Integer) Type() string {
+	return "integer"
 }
 
 type String struct {
 	v string
 }
 
-func (s String) IsValue() bool {
-	return true
+func (s String) Type() string {
+	return "string"
 }
