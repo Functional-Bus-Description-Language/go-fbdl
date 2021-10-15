@@ -2,7 +2,7 @@ package parse
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/expr"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"strings"
 )
 
@@ -37,8 +37,8 @@ type Element interface {
 	Type() string
 	Args() []Argument
 	Params() []Parameter
-	SetResolvedArgs(args map[string]value.Value)
-	ResolvedArgs() map[string]value.Value
+	SetResolvedArgs(args map[string]val.Value)
+	ResolvedArgs() map[string]val.Value
 	Properties() map[string]Property
 	Symbols() map[string]Symbol
 }
@@ -56,7 +56,7 @@ type ElementDefinition struct {
 
 	params       []Parameter
 	args         []Argument
-	resolvedArgs map[string]value.Value
+	resolvedArgs map[string]val.Value
 }
 
 func (e ElementDefinition) Type() string {
@@ -87,11 +87,11 @@ func (e ElementDefinition) Params() []Parameter {
 	return e.params
 }
 
-func (e *ElementDefinition) SetResolvedArgs(ra map[string]value.Value) {
+func (e *ElementDefinition) SetResolvedArgs(ra map[string]val.Value) {
 	e.resolvedArgs = ra
 }
 
-func (e ElementDefinition) ResolvedArgs() map[string]value.Value {
+func (e ElementDefinition) ResolvedArgs() map[string]val.Value {
 	return e.resolvedArgs
 }
 
@@ -112,7 +112,7 @@ type TypeDefinition struct {
 
 	params       []Parameter
 	args         []Argument
-	resolvedArgs map[string]value.Value
+	resolvedArgs map[string]val.Value
 }
 
 func (t *TypeDefinition) GetSymbol(s string) (Symbol, error) {
@@ -143,11 +143,11 @@ func (t TypeDefinition) Params() []Parameter {
 	return t.params
 }
 
-func (t *TypeDefinition) SetResolvedArgs(ra map[string]value.Value) {
+func (t *TypeDefinition) SetResolvedArgs(ra map[string]val.Value) {
 	t.resolvedArgs = ra
 }
 
-func (t TypeDefinition) ResolvedArgs() map[string]value.Value {
+func (t TypeDefinition) ResolvedArgs() map[string]val.Value {
 	return t.resolvedArgs
 }
 

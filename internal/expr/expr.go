@@ -3,12 +3,12 @@ package expr
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"strconv"
 )
 
 type Expression interface {
-	Eval() (value.Value, error)
+	Eval() (val.Value, error)
 }
 
 func MakeExpression(n ts.Node) (Expression, error) {
@@ -57,28 +57,28 @@ type BinaryOperation struct {
 	operator    BinaryOperator
 }
 
-func (bo BinaryOperation) Eval() (value.Value, error) {
+func (bo BinaryOperation) Eval() (val.Value, error) {
 	left, err := bo.left.Eval()
 	if err != nil {
-		return value.Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
+		return val.Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
 	}
 	right, err := bo.right.Eval()
 	if err != nil {
-		return value.Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
+		return val.Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
 	}
 
-	if left, ok := left.(value.Integer); ok {
-		if right, ok := right.(value.Integer); ok {
+	if left, ok := left.(val.Int); ok {
+		if right, ok := right.(val.Int); ok {
 			switch bo.operator {
 			case Add:
-				return value.Integer{V: left.V + right.V}, nil
+				return val.Int{V: left.V + right.V}, nil
 			default:
 				panic("operator not yet supported")
 			}
 		}
 	}
 
-	return value.Bool{}, fmt.Errorf("unknown operand type")
+	return val.Bool{}, fmt.Errorf("unknown operand type")
 }
 
 func MakeBinaryOperation(n ts.Node) (BinaryOperation, error) {
@@ -107,8 +107,8 @@ type DecimalLiteral struct {
 	v int32
 }
 
-func (dl DecimalLiteral) Eval() (value.Value, error) {
-	return value.Integer{V: dl.v}, nil
+func (dl DecimalLiteral) Eval() (val.Value, error) {
+	return val.Int{V: dl.v}, nil
 }
 
 func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
@@ -122,8 +122,8 @@ func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
 
 type False struct{}
 
-func (f False) Eval() (value.Value, error) {
-	return value.Bool{V: false}, nil
+func (f False) Eval() (val.Value, error) {
+	return val.Bool{V: false}, nil
 }
 
 func MakeFalse() False {
@@ -134,9 +134,9 @@ type Identifier struct {
 	v string
 }
 
-func (i Identifier) Eval() (value.Value, error) {
+func (i Identifier) Eval() (val.Value, error) {
 	// TODO: implement
-	return value.Bool{V: false}, nil
+	return val.Bool{V: false}, nil
 }
 
 func MakeIdentifier(n ts.Node) Identifier {
@@ -147,10 +147,10 @@ type PrimaryExpression struct {
 	v Expression
 }
 
-func (pe PrimaryExpression) Eval() (value.Value, error) {
+func (pe PrimaryExpression) Eval() (val.Value, error) {
 	v, err := pe.v.Eval()
 	if err != nil {
-		return value.Bool{}, fmt.Errorf("primary expression: %v", err)
+		return val.Bool{}, fmt.Errorf("primary expression: %v", err)
 	}
 
 	return v, nil
@@ -167,8 +167,8 @@ func MakePrimaryExpression(n ts.Node) (PrimaryExpression, error) {
 
 type True struct{}
 
-func (t True) Eval() (value.Value, error) {
-	return value.Bool{V: true}, nil
+func (t True) Eval() (val.Value, error) {
+	return val.Bool{V: true}, nil
 }
 
 func MakeTrue() True {
@@ -187,24 +187,24 @@ type UnaryOperation struct {
 	operand  Expression
 }
 
-func (uo UnaryOperation) Eval() (value.Value, error) {
+func (uo UnaryOperation) Eval() (val.Value, error) {
 	operand, err := uo.operand.Eval()
 	if err != nil {
-		return value.Bool{}, fmt.Errorf("unary operation: operand: %v", err)
+		return val.Bool{}, fmt.Errorf("unary operation: operand: %v", err)
 	}
 
-	if operand, ok := operand.(value.Integer); ok {
+	if operand, ok := operand.(val.Int); ok {
 		switch uo.operator {
 		case UnaryPlus:
-			return value.Integer{V: operand.V}, nil
+			return val.Int{V: operand.V}, nil
 		case UnaryMinus:
-			return value.Integer{V: -operand.V}, nil
+			return val.Int{V: -operand.V}, nil
 		default:
 			panic("operator not yet supported")
 		}
 	}
 
-	return value.Bool{}, fmt.Errorf("unknown operand type")
+	return val.Bool{}, fmt.Errorf("unknown operand type")
 }
 
 func MakeUnaryOperation(n ts.Node) (UnaryOperation, error) {
@@ -230,8 +230,8 @@ type ZeroLiteral struct {
 	v int32
 }
 
-func (zl ZeroLiteral) Eval() (value.Value, error) {
-	return value.Integer{V: zl.v}, nil
+func (zl ZeroLiteral) Eval() (val.Value, error) {
+	return val.Int{V: zl.v}, nil
 }
 
 func MakeZeroLiteral() ZeroLiteral {

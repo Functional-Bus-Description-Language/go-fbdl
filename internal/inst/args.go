@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	_ "log"
 )
 
@@ -43,10 +43,10 @@ func resolveArgumentListsInSymbols(symbols map[string]parse.Symbol) error {
 	return nil
 }
 
-func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
+func resolveArguments(symbol parse.Element) (map[string]val.Value, error) {
 	var err error
 	args := symbol.Args()
-	resolvedArgs := make(map[string]value.Value)
+	resolvedArgs := make(map[string]val.Value)
 	inPositionalArgs := true
 
 	type_symbol, err := symbol.GetSymbol(symbol.Type())
@@ -97,7 +97,7 @@ func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
 					}
 				}
 			} else {
-				var v value.Value
+				var v val.Value
 				if i < len(args) {
 					v, err = args[i].Value.Eval()
 				} else {

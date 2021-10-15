@@ -1,4 +1,4 @@
-package value
+package val
 
 type Value interface {
 	Type() string
@@ -12,18 +12,18 @@ func (b Bool) Type() string {
 	return "bool"
 }
 
-type Integer struct {
+type Int struct {
 	V int32
 }
 
-func (i Integer) Type() string {
+func (i Int) Type() string {
 	return "integer"
 }
 
-type String struct {
+type Str struct {
 	v string
 }
 
-func (s String) Type() string {
+func (s Str) Type() string {
 	return "string"
 }

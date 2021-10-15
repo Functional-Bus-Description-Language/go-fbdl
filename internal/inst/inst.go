@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"log"
 )
 
@@ -29,7 +29,7 @@ func setBusWidth(main parse.Symbol) error {
 		return fmt.Errorf("cannot evaluate main bus width")
 	}
 
-	if v, ok := v.(value.Integer); ok {
+	if v, ok := v.(val.Int); ok {
 		busWidth = uint(v.V)
 	} else {
 		log.Fatalf(
@@ -114,13 +114,13 @@ func resolveToBaseType(e parse.Element) []parse.Element {
 
 func instantiateTypeChain(tc []parse.Element) (*Element, error) {
 	inst := &Element{
-		Properties: map[string]value.Value{},
-		Constants:  map[string]value.Value{},
+		Properties: map[string]val.Value{},
+		Constants:  map[string]val.Value{},
 		Elements:   map[string]*Element{},
 	}
 
 	for i, t := range tc {
-		resolvedArgs := make(map[string]value.Value)
+		resolvedArgs := make(map[string]val.Value)
 		if (i+1) < len(tc) && tc[i+1].ResolvedArgs() != nil {
 			resolvedArgs = tc[i+1].ResolvedArgs()
 		}

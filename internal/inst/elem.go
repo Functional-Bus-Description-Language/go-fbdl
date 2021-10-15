@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 )
 
 type Element struct {
 	name       string
 	baseType   string
-	Properties map[string]value.Value
-	Constants  map[string]value.Value
+	Properties map[string]val.Value
+	Constants  map[string]val.Value
 	Elements   map[string]*Element
 }
 
-func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]value.Value) error {
+func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]val.Value) error {
 	if elem.baseType == "" {
 		if !util.IsBaseType(type_.Type()) {
 			return fmt.Errorf("cannot start element instantiation from non base type '%s'", type_.Type())
