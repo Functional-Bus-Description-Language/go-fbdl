@@ -28,6 +28,8 @@ func MakeExpression(n ts.Node) (Expression, error) {
 		expr, err = MakePrimaryExpression(n)
 	case "true":
 		expr = MakeTrue()
+	case "unary_operation":
+		expr, err = MakeUnaryOperation(n)
 	case "zero_literal":
 		expr = MakeZeroLiteral()
 	default:
@@ -95,7 +97,7 @@ func MakeBinaryOperation(n ts.Node) (BinaryOperation, error) {
 	case "+":
 		operator = Add
 	default:
-		return BinaryOperation{}, fmt.Errorf("make binary_operation: invalid operand %s", op)
+		return BinaryOperation{}, fmt.Errorf("make binary operation: invalid operator %s", op)
 	}
 
 	return BinaryOperation{left: left, right: right, operator: operator}, nil
@@ -171,6 +173,57 @@ func (t True) Value() (value.Value, error) {
 
 func MakeTrue() True {
 	return True{}
+}
+
+type UnaryOperator uint8
+
+const (
+	UnaryPlus = iota
+	UnaryMinus
+)
+
+type UnaryOperation struct {
+	operator UnaryOperator
+	operand  Expression
+}
+
+func (uo UnaryOperation) Value() (value.Value, error) {
+	operand, err := uo.operand.Value()
+	if err != nil {
+		return value.Bool{}, fmt.Errorf("unary operation: operand: %v", err)
+	}
+
+	if operand, ok := operand.(value.Integer); ok {
+		switch uo.operator {
+		case UnaryPlus:
+			return value.Integer{V: operand.V}, nil
+		case UnaryMinus:
+			return value.Integer{V: -operand.V}, nil
+		default:
+			panic("operator not yet supported")
+		}
+	}
+
+	return value.Bool{}, fmt.Errorf("unknown operand type")
+}
+
+func MakeUnaryOperation(n ts.Node) (UnaryOperation, error) {
+	var operator UnaryOperator
+	switch op := n.Child(0).Content(); op {
+	case "+":
+		operator = UnaryPlus
+	case "-":
+		operator = UnaryMinus
+	default:
+		return UnaryOperation{}, fmt.Errorf("make unary operation: invalid operator %s", op)
+	}
+
+	operand, err := MakeExpression(n.Child(1))
+	if err != nil {
+		return UnaryOperation{}, fmt.Errorf("make unary operation: operand: %v", err)
+	}
+
+	return UnaryOperation{operator: operator, operand: operand}, nil
 }
 
 type ZeroLiteral struct {
