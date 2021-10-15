@@ -1,5 +1,9 @@
 package util
 
+import (
+	"fmt"
+)
+
 func IsBaseType(t string) bool {
 	base_types := [...]string{"block", "bus", "config", "func", "mask", "param", "status"}
 
@@ -12,8 +16,8 @@ func IsBaseType(t string) bool {
 	return false
 }
 
-// IsValidProperty returns true if given property is valid for given type.
-func IsValidProperty(t string, p string) bool {
+// IsValidProperty returns true if given property is valid for given base type.
+func IsValidProperty(p string, t string) error {
 	validProps := map[string][]string{
 		"block":  []string{"doc"},
 		"bus":    []string{"doc", "masters", "width"},
@@ -27,14 +31,25 @@ func IsValidProperty(t string, p string) bool {
 	if list, ok := validProps[t]; ok {
 		for i, _ := range list {
 			if p == list[i] {
-				return true
+				return nil
 			}
 		}
 	} else {
-		panic("should never happen")
+		panic(fmt.Sprintf("invalid base type '%s'", t))
 	}
 
-	return false
+	msg := "invalid property '%s' for element of type '%s', " +
+		"valid properties for element of type '%s' are:"
+
+	list := validProps[t]
+	for i, _ := range list {
+		msg = msg + " '" + list[i] + "',"
+	}
+
+	msg = fmt.Sprintf(msg, p, t, t)
+	msg = msg[:len(msg) - 1]
+
+	return fmt.Errorf(msg)
 }
 
 // IsValidType returns true if given inner type is valid for given outter type.

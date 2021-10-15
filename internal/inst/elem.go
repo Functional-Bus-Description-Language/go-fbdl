@@ -33,7 +33,7 @@ func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]val.
 	}
 
 	for name, prop := range type_.Properties() {
-		if util.IsValidProperty(elem.baseType, name) == false {
+		if err := util.IsValidProperty(name, elem.baseType); err != nil {
 			panic("implement me")
 		}
 		err := checkProperty(name, prop)

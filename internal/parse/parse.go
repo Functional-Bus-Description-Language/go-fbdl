@@ -304,12 +304,12 @@ func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 		}
 
 		for prop, v := range props {
-			if util.IsValidProperty(type_, prop) == false {
+			if err = util.IsValidProperty(prop, type_); err != nil {
 				return nil,
 					fmt.Errorf(
 						"line %d: element anonymous instantiation: "+
-							"line %d: invalid property '%s' for element of type '%v'",
-						n.LineNumber(), v.LineNumber, prop, type_,
+							"line %d: %v",
+						n.LineNumber(), v.LineNumber, err,
 					)
 			}
 		}
