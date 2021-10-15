@@ -46,7 +46,7 @@ func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]valu
 				name,
 			)
 		}
-		v, err := prop.Value.Value()
+		v, err := prop.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}

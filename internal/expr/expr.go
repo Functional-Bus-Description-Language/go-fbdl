@@ -8,7 +8,7 @@ import (
 )
 
 type Expression interface {
-	Value() (value.Value, error)
+	Eval() (value.Value, error)
 }
 
 func MakeExpression(n ts.Node) (Expression, error) {
@@ -57,12 +57,12 @@ type BinaryOperation struct {
 	operator    BinaryOperator
 }
 
-func (bo BinaryOperation) Value() (value.Value, error) {
-	left, err := bo.left.Value()
+func (bo BinaryOperation) Eval() (value.Value, error) {
+	left, err := bo.left.Eval()
 	if err != nil {
 		return value.Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
 	}
-	right, err := bo.right.Value()
+	right, err := bo.right.Eval()
 	if err != nil {
 		return value.Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
 	}
@@ -107,7 +107,7 @@ type DecimalLiteral struct {
 	v int32
 }
 
-func (dl DecimalLiteral) Value() (value.Value, error) {
+func (dl DecimalLiteral) Eval() (value.Value, error) {
 	return value.Integer{V: dl.v}, nil
 }
 
@@ -122,7 +122,7 @@ func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
 
 type False struct{}
 
-func (f False) Value() (value.Value, error) {
+func (f False) Eval() (value.Value, error) {
 	return value.Bool{V: false}, nil
 }
 
@@ -134,7 +134,7 @@ type Identifier struct {
 	v string
 }
 
-func (i Identifier) Value() (value.Value, error) {
+func (i Identifier) Eval() (value.Value, error) {
 	// TODO: implement
 	return value.Bool{V: false}, nil
 }
@@ -147,8 +147,8 @@ type PrimaryExpression struct {
 	v Expression
 }
 
-func (pe PrimaryExpression) Value() (value.Value, error) {
-	v, err := pe.v.Value()
+func (pe PrimaryExpression) Eval() (value.Value, error) {
+	v, err := pe.v.Eval()
 	if err != nil {
 		return value.Bool{}, fmt.Errorf("primary expression: %v", err)
 	}
@@ -167,7 +167,7 @@ func MakePrimaryExpression(n ts.Node) (PrimaryExpression, error) {
 
 type True struct{}
 
-func (t True) Value() (value.Value, error) {
+func (t True) Eval() (value.Value, error) {
 	return value.Bool{V: true}, nil
 }
 
@@ -187,8 +187,8 @@ type UnaryOperation struct {
 	operand  Expression
 }
 
-func (uo UnaryOperation) Value() (value.Value, error) {
-	operand, err := uo.operand.Value()
+func (uo UnaryOperation) Eval() (value.Value, error) {
+	operand, err := uo.operand.Eval()
 	if err != nil {
 		return value.Bool{}, fmt.Errorf("unary operation: operand: %v", err)
 	}
@@ -230,7 +230,7 @@ type ZeroLiteral struct {
 	v int32
 }
 
-func (zl ZeroLiteral) Value() (value.Value, error) {
+func (zl ZeroLiteral) Eval() (value.Value, error) {
 	return value.Integer{V: zl.v}, nil
 }
 

@@ -8,7 +8,7 @@ import (
 
 // Check property value type, value and conflicting properties within element.
 func checkProperty(name string, prop parse.Property) error {
-	val, err := prop.Value.Value()
+	val, err := prop.Value.Eval()
 	if err != nil {
 		return fmt.Errorf("cannot evaluate expression: %v", err)
 	}

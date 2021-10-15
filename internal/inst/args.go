@@ -71,7 +71,7 @@ func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
 			if argHasName == true {
 				inPositionalArgs = false
 				if argName == p.Name {
-					v, err := args[i].Value.Value()
+					v, err := args[i].Value.Eval()
 					if err != nil {
 						return nil, fmt.Errorf("resolve arguments: %v", err)
 					}
@@ -80,7 +80,7 @@ func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
 					found := false
 					for _, ar := range args {
 						if ar.Name == p.Name {
-							v, err := ar.Value.Value()
+							v, err := ar.Value.Eval()
 							if err != nil {
 								return nil, fmt.Errorf("resolve arguments: %v", err)
 							}
@@ -89,7 +89,7 @@ func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
 						}
 					}
 					if !found {
-						v, err := p.DefaultValue.Value()
+						v, err := p.DefaultValue.Eval()
 						if err != nil {
 							return nil, fmt.Errorf("resolve arguments: %v", err)
 						}
@@ -99,9 +99,9 @@ func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
 			} else {
 				var v value.Value
 				if i < len(args) {
-					v, err = args[i].Value.Value()
+					v, err = args[i].Value.Eval()
 				} else {
-					v, err = p.DefaultValue.Value()
+					v, err = p.DefaultValue.Eval()
 				}
 				if err != nil {
 					return nil, fmt.Errorf("resolve arguments: %v", err)
@@ -112,7 +112,7 @@ func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
 			found := false
 			for _, ar := range args {
 				if ar.Name == p.Name {
-					v, err := ar.Value.Value()
+					v, err := ar.Value.Eval()
 					if err != nil {
 						return nil, fmt.Errorf("resolve arguments: %v", err)
 					}
@@ -121,7 +121,7 @@ func resolveArguments(symbol parse.Element) (map[string]value.Value, error) {
 				}
 			}
 			if !found {
-				v, err := p.DefaultValue.Value()
+				v, err := p.DefaultValue.Eval()
 				if err != nil {
 					return nil, fmt.Errorf("resolve arguments: %v", err)
 				}

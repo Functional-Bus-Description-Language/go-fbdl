@@ -24,7 +24,7 @@ func setBusWidth(main parse.Symbol) error {
 		return nil
 	}
 
-	v, err := prop.Value.Value()
+	v, err := prop.Value.Eval()
 	if err != nil {
 		return fmt.Errorf("cannot evaluate main bus width")
 	}
