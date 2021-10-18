@@ -47,7 +47,7 @@ func IsValidProperty(p string, t string) error {
 	}
 
 	msg = fmt.Sprintf(msg, p, t)
-	msg = msg[:len(msg) - 1]
+	msg = msg[:len(msg)-1]
 
 	return fmt.Errorf(msg)
 }

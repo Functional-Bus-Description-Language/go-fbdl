@@ -178,6 +178,8 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			}
 			file.Imports[i.ImportName] = i
 			goto nextNode
+		case "ERROR":
+			log.Fatalf("%s: line %d: invalid syntax, tree-sitter ERROR", path, node.LineNumber())
 		default:
 			log.Fatalf("parsing %s not yet supported", node.Type())
 		}
@@ -454,6 +456,8 @@ func parseElementBody(n ts.Node) (map[string]Property, map[string]Symbol, error)
 				ss, err = parseSingleConstantDefinition(nc)
 			case "multi_constant_definition":
 				panic("not yet implemented")
+			case "ERROR":
+				return props, symbols, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", n.LineNumber())
 			default:
 				panic("this should never happen %s")
 			}
