@@ -469,11 +469,13 @@ func parseElementBody(n ts.Node) (map[string]Property, map[string]Symbol, error)
 			}
 
 			for i := 0; i < len(ss); i++ {
-				if _, exist := symbols[ss[i].Name()]; exist {
+				if s, exist := symbols[ss[i].Name()]; exist {
 					return props,
 						symbols,
 						fmt.Errorf(
-							"line %d: symbol '%s' defined at least twice in the same element body", nc.LineNumber(), ss[i].Name(),
+							"line %d: symbol '%s' defined at least twice in the same element body, " +
+								"first occurrence line %d",
+							nc.LineNumber(), ss[i].Name(), s.LineNumber(),
 						)
 				}
 				symbols[ss[i].Name()] = ss[i]

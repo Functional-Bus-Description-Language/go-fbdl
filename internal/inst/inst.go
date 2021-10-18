@@ -44,7 +44,8 @@ func setBusWidth(main parse.Symbol) error {
 func Instantiate(packages parse.Packages) *Element {
 	main, ok := packages["main"][0].Symbols["main"]
 	if !ok {
-		log.Println("instantiation: there is no main bus: returning empty dictionary")
+		log.Println("instantiation: there is no main bus: returning nil")
+		return nil
 	}
 
 	setBusWidth(main)

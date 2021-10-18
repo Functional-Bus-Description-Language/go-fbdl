@@ -1,1 +1,1 @@
-bus.fbd: symbol 'A' defined at least twice in file, first occurence line 1, second line 3
+bus.fbd: line 3: symbol 'A' defined at least twice in file, first occurence line 1
