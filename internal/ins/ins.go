@@ -1,3 +1,4 @@
+// Package ins implements code responsible for instantiation.
 package ins
 
 import (
