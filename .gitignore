@@ -1,5 +1,6 @@
 pkgs.txt
 inst.txt
+reg.txt
 fbdl.bin
 fbdl
 /bus.fbd

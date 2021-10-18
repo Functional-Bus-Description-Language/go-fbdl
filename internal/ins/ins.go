@@ -45,7 +45,7 @@ func setBusWidth(main prs.Symbol) error {
 func Instantiate(packages prs.Packages) *Element {
 	main, ok := packages["main"][0].Symbols["main"]
 	if !ok {
-		log.Println("instantiation: there is no main bus: returning nil")
+		log.Println("instantiation: there is no main bus; returning nil")
 		return nil
 	}
 

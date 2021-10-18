@@ -5,6 +5,7 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jessevdk/go-flags"
@@ -21,6 +22,7 @@ type Options struct {
 	Version           bool   `short:"v" long:"version" description:"Display version."`
 	DumpPackages      string `short:"p" description:"Dump packages to a file." optional:"true" optional-value:"pkgs.txt"`
 	DumpInstantiation string `short:"i" description:"Dump instantiation to a file." optional:"true" optional-value:"inst.txt"`
+	DumpRegisterification string `short:"r" description:"Dump registerification to a file." optional:"true" optional-value:"reg.txt"`
 }
 
 func main() {
@@ -53,7 +55,7 @@ func main() {
 		spew.Fdump(f, packages)
 	}
 
-	bus := ins.Instantiate(packages)
+	insBus := ins.Instantiate(packages)
 
 	if opts.DumpInstantiation != "" {
 		f, err := os.Create(opts.DumpInstantiation)
@@ -61,6 +63,17 @@ func main() {
 			panic(err)
 		}
 		defer f.Close()
-		spew.Fdump(f, bus)
+		spew.Fdump(f, insBus)
+	}
+
+	regBus := reg.Registerify(insBus)
+
+	if opts.DumpRegisterification != "" {
+		f, err := os.Create(opts.DumpRegisterification)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		spew.Fdump(f, regBus)
 	}
 }

@@ -474,7 +474,7 @@ func parseElementBody(n ts.Node) (map[string]Property, map[string]Symbol, error)
 					return props,
 						symbols,
 						fmt.Errorf(
-							"line %d: symbol '%s' defined at least twice in the same element body, " +
+							"line %d: symbol '%s' defined at least twice in the same element body, "+
 								"first occurrence line %d",
 							nc.LineNumber(), ss[i].Name(), s.LineNumber(),
 						)
