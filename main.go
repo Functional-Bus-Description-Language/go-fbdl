@@ -19,9 +19,9 @@ const VERSION string = "0.0.0"
 type logWriter struct{}
 
 type Options struct {
-	Version           bool   `short:"v" long:"version" description:"Display version."`
-	DumpPackages      string `short:"p" description:"Dump packages to a file." optional:"true" optional-value:"pkgs.txt"`
-	DumpInstantiation string `short:"i" description:"Dump instantiation to a file." optional:"true" optional-value:"inst.txt"`
+	Version               bool   `short:"v" long:"version" description:"Display version."`
+	DumpPackages          string `short:"p" description:"Dump packages to a file." optional:"true" optional-value:"pkgs.txt"`
+	DumpInstantiation     string `short:"i" description:"Dump instantiation to a file." optional:"true" optional-value:"inst.txt"`
 	DumpRegisterification string `short:"r" description:"Dump registerification to a file." optional:"true" optional-value:"reg.txt"`
 }
 

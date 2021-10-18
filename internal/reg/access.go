@@ -25,7 +25,7 @@ func (as AccessSingle) Count() uint { return as.count }
 func MakeAccessSingle(baseAddr uint, width uint) *AccessSingle {
 	as := AccessSingle{
 		Address: baseAddr,
-		count: uint(math.Ceil(float64(width) / float64(busWidth))),
+		count:   uint(math.Ceil(float64(width) / float64(busWidth))),
 	}
 
 	if width > busWidth {
@@ -58,9 +58,9 @@ func (aa AccessArray) Count() uint { return aa.count }
 
 func MakeAccessArray(count uint, baseAddr uint, width uint) *AccessArray {
 	aa := AccessArray{
-		Address: baseAddr,
+		Address:         baseAddr,
 		AccessesPerItem: uint(math.Ceil(float64(width) / float64(busWidth))),
-		ItemsPerAccess: busWidth / width,
+		ItemsPerAccess:  busWidth / width,
 	}
 
 	if aa.AccessesPerItem == 1 && aa.ItemsPerAccess == 1 {
@@ -81,7 +81,7 @@ func MakeAccessArray(count uint, baseAddr uint, width uint) *AccessArray {
 			aa.BunchSize = busWidth / (width % busWidth)
 		}
 		// Number of accesses for bunch transfer.
-		aa.AccessesPerBunch = aa.BunchSize * width / busWidth + 1
+		aa.AccessesPerBunch = aa.BunchSize*width/busWidth + 1
 	}
 
 	return &aa

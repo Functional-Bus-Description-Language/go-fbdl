@@ -6,9 +6,9 @@ import (
 )
 
 type Element struct {
-	InsElem *ins.Element
-	Access Access
-	Sizes Sizes
+	InsElem  *ins.Element
+	Access   Access
+	Sizes    Sizes
 	Elements map[string]*Element
 }
 
