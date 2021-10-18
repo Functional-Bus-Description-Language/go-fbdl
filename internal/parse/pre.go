@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"fmt"
+	_ "fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -31,7 +31,7 @@ func DiscoverPackages(main string) Packages {
 
 	// TODO: Add support for $HOME/local/.lib/fbd
 
-	fmt.Println(paths_to_look)
+	//fmt.Println(paths_to_look)
 
 	packages := make(Packages)
 
