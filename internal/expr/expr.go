@@ -11,7 +11,7 @@ type Expression interface {
 	Eval() (val.Value, error)
 }
 
-func MakeExpression(n ts.Node) (Expression, error) {
+func Make(n ts.Node) (Expression, error) {
 	var err error = nil
 	var expr Expression
 
@@ -82,12 +82,12 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 }
 
 func MakeBinaryOperation(n ts.Node) (BinaryOperation, error) {
-	left, err := MakeExpression(n.Child(0))
+	left, err := Make(n.Child(0))
 	if err != nil {
 		return BinaryOperation{}, fmt.Errorf("make binary operation: left operand: %v", err)
 	}
 
-	right, err := MakeExpression(n.Child(2))
+	right, err := Make(n.Child(2))
 	if err != nil {
 		return BinaryOperation{}, fmt.Errorf("make binary operation: right operand: %v", err)
 	}
@@ -157,7 +157,7 @@ func (pe PrimaryExpression) Eval() (val.Value, error) {
 }
 
 func MakePrimaryExpression(n ts.Node) (PrimaryExpression, error) {
-	v, err := MakeExpression(n.Child(0))
+	v, err := Make(n.Child(0))
 	if err != nil {
 		return PrimaryExpression{}, fmt.Errorf("make primary expression: %v", err)
 	}
@@ -218,7 +218,7 @@ func MakeUnaryOperation(n ts.Node) (UnaryOperation, error) {
 		return UnaryOperation{}, fmt.Errorf("make unary operation: invalid operator %s", op)
 	}
 
-	operand, err := MakeExpression(n.Child(1))
+	operand, err := Make(n.Child(1))
 	if err != nil {
 		return UnaryOperation{}, fmt.Errorf("make unary operation: operand: %v", err)
 	}

@@ -227,7 +227,7 @@ func parseArgumentList(n ts.Node) ([]Argument, error) {
 		if t == "identifier" {
 			name = nc.Content()
 		} else {
-			val, err = expr.MakeExpression(nc)
+			val, err = expr.Make(nc)
 			if err != nil {
 				return args, fmt.Errorf("argument list: %v", err)
 			}
@@ -272,7 +272,7 @@ func parseElementAnonymousInstantiation(n ts.Node) ([]Symbol, error) {
 	var count expr.Expression
 	if n.Child(1).Type() == "[" {
 		isArray = true
-		expr, err := expr.MakeExpression(n.Child(2))
+		expr, err := expr.Make(n.Child(2))
 		if err != nil {
 			return nil, fmt.Errorf(": %v", err)
 		}
@@ -344,7 +344,7 @@ func parseElementDefinitiveInstantiation(n ts.Node) ([]Symbol, error) {
 	var count expr.Expression
 	if n.Child(1).Type() == "[" {
 		isArray = true
-		count, err = expr.MakeExpression(n.Child(2))
+		count, err = expr.Make(n.Child(2))
 		if err != nil {
 			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
 		}
@@ -434,7 +434,7 @@ func parseElementBody(n ts.Node) (map[string]Property, map[string]Symbol, error)
 					symbols,
 					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
 			}
-			expr, err := expr.MakeExpression(nc.Child(2))
+			expr, err := expr.Make(nc.Child(2))
 			if err != nil {
 				return props,
 					symbols,
@@ -560,7 +560,7 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	var symbols []Symbol
 
 	for i := 0; i < (int(n.ChildCount())-1)/3; i++ {
-		expr, err := expr.MakeExpression(n.Child(i*3 + 3))
+		expr, err := expr.Make(n.Child(i*3 + 3))
 		if err != nil {
 			return nil, fmt.Errorf("line %d: %v", n.Child(i*3+1).LineNumber(), err)
 		}
@@ -601,7 +601,7 @@ func parseParameterList(n ts.Node) ([]Parameter, error) {
 		if t == "identifier" {
 			name = nc.Content()
 		} else {
-			defaultValue, err = expr.MakeExpression(nc)
+			defaultValue, err = expr.Make(nc)
 			if err != nil {
 				return nil, fmt.Errorf("parameter list: %v", err)
 			}
@@ -639,7 +639,7 @@ func parseParameterList(n ts.Node) ([]Parameter, error) {
 }
 
 func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
-	v, err := expr.MakeExpression(n.Child(3))
+	v, err := expr.Make(n.Child(3))
 	if err != nil {
 		return nil, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
 	}
