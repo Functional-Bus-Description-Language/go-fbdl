@@ -99,7 +99,7 @@ func getIndent(line string) (uint32, error) {
 }
 
 func checkIndent(code []string) error {
-	var current_indent uint32 = 0
+	var currentIndent uint32 = 0
 
 	for i, line := range code {
 		if line == "\n" {
@@ -109,10 +109,10 @@ func checkIndent(code []string) error {
 		indent, err := getIndent(line)
 		if err != nil {
 			return fmt.Errorf("line %d: %v", i, err)
-		} else if indent > current_indent+1 {
+		} else if indent > currentIndent+1 {
 			return fmt.Errorf("line %d: multi indent detected", i)
 		}
-		current_indent = indent
+		currentIndent = indent
 	}
 
 	return nil
@@ -138,20 +138,20 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	defer wg.Done()
 	var err error
 
-	code_lines := readFile(path)
+	codeLines := readFile(path)
 
-	err = checkIndent(code_lines)
+	err = checkIndent(codeLines)
 	if err != nil {
 		log.Fatalf("%s: %v", path, err)
 	}
 
-	var code_bytes []byte
-	for _, line := range code_lines {
-		code_bytes = append(code_bytes, []byte(line)...)
-		code_bytes = append(code_bytes, byte('\n'))
+	var codeBytes []byte
+	for _, line := range codeLines {
+		codeBytes = append(codeBytes, []byte(line)...)
+		codeBytes = append(codeBytes, byte('\n'))
 	}
 
-	node := ts.MakeRootNode(code_bytes)
+	node := ts.MakeRootNode(codeBytes)
 
 	file := File{Path: path, Pkg: pkg, Symbols: make(map[string]Symbol), Imports: make(map[string]Import)}
 
