@@ -2,7 +2,7 @@ package inst
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"log"
@@ -12,8 +12,8 @@ const defaultBusWidth uint = 32
 
 var busWidth uint
 
-func setBusWidth(main parse.Symbol) error {
-	e, ok := main.(*parse.ElementDefinition)
+func setBusWidth(main prs.Symbol) error {
+	e, ok := main.(*prs.ElementDefinition)
 	if !ok {
 		panic("FIX ME")
 	}
@@ -41,7 +41,7 @@ func setBusWidth(main parse.Symbol) error {
 	return nil
 }
 
-func Instantiate(packages parse.Packages) *Element {
+func Instantiate(packages prs.Packages) *Element {
 	main, ok := packages["main"][0].Symbols["main"]
 	if !ok {
 		log.Println("instantiation: there is no main bus: returning nil")
@@ -60,7 +60,7 @@ func Instantiate(packages parse.Packages) *Element {
 	for pkg_name, pkgs := range packages {
 		for _, pkg := range pkgs {
 			for name, symbol := range pkg.Symbols {
-				e, ok := symbol.(parse.Element)
+				e, ok := symbol.(prs.Element)
 				if !ok {
 					continue
 				}
@@ -81,7 +81,7 @@ func Instantiate(packages parse.Packages) *Element {
 	return main_bus
 }
 
-func instantiateElement(e parse.Element) *Element {
+func instantiateElement(e prs.Element) *Element {
 	typeChain := resolveToBaseType(e)
 	instance, err := instantiateTypeChain(typeChain)
 	if err != nil {
@@ -94,15 +94,15 @@ func instantiateElement(e parse.Element) *Element {
 	return instance
 }
 
-func resolveToBaseType(e parse.Element) []parse.Element {
-	typeChain := []parse.Element{}
+func resolveToBaseType(e prs.Element) []prs.Element {
+	typeChain := []prs.Element{}
 
 	if !util.IsBaseType(e.Type()) {
 		s, err := e.GetSymbol(e.Type())
 		if err != nil {
 			log.Fatalf("cannot get symbol '%s': %v", e.Type(), err)
 		}
-		type_elem := s.(parse.Element)
+		type_elem := s.(prs.Element)
 
 		for _, bt := range resolveToBaseType(type_elem) {
 			typeChain = append(typeChain, bt)
@@ -113,7 +113,7 @@ func resolveToBaseType(e parse.Element) []parse.Element {
 	return typeChain
 }
 
-func instantiateTypeChain(tc []parse.Element) (*Element, error) {
+func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	inst := &Element{
 		Properties: map[string]val.Value{},
 		Constants:  map[string]val.Value{},

@@ -1,4 +1,4 @@
-package parse
+package prs
 
 type Symbol interface {
 	Name() string

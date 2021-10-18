@@ -2,12 +2,12 @@ package inst
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 )
 
 // Check property value type, value and conflicting properties within element.
-func checkProperty(name string, prop parse.Property) error {
+func checkProperty(name string, prop prs.Property) error {
 	pv, err := prop.Value.Eval()
 	if err != nil {
 		return fmt.Errorf("cannot evaluate expression: %v", err)

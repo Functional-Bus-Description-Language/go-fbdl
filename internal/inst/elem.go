@@ -2,7 +2,7 @@ package inst
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 )
@@ -15,7 +15,7 @@ type Element struct {
 	Elements   map[string]*Element
 }
 
-func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]val.Value) error {
+func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]val.Value) error {
 	if elem.baseType == "" {
 		if !util.IsBaseType(type_.Type()) {
 			return fmt.Errorf("cannot start element instantiation from non base type '%s'", type_.Type())
@@ -24,7 +24,7 @@ func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]val.
 		elem.baseType = type_.Type()
 	}
 
-	if def, ok := type_.(*parse.ElementDefinition); ok {
+	if def, ok := type_.(*prs.ElementDefinition); ok {
 		elem.name = def.Name()
 	}
 
@@ -54,7 +54,7 @@ func (elem *Element) applyType(type_ parse.Element, resolvedArgs map[string]val.
 	}
 
 	for _, s := range type_.Symbols() {
-		pe, ok := s.(*parse.ElementDefinition)
+		pe, ok := s.(*prs.ElementDefinition)
 		if !ok {
 			continue
 		}

@@ -2,13 +2,13 @@ package inst
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	_ "log"
 )
 
-func resolveArgumentLists(packages parse.Packages) error {
+func resolveArgumentLists(packages prs.Packages) error {
 	for name, pkgs := range packages {
 		for _, pkg := range pkgs {
 			err := resolveArgumentListsInSymbols(pkg.Symbols)
@@ -21,9 +21,9 @@ func resolveArgumentLists(packages parse.Packages) error {
 	return nil
 }
 
-func resolveArgumentListsInSymbols(symbols map[string]parse.Symbol) error {
+func resolveArgumentListsInSymbols(symbols map[string]prs.Symbol) error {
 	for name, s := range symbols {
-		e, ok := s.(parse.Element)
+		e, ok := s.(prs.Element)
 		if !ok {
 			continue
 		}
@@ -43,7 +43,7 @@ func resolveArgumentListsInSymbols(symbols map[string]parse.Symbol) error {
 	return nil
 }
 
-func resolveArguments(symbol parse.Element) (map[string]val.Value, error) {
+func resolveArguments(symbol prs.Element) (map[string]val.Value, error) {
 	var err error
 	args := symbol.Args()
 	resolvedArgs := make(map[string]val.Value)
@@ -54,7 +54,7 @@ func resolveArguments(symbol parse.Element) (map[string]val.Value, error) {
 		return nil, fmt.Errorf("cannot get symbol '%s'", symbol.Type())
 	}
 
-	params := type_symbol.(parse.Element).Params()
+	params := type_symbol.(prs.Element).Params()
 
 	var argName string
 	var argHasName bool

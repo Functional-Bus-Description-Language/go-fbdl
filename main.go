@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/inst"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parse"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jessevdk/go-flags"
@@ -41,8 +41,8 @@ func main() {
 		os.Exit(0)
 	}
 
-	packages := parse.DiscoverPackages(args[0])
-	parse.ParsePackages(packages)
+	packages := prs.DiscoverPackages(args[0])
+	prs.ParsePackages(packages)
 
 	if opts.DumpPackages != "" {
 		f, err := os.Create(opts.DumpPackages)
