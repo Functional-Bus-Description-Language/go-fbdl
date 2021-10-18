@@ -39,14 +39,14 @@ func IsValidProperty(p string, t string) error {
 	}
 
 	msg := "invalid property '%s' for element of type '%s', " +
-		"valid properties for element of type '%s' are:"
+		"valid properties for element of type '%[2]s' are:"
 
 	list := validProps[t]
 	for i, _ := range list {
 		msg = msg + " '" + list[i] + "',"
 	}
 
-	msg = fmt.Sprintf(msg, p, t, t)
+	msg = fmt.Sprintf(msg, p, t)
 	msg = msg[:len(msg) - 1]
 
 	return fmt.Errorf(msg)
