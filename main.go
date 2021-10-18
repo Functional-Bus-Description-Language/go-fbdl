@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/inst"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 
 	"github.com/davecgh/go-spew/spew"
@@ -53,7 +53,7 @@ func main() {
 		spew.Fdump(f, packages)
 	}
 
-	bus := inst.Instantiate(packages)
+	bus := ins.Instantiate(packages)
 
 	if opts.DumpInstantiation != "" {
 		f, err := os.Create(opts.DumpInstantiation)

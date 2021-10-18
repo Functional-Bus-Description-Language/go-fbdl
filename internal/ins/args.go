@@ -1,4 +1,4 @@
-package inst
+package ins
 
 import (
 	"fmt"
