@@ -4,6 +4,7 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"log"
 )
@@ -32,6 +33,25 @@ func Registerify(insBus *ins.Element) *BlockElement {
 
 	regBus.Sizes.Compact = addr
 	regBus.Sizes.Own = addr
+
+	for _, e := range insBus.Elements {
+		if e.BaseType == "block" {
+			sizes := registerifyBlock(e)
+			count := uint(1)
+			if e.IsArray {
+				count = e.Count
+			}
+			regBus.Sizes.Compact += count * sizes.Compact
+			regBus.Sizes.BlockAligned += count * sizes.BlockAligned
+		}
+	}
+
+	regBus.Sizes.BlockAligned = util.AlignToPowerOf2(
+		regBus.Sizes.BlockAligned + regBus.Sizes.Own,
+	)
+
+	// Base address property is not yet supported, so it starts from 0.
+	assignGlobalAccessAddresses(&regBus, 0)
 
 	return &regBus
 }
@@ -71,4 +91,35 @@ func registerifyStatuses(elem *BlockElement, addr uint) uint {
 	}
 
 	return addr
+}
+
+func registerifyBlock(block *ins.Element) Sizes {
+	addr := uint(0)
+
+	b := BlockElement{
+		InsElem:            block,
+		BlockElements:      make(map[string]*BlockElement),
+		FunctionalElements: make(map[string]*FunctionalElement),
+	}
+
+	addr = registerifyFunctionalities(&b, addr)
+	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}
+
+	for _, e := range block.Elements {
+		if e.BaseType == "block" {
+			s := registerifyBlock(e)
+			count := uint(1)
+			if e.IsArray {
+				count = e.Count
+			}
+			sizes.Compact += count * s.Compact
+			sizes.BlockAligned += count * s.BlockAligned
+		}
+	}
+
+	sizes.BlockAligned = util.AlignToPowerOf2(addr + sizes.BlockAligned)
+
+	b.Sizes = sizes
+
+	return sizes
 }

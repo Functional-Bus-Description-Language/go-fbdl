@@ -10,9 +10,14 @@ type BlockElement struct {
 	Sizes              Sizes
 	BlockElements      map[string]*BlockElement
 	FunctionalElements map[string]*FunctionalElement
+	AddrSpace          AddrSpace
 }
 
 func (be *BlockElement) Constants() map[string]val.Value { return be.InsElem.Constants }
+
+func (be *BlockElement) IsArray() bool { return be.InsElem.IsArray }
+
+func (be *BlockElement) Count() uint { return be.InsElem.Count }
 
 type FunctionalElement struct {
 	InsElem *ins.Element

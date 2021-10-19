@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"math"
 )
 
 func IsBaseType(t string) bool {
@@ -75,4 +76,8 @@ func IsValidType(ot string, it string) bool {
 	}
 
 	return false
+}
+
+func AlignToPowerOf2(n uint) uint {
+	return uint(math.Pow(2, math.Ceil(math.Log2(float64(n)))))
 }
