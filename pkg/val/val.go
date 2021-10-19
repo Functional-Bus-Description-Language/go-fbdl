@@ -21,7 +21,7 @@ func (i Int) Type() string {
 }
 
 type Str struct {
-	v string
+	V string
 }
 
 func (s Str) Type() string {

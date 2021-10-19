@@ -26,6 +26,8 @@ func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
 		expr = MakeIdentifier(n, s)
 	case "primary_expression":
 		expr, err = MakePrimaryExpression(n, s)
+	case "string_literal":
+		expr = MakeStringLiteral(n)
 	case "true":
 		expr = MakeTrue()
 	case "unary_operation":
@@ -176,6 +178,18 @@ func MakePrimaryExpression(n ts.Node, s Searchable) (PrimaryExpression, error) {
 	}
 
 	return PrimaryExpression{v: v}, nil
+}
+
+type StringLiteral struct {
+	v string
+}
+
+func (sl StringLiteral) Eval() (val.Value, error) {
+	return val.Str{V: sl.v}, nil
+}
+
+func MakeStringLiteral(n ts.Node) StringLiteral {
+	return StringLiteral{v: n.Content()}
 }
 
 type True struct{}

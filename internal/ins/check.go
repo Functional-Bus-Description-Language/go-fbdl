@@ -13,21 +13,37 @@ func checkProperty(name string, prop prs.Property) error {
 		return fmt.Errorf("cannot evaluate expression: %v", err)
 	}
 
+	invalidTypeMsg := `'%s' property must be of type '%s', current type '%s'`
+
 	switch name {
 	case "atomic", "once":
 		if _, ok := pv.(val.Bool); !ok {
-			return fmt.Errorf("'%s' must be of type 'bool'", name)
+			return fmt.Errorf(invalidTypeMsg, name, "bool", pv.Type())
+		}
+	case "doc":
+		if _, ok := pv.(val.Str); !ok {
+			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+		}
+	case "masters":
+		v, ok := pv.(val.Int)
+		if !ok {
+			return fmt.Errorf(invalidTypeMsg, name, "integer", pv.Type())
+		}
+		if v.V < 1 {
+			return fmt.Errorf("'masters' property must be positive, current value (%d)", v.V)
 		}
 	case "width":
 		v, ok := pv.(val.Int)
 		if !ok {
-			return fmt.Errorf("'%s' property must be of type 'integer', current type '%s'", name, pv.Type())
+			return fmt.Errorf(invalidTypeMsg, name, "integer", pv.Type())
 		}
 		if v.V < 0 {
-			return fmt.Errorf("'width' property cannot have negative value (%d)", v.V)
+			return fmt.Errorf("'width' property must be natural, current value (%d)", v.V)
 		}
 	default:
-		return fmt.Errorf("unknown property name '%s'", name)
+		msg := `checkProperty() for property '%s' not yet implemented`
+		msg = fmt.Sprintf(msg, name)
+		panic(msg)
 	}
 
 	return nil
