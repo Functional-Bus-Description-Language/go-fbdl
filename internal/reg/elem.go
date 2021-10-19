@@ -5,11 +5,16 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 )
 
-type Element struct {
-	InsElem  *ins.Element
-	Access   Access
-	Sizes    Sizes
-	Elements map[string]*Element
+type BlockElement struct {
+	InsElem            *ins.Element
+	Sizes              Sizes
+	BlockElements      map[string]*BlockElement
+	FunctionalElements map[string]*FunctionalElement
 }
 
-func (e *Element) Constants() map[string]val.Value { return e.InsElem.Constants }
+func (be *BlockElement) Constants() map[string]val.Value { return be.InsElem.Constants }
+
+type FunctionalElement struct {
+	InsElem *ins.Element
+	Access  Access
+}

@@ -10,7 +10,7 @@ import (
 
 var busWidth uint
 
-func Registerify(insBus *ins.Element) *Element {
+func Registerify(insBus *ins.Element) *BlockElement {
 	if insBus == nil {
 		log.Println("registerification: there is no main bus; returning nil")
 		return nil
@@ -18,7 +18,11 @@ func Registerify(insBus *ins.Element) *Element {
 
 	busWidth = uint(insBus.Properties["width"].(val.Int).V)
 
-	regBus := Element{InsElem: insBus, Elements: make(map[string]*Element)}
+	regBus := BlockElement{
+		InsElem:            insBus,
+		BlockElements:      make(map[string]*BlockElement),
+		FunctionalElements: make(map[string]*FunctionalElement),
+	}
 
 	// addr is current block internal access address, not global address.
 	// 0 and 1 are reserved for x_uuid_x and x_timestamp_x.
@@ -32,7 +36,7 @@ func Registerify(insBus *ins.Element) *Element {
 	return &regBus
 }
 
-func registerifyFunctionalities(elem *Element, addr uint) uint {
+func registerifyFunctionalities(elem *BlockElement, addr uint) uint {
 	if len(elem.InsElem.Elements) == 0 {
 		return addr
 	}
@@ -43,7 +47,7 @@ func registerifyFunctionalities(elem *Element, addr uint) uint {
 }
 
 // Current approach is trivial. Even groups are not respected.
-func registerifyStatuses(elem *Element, addr uint) uint {
+func registerifyStatuses(elem *BlockElement, addr uint) uint {
 	var statuses = []*ins.Element{}
 	for _, ie := range elem.InsElem.Elements {
 		if ie.BaseType == "status" {
@@ -52,18 +56,18 @@ func registerifyStatuses(elem *Element, addr uint) uint {
 	}
 
 	for _, st := range statuses {
-		e := Element{InsElem: st}
+		e := FunctionalElement{InsElem: st}
 
 		width := uint(st.Properties["width"].(val.Int).V)
 
 		if st.IsArray {
-			e.Access = MakeAccessSingle(addr, width)
-		} else {
 			e.Access = MakeAccessArray(st.Count, addr, width)
+		} else {
+			e.Access = MakeAccessSingle(addr, width)
 		}
 		addr += e.Access.Count()
 
-		elem.Elements[st.Name] = &e
+		elem.FunctionalElements[st.Name] = &e
 	}
 
 	return addr
