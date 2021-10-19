@@ -92,6 +92,8 @@ func instantiateElement(e prs.Element) *Element {
 		)
 	}
 
+	fillMissingProperties(instance)
+
 	return instance
 }
 
