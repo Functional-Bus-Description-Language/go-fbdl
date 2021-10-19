@@ -5,20 +5,22 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 )
 
-func fillMissingProperties(e *Element) {
+// fillProperties fills required properties that have not been set by the user.
+// Some properties have default values and user is not obliged to set them explicitly.
+func fillProperties(e *Element) {
 	switch e.BaseType {
 	case "block":
-		fillMissingPropertiesBlock(e)
+		fillPropertiesBlock(e)
 	case "bus":
-		fillMissingPropertiesBus(e)
+		fillPropertiesBus(e)
 	case "config", "status":
-		fillMissingPropertiesConfig(e)
+		fillPropertiesConfig(e)
 	case "func":
-		fillMissingPropertiesFunc(e)
+		fillPropertiesFunc(e)
 	case "mask":
-		fillMissingPropertiesMask(e)
+		fillPropertiesMask(e)
 	case "param":
-		fillMissingPropertiesParam(e)
+		fillPropertiesParam(e)
 	default:
 		msg := `no implementation for base type '%s'`
 		msg = fmt.Sprintf(msg, e.BaseType)
@@ -26,13 +28,13 @@ func fillMissingProperties(e *Element) {
 	}
 }
 
-func fillMissingPropertiesBlock(b *Element) {
+func fillPropertiesBlock(b *Element) {
 	if _, ok := b.Properties["masters"]; !ok {
 		b.Properties["masters"] = val.Int{V: 1}
 	}
 }
 
-func fillMissingPropertiesBus(b *Element) {
+func fillPropertiesBus(b *Element) {
 	if _, ok := b.Properties["masters"]; !ok {
 		b.Properties["masters"] = val.Int{V: 1}
 	}
@@ -42,7 +44,7 @@ func fillMissingPropertiesBus(b *Element) {
 	}
 }
 
-func fillMissingPropertiesConfig(c *Element) {
+func fillPropertiesConfig(c *Element) {
 	if _, ok := c.Properties["width"]; !ok {
 		c.Properties["width"] = val.Int{V: int32(busWidth)}
 	}
@@ -56,11 +58,11 @@ func fillMissingPropertiesConfig(c *Element) {
 	}
 }
 
-func fillMissingPropertiesFunc(f *Element) {
+func fillPropertiesFunc(f *Element) {
 	return
 }
 
-func fillMissingPropertiesMask(m *Element) {
+func fillPropertiesMask(m *Element) {
 	if _, ok := m.Properties["width"]; !ok {
 		m.Properties["width"] = val.Int{V: int32(busWidth)}
 	}
@@ -74,7 +76,7 @@ func fillMissingPropertiesMask(m *Element) {
 	}
 }
 
-func fillMissingPropertiesParam(p *Element) {
+func fillPropertiesParam(p *Element) {
 	if _, ok := p.Properties["width"]; !ok {
 		p.Properties["width"] = val.Int{V: int32(busWidth)}
 	}
