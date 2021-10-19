@@ -18,7 +18,7 @@ func Registerify(insBus *ins.Element) *Element {
 
 	busWidth = uint(insBus.Properties["width"].(val.Int).V)
 
-	regBus := Element{InsElem: insBus}
+	regBus := Element{InsElem: insBus, Elements: make(map[string]*Element)}
 
 	// addr is current block internal access address, not global address.
 	// 0 and 1 are reserved for x_uuid_x and x_timestamp_x.
@@ -52,7 +52,7 @@ func registerifyStatuses(elem *Element, addr uint) uint {
 	}
 
 	for _, st := range statuses {
-		e := Element{}
+		e := Element{InsElem: st}
 
 		width := uint(st.Properties["width"].(val.Int).V)
 
@@ -62,6 +62,8 @@ func registerifyStatuses(elem *Element, addr uint) uint {
 			e.Access = MakeAccessArray(st.Count, addr, width)
 		}
 		addr += e.Access.Count()
+
+		elem.Elements[st.Name] = &e
 	}
 
 	return addr
