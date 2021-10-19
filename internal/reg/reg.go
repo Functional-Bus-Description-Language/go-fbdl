@@ -7,6 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"log"
+	"sort"
 )
 
 var busWidth uint
@@ -68,14 +69,18 @@ func registerifyFunctionalities(elem *BlockElement, addr uint) uint {
 
 // Current approach is trivial. Even groups are not respected.
 func registerifyStatuses(elem *BlockElement, addr uint) uint {
-	var statuses = []*ins.Element{}
-	for _, ie := range elem.InsElem.Elements {
+	// Collect names instead of elements because the results must be reproducable.
+	// Keys from a dictionary are returned in random order, so collect names and sort them.
+	names := []string{}
+	for name, ie := range elem.InsElem.Elements {
 		if ie.BaseType == "status" {
-			statuses = append(statuses, ie)
+			names = append(names, name)
 		}
 	}
+	sort.Strings(names)
 
-	for _, st := range statuses {
+	for _, name := range names {
+		st := elem.InsElem.Elements[name]
 		e := FunctionalElement{InsElem: st}
 
 		width := uint(st.Properties["width"].(val.Int).V)
