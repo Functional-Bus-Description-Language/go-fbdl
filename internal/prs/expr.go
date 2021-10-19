@@ -1,4 +1,4 @@
-package expr
+package prs
 
 import (
 	"fmt"
@@ -11,25 +11,25 @@ type Expression interface {
 	Eval() (val.Value, error)
 }
 
-func Make(n ts.Node) (Expression, error) {
+func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
 	var err error = nil
 	var expr Expression
 
 	switch t := n.Type(); t {
 	case "binary_operation":
-		expr, err = MakeBinaryOperation(n)
+		expr, err = MakeBinaryOperation(n, s)
 	case "decimal_literal":
 		expr, err = MakeDecimalLiteral(n)
 	case "false":
 		expr = MakeFalse()
 	case "identifier":
-		expr = MakeIdentifier(n)
+		expr = MakeIdentifier(n, s)
 	case "primary_expression":
-		expr, err = MakePrimaryExpression(n)
+		expr, err = MakePrimaryExpression(n, s)
 	case "true":
 		expr = MakeTrue()
 	case "unary_operation":
-		expr, err = MakeUnaryOperation(n)
+		expr, err = MakeUnaryOperation(n, s)
 	case "zero_literal":
 		expr = MakeZeroLiteral()
 	default:
@@ -81,13 +81,13 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 	return val.Bool{}, fmt.Errorf("unknown operand type")
 }
 
-func MakeBinaryOperation(n ts.Node) (BinaryOperation, error) {
-	left, err := Make(n.Child(0))
+func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
+	left, err := MakeExpression(n.Child(0), s)
 	if err != nil {
 		return BinaryOperation{}, fmt.Errorf("make binary operation: left operand: %v", err)
 	}
 
-	right, err := Make(n.Child(2))
+	right, err := MakeExpression(n.Child(2), s)
 	if err != nil {
 		return BinaryOperation{}, fmt.Errorf("make binary operation: right operand: %v", err)
 	}
@@ -132,15 +132,28 @@ func MakeFalse() False {
 
 type Identifier struct {
 	v string
+	s Searchable
 }
 
 func (i Identifier) Eval() (val.Value, error) {
-	// TODO: implement
-	return val.Bool{V: false}, nil
+	id, err := i.s.GetSymbol(i.v)
+	if err != nil {
+		return val.Bool{}, fmt.Errorf("evaluating identifier '%s': %v", i.v, err)
+	}
+
+	if c, ok := id.(*Constant); ok {
+		v, err := c.Value.Eval()
+		if err != nil {
+			return val.Bool{}, fmt.Errorf("evaluating constant identifier '%s': %v", i.v, err)
+		}
+		return v, nil
+	} else {
+		panic("not yet implemented")
+	}
 }
 
-func MakeIdentifier(n ts.Node) Identifier {
-	return Identifier{v: n.Content()}
+func MakeIdentifier(n ts.Node, s Searchable) Identifier {
+	return Identifier{v: n.Content(), s: s}
 }
 
 type PrimaryExpression struct {
@@ -156,8 +169,8 @@ func (pe PrimaryExpression) Eval() (val.Value, error) {
 	return v, nil
 }
 
-func MakePrimaryExpression(n ts.Node) (PrimaryExpression, error) {
-	v, err := Make(n.Child(0))
+func MakePrimaryExpression(n ts.Node, s Searchable) (PrimaryExpression, error) {
+	v, err := MakeExpression(n.Child(0), s)
 	if err != nil {
 		return PrimaryExpression{}, fmt.Errorf("make primary expression: %v", err)
 	}
@@ -207,7 +220,7 @@ func (uo UnaryOperation) Eval() (val.Value, error) {
 	return val.Bool{}, fmt.Errorf("unknown operand type")
 }
 
-func MakeUnaryOperation(n ts.Node) (UnaryOperation, error) {
+func MakeUnaryOperation(n ts.Node, s Searchable) (UnaryOperation, error) {
 	var operator UnaryOperator
 	switch op := n.Child(0).Content(); op {
 	case "+":
@@ -218,7 +231,7 @@ func MakeUnaryOperation(n ts.Node) (UnaryOperation, error) {
 		return UnaryOperation{}, fmt.Errorf("make unary operation: invalid operator %s", op)
 	}
 
-	operand, err := Make(n.Child(1))
+	operand, err := MakeExpression(n.Child(1), s)
 	if err != nil {
 		return UnaryOperation{}, fmt.Errorf("make unary operation: operand: %v", err)
 	}

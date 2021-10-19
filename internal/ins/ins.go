@@ -99,7 +99,7 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 	typeChain := []prs.Element{}
 
 	if !util.IsBaseType(e.Type()) {
-		s, err := e.GetSymbol(e.Type())
+		s, err := e.Parent().GetSymbol(e.Type())
 		if err != nil {
 			log.Fatalf("cannot get symbol '%s': %v", e.Type(), err)
 		}
@@ -122,7 +122,7 @@ func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	}
 
 	for i, t := range tc {
-		resolvedArgs := make(map[string]val.Value)
+		resolvedArgs := make(map[string]prs.Expression)
 		if (i+1) < len(tc) && tc[i+1].ResolvedArgs() != nil {
 			resolvedArgs = tc[i+1].ResolvedArgs()
 		}

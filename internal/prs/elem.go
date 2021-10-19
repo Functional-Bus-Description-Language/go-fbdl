@@ -1,8 +1,6 @@
 package prs
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/expr"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"strings"
 )
 
@@ -10,19 +8,19 @@ import (
 type Argument struct {
 	HasName bool
 	Name    string
-	Value   expr.Expression
+	Value   Expression
 }
 
 // Parameter represents parameter in the parameter list, not 'param' element.
 type Parameter struct {
 	Name            string
 	HasDefaultValue bool
-	DefaultValue    expr.Expression
+	DefaultValue    Expression
 }
 
 type Property struct {
 	LineNumber uint32
-	Value      expr.Expression
+	Value      Expression
 }
 
 type ElementInstantiationType uint8
@@ -37,8 +35,8 @@ type Element interface {
 	Type() string
 	Args() []Argument
 	Params() []Parameter
-	SetResolvedArgs(args map[string]val.Value)
-	ResolvedArgs() map[string]val.Value
+	SetResolvedArgs(args map[string]Expression)
+	ResolvedArgs() map[string]Expression
 	Properties() map[string]Property
 	Symbols() map[string]Symbol
 }
@@ -49,14 +47,14 @@ type ElementDefinition struct {
 	type_             string
 	InstantiationType ElementInstantiationType
 	IsArray           bool
-	Count             expr.Expression
+	Count             Expression
 
 	properties map[string]Property
 	symbols    map[string]Symbol
 
 	params       []Parameter
 	args         []Argument
-	resolvedArgs map[string]val.Value
+	resolvedArgs map[string]Expression
 }
 
 func (e ElementDefinition) Type() string {
@@ -70,6 +68,10 @@ func (e *ElementDefinition) GetSymbol(s string) (Symbol, error) {
 
 	if sym, ok := e.symbols[s]; ok {
 		return sym, nil
+	}
+
+	if v, ok := e.resolvedArgs[s]; ok {
+		return &Constant{Value: v}, nil
 	}
 
 	if e.parent != nil {
@@ -87,11 +89,11 @@ func (e ElementDefinition) Params() []Parameter {
 	return e.params
 }
 
-func (e *ElementDefinition) SetResolvedArgs(ra map[string]val.Value) {
+func (e *ElementDefinition) SetResolvedArgs(ra map[string]Expression) {
 	e.resolvedArgs = ra
 }
 
-func (e ElementDefinition) ResolvedArgs() map[string]val.Value {
+func (e ElementDefinition) ResolvedArgs() map[string]Expression {
 	return e.resolvedArgs
 }
 
@@ -112,7 +114,7 @@ type TypeDefinition struct {
 
 	params       []Parameter
 	args         []Argument
-	resolvedArgs map[string]val.Value
+	resolvedArgs map[string]Expression
 }
 
 func (t *TypeDefinition) GetSymbol(s string) (Symbol, error) {
@@ -122,6 +124,10 @@ func (t *TypeDefinition) GetSymbol(s string) (Symbol, error) {
 
 	if sym, ok := t.symbols[s]; ok {
 		return sym, nil
+	}
+
+	if v, ok := t.resolvedArgs[s]; ok {
+		return &Constant{Value: v}, nil
 	}
 
 	if t.parent != nil {
@@ -143,11 +149,11 @@ func (t TypeDefinition) Params() []Parameter {
 	return t.params
 }
 
-func (t *TypeDefinition) SetResolvedArgs(ra map[string]val.Value) {
+func (t *TypeDefinition) SetResolvedArgs(ra map[string]Expression) {
 	t.resolvedArgs = ra
 }
 
-func (t TypeDefinition) ResolvedArgs() map[string]val.Value {
+func (t TypeDefinition) ResolvedArgs() map[string]Expression {
 	return t.resolvedArgs
 }
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	_ "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	_ "log"
 )
 
@@ -28,25 +28,27 @@ func resolveArgumentListsInSymbols(symbols map[string]prs.Symbol) error {
 			continue
 		}
 
-		if util.IsBaseType(e.Type()) {
-			continue
+		if !util.IsBaseType(e.Type()) {
+			resolvedArgs, err := resolveArguments(e)
+			if err != nil {
+				return fmt.Errorf("cannot resolve argument list for symbol '%s': %v", name, err)
+			}
+
+			e.SetResolvedArgs(resolvedArgs)
 		}
 
-		resolvedArgs, err := resolveArguments(e)
-		if err != nil {
-			return fmt.Errorf("cannot resolve argument list for symbol '%s': %v", name, err)
+		if len(e.Symbols()) > 0 {
+			resolveArgumentListsInSymbols(e.Symbols())
 		}
-
-		e.SetResolvedArgs(resolvedArgs)
 	}
 
 	return nil
 }
 
-func resolveArguments(symbol prs.Element) (map[string]val.Value, error) {
+func resolveArguments(symbol prs.Element) (map[string]prs.Expression, error) {
 	var err error
 	args := symbol.Args()
-	resolvedArgs := make(map[string]val.Value)
+	resolvedArgs := make(map[string]prs.Expression)
 	inPositionalArgs := true
 
 	type_symbol, err := symbol.GetSymbol(symbol.Type())
@@ -71,61 +73,36 @@ func resolveArguments(symbol prs.Element) (map[string]val.Value, error) {
 			if argHasName == true {
 				inPositionalArgs = false
 				if argName == p.Name {
-					v, err := args[i].Value.Eval()
-					if err != nil {
-						return nil, fmt.Errorf("resolve arguments: %v", err)
-					}
-					resolvedArgs[p.Name] = v
+					resolvedArgs[p.Name] = args[i].Value
 				} else {
 					found := false
 					for _, ar := range args {
 						if ar.Name == p.Name {
-							v, err := ar.Value.Eval()
-							if err != nil {
-								return nil, fmt.Errorf("resolve arguments: %v", err)
-							}
-							resolvedArgs[p.Name] = v
+							resolvedArgs[p.Name] = ar.Value
 							found = true
 						}
 					}
 					if !found {
-						v, err := p.DefaultValue.Eval()
-						if err != nil {
-							return nil, fmt.Errorf("resolve arguments: %v", err)
-						}
-						resolvedArgs[p.Name] = v
+						resolvedArgs[p.Name] = p.DefaultValue
 					}
 				}
 			} else {
-				var v val.Value
 				if i < len(args) {
-					v, err = args[i].Value.Eval()
+					resolvedArgs[p.Name] = args[i].Value
 				} else {
-					v, err = p.DefaultValue.Eval()
+					resolvedArgs[p.Name] = p.DefaultValue
 				}
-				if err != nil {
-					return nil, fmt.Errorf("resolve arguments: %v", err)
-				}
-				resolvedArgs[p.Name] = v
 			}
 		} else {
 			found := false
 			for _, ar := range args {
 				if ar.Name == p.Name {
-					v, err := ar.Value.Eval()
-					if err != nil {
-						return nil, fmt.Errorf("resolve arguments: %v", err)
-					}
-					resolvedArgs[p.Name] = v
+					resolvedArgs[p.Name] = ar.Value
 					found = true
 				}
 			}
 			if !found {
-				v, err := p.DefaultValue.Eval()
-				if err != nil {
-					return nil, fmt.Errorf("resolve arguments: %v", err)
-				}
-				resolvedArgs[p.Name] = v
+				resolvedArgs[p.Name] = p.DefaultValue
 			}
 		}
 	}

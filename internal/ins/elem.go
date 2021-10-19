@@ -17,7 +17,7 @@ type Element struct {
 	Elements   map[string]*Element
 }
 
-func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]val.Value) error {
+func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Expression) error {
 	if elem.BaseType == "" {
 		if !util.IsBaseType(type_.Type()) {
 			return fmt.Errorf("cannot start element instantiation from non base type '%s'", type_.Type())
@@ -72,7 +72,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]val.Va
 
 		if _, ok := elem.Elements[e.Name]; ok {
 			return fmt.Errorf(
-				"cannot instantiate element '%s', element with such Name is already instantiated in one of ancestor types",
+				"cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types",
 				e.Name,
 			)
 		}

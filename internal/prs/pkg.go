@@ -12,12 +12,12 @@ type Package struct {
 	Name           string
 	Path           string
 	addFileMutex   sync.Mutex
-	Files          []File
+	Files          []*File
 	addSymbolMutex sync.Mutex
 	Symbols        map[string]Symbol
 }
 
-func (p *Package) AddFile(f File) {
+func (p *Package) AddFile(f *File) {
 	p.addFileMutex.Lock()
 	p.Files = append(p.Files, f)
 	p.addFileMutex.Unlock()
