@@ -14,13 +14,6 @@ import (
 
 type logWriter struct{}
 
-type Options struct {
-	Version               bool   `short:"v" long:"version" description:"Display version."`
-	DumpPackages          string `short:"p" description:"Dump packages to a file." optional:"true" optional-value:"pkgs.txt"`
-	DumpInstantiation     string `short:"i" description:"Dump instantiation to a file." optional:"true" optional-value:"ins.txt"`
-	DumpRegisterification string `short:"r" description:"Dump registerification to a file." optional:"true" optional-value:"reg.txt"`
-}
-
 func main() {
 	log.SetFlags(0)
 
