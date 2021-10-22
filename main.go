@@ -1,20 +1,16 @@
 package main
 
 import (
-	"fmt"
-
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/args"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/jessevdk/go-flags"
 
 	"log"
 	"os"
 )
-
-const VERSION string = "0.0.0"
 
 type logWriter struct{}
 
@@ -28,27 +24,18 @@ type Options struct {
 func main() {
 	log.SetFlags(0)
 
+	cmdLineArgs := args.Parse()
+
 	spew.Config.Indent = "\t"
 	spew.Config.DisablePointerAddresses = true
 	spew.Config.DisableCapacities = true
 	spew.Config.SortKeys = true
 
-	var opts Options
-	args, err := flags.Parse(&opts)
-	if err != nil {
-		panic(err)
-	}
-
-	if opts.Version {
-		fmt.Println(VERSION)
-		os.Exit(0)
-	}
-
-	packages := prs.DiscoverPackages(args[0])
+	packages := prs.DiscoverPackages(cmdLineArgs["mainFile"])
 	prs.ParsePackages(packages)
 
-	if opts.DumpPackages != "" {
-		f, err := os.Create(opts.DumpPackages)
+	if path, ok := cmdLineArgs["-p"]; ok {
+		f, err := os.Create(path)
 		if err != nil {
 			panic(err)
 		}
@@ -58,8 +45,8 @@ func main() {
 
 	insBus := ins.Instantiate(packages)
 
-	if opts.DumpInstantiation != "" {
-		f, err := os.Create(opts.DumpInstantiation)
+	if path, ok := cmdLineArgs["-i"]; ok {
+		f, err := os.Create(path)
 		if err != nil {
 			panic(err)
 		}
@@ -69,8 +56,8 @@ func main() {
 
 	regBus := reg.Registerify(insBus)
 
-	if opts.DumpRegisterification != "" {
-		f, err := os.Create(opts.DumpRegisterification)
+	if path, ok := cmdLineArgs["-r"]; ok {
+		f, err := os.Create(path)
 		if err != nil {
 			panic(err)
 		}
