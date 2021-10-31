@@ -131,7 +131,18 @@ type ExpressionList struct {
 }
 
 func (el ExpressionList) Eval() (val.Value, error) {
-	return val.Bool{}, fmt.Errorf("list cannot be evaluated")
+	vals := []val.Value{}
+
+	for i, expr := range el.exprs {
+		v, err := expr.Eval()
+		if err != nil {
+			return val.Bool{}, fmt.Errorf("expression list evaluation, index %d: %v", i, err)
+		}
+
+		vals = append(vals, v)
+	}
+
+	return val.List{V: vals}, nil
 }
 
 func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {

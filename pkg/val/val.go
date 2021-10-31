@@ -20,6 +20,14 @@ func (i Int) Type() string {
 	return "integer"
 }
 
+type List struct {
+	V []Value
+}
+
+func (l List) Type() string {
+	return "list"
+}
+
 type Str struct {
 	V string
 }
