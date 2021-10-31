@@ -20,6 +20,8 @@ func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
 		expr, err = MakeBinaryOperation(n, s)
 	case "decimal_literal":
 		expr, err = MakeDecimalLiteral(n)
+	case "expression_list":
+		expr, err = MakeExpressionList(n, s)
 	case "false":
 		expr = MakeFalse()
 	case "identifier":
@@ -28,6 +30,8 @@ func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
 		expr, err = MakePrimaryExpression(n, s)
 	case "string_literal":
 		expr = MakeStringLiteral(n)
+	case "subscript":
+		expr, err = MakeSubscript(n, s)
 	case "true":
 		expr = MakeTrue()
 	case "unary_operation":
@@ -122,6 +126,38 @@ func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
 	return DecimalLiteral{v: int32(v)}, nil
 }
 
+type ExpressionList struct {
+	exprs []Expression
+}
+
+func (el ExpressionList) Eval() (val.Value, error) {
+	return val.Bool{}, fmt.Errorf("list cannot be evaluated")
+}
+
+func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
+	exprs := []Expression{}
+
+	itemIdx := 0
+	for i := 1; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		t := nc.Type()
+
+		if t == "," || t == "]" {
+			continue
+		}
+
+		e, err := MakeExpression(nc, s)
+		if err != nil {
+			return ExpressionList{}, fmt.Errorf("make expression list: item %d: %v", itemIdx, err)
+		}
+		exprs = append(exprs, e)
+
+		itemIdx += 1
+	}
+
+	return ExpressionList{exprs: exprs}, nil
+}
+
 type False struct{}
 
 func (f False) Eval() (val.Value, error) {
@@ -190,6 +226,57 @@ func (sl StringLiteral) Eval() (val.Value, error) {
 
 func MakeStringLiteral(n ts.Node) StringLiteral {
 	return StringLiteral{v: n.Content()}
+}
+
+type Subscript struct {
+	name string
+	idx  Expression
+	s    Searchable
+}
+
+func (s Subscript) Eval() (val.Value, error) {
+	idx, err := s.idx.Eval()
+	if err != nil {
+		return val.Bool{}, fmt.Errorf("subscript index evaluation:%v", err)
+	}
+
+	i, ok := idx.(val.Int)
+	if !ok {
+		return val.Bool{}, fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
+	}
+
+	sym, err := s.s.GetSymbol(s.name)
+	if err != nil {
+		return val.Bool{}, fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
+	}
+
+	cons, ok := sym.(*Constant)
+	if !ok {
+		return val.Bool{}, fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
+	}
+
+	exprList, ok := cons.Value.(ExpressionList)
+	if !ok {
+		return val.Bool{},
+			fmt.Errorf("subscript evaluation, constant '%s' is not expression list, type '%T'", s.name, cons.Value)
+	}
+
+	if int(i.V) >= len(exprList.exprs) {
+		return val.Bool{}, fmt.Errorf("list '%s', index %d out of range", s.name, i.V)
+	}
+
+	return exprList.exprs[i.V].Eval()
+}
+
+func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
+	name := n.Child(0).Content()
+
+	idx, err := MakeExpression(n.Child(2), s)
+	if err != nil {
+		return Subscript{}, fmt.Errorf("make subscript: %v", err)
+	}
+
+	return Subscript{name: name, idx: idx, s: s}, nil
 }
 
 type True struct{}
