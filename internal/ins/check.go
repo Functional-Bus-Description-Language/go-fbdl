@@ -6,7 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 )
 
-// Check property value type, value and conflicting properties within element.
+// Check property value type and value.
 func checkProperty(name string, prop prs.Property) error {
 	pv, err := prop.Value.Eval()
 	if err != nil {
