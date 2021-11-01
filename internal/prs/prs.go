@@ -215,7 +215,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 
 	names := []string{}
 	var err error
-	var hasName = true
+	var hasName = false
 	name := ""
 	var val Expression
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
@@ -228,6 +228,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 
 		if t == "identifier" {
 			name = nc.Content()
+			hasName = true
 		} else {
 			val, err = MakeExpression(nc, parent)
 			if err != nil {
