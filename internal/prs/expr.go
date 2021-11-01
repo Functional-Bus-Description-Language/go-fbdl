@@ -110,7 +110,7 @@ func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
 }
 
 type DecimalLiteral struct {
-	v int32
+	v int64
 }
 
 func (dl DecimalLiteral) Eval() (val.Value, error) {
@@ -123,7 +123,7 @@ func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
 		return DecimalLiteral{}, fmt.Errorf("make decimal literal: %v", err)
 	}
 
-	return DecimalLiteral{v: int32(v)}, nil
+	return DecimalLiteral{v: v}, nil
 }
 
 type ExpressionList struct {
@@ -352,7 +352,7 @@ func MakeUnaryOperation(n ts.Node, s Searchable) (UnaryOperation, error) {
 }
 
 type ZeroLiteral struct {
-	v int32
+	v int64
 }
 
 func (zl ZeroLiteral) Eval() (val.Value, error) {

@@ -40,18 +40,18 @@ func fillPropertiesBus(b *Element) {
 	}
 
 	if _, ok := b.Properties["width"]; !ok {
-		b.Properties["width"] = val.Int{V: int32(busWidth)}
+		b.Properties["width"] = val.Int{V: int64(busWidth)}
 	}
 }
 
 func fillPropertiesConfig(c *Element) {
 	if _, ok := c.Properties["width"]; !ok {
-		c.Properties["width"] = val.Int{V: int32(busWidth)}
+		c.Properties["width"] = val.Int{V: int64(busWidth)}
 	}
 
 	if _, ok := c.Properties["atomic"]; !ok {
 		v := false
-		if c.Properties["width"].(val.Int).V > int32(busWidth) {
+		if c.Properties["width"].(val.Int).V > int64(busWidth) {
 			v = true
 		}
 		c.Properties["atomic"] = val.Bool{V: v}
@@ -64,12 +64,12 @@ func fillPropertiesFunc(f *Element) {
 
 func fillPropertiesMask(m *Element) {
 	if _, ok := m.Properties["width"]; !ok {
-		m.Properties["width"] = val.Int{V: int32(busWidth)}
+		m.Properties["width"] = val.Int{V: int64(busWidth)}
 	}
 
 	if _, ok := m.Properties["atomic"]; !ok {
 		v := false
-		if m.Properties["width"].(val.Int).V > int32(busWidth) {
+		if m.Properties["width"].(val.Int).V > int64(busWidth) {
 			v = true
 		}
 		m.Properties["atomic"] = val.Bool{V: v}
@@ -78,6 +78,6 @@ func fillPropertiesMask(m *Element) {
 
 func fillPropertiesParam(p *Element) {
 	if _, ok := p.Properties["width"]; !ok {
-		p.Properties["width"] = val.Int{V: int32(busWidth)}
+		p.Properties["width"] = val.Int{V: int64(busWidth)}
 	}
 }

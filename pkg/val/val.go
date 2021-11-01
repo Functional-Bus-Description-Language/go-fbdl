@@ -13,7 +13,7 @@ func (b Bool) Type() string {
 }
 
 type Int struct {
-	V int32
+	V int64
 }
 
 func (i Int) Type() string {
