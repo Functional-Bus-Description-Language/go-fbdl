@@ -7,17 +7,34 @@ on:
     branches: [ master ]
 
 jobs:
+  vet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17.1'
+      - run: go version
+      - run: make vet
+
   Parsing-Tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - uses: actions/setup-go@v2
         with:
           go-version: '^1.17.1'
-
       - run: go version
-
       - run: make build
-
       - run: ./scripts/test-parsing.sh
+
+  Instantiating-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17.1'
+      - run: go version
+      - run: make build
+      - run: ./scripts/test-instantiating.sh
