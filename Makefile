@@ -37,7 +37,7 @@ test-parsing:
 test: test-parsing test-instantiating
 
 install:
-	cp fbdl /usr/bin
+	cp $(PROJECT_NAME) /usr/bin
 
 uninstall:
-	rm /usr/bin/fbdl
+	rm /usr/bin/$(PROJECT_NAME)
