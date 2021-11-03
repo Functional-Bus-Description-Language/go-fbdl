@@ -20,8 +20,8 @@ func Parse() map[string]string {
 
 	argsLen := len(os.Args)
 
-	if argsLen == 0 {
-		log.Fatalf("help")
+	if argsLen == 1 {
+		printHelp()
 	}
 
 	skipNext := false
