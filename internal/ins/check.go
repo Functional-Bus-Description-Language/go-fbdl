@@ -71,3 +71,14 @@ func checkProperty(name string, prop prs.Property) error {
 
 	return nil
 }
+
+func checkPropertyConflict(elem *Element, prop string) error {
+	msg := `cannot set '%s' property, because '%s' property is already set in one of ancestor types`
+	if _, ok := elem.Properties["width"]; ok {
+		if prop == "range" {
+			return fmt.Errorf(msg, "range", "width")
+		}
+	}
+
+	return nil
+}
