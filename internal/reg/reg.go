@@ -47,6 +47,16 @@ func Registerify(insBus *ins.Element) *BlockElement {
 		}
 	}
 
+	if regBus.hasElement("x_uuid_x") {
+		panic("x_uuid_x is reserved element name")
+	}
+	regBus.FunctionalElements["x_uuid_x"] = x_timestamp_x()
+
+	if regBus.hasElement("x_timestamp_x") {
+		panic("x_timestamp_x is reserved element name")
+	}
+	regBus.FunctionalElements["x_timestamp_x"] = x_timestamp_x()
+
 	regBus.Sizes.BlockAligned = util.AlignToPowerOf2(
 		regBus.Sizes.BlockAligned + regBus.Sizes.Own,
 	)

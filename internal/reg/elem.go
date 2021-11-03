@@ -19,6 +19,18 @@ func (be *BlockElement) IsArray() bool { return be.InsElem.IsArray }
 
 func (be *BlockElement) Count() uint { return be.InsElem.Count }
 
+func (be *BlockElement) hasElement(name string) bool {
+	if _, ok := be.BlockElements["x_timestamp_x"]; ok {
+		return true
+	}
+
+	if _, ok := be.FunctionalElements["x_timestamp_x"]; ok {
+		return true
+	}
+
+	return false
+}
+
 type FunctionalElement struct {
 	InsElem *ins.Element
 	Access  Access
