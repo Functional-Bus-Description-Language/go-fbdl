@@ -35,3 +35,9 @@ test-parsing:
 	@./scripts/test-parsing.sh
 
 test: test-parsing test-instantiating
+
+install:
+	cp fbdl /usr/bin
+
+uninstall:
+	rm /usr/bin/fbdl
