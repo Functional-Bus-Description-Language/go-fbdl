@@ -1,5 +1,4 @@
-// Package val provides value types for FBDL type system.
-package val
+package fbdl
 
 type Value interface {
 	Type() string

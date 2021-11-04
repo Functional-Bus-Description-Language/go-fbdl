@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
 )
 
 type Element struct {
@@ -12,8 +12,8 @@ type Element struct {
 	BaseType   string
 	IsArray    bool
 	Count      uint
-	Properties map[string]val.Value
-	Constants  map[string]val.Value
+	Properties map[string]fbdl.Value
+	Constants  map[string]fbdl.Value
 	Elements   map[string]*Element
 }
 
@@ -99,7 +99,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 			if err != nil {
 				return fmt.Errorf("applying type '%s': %v", type_.Name(), err)
 			}
-			elem.Count = uint(count.(val.Int).V)
+			elem.Count = uint(count.(fbdl.Int).V)
 		}
 	}
 

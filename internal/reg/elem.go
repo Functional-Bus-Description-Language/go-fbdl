@@ -2,7 +2,7 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
 )
 
 type BlockElement struct {
@@ -13,7 +13,7 @@ type BlockElement struct {
 	AddrSpace          AddrSpace
 }
 
-func (be *BlockElement) Constants() map[string]val.Value { return be.InsElem.Constants }
+func (be *BlockElement) Constants() map[string]fbdl.Value { return be.InsElem.Constants }
 
 func (be *BlockElement) IsArray() bool { return be.InsElem.IsArray }
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	_ "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	_ "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
 	_ "log"
 )
 

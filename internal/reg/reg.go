@@ -5,7 +5,7 @@ package reg
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
 	"log"
 	"sort"
 )
@@ -18,7 +18,7 @@ func Registerify(insBus *ins.Element) *BlockElement {
 		return nil
 	}
 
-	busWidth = uint(insBus.Properties["width"].(val.Int).V)
+	busWidth = uint(insBus.Properties["width"].(fbdl.Int).V)
 
 	regBus := BlockElement{
 		InsElem:            insBus,
@@ -93,7 +93,7 @@ func registerifyStatuses(elem *BlockElement, addr uint) uint {
 		st := elem.InsElem.Elements[name]
 		e := FunctionalElement{InsElem: st}
 
-		width := uint(st.Properties["width"].(val.Int).V)
+		width := uint(st.Properties["width"].(fbdl.Int).V)
 
 		if st.IsArray {
 			e.Access = MakeAccessArray(st.Count, addr, width)
