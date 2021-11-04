@@ -12,7 +12,7 @@ import (
 
 var busWidth uint
 
-func Registerify(insBus *ins.Element) *BlockElement {
+func Registerify(insBus *ins.Element) *Block {
 	if insBus == nil {
 		log.Println("registerification: there is no main bus; returning nil")
 		return nil
@@ -20,17 +20,13 @@ func Registerify(insBus *ins.Element) *BlockElement {
 
 	busWidth = uint(insBus.Properties["width"].(val.Int))
 
-	regBus := BlockElement{
-		InsElem:            insBus,
-		BlockElements:      make(map[string]*BlockElement),
-		FunctionalElements: make(map[string]*FunctionalElement),
-	}
+	regBus := Block{Name: "main"}
 
 	// addr is current block internal access address, not global address.
 	// 0 and 1 are reserved for x_uuid_x and x_timestamp_x.
 	addr := uint(2)
 
-	addr = registerifyFunctionalities(&regBus, addr)
+	addr = registerifyFunctionalities(&regBus, insBus, addr)
 
 	regBus.Sizes.Compact = addr
 	regBus.Sizes.Own = addr
@@ -47,15 +43,17 @@ func Registerify(insBus *ins.Element) *BlockElement {
 		}
 	}
 
-	if regBus.hasElement("x_uuid_x") {
-		panic("x_uuid_x is reserved element name")
-	}
-	regBus.FunctionalElements["x_uuid_x"] = x_timestamp_x()
+	/*
+		if regBus.hasElement("x_uuid_x") {
+			panic("x_uuid_x is reserved element name")
+		}
+		regBus.FunctionalElements["x_uuid_x"] = x_timestamp_x()
 
-	if regBus.hasElement("x_timestamp_x") {
-		panic("x_timestamp_x is reserved element name")
-	}
-	regBus.FunctionalElements["x_timestamp_x"] = x_timestamp_x()
+		if regBus.hasElement("x_timestamp_x") {
+			panic("x_timestamp_x is reserved element name")
+		}
+		regBus.FunctionalElements["x_timestamp_x"] = x_timestamp_x()
+	*/
 
 	regBus.Sizes.BlockAligned = util.AlignToPowerOf2(
 		regBus.Sizes.BlockAligned + regBus.Sizes.Own,
@@ -67,22 +65,22 @@ func Registerify(insBus *ins.Element) *BlockElement {
 	return &regBus
 }
 
-func registerifyFunctionalities(elem *BlockElement, addr uint) uint {
-	if len(elem.InsElem.Elements) == 0 {
+func registerifyFunctionalities(block *Block, insElem *ins.Element, addr uint) uint {
+	if len(insElem.Elements) == 0 {
 		return addr
 	}
 
-	addr = registerifyStatuses(elem, addr)
+	addr = registerifyStatuses(block, insElem, addr)
 
 	return addr
 }
 
 // Current approach is trivial. Even groups are not respected.
-func registerifyStatuses(elem *BlockElement, addr uint) uint {
+func registerifyStatuses(block *Block, insElem *ins.Element, addr uint) uint {
 	// Collect names instead of elements because the results must be reproducable.
 	// Keys from a dictionary are returned in random order, so collect names and sort them.
 	names := []string{}
-	for name, ie := range elem.InsElem.Elements {
+	for name, ie := range insElem.Elements {
 		if ie.BaseType == "status" {
 			names = append(names, name)
 		}
@@ -90,8 +88,12 @@ func registerifyStatuses(elem *BlockElement, addr uint) uint {
 	sort.Strings(names)
 
 	for _, name := range names {
-		st := elem.InsElem.Elements[name]
-		e := FunctionalElement{InsElem: st}
+		st := insElem.Elements[name]
+		e := Status{
+			Name:   name,
+			Atomic: bool(st.Properties["atomic"].(val.Bool)),
+			Width:  int64(st.Properties["width"].(val.Int)),
+		}
 
 		width := uint(st.Properties["width"].(val.Int))
 
@@ -102,25 +104,21 @@ func registerifyStatuses(elem *BlockElement, addr uint) uint {
 		}
 		addr += e.Access.Count()
 
-		elem.FunctionalElements[st.Name] = &e
+		block.addStatus(e)
 	}
 
 	return addr
 }
 
-func registerifyBlock(block *ins.Element) Sizes {
+func registerifyBlock(insBlock *ins.Element) Sizes {
 	addr := uint(0)
 
-	b := BlockElement{
-		InsElem:            block,
-		BlockElements:      make(map[string]*BlockElement),
-		FunctionalElements: make(map[string]*FunctionalElement),
-	}
+	b := Block{Name: "I need name"}
 
-	addr = registerifyFunctionalities(&b, addr)
+	addr = registerifyFunctionalities(&b, insBlock, addr)
 	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
-	for _, e := range block.Elements {
+	for _, e := range insBlock.Elements {
 		if e.BaseType == "block" {
 			s := registerifyBlock(e)
 			count := uint(1)

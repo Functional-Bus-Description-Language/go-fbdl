@@ -5,42 +5,37 @@ import (
 	"strings"
 )
 
-func assignGlobalAccessAddresses(bus *BlockElement, baseAddr uint) {
+func assignGlobalAccessAddresses(bus *Block, baseAddr uint) {
 	// Currently there is only Block Align strategy.
 	// In the future there may also be Compact and Full Align.
 
 	assignGlobalAccessAddressesBlockAlign(bus, baseAddr)
 }
 
-func assignGlobalAccessAddressesBlockAlign(be *BlockElement, baseAddr uint) {
-	if be.IsArray() {
-		be.AddrSpace = AddrSpaceArray{
+func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr uint) {
+	if block.IsArray {
+		block.AddrSpace = AddrSpaceArray{
 			start:     baseAddr,
-			count:     be.Count(),
-			BlockSize: be.Sizes.BlockAligned,
+			count:     uint(block.Count),
+			BlockSize: block.Sizes.BlockAligned,
 		}
 	} else {
-		be.AddrSpace = AddrSpaceSingle{
+		block.AddrSpace = AddrSpaceSingle{
 			start: baseAddr,
-			end:   baseAddr + be.Sizes.BlockAligned - 1,
+			end:   baseAddr + block.Sizes.BlockAligned - 1,
 		}
 	}
 
-	if len(be.BlockElements) == 0 {
+	if len(block.Blocks) == 0 {
 		return
 	}
 
-	subblockNames := []string{}
-	for name, _ := range be.BlockElements {
-		subblockNames = append(subblockNames, name)
-	}
-
 	sortFunc := func(i, j int) bool {
-		namei := subblockNames[i]
-		namej := subblockNames[j]
+		sizei := block.Blocks[i].Sizes.BlockAligned
+		sizej := block.Blocks[j].Sizes.BlockAligned
 
-		sizei := be.BlockElements[namei].Sizes.BlockAligned
-		sizej := be.BlockElements[namej].Sizes.BlockAligned
+		namei := block.Blocks[i].Name
+		namej := block.Blocks[j].Name
 
 		if sizei < sizej {
 			return true
@@ -54,13 +49,12 @@ func assignGlobalAccessAddressesBlockAlign(be *BlockElement, baseAddr uint) {
 			}
 		}
 	}
-	sort.Slice(subblockNames, sortFunc)
+	sort.Slice(block.Blocks, sortFunc)
 
-	subblockBaseAddr := be.AddrSpace.End() + 1
-	for i := len(subblockNames) - 1; i >= 0; i++ {
-		name := subblockNames[i]
-		sb := be.BlockElements[name]
-		subblockBaseAddr -= sb.Count() * sb.Sizes.BlockAligned
+	subblockBaseAddr := block.AddrSpace.End() + 1
+	for i, _ := range block.Blocks {
+		sb := &block.Blocks[i]
+		subblockBaseAddr -= uint(sb.Count) * sb.Sizes.BlockAligned
 		assignGlobalAccessAddressesBlockAlign(sb, subblockBaseAddr)
 	}
 }

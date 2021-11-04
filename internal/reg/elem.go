@@ -35,3 +35,52 @@ type FunctionalElement struct {
 	InsElem *ins.Element
 	Access  Access
 }
+
+type Block struct {
+	Name      string
+	IsArray   bool
+	Count     int64
+	Sizes     Sizes
+	AddrSpace AddrSpace
+
+	// Properties
+	Doc string
+
+	// Elements
+	Blocks []Block
+	//Configs  []Config
+	//Funcs    []Func
+	//Masks    []Mask
+	Statuses []Status
+}
+
+func (b *Block) addStatus(s Status) {
+	b.Statuses = append(b.Statuses, s)
+}
+
+func (b *Block) hasElement(name string) bool {
+	return false
+	/*
+		if _, ok := b.insElem.Elements["x_timestamp_x"]; ok {
+			return true
+		}
+
+		if _, ok := b.insElem.Elements["x_timestamp_x"]; ok {
+			return true
+		}
+
+		return false
+	*/
+}
+
+type Status struct {
+	Name   string
+	Access Access
+
+	// Properties
+	Atomic bool
+	Doc    string
+	Groups []string
+	Once   bool
+	Width  int64
+}
