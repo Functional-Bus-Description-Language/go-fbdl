@@ -2,7 +2,7 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 
 	"math"
 	"time"

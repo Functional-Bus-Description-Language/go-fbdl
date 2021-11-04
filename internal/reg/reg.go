@@ -5,7 +5,7 @@ package reg
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"log"
 	"sort"
 )
@@ -20,7 +20,11 @@ func Registerify(insBus *ins.Element) *Block {
 
 	busWidth = uint(insBus.Properties["width"].(val.Int))
 
-	regBus := Block{Name: "main"}
+	regBus := Block{
+		Name: "main",
+		IsArray: insBus.IsArray,
+		Count:  int64(insBus.Count),
+	}
 
 	// addr is current block internal access address, not global address.
 	// 0 and 1 are reserved for x_uuid_x and x_timestamp_x.
@@ -113,7 +117,11 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr uint) uint {
 func registerifyBlock(insBlock *ins.Element) Sizes {
 	addr := uint(0)
 
-	b := Block{Name: "I need name"}
+	b := Block{
+		Name: insBlock.Name,
+		IsArray: insBlock.IsArray,
+		Count:  int64(insBlock.Count),
+	}
 
 	addr = registerifyFunctionalities(&b, insBlock, addr)
 	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}

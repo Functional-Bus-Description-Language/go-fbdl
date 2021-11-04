@@ -2,7 +2,7 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
 type BlockElement struct {
@@ -59,18 +59,13 @@ func (b *Block) addStatus(s Status) {
 }
 
 func (b *Block) hasElement(name string) bool {
+	for i, _ := range b.Statuses {
+		if b.Statuses[i].Name == name {
+			return true
+		}
+	}
+
 	return false
-	/*
-		if _, ok := b.insElem.Elements["x_timestamp_x"]; ok {
-			return true
-		}
-
-		if _, ok := b.insElem.Elements["x_timestamp_x"]; ok {
-			return true
-		}
-
-		return false
-	*/
 }
 
 type Status struct {

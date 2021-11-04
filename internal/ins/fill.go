@@ -2,7 +2,7 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
 // fillProperties fills required properties that have not been set by the user.

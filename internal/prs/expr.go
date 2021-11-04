@@ -3,7 +3,7 @@ package prs
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"strconv"
 )
 
