@@ -99,7 +99,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 			if err != nil {
 				return fmt.Errorf("applying type '%s': %v", type_.Name(), err)
 			}
-			elem.Count = uint(count.(val.Int).V)
+			elem.Count = uint(count.(val.Int))
 		}
 	}
 

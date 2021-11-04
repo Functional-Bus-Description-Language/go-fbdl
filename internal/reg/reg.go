@@ -18,7 +18,7 @@ func Registerify(insBus *ins.Element) *BlockElement {
 		return nil
 	}
 
-	busWidth = uint(insBus.Properties["width"].(val.Int).V)
+	busWidth = uint(insBus.Properties["width"].(val.Int))
 
 	regBus := BlockElement{
 		InsElem:            insBus,
@@ -93,7 +93,7 @@ func registerifyStatuses(elem *BlockElement, addr uint) uint {
 		st := elem.InsElem.Elements[name]
 		e := FunctionalElement{InsElem: st}
 
-		width := uint(st.Properties["width"].(val.Int).V)
+		width := uint(st.Properties["width"].(val.Int))
 
 		if st.IsArray {
 			e.Access = MakeAccessArray(st.Count, addr, width)

@@ -29,30 +29,30 @@ func checkProperty(name string, prop prs.Property) error {
 		if !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "integer", pv.Type())
 		}
-		if v.V < 1 {
-			return fmt.Errorf("'masters' property must be positive, current value (%d)", v.V)
+		if v < 1 {
+			return fmt.Errorf("'masters' property must be positive, current value (%d)", v)
 		}
 	case "range":
 		v, ok := pv.(val.List)
 		if !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "list", pv.Type())
 		}
-		if len(v.V) != 2 {
-			return fmt.Errorf("length of 'range' property value list must equal 2, current length %d", len(v.V))
+		if len(v.Items) != 2 {
+			return fmt.Errorf("length of 'range' property value list must equal 2, current length %d", len(v.Items))
 		}
-		v0, ok := v.V[0].(val.Int)
+		v0, ok := v.Items[0].(val.Int)
 		if !ok {
 			return fmt.Errorf(
-				"first value in 'range' property value list must be of type 'integer', current type '%s'", v.V[0].Type(),
+				"first value in 'range' property value list must be of type 'integer', current type '%s'", v.Items[0].Type(),
 			)
 		}
-		v1, ok := v.V[1].(val.Int)
+		v1, ok := v.Items[1].(val.Int)
 		if !ok {
 			return fmt.Errorf(
-				"second value in 'range' property value list must be of type 'integer', current type '%s'", v.V[1].Type(),
+				"second value in 'range' property value list must be of type 'integer', current type '%s'", v.Items[1].Type(),
 			)
 		}
-		if v0.V >= v1.V {
+		if v0 >= v1 {
 			return fmt.Errorf("second value in 'range' property value list must be greater than first value")
 		}
 	case "width":
@@ -60,8 +60,8 @@ func checkProperty(name string, prop prs.Property) error {
 		if !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "integer", pv.Type())
 		}
-		if v.V < 0 {
-			return fmt.Errorf("'width' property must be natural, current value (%d)", v.V)
+		if v < 0 {
+			return fmt.Errorf("'width' property must be natural, current value (%d)", v)
 		}
 	default:
 		msg := `checkProperty() for property '%s' not yet implemented`

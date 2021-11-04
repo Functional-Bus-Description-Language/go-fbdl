@@ -17,8 +17,8 @@ func x_timestamp_x() *FunctionalElement {
 			IsArray:  false,
 			Count:    0,
 			Properties: map[string]val.Value{
-				"width":   val.Int{V: int64(busWidth)},
-				"default": val.Int{V: time.Now().Unix() & int64(math.Pow(2, float64(busWidth))-1)},
+				"width":   val.Int(int64(busWidth)),
+				"default": val.Int(time.Now().Unix() & int64(math.Pow(2, float64(busWidth))-1)),
 			},
 			Constants: nil,
 			Elements:  nil,
@@ -36,8 +36,8 @@ func x_uuid_x() *FunctionalElement {
 			IsArray:  false,
 			Count:    0,
 			Properties: map[string]val.Value{
-				"width":   val.Int{V: int64(busWidth)},
-				"default": val.Int{V: 0},
+				"width":   val.Int(int64(busWidth)),
+				"default": val.Int(0),
 			},
 			Constants: nil,
 			Elements:  nil,

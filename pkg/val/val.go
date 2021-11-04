@@ -6,20 +6,14 @@ type Value interface {
 }
 
 // Bool represents FBDL bool type.
-// Internal value representation is bool.
-type Bool struct {
-	V bool
-}
+type Bool bool
 
 func (b Bool) Type() string {
 	return "bool"
 }
 
 // Int represents FBDL integer type.
-// Internal value representation is int64.
-type Int struct {
-	V int64
-}
+type Int int64
 
 func (i Int) Type() string {
 	return "integer"
@@ -28,7 +22,7 @@ func (i Int) Type() string {
 // List represents FBDL list type.
 // Internal value representation is a list of type implementing Value interface.
 type List struct {
-	V []Value
+	Items []Value
 }
 
 func (l List) Type() string {
@@ -36,10 +30,7 @@ func (l List) Type() string {
 }
 
 // Str represents FBDL string type.
-// Internal value representation is string.
-type Str struct {
-	V string
-}
+type Str string
 
 func (s Str) Type() string {
 	return "string"

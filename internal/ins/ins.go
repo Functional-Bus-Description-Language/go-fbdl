@@ -31,7 +31,7 @@ func setBusWidth(main prs.Symbol) error {
 	}
 
 	if v, ok := v.(val.Int); ok {
-		busWidth = uint(v.V)
+		busWidth = uint(v)
 	} else {
 		log.Fatalf(
 			"%s: line %d: 'main' bus 'width' property must be of type 'integer'",

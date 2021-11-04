@@ -66,25 +66,25 @@ type BinaryOperation struct {
 func (bo BinaryOperation) Eval() (val.Value, error) {
 	left, err := bo.left.Eval()
 	if err != nil {
-		return val.Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
+		return val.Int(0), fmt.Errorf("binary operation: left operand: %v", err)
 	}
 	right, err := bo.right.Eval()
 	if err != nil {
-		return val.Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
+		return val.Int(0), fmt.Errorf("binary operation: right operand: %v", err)
 	}
 
 	if left, ok := left.(val.Int); ok {
 		if right, ok := right.(val.Int); ok {
 			switch bo.operator {
 			case Add:
-				return val.Int{V: left.V + right.V}, nil
+				return val.Int(left + right), nil
 			default:
 				panic("operator not yet supported")
 			}
 		}
 	}
 
-	return val.Bool{}, fmt.Errorf("unknown operand type")
+	return val.Int(0), fmt.Errorf("unknown operand type")
 }
 
 func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
@@ -114,7 +114,7 @@ type DecimalLiteral struct {
 }
 
 func (dl DecimalLiteral) Eval() (val.Value, error) {
-	return val.Int{V: dl.v}, nil
+	return val.Int(dl.v), nil
 }
 
 func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
@@ -136,13 +136,13 @@ func (el ExpressionList) Eval() (val.Value, error) {
 	for i, expr := range el.exprs {
 		v, err := expr.Eval()
 		if err != nil {
-			return val.Bool{}, fmt.Errorf("expression list evaluation, index %d: %v", i, err)
+			return val.Int(0), fmt.Errorf("expression list evaluation, index %d: %v", i, err)
 		}
 
 		vals = append(vals, v)
 	}
 
-	return val.List{V: vals}, nil
+	return val.List{Items: vals}, nil
 }
 
 func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
@@ -172,7 +172,7 @@ func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
 type False struct{}
 
 func (f False) Eval() (val.Value, error) {
-	return val.Bool{V: false}, nil
+	return val.Bool(false), nil
 }
 
 func MakeFalse() False {
@@ -187,13 +187,13 @@ type Identifier struct {
 func (i Identifier) Eval() (val.Value, error) {
 	id, err := i.s.GetSymbol(i.v)
 	if err != nil {
-		return val.Bool{}, fmt.Errorf("evaluating identifier '%s': %v", i.v, err)
+		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", i.v, err)
 	}
 
 	if c, ok := id.(*Constant); ok {
 		v, err := c.Value.Eval()
 		if err != nil {
-			return val.Bool{}, fmt.Errorf("evaluating constant identifier '%s': %v", i.v, err)
+			return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", i.v, err)
 		}
 		return v, nil
 	} else {
@@ -212,7 +212,7 @@ type PrimaryExpression struct {
 func (pe PrimaryExpression) Eval() (val.Value, error) {
 	v, err := pe.v.Eval()
 	if err != nil {
-		return val.Bool{}, fmt.Errorf("primary expression: %v", err)
+		return val.Int(0), fmt.Errorf("primary expression: %v", err)
 	}
 
 	return v, nil
@@ -232,7 +232,7 @@ type StringLiteral struct {
 }
 
 func (sl StringLiteral) Eval() (val.Value, error) {
-	return val.Str{V: sl.v}, nil
+	return val.Str(sl.v), nil
 }
 
 func MakeStringLiteral(n ts.Node) StringLiteral {
@@ -248,35 +248,35 @@ type Subscript struct {
 func (s Subscript) Eval() (val.Value, error) {
 	idx, err := s.idx.Eval()
 	if err != nil {
-		return val.Bool{}, fmt.Errorf("subscript index evaluation:%v", err)
+		return val.Int(0), fmt.Errorf("subscript index evaluation:%v", err)
 	}
 
 	i, ok := idx.(val.Int)
 	if !ok {
-		return val.Bool{}, fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
+		return val.Int(0), fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
 	}
 
 	sym, err := s.s.GetSymbol(s.name)
 	if err != nil {
-		return val.Bool{}, fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
+		return val.Int(0), fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
 	}
 
 	cons, ok := sym.(*Constant)
 	if !ok {
-		return val.Bool{}, fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
+		return val.Int(0), fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
 	}
 
 	exprList, ok := cons.Value.(ExpressionList)
 	if !ok {
-		return val.Bool{},
+		return val.Int(0),
 			fmt.Errorf("subscript evaluation, constant '%s' is not expression list, type '%T'", s.name, cons.Value)
 	}
 
-	if int(i.V) >= len(exprList.exprs) {
-		return val.Bool{}, fmt.Errorf("list '%s', index %d out of range", s.name, i.V)
+	if int(i) >= len(exprList.exprs) {
+		return val.Int(0), fmt.Errorf("list '%s', index %d out of range", s.name, i)
 	}
 
-	return exprList.exprs[i.V].Eval()
+	return exprList.exprs[i].Eval()
 }
 
 func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
@@ -293,7 +293,7 @@ func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
 type True struct{}
 
 func (t True) Eval() (val.Value, error) {
-	return val.Bool{V: true}, nil
+	return val.Bool(true), nil
 }
 
 func MakeTrue() True {
@@ -315,21 +315,21 @@ type UnaryOperation struct {
 func (uo UnaryOperation) Eval() (val.Value, error) {
 	operand, err := uo.operand.Eval()
 	if err != nil {
-		return val.Bool{}, fmt.Errorf("unary operation: operand: %v", err)
+		return val.Int(0), fmt.Errorf("unary operation: operand: %v", err)
 	}
 
 	if operand, ok := operand.(val.Int); ok {
 		switch uo.operator {
 		case UnaryPlus:
-			return val.Int{V: operand.V}, nil
+			return val.Int(operand), nil
 		case UnaryMinus:
-			return val.Int{V: -operand.V}, nil
+			return val.Int(-operand), nil
 		default:
 			panic("operator not yet supported")
 		}
 	}
 
-	return val.Bool{}, fmt.Errorf("unknown operand type")
+	return val.Int(0), fmt.Errorf("unknown operand type")
 }
 
 func MakeUnaryOperation(n ts.Node, s Searchable) (UnaryOperation, error) {
@@ -356,7 +356,7 @@ type ZeroLiteral struct {
 }
 
 func (zl ZeroLiteral) Eval() (val.Value, error) {
-	return val.Int{V: zl.v}, nil
+	return val.Int(zl.v), nil
 }
 
 func MakeZeroLiteral() ZeroLiteral {
