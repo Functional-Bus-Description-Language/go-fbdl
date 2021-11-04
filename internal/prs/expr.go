@@ -3,12 +3,12 @@ package prs
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"strconv"
 )
 
 type Expression interface {
-	Eval() (fbdl.Value, error)
+	Eval() (val.Value, error)
 }
 
 func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
@@ -63,28 +63,28 @@ type BinaryOperation struct {
 	operator    BinaryOperator
 }
 
-func (bo BinaryOperation) Eval() (fbdl.Value, error) {
+func (bo BinaryOperation) Eval() (val.Value, error) {
 	left, err := bo.left.Eval()
 	if err != nil {
-		return fbdl.Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
+		return val.Bool{}, fmt.Errorf("binary operation: left operand: %v", err)
 	}
 	right, err := bo.right.Eval()
 	if err != nil {
-		return fbdl.Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
+		return val.Bool{}, fmt.Errorf("binary operation: right operand: %v", err)
 	}
 
-	if left, ok := left.(fbdl.Int); ok {
-		if right, ok := right.(fbdl.Int); ok {
+	if left, ok := left.(val.Int); ok {
+		if right, ok := right.(val.Int); ok {
 			switch bo.operator {
 			case Add:
-				return fbdl.Int{V: left.V + right.V}, nil
+				return val.Int{V: left.V + right.V}, nil
 			default:
 				panic("operator not yet supported")
 			}
 		}
 	}
 
-	return fbdl.Bool{}, fmt.Errorf("unknown operand type")
+	return val.Bool{}, fmt.Errorf("unknown operand type")
 }
 
 func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
@@ -113,8 +113,8 @@ type DecimalLiteral struct {
 	v int64
 }
 
-func (dl DecimalLiteral) Eval() (fbdl.Value, error) {
-	return fbdl.Int{V: dl.v}, nil
+func (dl DecimalLiteral) Eval() (val.Value, error) {
+	return val.Int{V: dl.v}, nil
 }
 
 func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
@@ -130,19 +130,19 @@ type ExpressionList struct {
 	exprs []Expression
 }
 
-func (el ExpressionList) Eval() (fbdl.Value, error) {
-	vals := []fbdl.Value{}
+func (el ExpressionList) Eval() (val.Value, error) {
+	vals := []val.Value{}
 
 	for i, expr := range el.exprs {
 		v, err := expr.Eval()
 		if err != nil {
-			return fbdl.Bool{}, fmt.Errorf("expression list evaluation, index %d: %v", i, err)
+			return val.Bool{}, fmt.Errorf("expression list evaluation, index %d: %v", i, err)
 		}
 
 		vals = append(vals, v)
 	}
 
-	return fbdl.List{V: vals}, nil
+	return val.List{V: vals}, nil
 }
 
 func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
@@ -171,8 +171,8 @@ func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
 
 type False struct{}
 
-func (f False) Eval() (fbdl.Value, error) {
-	return fbdl.Bool{V: false}, nil
+func (f False) Eval() (val.Value, error) {
+	return val.Bool{V: false}, nil
 }
 
 func MakeFalse() False {
@@ -184,16 +184,16 @@ type Identifier struct {
 	s Searchable
 }
 
-func (i Identifier) Eval() (fbdl.Value, error) {
+func (i Identifier) Eval() (val.Value, error) {
 	id, err := i.s.GetSymbol(i.v)
 	if err != nil {
-		return fbdl.Bool{}, fmt.Errorf("evaluating identifier '%s': %v", i.v, err)
+		return val.Bool{}, fmt.Errorf("evaluating identifier '%s': %v", i.v, err)
 	}
 
 	if c, ok := id.(*Constant); ok {
 		v, err := c.Value.Eval()
 		if err != nil {
-			return fbdl.Bool{}, fmt.Errorf("evaluating constant identifier '%s': %v", i.v, err)
+			return val.Bool{}, fmt.Errorf("evaluating constant identifier '%s': %v", i.v, err)
 		}
 		return v, nil
 	} else {
@@ -209,10 +209,10 @@ type PrimaryExpression struct {
 	v Expression
 }
 
-func (pe PrimaryExpression) Eval() (fbdl.Value, error) {
+func (pe PrimaryExpression) Eval() (val.Value, error) {
 	v, err := pe.v.Eval()
 	if err != nil {
-		return fbdl.Bool{}, fmt.Errorf("primary expression: %v", err)
+		return val.Bool{}, fmt.Errorf("primary expression: %v", err)
 	}
 
 	return v, nil
@@ -231,8 +231,8 @@ type StringLiteral struct {
 	v string
 }
 
-func (sl StringLiteral) Eval() (fbdl.Value, error) {
-	return fbdl.Str{V: sl.v}, nil
+func (sl StringLiteral) Eval() (val.Value, error) {
+	return val.Str{V: sl.v}, nil
 }
 
 func MakeStringLiteral(n ts.Node) StringLiteral {
@@ -245,35 +245,35 @@ type Subscript struct {
 	s    Searchable
 }
 
-func (s Subscript) Eval() (fbdl.Value, error) {
+func (s Subscript) Eval() (val.Value, error) {
 	idx, err := s.idx.Eval()
 	if err != nil {
-		return fbdl.Bool{}, fmt.Errorf("subscript index evaluation:%v", err)
+		return val.Bool{}, fmt.Errorf("subscript index evaluation:%v", err)
 	}
 
-	i, ok := idx.(fbdl.Int)
+	i, ok := idx.(val.Int)
 	if !ok {
-		return fbdl.Bool{}, fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
+		return val.Bool{}, fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
 	}
 
 	sym, err := s.s.GetSymbol(s.name)
 	if err != nil {
-		return fbdl.Bool{}, fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
+		return val.Bool{}, fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
 	}
 
 	cons, ok := sym.(*Constant)
 	if !ok {
-		return fbdl.Bool{}, fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
+		return val.Bool{}, fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
 	}
 
 	exprList, ok := cons.Value.(ExpressionList)
 	if !ok {
-		return fbdl.Bool{},
+		return val.Bool{},
 			fmt.Errorf("subscript evaluation, constant '%s' is not expression list, type '%T'", s.name, cons.Value)
 	}
 
 	if int(i.V) >= len(exprList.exprs) {
-		return fbdl.Bool{}, fmt.Errorf("list '%s', index %d out of range", s.name, i.V)
+		return val.Bool{}, fmt.Errorf("list '%s', index %d out of range", s.name, i.V)
 	}
 
 	return exprList.exprs[i.V].Eval()
@@ -292,8 +292,8 @@ func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
 
 type True struct{}
 
-func (t True) Eval() (fbdl.Value, error) {
-	return fbdl.Bool{V: true}, nil
+func (t True) Eval() (val.Value, error) {
+	return val.Bool{V: true}, nil
 }
 
 func MakeTrue() True {
@@ -312,24 +312,24 @@ type UnaryOperation struct {
 	operand  Expression
 }
 
-func (uo UnaryOperation) Eval() (fbdl.Value, error) {
+func (uo UnaryOperation) Eval() (val.Value, error) {
 	operand, err := uo.operand.Eval()
 	if err != nil {
-		return fbdl.Bool{}, fmt.Errorf("unary operation: operand: %v", err)
+		return val.Bool{}, fmt.Errorf("unary operation: operand: %v", err)
 	}
 
-	if operand, ok := operand.(fbdl.Int); ok {
+	if operand, ok := operand.(val.Int); ok {
 		switch uo.operator {
 		case UnaryPlus:
-			return fbdl.Int{V: operand.V}, nil
+			return val.Int{V: operand.V}, nil
 		case UnaryMinus:
-			return fbdl.Int{V: -operand.V}, nil
+			return val.Int{V: -operand.V}, nil
 		default:
 			panic("operator not yet supported")
 		}
 	}
 
-	return fbdl.Bool{}, fmt.Errorf("unknown operand type")
+	return val.Bool{}, fmt.Errorf("unknown operand type")
 }
 
 func MakeUnaryOperation(n ts.Node, s Searchable) (UnaryOperation, error) {
@@ -355,8 +355,8 @@ type ZeroLiteral struct {
 	v int64
 }
 
-func (zl ZeroLiteral) Eval() (fbdl.Value, error) {
-	return fbdl.Int{V: zl.v}, nil
+func (zl ZeroLiteral) Eval() (val.Value, error) {
+	return val.Int{V: zl.v}, nil
 }
 
 func MakeZeroLiteral() ZeroLiteral {

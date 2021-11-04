@@ -1,4 +1,5 @@
-package fbdl
+// Package val provides types for Functional Bus Description Language type system.
+package val
 
 type Value interface {
 	Type() string

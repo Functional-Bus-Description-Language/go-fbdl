@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/val"
 	"log"
 )
 
@@ -30,7 +30,7 @@ func setBusWidth(main prs.Symbol) error {
 		return fmt.Errorf("cannot evaluate main bus width")
 	}
 
-	if v, ok := v.(fbdl.Int); ok {
+	if v, ok := v.(val.Int); ok {
 		busWidth = uint(v.V)
 	} else {
 		log.Fatalf(
@@ -118,8 +118,8 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 
 func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	inst := &Element{
-		Properties: map[string]fbdl.Value{},
-		Constants:  map[string]fbdl.Value{},
+		Properties: map[string]val.Value{},
+		Constants:  map[string]val.Value{},
 		Elements:   map[string]*Element{},
 	}
 
