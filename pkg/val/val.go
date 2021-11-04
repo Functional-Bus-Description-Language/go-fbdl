@@ -20,10 +20,7 @@ func (i Int) Type() string {
 }
 
 // List represents FBDL list type.
-// Internal value representation is a list of type implementing Value interface.
-type List struct {
-	Items []Value
-}
+type List []Value
 
 func (l List) Type() string {
 	return "list"

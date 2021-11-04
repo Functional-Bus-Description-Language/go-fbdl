@@ -37,19 +37,19 @@ func checkProperty(name string, prop prs.Property) error {
 		if !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "list", pv.Type())
 		}
-		if len(v.Items) != 2 {
-			return fmt.Errorf("length of 'range' property value list must equal 2, current length %d", len(v.Items))
+		if len(v) != 2 {
+			return fmt.Errorf("length of 'range' property value list must equal 2, current length %d", len(v))
 		}
-		v0, ok := v.Items[0].(val.Int)
+		v0, ok := v[0].(val.Int)
 		if !ok {
 			return fmt.Errorf(
-				"first value in 'range' property value list must be of type 'integer', current type '%s'", v.Items[0].Type(),
+				"first value in 'range' property value list must be of type 'integer', current type '%s'", v[0].Type(),
 			)
 		}
-		v1, ok := v.Items[1].(val.Int)
+		v1, ok := v[1].(val.Int)
 		if !ok {
 			return fmt.Errorf(
-				"second value in 'range' property value list must be of type 'integer', current type '%s'", v.Items[1].Type(),
+				"second value in 'range' property value list must be of type 'integer', current type '%s'", v[1].Type(),
 			)
 		}
 		if v0 >= v1 {

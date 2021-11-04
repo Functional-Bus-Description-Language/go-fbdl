@@ -142,7 +142,7 @@ func (el ExpressionList) Eval() (val.Value, error) {
 		vals = append(vals, v)
 	}
 
-	return val.List{Items: vals}, nil
+	return val.List(vals), nil
 }
 
 func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
