@@ -1,4 +1,4 @@
-package reg
+package fbdl
 
 type Block struct {
 	Name      string

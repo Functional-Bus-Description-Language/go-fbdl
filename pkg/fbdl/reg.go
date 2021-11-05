@@ -1,6 +1,6 @@
 // Package reg implements code responsible for registerificaiton.
 // This includes packing functionalities into registers and assigning addresses.
-package reg
+package fbdl
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"

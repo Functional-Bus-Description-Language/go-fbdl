@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/args"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
 
 	"github.com/davecgh/go-spew/spew"
 
@@ -47,7 +47,7 @@ func main() {
 		spew.Fdump(f, insBus)
 	}
 
-	regBus := reg.Registerify(insBus)
+	regBus := fbdl.Registerify(insBus)
 
 	if path, ok := cmdLineArgs["-r"]; ok {
 		f, err := os.Create(path)

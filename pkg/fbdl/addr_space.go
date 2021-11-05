@@ -1,4 +1,4 @@
-package reg
+package fbdl
 
 type AddrSpace interface {
 	Start() uint
