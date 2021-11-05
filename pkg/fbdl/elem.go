@@ -3,6 +3,7 @@ package fbdl
 // Block represents block element as well as bus element.
 type Block struct {
 	Name      string
+	IsArray   bool
 	Count     int64
 	Sizes     Sizes
 	AddrSpace AddrSpace
@@ -32,13 +33,10 @@ func (b *Block) hasElement(name string) bool {
 	return false
 }
 
-func (b *Block) IsArray() bool {
-	return b.AddrSpace.IsArray()
-}
-
 // Status represents status element.
 type Status struct {
 	Name   string
+	IsArray   bool
 	Count  int64
 	Access Access
 
@@ -49,8 +47,4 @@ type Status struct {
 	Groups  []string
 	Once    bool
 	Width   int64
-}
-
-func (s *Status) IsArray() bool {
-	return s.Access.IsArray()
 }

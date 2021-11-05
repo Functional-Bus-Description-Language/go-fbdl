@@ -20,6 +20,7 @@ func Registerify(insBus *ins.Element) *Block {
 
 	regBus := Block{
 		Name:  "main",
+		IsArray: insBus.IsArray,
 		Count: int64(insBus.Count),
 	}
 
@@ -114,6 +115,7 @@ func registerifyBlock(insBlock *ins.Element) Sizes {
 
 	b := Block{
 		Name:  insBlock.Name,
+		IsArray: insBlock.IsArray,
 		Count: int64(insBlock.Count),
 	}
 
