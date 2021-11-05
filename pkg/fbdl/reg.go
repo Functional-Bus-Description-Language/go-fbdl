@@ -1,5 +1,3 @@
-// Package reg implements code responsible for registerificaiton.
-// This includes packing functionalities into registers and assigning addresses.
 package fbdl
 
 import (
@@ -99,9 +97,9 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr uint) uint {
 		width := uint(st.Properties["width"].(val.Int))
 
 		if st.IsArray {
-			e.Access = MakeAccessArray(st.Count, addr, width)
+			e.Access = makeAccessArray(st.Count, addr, width)
 		} else {
-			e.Access = MakeAccessSingle(addr, width)
+			e.Access = makeAccessSingle(addr, width)
 		}
 		addr += e.Access.Count()
 

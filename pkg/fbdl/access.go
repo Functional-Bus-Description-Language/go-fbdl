@@ -25,7 +25,7 @@ func (as *AccessSingle) Count() uint { return as.count }
 
 func (as *AccessSingle) IsArray() bool { return false }
 
-func MakeAccessSingle(baseAddr uint, width uint) *AccessSingle {
+func makeAccessSingle(baseAddr uint, width uint) *AccessSingle {
 	as := AccessSingle{
 		Address: baseAddr,
 		count:   uint(math.Ceil(float64(width) / float64(busWidth))),
@@ -61,7 +61,7 @@ func (aa *AccessArray) Count() uint { return aa.count }
 
 func (aa *AccessArray) IsArray() bool { return true }
 
-func MakeAccessArray(count uint, baseAddr uint, width uint) *AccessArray {
+func makeAccessArray(count uint, baseAddr uint, width uint) *AccessArray {
 	aa := AccessArray{
 		Address:         baseAddr,
 		AccessesPerItem: uint(math.Ceil(float64(width) / float64(busWidth))),
