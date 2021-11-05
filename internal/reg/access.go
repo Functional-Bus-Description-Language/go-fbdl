@@ -10,6 +10,7 @@ type Mask struct {
 
 type Access interface {
 	Count() uint
+	IsArray() bool
 }
 
 type AccessSingle struct {
@@ -20,7 +21,9 @@ type AccessSingle struct {
 	Mask    Mask
 }
 
-func (as AccessSingle) Count() uint { return as.count }
+func (as *AccessSingle) Count() uint { return as.count }
+
+func (as *AccessSingle) IsArray() bool { return false }
 
 func MakeAccessSingle(baseAddr uint, width uint) *AccessSingle {
 	as := AccessSingle{
@@ -54,7 +57,9 @@ type AccessArray struct {
 	Mask Mask
 }
 
-func (aa AccessArray) Count() uint { return aa.count }
+func (aa *AccessArray) Count() uint { return aa.count }
+
+func (aa *AccessArray) IsArray() bool { return true }
 
 func MakeAccessArray(count uint, baseAddr uint, width uint) *AccessArray {
 	aa := AccessArray{

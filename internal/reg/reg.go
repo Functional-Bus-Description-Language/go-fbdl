@@ -21,9 +21,8 @@ func Registerify(insBus *ins.Element) *Block {
 	busWidth = uint(insBus.Properties["width"].(val.Int))
 
 	regBus := Block{
-		Name: "main",
-		IsArray: insBus.IsArray,
-		Count:  int64(insBus.Count),
+		Name:  "main",
+		Count: int64(insBus.Count),
 	}
 
 	// addr is current block internal access address, not global address.
@@ -47,17 +46,15 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
-	/*
-		if regBus.hasElement("x_uuid_x") {
-			panic("x_uuid_x is reserved element name")
-		}
-		regBus.FunctionalElements["x_uuid_x"] = x_timestamp_x()
+	if regBus.hasElement("x_uuid_x") {
+		panic("x_uuid_x is reserved element name")
+	}
+	regBus.addStatus(x_uuid_x())
 
-		if regBus.hasElement("x_timestamp_x") {
-			panic("x_timestamp_x is reserved element name")
-		}
-		regBus.FunctionalElements["x_timestamp_x"] = x_timestamp_x()
-	*/
+	if regBus.hasElement("x_timestamp_x") {
+		panic("x_timestamp_x is reserved element name")
+	}
+	regBus.addStatus(x_timestamp_x())
 
 	regBus.Sizes.BlockAligned = util.AlignToPowerOf2(
 		regBus.Sizes.BlockAligned + regBus.Sizes.Own,
@@ -118,9 +115,8 @@ func registerifyBlock(insBlock *ins.Element) Sizes {
 	addr := uint(0)
 
 	b := Block{
-		Name: insBlock.Name,
-		IsArray: insBlock.IsArray,
-		Count:  int64(insBlock.Count),
+		Name:  insBlock.Name,
+		Count: int64(insBlock.Count),
 	}
 
 	addr = registerifyFunctionalities(&b, insBlock, addr)
