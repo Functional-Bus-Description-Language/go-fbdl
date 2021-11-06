@@ -9,7 +9,9 @@ type Block struct {
 	AddrSpace AddrSpace
 
 	// Properties
-	Doc string
+	Doc     string
+	Masters int64
+	Width   int64
 
 	// Elements
 	Blocks []Block
@@ -35,10 +37,10 @@ func (b *Block) hasElement(name string) bool {
 
 // Status represents status element.
 type Status struct {
-	Name   string
-	IsArray   bool
-	Count  int64
-	Access Access
+	Name    string
+	IsArray bool
+	Count   int64
+	Access  Access
 
 	// Properties
 	Atomic  bool

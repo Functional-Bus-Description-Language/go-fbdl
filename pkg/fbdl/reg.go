@@ -19,9 +19,11 @@ func Registerify(insBus *ins.Element) *Block {
 	busWidth = uint(insBus.Properties["width"].(val.Int))
 
 	regBus := Block{
-		Name:  "main",
+		Name:    "main",
 		IsArray: insBus.IsArray,
-		Count: int64(insBus.Count),
+		Count:   int64(insBus.Count),
+		Masters: int64(insBus.Properties["masters"].(val.Int)),
+		Width:   int64(insBus.Properties["width"].(val.Int)),
 	}
 
 	// addr is current block internal access address, not global address.
@@ -114,9 +116,9 @@ func registerifyBlock(insBlock *ins.Element) Sizes {
 	addr := uint(0)
 
 	b := Block{
-		Name:  insBlock.Name,
+		Name:    insBlock.Name,
 		IsArray: insBlock.IsArray,
-		Count: int64(insBlock.Count),
+		Count:   int64(insBlock.Count),
 	}
 
 	addr = registerifyFunctionalities(&b, insBlock, addr)
