@@ -14,7 +14,7 @@ type Block struct {
 	Width   int64
 
 	// Elements
-	Blocks []Block
+	Subblocks []Block
 	//Configs  []Config
 	//Funcs    []Func
 	//Masks    []Mask

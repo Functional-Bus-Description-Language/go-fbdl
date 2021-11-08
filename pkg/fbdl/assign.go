@@ -26,16 +26,16 @@ func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr uint) {
 		}
 	}
 
-	if len(block.Blocks) == 0 {
+	if len(block.Subblocks) == 0 {
 		return
 	}
 
 	sortFunc := func(i, j int) bool {
-		sizei := block.Blocks[i].Sizes.BlockAligned
-		sizej := block.Blocks[j].Sizes.BlockAligned
+		sizei := block.Subblocks[i].Sizes.BlockAligned
+		sizej := block.Subblocks[j].Sizes.BlockAligned
 
-		namei := block.Blocks[i].Name
-		namej := block.Blocks[j].Name
+		namei := block.Subblocks[i].Name
+		namej := block.Subblocks[j].Name
 
 		if sizei < sizej {
 			return true
@@ -49,11 +49,11 @@ func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr uint) {
 			}
 		}
 	}
-	sort.Slice(block.Blocks, sortFunc)
+	sort.Slice(block.Subblocks, sortFunc)
 
 	subblockBaseAddr := block.AddrSpace.End() + 1
-	for i, _ := range block.Blocks {
-		sb := &block.Blocks[i]
+	for i, _ := range block.Subblocks {
+		sb := &block.Subblocks[i]
 		subblockBaseAddr -= uint(sb.Count) * sb.Sizes.BlockAligned
 		assignGlobalAccessAddressesBlockAlign(sb, subblockBaseAddr)
 	}
