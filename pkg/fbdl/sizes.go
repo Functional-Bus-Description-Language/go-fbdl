@@ -1,5 +1,5 @@
 package fbdl
 
 type Sizes struct {
-	BlockAligned, Compact, Own uint
+	BlockAligned, Compact, Own int64
 }

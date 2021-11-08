@@ -78,6 +78,6 @@ func IsValidType(ot string, it string) bool {
 	return false
 }
 
-func AlignToPowerOf2(n uint) uint {
-	return uint(math.Pow(2, math.Ceil(math.Log2(float64(n)))))
+func AlignToPowerOf2(n int64) int64 {
+	return int64(math.Pow(2, math.Ceil(math.Log2(float64(n)))))
 }

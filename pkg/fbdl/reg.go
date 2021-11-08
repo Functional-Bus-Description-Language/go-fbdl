@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-var busWidth uint
+var busWidth int64
 
 func Registerify(insBus *ins.Element) *Block {
 	if insBus == nil {
@@ -16,7 +16,7 @@ func Registerify(insBus *ins.Element) *Block {
 		return nil
 	}
 
-	busWidth = uint(insBus.Properties["width"].(val.Int))
+	busWidth = int64(insBus.Properties["width"].(val.Int))
 
 	regBus := Block{
 		Name:    "main",
@@ -28,7 +28,7 @@ func Registerify(insBus *ins.Element) *Block {
 
 	// addr is current block internal access address, not global address.
 	// 0 and 1 are reserved for x_uuid_x and x_timestamp_x.
-	addr := uint(2)
+	addr := int64(2)
 
 	addr = registerifyFunctionalities(&regBus, insBus, addr)
 
@@ -38,7 +38,7 @@ func Registerify(insBus *ins.Element) *Block {
 	for _, e := range insBus.Elements {
 		if e.BaseType == "block" {
 			sizes := registerifyBlock(e)
-			count := uint(1)
+			count := int64(1)
 			if e.IsArray {
 				count = e.Count
 			}
@@ -67,7 +67,7 @@ func Registerify(insBus *ins.Element) *Block {
 	return &regBus
 }
 
-func registerifyFunctionalities(block *Block, insElem *ins.Element, addr uint) uint {
+func registerifyFunctionalities(block *Block, insElem *ins.Element, addr int64) int64 {
 	if len(insElem.Elements) == 0 {
 		return addr
 	}
@@ -78,7 +78,7 @@ func registerifyFunctionalities(block *Block, insElem *ins.Element, addr uint) u
 }
 
 // Current approach is trivial. Even groups are not respected.
-func registerifyStatuses(block *Block, insElem *ins.Element, addr uint) uint {
+func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 	// Collect names instead of elements because the results must be reproducable.
 	// Keys from a dictionary are returned in random order, so collect names and sort them.
 	names := []string{}
@@ -97,7 +97,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr uint) uint {
 			Width:  int64(st.Properties["width"].(val.Int)),
 		}
 
-		width := uint(st.Properties["width"].(val.Int))
+		width := int64(st.Properties["width"].(val.Int))
 
 		if st.IsArray {
 			e.Access = makeAccessArray(st.Count, addr, width)
@@ -113,7 +113,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr uint) uint {
 }
 
 func registerifyBlock(insBlock *ins.Element) Sizes {
-	addr := uint(0)
+	addr := int64(0)
 
 	b := Block{
 		Name:    insBlock.Name,
@@ -127,7 +127,7 @@ func registerifyBlock(insBlock *ins.Element) Sizes {
 	for _, e := range insBlock.Elements {
 		if e.BaseType == "block" {
 			s := registerifyBlock(e)
-			count := uint(1)
+			count := int64(1)
 			if e.IsArray {
 				count = e.Count
 			}

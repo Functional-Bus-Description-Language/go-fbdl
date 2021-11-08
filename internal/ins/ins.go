@@ -9,9 +9,9 @@ import (
 	"log"
 )
 
-const defaultBusWidth uint = 32
+const defaultBusWidth int64 = 32
 
-var busWidth uint
+var busWidth int64
 
 func setBusWidth(main prs.Symbol) error {
 	e, ok := main.(*prs.ElementDefinition)
@@ -31,7 +31,7 @@ func setBusWidth(main prs.Symbol) error {
 	}
 
 	if v, ok := v.(val.Int); ok {
-		busWidth = uint(v)
+		busWidth = int64(v)
 	} else {
 		log.Fatalf(
 			"%s: line %d: 'main' bus 'width' property must be of type 'integer'",

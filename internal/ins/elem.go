@@ -11,7 +11,7 @@ type Element struct {
 	Name       string
 	BaseType   string
 	IsArray    bool
-	Count      uint
+	Count      int64
 	Properties map[string]val.Value
 	Constants  map[string]val.Value
 	Elements   map[string]*Element
@@ -99,7 +99,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 			if err != nil {
 				return fmt.Errorf("applying type '%s': %v", type_.Name(), err)
 			}
-			elem.Count = uint(count.(val.Int))
+			elem.Count = int64(count.(val.Int))
 		}
 	}
 

@@ -5,18 +5,18 @@ import (
 	"strings"
 )
 
-func assignGlobalAccessAddresses(bus *Block, baseAddr uint) {
+func assignGlobalAccessAddresses(bus *Block, baseAddr int64) {
 	// Currently there is only Block Align strategy.
 	// In the future there may also be Compact and Full Align.
 
 	assignGlobalAccessAddressesBlockAlign(bus, baseAddr)
 }
 
-func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr uint) {
+func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr int64) {
 	if block.IsArray {
 		block.AddrSpace = AddrSpaceArray{
 			start:     baseAddr,
-			count:     uint(block.Count),
+			count:     int64(block.Count),
 			BlockSize: block.Sizes.BlockAligned,
 		}
 	} else {
@@ -54,7 +54,7 @@ func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr uint) {
 	subblockBaseAddr := block.AddrSpace.End() + 1
 	for i, _ := range block.Subblocks {
 		sb := &block.Subblocks[i]
-		subblockBaseAddr -= uint(sb.Count) * sb.Sizes.BlockAligned
+		subblockBaseAddr -= sb.Count * sb.Sizes.BlockAligned
 		assignGlobalAccessAddressesBlockAlign(sb, subblockBaseAddr)
 	}
 }

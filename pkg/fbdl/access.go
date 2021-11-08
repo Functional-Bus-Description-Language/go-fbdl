@@ -5,30 +5,30 @@ import (
 )
 
 type Mask struct {
-	Upper, Lower uint
+	Upper, Lower int64
 }
 
 type Access interface {
-	Count() uint
+	Count() int64
 	IsArray() bool
 }
 
 type AccessSingle struct {
 	Strategy string
 
-	Address uint
-	count   uint // count is the number of occupied registers.
+	Address int64
+	count   int64 // count is the number of occupied registers.
 	Mask    Mask
 }
 
-func (as *AccessSingle) Count() uint { return as.count }
+func (as *AccessSingle) Count() int64 { return as.count }
 
 func (as *AccessSingle) IsArray() bool { return false }
 
-func makeAccessSingle(baseAddr uint, width uint) *AccessSingle {
+func makeAccessSingle(baseAddr int64, width int64) *AccessSingle {
 	as := AccessSingle{
 		Address: baseAddr,
-		count:   uint(math.Ceil(float64(width) / float64(busWidth))),
+		count:   int64(math.Ceil(float64(width) / float64(busWidth))),
 	}
 
 	if width > busWidth {
@@ -45,26 +45,26 @@ func makeAccessSingle(baseAddr uint, width uint) *AccessSingle {
 type AccessArray struct {
 	Strategy string
 
-	Address uint
-	count   uint // count is the number of occupied registers.
+	Address int64
+	count   int64 // count is the number of occupied registers.
 
-	AccessesPerItem uint
-	ItemsPerAccess  uint
+	AccessesPerItem int64
+	ItemsPerAccess  int64
 
-	BunchSize        uint
-	AccessesPerBunch uint
+	BunchSize        int64
+	AccessesPerBunch int64
 
 	Mask Mask
 }
 
-func (aa *AccessArray) Count() uint { return aa.count }
+func (aa *AccessArray) Count() int64 { return aa.count }
 
 func (aa *AccessArray) IsArray() bool { return true }
 
-func makeAccessArray(count uint, baseAddr uint, width uint) *AccessArray {
+func makeAccessArray(count int64, baseAddr int64, width int64) *AccessArray {
 	aa := AccessArray{
 		Address:         baseAddr,
-		AccessesPerItem: uint(math.Ceil(float64(width) / float64(busWidth))),
+		AccessesPerItem: int64(math.Ceil(float64(width) / float64(busWidth))),
 		ItemsPerAccess:  busWidth / width,
 	}
 
@@ -74,7 +74,7 @@ func makeAccessArray(count uint, baseAddr uint, width uint) *AccessArray {
 		aa.Mask = Mask{Upper: width - 1, Lower: 0}
 	} else if aa.AccessesPerItem == 1 && aa.ItemsPerAccess > 1 {
 		aa.Strategy = "Multiple"
-		aa.count = uint(math.Ceil(float64(count) / float64(aa.ItemsPerAccess)))
+		aa.count = int64(math.Ceil(float64(count) / float64(aa.ItemsPerAccess)))
 	} else {
 		aa.Strategy = "Bunch"
 		// TODO: Calculate it correctly.

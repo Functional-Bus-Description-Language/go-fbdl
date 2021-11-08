@@ -1,43 +1,43 @@
 package fbdl
 
 type AddrSpace interface {
-	Start() uint
-	End() uint
+	Start() int64
+	End() int64
 	IsArray() bool
-	Count() uint
+	Count() int64
 }
 
 type AddrSpaceSingle struct {
-	start, end uint
+	start, end int64
 }
 
-func (s AddrSpaceSingle) Start() uint { return s.start }
+func (s AddrSpaceSingle) Start() int64 { return s.start }
 
-func (s AddrSpaceSingle) End() uint { return s.end }
+func (s AddrSpaceSingle) End() int64 { return s.end }
 
 func (s AddrSpaceSingle) IsArray() bool { return false }
 
-func (s AddrSpaceSingle) Count() uint { return 1 }
+func (s AddrSpaceSingle) Count() int64 { return 1 }
 
 type AddrSpaceArray struct {
-	start     uint
-	count     uint
-	BlockSize uint
+	start     int64
+	count     int64
+	BlockSize int64
 }
 
-func (a AddrSpaceArray) GetAddress(i uint) (start uint, end uint) {
+func (a AddrSpaceArray) GetAddress(i int64) (start int64, end int64) {
 	start = a.start + i*a.BlockSize
 	end = start + a.BlockSize - 1
 
 	return
 }
 
-func (a AddrSpaceArray) Start() uint { return a.start }
+func (a AddrSpaceArray) Start() int64 { return a.start }
 
-func (a AddrSpaceArray) End() uint {
+func (a AddrSpaceArray) End() int64 {
 	return a.start + a.count*a.BlockSize - 1
 }
 
 func (a AddrSpaceArray) IsArray() bool { return true }
 
-func (a AddrSpaceArray) Count() uint { return a.count }
+func (a AddrSpaceArray) Count() int64 { return a.count }
