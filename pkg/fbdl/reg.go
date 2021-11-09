@@ -91,7 +91,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 
 	for _, name := range names {
 		st := insElem.Elements[name]
-		e := Status{
+		s := Status{
 			Name:   name,
 			Atomic: bool(st.Properties["atomic"].(val.Bool)),
 			Width:  int64(st.Properties["width"].(val.Int)),
@@ -100,13 +100,13 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		width := int64(st.Properties["width"].(val.Int))
 
 		if st.IsArray {
-			e.Access = makeAccessArray(st.Count, addr, width)
+			s.Access = makeAccessArray(st.Count, addr, width)
 		} else {
-			e.Access = makeAccessSingle(addr, width)
+			s.Access = makeAccessSingle(addr, width)
 		}
-		addr += e.Access.Count()
+		addr += s.Access.Count()
 
-		block.addStatus(e)
+		block.addStatus(&s)
 	}
 
 	return addr

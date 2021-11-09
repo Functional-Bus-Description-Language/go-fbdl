@@ -53,7 +53,7 @@ func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr int64) {
 
 	subblockBaseAddr := block.AddrSpace.End() + 1
 	for i, _ := range block.Subblocks {
-		sb := &block.Subblocks[i]
+		sb := block.Subblocks[i]
 		subblockBaseAddr -= sb.Count * sb.Sizes.BlockAligned
 		assignGlobalAccessAddressesBlockAlign(sb, subblockBaseAddr)
 	}

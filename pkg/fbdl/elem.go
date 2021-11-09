@@ -14,14 +14,14 @@ type Block struct {
 	Width   int64
 
 	// Elements
-	Subblocks []Block
+	Subblocks []*Block
 	//Configs  []Config
 	//Funcs    []Func
 	//Masks    []Mask
-	Statuses []Status
+	Statuses []*Status
 }
 
-func (b *Block) addStatus(s Status) {
+func (b *Block) addStatus(s *Status) {
 	b.Statuses = append(b.Statuses, s)
 }
 

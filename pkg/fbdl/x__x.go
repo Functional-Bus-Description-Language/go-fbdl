@@ -5,8 +5,8 @@ import (
 	_ "time"
 )
 
-func x_timestamp_x() Status {
-	return Status{
+func x_timestamp_x() *Status {
+	return &Status{
 		Name:    "x_timestamp_x",
 		Access:  makeAccessSingle(1, busWidth),
 		Width:   int64(busWidth),
@@ -16,8 +16,8 @@ func x_timestamp_x() Status {
 }
 
 // Value generation is not yet supported.
-func x_uuid_x() Status {
-	return Status{
+func x_uuid_x() *Status {
+	return &Status{
 		Name:    "x_uuid_x",
 		Access:  makeAccessSingle(0, busWidth),
 		Width:   int64(busWidth),
