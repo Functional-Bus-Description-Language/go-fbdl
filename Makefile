@@ -20,7 +20,8 @@ help:
 	@echo "  test-instantiating  Run instantiating tests."
 	@echo "  test-parsing        Run parsing tests."
 	@echo "Other targets:"
-	@echo "  help  Print help message."
+	@echo "  help                Print help message."
+	@echo "  update-tree-sitter  Update tree-sitter source files."
 
 fmt:
 	go fmt ./...
@@ -41,3 +42,6 @@ install:
 
 uninstall:
 	rm /usr/bin/$(PROJECT_NAME)
+
+update-tree-sitter:
+	@./scripts/update-tree-sitter.sh
