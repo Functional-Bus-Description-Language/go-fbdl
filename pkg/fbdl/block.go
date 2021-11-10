@@ -34,19 +34,3 @@ func (b *Block) hasElement(name string) bool {
 
 	return false
 }
-
-// Status represents status element.
-type Status struct {
-	Name    string
-	IsArray bool
-	Count   int64
-	Access  Access
-
-	// Properties
-	Atomic  bool
-	Default string
-	Doc     string
-	Groups  []string
-	Once    bool
-	Width   int64
-}
