@@ -78,10 +78,12 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 			switch bo.operator {
 			case Add:
 				return val.Int(left + right), nil
-			case Multiply:
-				return val.Int(left * right), nil
 			case Subtract:
 				return val.Int(left - right), nil
+			case Multiply:
+				return val.Int(left * right), nil
+			case Modulo:
+				return val.Int(left % right), nil
 			default:
 				panic("operator not yet supported")
 			}
@@ -110,6 +112,8 @@ func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
 		operator = Subtract
 	case "*":
 		operator = Multiply
+	case "%":
+		operator = Modulo
 	default:
 		return BinaryOperation{}, fmt.Errorf("make binary operation: invalid operator %s", op)
 	}
