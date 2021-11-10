@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"math"
 	"strconv"
 )
 
@@ -84,6 +85,8 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 				return val.Int(left * right), nil
 			case Modulo:
 				return val.Int(left % right), nil
+			case Power:
+				return val.Int(int64(math.Pow(float64(left), float64(right)))), nil
 			default:
 				panic("operator not yet supported")
 			}
@@ -114,6 +117,8 @@ func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
 		operator = Multiply
 	case "%":
 		operator = Modulo
+	case "**":
+		operator = Power
 	default:
 		return BinaryOperation{}, fmt.Errorf("make binary operation: invalid operator %s", op)
 	}
