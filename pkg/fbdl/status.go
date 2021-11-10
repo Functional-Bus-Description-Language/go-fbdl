@@ -9,7 +9,7 @@ type Status struct {
 
 	// Properties
 	Atomic  bool
-	Default BitLiteral
+	Default BitStr
 	Doc     string
 	Groups  []string
 	Once    bool
