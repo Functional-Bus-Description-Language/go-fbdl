@@ -1,6 +1,6 @@
 package ts
 
-//#include "parser.h"
+//#include "tree_sitter/parser.h"
 //TSLanguage *tree_sitter_fbdl();
 import "C"
 import (

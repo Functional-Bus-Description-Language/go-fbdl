@@ -1,4 +1,4 @@
-#include <parser.h>
+#include <tree_sitter/parser.h>
 
 #if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
