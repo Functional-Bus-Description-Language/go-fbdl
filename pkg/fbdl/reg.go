@@ -108,7 +108,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		st := insElem.Elements[name]
 		s := Status{
 			Name:   name,
-			Count: insElem.Count,
+			Count:  insElem.Count,
 			Atomic: bool(st.Properties["atomic"].(val.Bool)),
 			Width:  int64(st.Properties["width"].(val.Int)),
 		}

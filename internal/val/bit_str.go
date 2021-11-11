@@ -119,11 +119,11 @@ func BitStrFromInt(v Int, width int64) (BitStr, error) {
 	if i > 0 {
 		var s string
 		if width%4 == 0 {
-			s = "0x\"" + strconv.FormatInt(i, 16) + "\""
+			s = "x\"" + strconv.FormatInt(i, 16) + "\""
 		} else if width%3 == 0 {
-			s = "0o\"" + strconv.FormatInt(i, 8) + "\""
+			s = "o\"" + strconv.FormatInt(i, 8) + "\""
 		} else {
-			s = "0b\"" + strconv.FormatInt(i, 2) + "\""
+			s = "b\"" + strconv.FormatInt(i, 2) + "\""
 		}
 
 		return BitStr(s), nil
