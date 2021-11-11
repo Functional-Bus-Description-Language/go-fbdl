@@ -100,6 +100,8 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 				return fmt.Errorf("applying type '%s': %v", type_.Name(), err)
 			}
 			elem.Count = int64(count.(val.Int))
+		} else {
+			elem.Count = int64(1)
 		}
 	}
 

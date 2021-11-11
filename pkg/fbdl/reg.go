@@ -37,13 +37,10 @@ func Registerify(insBus *ins.Element) *Block {
 
 	for _, e := range insBus.Elements {
 		if e.BaseType == "block" {
-			sizes := registerifyBlock(e)
-			count := int64(1)
-			if e.IsArray {
-				count = e.Count
-			}
-			regBus.Sizes.Compact += count * sizes.Compact
-			regBus.Sizes.BlockAligned += count * sizes.BlockAligned
+			sb, sizes := registerifyBlock(e)
+			regBus.Sizes.Compact += e.Count * sizes.Compact
+			regBus.Sizes.BlockAligned += e.Count * sizes.BlockAligned
+			regBus.addSubblock(sb)
 		}
 	}
 
@@ -51,6 +48,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.addStatus(
 		&Status{
 			Name:    ts.Name,
+			Count:   ts.Count,
 			Access:  makeAccessSingle(1, busWidth),
 			Atomic:  bool(ts.Properties["atomic"].(val.Bool)),
 			Width:   int64(ts.Properties["width"].(val.Int)),
@@ -62,6 +60,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.addStatus(
 		&Status{
 			Name:    uuid.Name,
+			Count:   uuid.Count,
 			Access:  makeAccessSingle(1, busWidth),
 			Atomic:  bool(uuid.Properties["atomic"].(val.Bool)),
 			Width:   int64(uuid.Properties["width"].(val.Int)),
@@ -109,6 +108,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		st := insElem.Elements[name]
 		s := Status{
 			Name:   name,
+			Count: insElem.Count,
 			Atomic: bool(st.Properties["atomic"].(val.Bool)),
 			Width:  int64(st.Properties["width"].(val.Int)),
 		}
@@ -128,7 +128,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func registerifyBlock(insBlock *ins.Element) Sizes {
+func registerifyBlock(insBlock *ins.Element) (*Block, Sizes) {
 	addr := int64(0)
 
 	b := Block{
@@ -142,13 +142,10 @@ func registerifyBlock(insBlock *ins.Element) Sizes {
 
 	for _, e := range insBlock.Elements {
 		if e.BaseType == "block" {
-			s := registerifyBlock(e)
-			count := int64(1)
-			if e.IsArray {
-				count = e.Count
-			}
-			sizes.Compact += count * s.Compact
-			sizes.BlockAligned += count * s.BlockAligned
+			sb, s := registerifyBlock(e)
+			sizes.Compact += e.Count * s.Compact
+			sizes.BlockAligned += e.Count * s.BlockAligned
+			b.addSubblock(sb)
 		}
 	}
 
@@ -156,5 +153,5 @@ func registerifyBlock(insBlock *ins.Element) Sizes {
 
 	b.Sizes = sizes
 
-	return sizes
+	return &b, sizes
 }

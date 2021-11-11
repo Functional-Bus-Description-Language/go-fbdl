@@ -21,6 +21,10 @@ type Block struct {
 	Statuses []*Status
 }
 
+func (b *Block) addSubblock(sb *Block) {
+	b.Subblocks = append(b.Subblocks, sb)
+}
+
 func (b *Block) addStatus(s *Status) {
 	b.Statuses = append(b.Statuses, s)
 }
