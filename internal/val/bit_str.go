@@ -13,6 +13,24 @@ func (bs BitStr) Type() string {
 	return "bit string"
 }
 
+// Width returns bit width of the bit string.
+func (bs BitStr) Width() int64 {
+	var width int64
+
+	switch string(bs)[0] {
+	case 'b', 'B':
+		width = int64(len(bs)) - 3
+	case 'o', 'O':
+		panic("not implemented")
+	case 'x', 'X':
+		panic("not implemented")
+	default:
+		panic("should never happen")
+	}
+
+	return width
+}
+
 func MakeBitStr(s string) (BitStr, error) {
 	format := s[0]
 	bs := BitStr("")
