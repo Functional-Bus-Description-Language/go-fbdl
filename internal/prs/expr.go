@@ -85,6 +85,12 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 				return val.Int(left - right), nil
 			case Multiply:
 				return val.Int(left * right), nil
+			case Divide:
+				if left%right == 0 {
+					return val.Int(left / right), nil
+				} else {
+					panic("not yet implement, needs float point type")
+				}
 			case Modulo:
 				return val.Int(left % right), nil
 			case Power:
@@ -121,6 +127,8 @@ func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
 		operator = Subtract
 	case "*":
 		operator = Multiply
+	case "/":
+		operator = Divide
 	case "%":
 		operator = Modulo
 	case "**":
