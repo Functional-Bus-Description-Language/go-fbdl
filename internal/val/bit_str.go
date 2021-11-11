@@ -10,7 +10,7 @@ import (
 type BitStr string
 
 func (bs BitStr) Type() string {
-	return "bit literal"
+	return "bit string"
 }
 
 func MakeBitStr(s string) (BitStr, error) {

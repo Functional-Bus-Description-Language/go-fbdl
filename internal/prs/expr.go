@@ -19,6 +19,8 @@ func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
 	switch t := n.Type(); t {
 	case "binary_operation":
 		expr, err = MakeBinaryOperation(n, s)
+	case "bit_literal":
+		expr, err = MakeBitLiteral(n)
 	case "decimal_literal":
 		expr, err = MakeDecimalLiteral(n)
 	case "expression_list":
@@ -132,6 +134,23 @@ func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
 	}
 
 	return BinaryOperation{left: left, right: right, operator: operator}, nil
+}
+
+type BitLiteral struct {
+	v val.BitStr
+}
+
+func (bl BitLiteral) Eval() (val.Value, error) {
+	return bl.v, nil
+}
+
+func MakeBitLiteral(n ts.Node) (BitLiteral, error) {
+	v, err := val.MakeBitStr(n.Content())
+	if err != nil {
+		return BitLiteral{}, fmt.Errorf("make bit literal: %v", err)
+	}
+
+	return BitLiteral{v: v}, nil
 }
 
 type DecimalLiteral struct {
