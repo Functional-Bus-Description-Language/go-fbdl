@@ -44,6 +44,18 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
+	uuid := insBus.Elements["x_uuid_x"]
+	regBus.addStatus(
+		&Status{
+			Name:    uuid.Name,
+			Count:   uuid.Count,
+			Access:  makeAccessSingle(0, busWidth),
+			Atomic:  bool(uuid.Properties["atomic"].(val.Bool)),
+			Width:   int64(uuid.Properties["width"].(val.Int)),
+			Default: MakeBitStr(uuid.Properties["default"].(val.BitStr)),
+		},
+	)
+
 	ts := insBus.Elements["x_timestamp_x"]
 	regBus.addStatus(
 		&Status{
@@ -53,18 +65,6 @@ func Registerify(insBus *ins.Element) *Block {
 			Atomic:  bool(ts.Properties["atomic"].(val.Bool)),
 			Width:   int64(ts.Properties["width"].(val.Int)),
 			Default: MakeBitStr(ts.Properties["default"].(val.BitStr)),
-		},
-	)
-
-	uuid := insBus.Elements["x_uuid_x"]
-	regBus.addStatus(
-		&Status{
-			Name:    uuid.Name,
-			Count:   uuid.Count,
-			Access:  makeAccessSingle(1, busWidth),
-			Atomic:  bool(uuid.Properties["atomic"].(val.Bool)),
-			Width:   int64(uuid.Properties["width"].(val.Int)),
-			Default: MakeBitStr(uuid.Properties["default"].(val.BitStr)),
 		},
 	)
 
