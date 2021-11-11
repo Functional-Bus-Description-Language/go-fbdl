@@ -47,15 +47,27 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
-	if regBus.hasElement("x_uuid_x") {
-		panic("x_uuid_x is reserved element name")
-	}
-	regBus.addStatus(x_uuid_x())
+	ts := insBus.Elements["x_timestamp_x"]
+	regBus.addStatus(
+		&Status{
+			Name:    ts.Name,
+			Access:  makeAccessSingle(1, busWidth),
+			Atomic:  bool(ts.Properties["atomic"].(val.Bool)),
+			Width:   int64(ts.Properties["width"].(val.Int)),
+			Default: MakeBitStr(ts.Properties["default"].(val.BitStr)),
+		},
+	)
 
-	if regBus.hasElement("x_timestamp_x") {
-		panic("x_timestamp_x is reserved element name")
-	}
-	regBus.addStatus(x_timestamp_x())
+	uuid := insBus.Elements["x_uuid_x"]
+	regBus.addStatus(
+		&Status{
+			Name:    uuid.Name,
+			Access:  makeAccessSingle(1, busWidth),
+			Atomic:  bool(uuid.Properties["atomic"].(val.Bool)),
+			Width:   int64(uuid.Properties["width"].(val.Int)),
+			Default: MakeBitStr(uuid.Properties["default"].(val.BitStr)),
+		},
+	)
 
 	regBus.Sizes.BlockAligned = util.AlignToPowerOf2(
 		regBus.Sizes.BlockAligned + regBus.Sizes.Own,
@@ -83,6 +95,10 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 	// Keys from a dictionary are returned in random order, so collect names and sort them.
 	names := []string{}
 	for name, ie := range insElem.Elements {
+		if name == "x_timestamp_x" || name == "x_uuid_x" {
+			continue
+		}
+
 		if ie.BaseType == "status" {
 			names = append(names, name)
 		}

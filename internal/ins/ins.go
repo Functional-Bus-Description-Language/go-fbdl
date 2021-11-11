@@ -79,6 +79,16 @@ func Instantiate(packages prs.Packages) *Element {
 		}
 	}
 
+	if _, exists := main_bus.Elements["x_uuid_x"]; exists {
+		panic("x_uuid_x is reserved element name")
+	}
+	main_bus.Elements["x_uuid_x"] = x_uuid_x()
+
+	if _, exists := main_bus.Elements["x_timestamp_x"]; exists {
+		panic("x_timestamp_x is reserved element name")
+	}
+	main_bus.Elements["x_timestamp_x"] = x_timestamp_x()
+
 	return main_bus
 }
 
