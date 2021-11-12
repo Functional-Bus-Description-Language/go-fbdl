@@ -132,5 +132,5 @@ func BitStrFromInt(v Int, width int64) (BitStr, error) {
 	// Negative value handling
 	panic("BitStrFromInt, negative value handling not yet implemented")
 
-	return BitStr(""), nil
+	//return BitStr(""), nil
 }
