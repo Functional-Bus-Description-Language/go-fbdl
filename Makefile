@@ -13,8 +13,9 @@ help:
 	@echo "  build    Build binary."
 	@echo "  default  Run build."
 	@echo "Quality related targets:"
-	@echo "  fmt  Format files with go fmt."
-	@echo "  vet  Examine go sources with go vet."
+	@echo "  fmt       Format files with go fmt."
+	@echo "  vet       Examine go sources with go vet."
+	@echo "  errcheck  Examine go sources with errcheck."
 	@echo "Test related targets:"
 	@echo "  test                Run all tests."
 	@echo "  test-instantiating  Run instantiating tests."
@@ -28,6 +29,9 @@ fmt:
 
 vet:
 	go vet ./...
+
+errcheck:
+	errcheck -verbose ./...
 
 test-instantiating:
 	@./scripts/test-instantiating.sh

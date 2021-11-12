@@ -32,8 +32,11 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		defer f.Close()
 		spew.Fdump(f, packages)
+		err = f.Close()
+		if err != nil {
+			log.Fatalf("dump parse results: %v", err)
+		}
 	}
 
 	insBus := ins.Instantiate(packages)
@@ -43,8 +46,11 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		defer f.Close()
 		spew.Fdump(f, insBus)
+		err = f.Close()
+		if err != nil {
+			log.Fatalf("dump instantiation results: %v", err)
+		}
 	}
 
 	regBus := fbdl.Registerify(insBus)
@@ -54,7 +60,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		defer f.Close()
 		spew.Fdump(f, regBus)
+		err = f.Close()
+		if err != nil {
+			log.Fatalf("dump instantiation results: %v", err)
+		}
 	}
 }

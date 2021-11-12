@@ -36,7 +36,7 @@ func resolveArgumentListsInSymbols(symbols map[string]prs.Symbol) error {
 		}
 
 		if len(e.Symbols()) > 0 {
-			resolveArgumentListsInSymbols(e.Symbols())
+			return resolveArgumentListsInSymbols(e.Symbols())
 		}
 	}
 

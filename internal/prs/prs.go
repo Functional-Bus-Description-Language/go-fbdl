@@ -123,12 +123,16 @@ func readFile(path string) []string {
 	if err != nil {
 		panic(err)
 	}
-	defer f.Close()
 
 	io_scanner := bufio.NewScanner(f)
 	var code []string
 	for io_scanner.Scan() {
 		code = append(code, io_scanner.Text())
+	}
+
+	err = f.Close()
+	if err != nil {
+		panic(err)
 	}
 
 	return code

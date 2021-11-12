@@ -49,9 +49,12 @@ func Instantiate(packages prs.Packages) *Element {
 		return nil
 	}
 
-	setBusWidth(main)
+	err := setBusWidth(main)
+	if err != nil {
+		log.Fatalf("instantiation: %v", err)
+	}
 
-	err := resolveArgumentLists(packages)
+	err = resolveArgumentLists(packages)
 	if err != nil {
 		log.Fatalf("instantiation: %v", err)
 	}
