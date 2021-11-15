@@ -49,7 +49,7 @@ func Registerify(insBus *ins.Element) *Block {
 		&Status{
 			Name:    uuid.Name,
 			Count:   uuid.Count,
-			Access:  makeAccessSingle(0, busWidth),
+			Access:  makeAccessSingle(0, 0, busWidth),
 			Atomic:  bool(uuid.Properties["atomic"].(val.Bool)),
 			Width:   int64(uuid.Properties["width"].(val.Int)),
 			Default: MakeBitStr(uuid.Properties["default"].(val.BitStr)),
@@ -61,7 +61,7 @@ func Registerify(insBus *ins.Element) *Block {
 		&Status{
 			Name:    ts.Name,
 			Count:   ts.Count,
-			Access:  makeAccessSingle(1, busWidth),
+			Access:  makeAccessSingle(1, 0, busWidth),
 			Atomic:  bool(ts.Properties["atomic"].(val.Bool)),
 			Width:   int64(ts.Properties["width"].(val.Int)),
 			Default: MakeBitStr(ts.Properties["default"].(val.BitStr)),
@@ -118,7 +118,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		if st.IsArray {
 			s.Access = makeAccessArray(st.Count, addr, width)
 		} else {
-			s.Access = makeAccessSingle(addr, width)
+			s.Access = makeAccessSingle(addr, 0, width)
 		}
 		addr += s.Access.Count()
 

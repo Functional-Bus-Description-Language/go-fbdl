@@ -9,6 +9,7 @@ type Mask struct {
 }
 
 type Access interface {
+	// Count returns the number of occupied registers.
 	Count() int64
 	IsArray() bool
 }
@@ -16,7 +17,7 @@ type Access interface {
 type AccessSingle struct {
 	Strategy string
 
-	Address int64
+	Address int64 // Address is the base address - address of the first register.
 	count   int64 // count is the number of occupied registers.
 	Mask    Mask
 }
@@ -25,7 +26,7 @@ func (as *AccessSingle) Count() int64 { return as.count }
 
 func (as *AccessSingle) IsArray() bool { return false }
 
-func makeAccessSingle(baseAddr int64, width int64) *AccessSingle {
+func makeAccessSingle(baseAddr int64, baseBit int64, width int64) *AccessSingle {
 	as := AccessSingle{
 		Address: baseAddr,
 		count:   int64(math.Ceil(float64(width) / float64(busWidth))),

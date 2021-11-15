@@ -17,7 +17,8 @@ help:
 	@echo "  vet       Examine go sources with go vet."
 	@echo "  errcheck  Examine go sources with errcheck."
 	@echo "Test related targets:"
-	@echo "  test                Run all tests."
+	@echo "  test-all            Run all tests."
+	@echo "  test                Run go test."
 	@echo "  test-instantiating  Run instantiating tests."
 	@echo "  test-parsing        Run parsing tests."
 	@echo "Other targets:"
@@ -39,7 +40,10 @@ test-instantiating:
 test-parsing:
 	@./scripts/test-parsing.sh
 
-test: test-parsing test-instantiating
+test:
+	go test ./...
+
+test-all: test test-parsing test-instantiating
 
 install:
 	cp $(PROJECT_NAME) /usr/bin
