@@ -145,10 +145,10 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 			p.Access = makeAccessSingle(addr, baseBit, p.Width)
 			as := p.Access.(*AccessSingle)
 			if as.LastMask.Upper < busWidth-1 {
-				addr += as.Count()
+				addr += as.Count() - 1
 				baseBit = as.LastMask.Upper + 1
 			} else {
-				addr += as.Count() + 1
+				addr += as.Count()
 				baseBit = 0
 			}
 		}
