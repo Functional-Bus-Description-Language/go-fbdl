@@ -5,6 +5,7 @@ type Param struct {
 	Name    string
 	IsArray bool
 	Count   int64
+	Access  Access
 
 	// Properties
 	Default BitStr
