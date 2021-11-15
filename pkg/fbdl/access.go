@@ -17,9 +17,10 @@ type Access interface {
 type AccessSingle struct {
 	Strategy string
 
-	Address int64 // Address is the base address - address of the first register.
-	count   int64 // count is the number of occupied registers.
-	Mask    Mask
+	Address   int64 // Address is the base address - address of the first register.
+	count     int64 // count is the number of occupied registers.
+	FirstMask Mask  // Mask for the first register.
+	LastMask  Mask  // Mask for the last register.
 }
 
 func (as *AccessSingle) Count() int64 { return as.count }
@@ -27,20 +28,43 @@ func (as *AccessSingle) Count() int64 { return as.count }
 func (as *AccessSingle) IsArray() bool { return false }
 
 func makeAccessSingle(baseAddr int64, baseBit int64, width int64) *AccessSingle {
-	as := AccessSingle{
-		Address: baseAddr,
-		count:   int64(math.Ceil(float64(width) / float64(busWidth))),
-	}
+	//remainder := width % busWidth
+	firstRegRemainder := busWidth - baseBit
 
-	if width > busWidth {
-		as.Strategy = "Linear"
-		as.Mask = Mask{Upper: (width - 1) % busWidth, Lower: 0}
+	var strategy string
+	var count int64
+	var firstMask Mask
+	var lastMask Mask
+
+	if width <= firstRegRemainder {
+		strategy = "Single"
+		count = 1
+		firstMask = Mask{Upper: baseBit + width - 1, Lower: baseBit}
+		lastMask = firstMask
 	} else {
-		as.Strategy = "Single"
-		as.Mask = Mask{Upper: width - 1, Lower: 0}
+		strategy = "Linear"
+		firstMask = Mask{Upper: busWidth - 1, Lower: baseBit}
+		count = 1
+
+		w := firstRegRemainder
+		for {
+			count += 1
+			if w+busWidth < width {
+				w += busWidth
+			} else {
+				lastMask = Mask{Upper: (width - w) - 1, Lower: 0}
+				break
+			}
+		}
 	}
 
-	return &as
+	return &AccessSingle{
+		Address:   baseAddr,
+		count:     count,
+		Strategy:  strategy,
+		FirstMask: firstMask,
+		LastMask:  lastMask,
+	}
 }
 
 type AccessArray struct {

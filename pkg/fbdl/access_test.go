@@ -15,7 +15,42 @@ func TestMakeAccessSingle(t *testing.T) {
 		width    int64
 		want     AccessSingle
 	}{
-		{0, 0, 1, AccessSingle{Strategy: "Single", Address: 0, count: 1, Mask: Mask{Upper: 0, Lower: 0}}},
+		{0, 0, 1,
+			AccessSingle{
+				Strategy:  "Single",
+				Address:   0,
+				count:     1,
+				FirstMask: Mask{Upper: 0, Lower: 0},
+				LastMask:  Mask{Upper: 0, Lower: 0},
+			},
+		},
+		{1, 31, 2,
+			AccessSingle{
+				Strategy:  "Linear",
+				Address:   1,
+				count:     2,
+				FirstMask: Mask{Upper: 31, Lower: 31},
+				LastMask:  Mask{Upper: 0, Lower: 0},
+			},
+		},
+		{2, 30, 57,
+			AccessSingle{
+				Strategy:  "Linear",
+				Address:   2,
+				count:     3,
+				FirstMask: Mask{Upper: 31, Lower: 30},
+				LastMask:  Mask{Upper: 22, Lower: 0},
+			},
+		},
+		{3, 0, 32,
+			AccessSingle{
+				Strategy:  "Single",
+				Address:   3,
+				count:     1,
+				FirstMask: Mask{Upper: 31, Lower: 0},
+				LastMask:  Mask{Upper: 31, Lower: 0},
+			},
+		},
 	}
 
 	for i, test := range tests {
@@ -30,11 +65,17 @@ func TestMakeAccessSingle(t *testing.T) {
 		if got.count != test.want.count {
 			t.Errorf("[%d] count differs: %v %v", i, got, test)
 		}
-		if got.Mask.Upper != test.want.Mask.Upper {
-			t.Errorf("[%d] Mask.Upper differs: %v %v", i, got, test)
+		if got.FirstMask.Upper != test.want.FirstMask.Upper {
+			t.Errorf("[%d] FirstMask.Upper differs: %v %v", i, got, test)
 		}
-		if got.Mask.Lower != test.want.Mask.Lower {
-			t.Errorf("[%d] Mask.Lower differs: %v %v", i, got, test)
+		if got.FirstMask.Lower != test.want.FirstMask.Lower {
+			t.Errorf("[%d] FirstMask.Lower differs: %v %v", i, got, test)
+		}
+		if got.LastMask.Upper != test.want.LastMask.Upper {
+			t.Errorf("[%d] LastMask.Upper differs: %v %v", i, got, test)
+		}
+		if got.LastMask.Lower != test.want.LastMask.Lower {
+			t.Errorf("[%d] LastMask.Lower differs: %v %v", i, got, test)
 		}
 	}
 }
