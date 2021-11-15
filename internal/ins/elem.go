@@ -9,6 +9,7 @@ import (
 
 type Element struct {
 	Name       string
+	LineNumber uint32
 	BaseType   string
 	IsArray    bool
 	Count      int64
@@ -28,6 +29,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 
 	if def, ok := type_.(*prs.ElementDefinition); ok {
 		elem.Name = def.Name()
+		elem.LineNumber = def.LineNumber()
 	}
 
 	if resolvedArgs != nil {

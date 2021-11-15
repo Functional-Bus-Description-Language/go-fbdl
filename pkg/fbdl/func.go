@@ -9,5 +9,5 @@ type Func struct {
 	// Properties
 	Doc string
 
-	Params []Param
+	Params []*Param
 }

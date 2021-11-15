@@ -83,7 +83,78 @@ func registerifyFunctionalities(block *Block, insElem *ins.Element, addr int64) 
 		return addr
 	}
 
+	addr = registerifyFuncs(block, insElem, addr)
 	addr = registerifyStatuses(block, insElem, addr)
+
+	return addr
+}
+
+func registerifyFuncs(block *Block, insElem *ins.Element, addr int64) int64 {
+	names := []string{}
+	for name, ie := range insElem.Elements {
+		if ie.BaseType == "func" {
+			names = append(names, name)
+		}
+	}
+	sort.Strings(names)
+
+	for _, name := range names {
+		addr = registerifyFunc(block, insElem.Elements[name], addr)
+	}
+
+	return addr
+}
+
+func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
+	// Sort params based on the Line Number.
+	params := []*ins.Element{}
+	for _, param := range insElem.Elements {
+		params = append(params, param)
+	}
+
+	sortFunc := func(i, j int) bool {
+		if params[i].LineNumber < params[j].LineNumber {
+			return true
+		}
+		return false
+	}
+	sort.Slice(params, sortFunc)
+
+	f := Func{
+		Name:    insElem.Name,
+		IsArray: insElem.IsArray,
+		Count:   insElem.Count,
+		//Doc:  string(insElem.Properties["doc"].(val.Str)),
+	}
+
+	block.addFunc(&f)
+
+	baseBit := int64(0)
+	for _, param := range params {
+		p := Param{
+			Name:    param.Name,
+			IsArray: param.IsArray,
+			Count:   param.Count,
+			//Doc: string(param.Properties["doc"].(val.Str)),
+			Width: int64(param.Properties["width"].(val.Int)),
+		}
+
+		if p.IsArray {
+			panic("parram array not yet supported")
+		} else {
+			p.Access = makeAccessSingle(addr, baseBit, p.Width)
+			as := p.Access.(*AccessSingle)
+			if as.LastMask.Upper < busWidth-1 {
+				addr += as.Count()
+				baseBit = as.LastMask.Upper + 1
+			} else {
+				addr += as.Count() + 1
+				baseBit = 0
+			}
+		}
+
+		f.Params = append(f.Params, &p)
+	}
 
 	return addr
 }

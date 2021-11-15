@@ -15,9 +15,9 @@ type Block struct {
 
 	// Elements
 	Subblocks []*Block
-	//Configs  []Config
-	//Funcs    []Func
-	//Masks    []Mask
+	//Configs  []*Config
+	Funcs []*Func
+	//Masks    []*Mask
 	Statuses []*Status
 }
 
@@ -27,6 +27,10 @@ func (b *Block) addSubblock(sb *Block) {
 
 func (b *Block) addStatus(s *Status) {
 	b.Statuses = append(b.Statuses, s)
+}
+
+func (b *Block) addFunc(f *Func) {
+	b.Funcs = append(b.Funcs, f)
 }
 
 func (b *Block) hasElement(name string) bool {
