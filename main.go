@@ -8,6 +8,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 
+	"encoding/json"
 	"log"
 	"os"
 )
@@ -60,10 +61,20 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		spew.Fdump(f, regBus)
+
+		byteArray, err := json.MarshalIndent(regBus, "", "\t")
+		if err != nil {
+			log.Fatalf("marshal registerification results: %v", err)
+		}
+
+		_, err = f.Write(byteArray)
+		if err != nil {
+			log.Fatalf("dump registerification results: %v", err)
+		}
+
 		err = f.Close()
 		if err != nil {
-			log.Fatalf("dump instantiation results: %v", err)
+			log.Fatalf("dump registerification results: %v", err)
 		}
 	}
 }

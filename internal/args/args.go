@@ -63,7 +63,7 @@ func Parse() map[string]string {
 				case "-i":
 					args[s] = "ins.txt"
 				case "-r":
-					args[s] = "reg.txt"
+					args[s] = "reg.json"
 				}
 			}
 		default:
@@ -88,7 +88,7 @@ Flags:
 Options:
   -p [path]  Dump parse results to a file (default path is prs.txt).
   -i [path]  Dump instantiation results to a file (default path is ins.txt).
-  -r [path]  Dump registerification results to a file (default path is reg.txt).
+  -r [path]  Dump registerification results to a file (default path is reg.json).
 `
 
 func printHelp() {
