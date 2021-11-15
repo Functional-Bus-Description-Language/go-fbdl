@@ -156,6 +156,14 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 		f.Params = append(f.Params, &p)
 	}
 
+	// If the last register is not fully occupied go to next address.
+	// TODO: This is a potential place for adding a gap struct instance
+	// for further address space optimization.
+	lastAs := f.Params[len(f.Params)-1].Access.(*AccessSingle)
+	if lastAs.LastMask.Upper < busWidth-1 {
+		addr += 1
+	}
+
 	return addr
 }
 
