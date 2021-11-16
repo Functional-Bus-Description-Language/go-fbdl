@@ -118,7 +118,11 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 		Name:    insElem.Name,
 		IsArray: insElem.IsArray,
 		Count:   insElem.Count,
-		//Doc:  string(insElem.Properties["doc"].(val.Str)),
+		//Doc:     string(insElem.Properties["doc"].(val.Str)),
+	}
+
+	if doc, ok := insElem.Properties["doc"]; ok {
+		f.Doc = string(doc.(val.Str))
 	}
 
 	block.addFunc(&f)
