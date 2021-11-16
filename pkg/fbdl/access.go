@@ -1,6 +1,7 @@
 package fbdl
 
 import (
+	"encoding/json"
 	"math"
 )
 
@@ -21,6 +22,28 @@ type AccessSingle struct {
 	count     int64 // count is the number of occupied registers.
 	FirstMask Mask  // Mask for the first register.
 	LastMask  Mask  // Mask for the last register.
+}
+
+func (as AccessSingle) MarshalJSON() ([]byte, error) {
+	j, err := json.Marshal(struct {
+		Strategy  string
+		Address   int64
+		Count     int64
+		FirstMask Mask
+		LastMask  Mask
+	}{
+		Strategy:  as.Strategy,
+		Address:   as.Address,
+		Count:     as.count,
+		FirstMask: as.FirstMask,
+		LastMask:  as.LastMask,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return j, nil
 }
 
 func (as *AccessSingle) Count() int64 { return as.count }

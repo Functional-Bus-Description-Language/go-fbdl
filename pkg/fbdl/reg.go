@@ -166,6 +166,10 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 	statuses := insElem.Elements.GetAllByBaseType("status")
 
 	for _, st := range statuses {
+		if st.Name == "x_uuid_x" || st.Name == "x_timestamp_x" {
+			continue
+		}
+
 		s := Status{
 			Name:   st.Name,
 			Count:  insElem.Count,
