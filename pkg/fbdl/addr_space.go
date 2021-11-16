@@ -1,5 +1,9 @@
 package fbdl
 
+import (
+	"encoding/json"
+)
+
 type AddrSpace interface {
 	Start() int64
 	End() int64
@@ -8,7 +12,23 @@ type AddrSpace interface {
 }
 
 type AddrSpaceSingle struct {
-	start, end int64
+	start int64
+	end   int64
+}
+
+func (s AddrSpaceSingle) MarshalJSON() ([]byte, error) {
+	j, err := json.Marshal(struct {
+		Start, End int64
+	}{
+		Start: s.start,
+		End:   s.end,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return j, nil
 }
 
 func (s AddrSpaceSingle) Start() int64 { return s.start }
