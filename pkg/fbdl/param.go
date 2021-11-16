@@ -8,8 +8,9 @@ type Param struct {
 	Access  Access
 
 	// Properties
-	Default BitStr
-	Doc     string
-	Range   Range
-	Width   int64
+	// TODO: Should Default be supported for param?
+	// Default BitStr
+	Doc   string
+	Range Range
+	Width int64
 }
