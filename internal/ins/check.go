@@ -59,8 +59,8 @@ func checkProperty(name string, prop prs.Property) error {
 				"second value in 'range' property value list must be of type 'integer', current type '%s'", v[1].Type(),
 			)
 		}
-		if v0 >= v1 {
-			return fmt.Errorf("second value in 'range' property value list must be greater than first value")
+		if v0 > v1 {
+			return fmt.Errorf("lower bound in 'range' property value list cannot be greater than upper bound")
 		}
 	case "width":
 		v, ok := pv.(val.Int)
