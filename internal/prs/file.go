@@ -13,27 +13,28 @@ type Import struct {
 type File struct {
 	Path    string
 	Pkg     *Package
-	Symbols map[string]Symbol
+	Symbols SymbolContainer
 	Imports map[string]Import
 }
 
 func (f *File) AddSymbol(s Symbol) error {
 	name := s.Name()
 
-	if _, ok := f.Symbols[name]; ok {
+	if !f.Symbols.Add(s) {
 		msg := `line %d: symbol '%s' defined at least twice in file, first occurence line %d`
-		return fmt.Errorf(msg, s.LineNumber(), name, f.Symbols[name].LineNumber())
+		first, _ := f.Symbols.Get(name)
+		return fmt.Errorf(msg, s.LineNumber(), name, first.LineNumber())
 	}
-	f.Symbols[name] = s
 	s.SetFile(f)
 
 	return nil
 }
 
-func (f *File) GetSymbol(s string) (Symbol, error) {
-	if sym, ok := f.Symbols[s]; ok {
+func (f *File) GetSymbol(name string) (Symbol, error) {
+	sym, ok := f.Symbols.Get(name)
+	if ok {
 		return sym, nil
 	}
 
-	return f.Pkg.GetSymbol(s)
+	return f.Pkg.GetSymbol(name)
 }

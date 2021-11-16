@@ -157,7 +157,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	node := ts.MakeRootNode(codeBytes)
 
-	file := File{Path: path, Pkg: pkg, Symbols: make(map[string]Symbol), Imports: make(map[string]Import)}
+	file := File{Path: path, Pkg: pkg, Symbols: SymbolContainer{}, Imports: make(map[string]Import)}
 
 	var symbols []Symbol
 	for {
@@ -313,7 +313,7 @@ func parseElementAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol,
 	}
 
 	var props map[string]Property
-	var symbols map[string]Symbol
+	var symbols SymbolContainer
 	last_node := n.LastChild()
 	if last_node.Type() == "element_body" {
 		props, symbols, err = parseElementBody(last_node, &elem)
@@ -407,7 +407,7 @@ func parseElementDefinitiveInstantiation(n ts.Node, parent Searchable) ([]Symbol
 	}
 
 	props := make(map[string]Property)
-	symbols := make(map[string]Symbol)
+	symbols := SymbolContainer{}
 	if last_child.Type() == "element_body" {
 		props, symbols, err = parseElementBody(last_child, &elem)
 		if err != nil {
@@ -427,10 +427,10 @@ func parseElementDefinitiveInstantiation(n ts.Node, parent Searchable) ([]Symbol
 	return []Symbol{&elem}, nil
 }
 
-func parseElementBody(n ts.Node, element Searchable) (map[string]Property, map[string]Symbol, error) {
+func parseElementBody(n ts.Node, element Searchable) (map[string]Property, SymbolContainer, error) {
 	var err error
 	props := make(map[string]Property)
-	symbols := make(map[string]Symbol)
+	symbols := SymbolContainer{}
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
@@ -476,7 +476,8 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, map[s
 			}
 
 			for i := 0; i < len(ss); i++ {
-				if s, exist := symbols[ss[i].Name()]; exist {
+				s, exists := symbols.Get(ss[i].Name())
+				if exists {
 					return props,
 						symbols,
 						fmt.Errorf(
@@ -485,7 +486,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, map[s
 							nc.LineNumber(), ss[i].Name(), s.LineNumber(),
 						)
 				}
-				symbols[ss[i].Name()] = ss[i]
+				_ = symbols.Add(ss[i])
 			}
 		}
 	}
@@ -497,7 +498,7 @@ func parseElementTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) 
 	args := []Argument{}
 	params := []Parameter{}
 	props := make(map[string]Property)
-	symbols := make(map[string]Symbol)
+	symbols := SymbolContainer{}
 
 	name := n.Child(1).Content()
 	if util.IsBaseType(name) {

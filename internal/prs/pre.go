@@ -60,7 +60,7 @@ func DiscoverPackages(main string) Packages {
 				}
 				file_name := ic.Name()
 				if strings.HasSuffix(file_name, ".fbd") {
-					pkg := Package{Name: pkg_name, Path: path.Join(check_path, c.Name()), Symbols: make(map[string]Symbol)}
+					pkg := Package{Name: pkg_name, Path: path.Join(check_path, c.Name()), Symbols: SymbolContainer{}}
 					if list, ok := packages[pkg_name]; ok {
 						list = append(list, &pkg)
 					} else {
@@ -74,7 +74,7 @@ func DiscoverPackages(main string) Packages {
 
 	// Add main file.
 	var tmp []*Package
-	tmp = append(tmp, &Package{Name: "main", Path: main, Symbols: make(map[string]Symbol)})
+	tmp = append(tmp, &Package{Name: "main", Path: main, Symbols: SymbolContainer{}})
 	packages["main"] = tmp
 
 	return packages

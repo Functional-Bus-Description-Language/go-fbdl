@@ -38,7 +38,7 @@ type Element interface {
 	SetResolvedArgs(args map[string]Expression)
 	ResolvedArgs() map[string]Expression
 	Properties() map[string]Property
-	Symbols() map[string]Symbol
+	Symbols() SymbolContainer
 }
 
 type ElementDefinition struct {
@@ -50,7 +50,7 @@ type ElementDefinition struct {
 	Count             Expression
 
 	properties map[string]Property
-	symbols    map[string]Symbol
+	symbols    SymbolContainer
 
 	params       []Parameter
 	args         []Argument
@@ -61,24 +61,25 @@ func (e ElementDefinition) Type() string {
 	return e.type_
 }
 
-func (e *ElementDefinition) GetSymbol(s string) (Symbol, error) {
-	if strings.Contains(s, ".") {
+func (e *ElementDefinition) GetSymbol(name string) (Symbol, error) {
+	if strings.Contains(name, ".") {
 		panic("To be implemented")
 	}
 
-	if sym, ok := e.symbols[s]; ok {
+	sym, ok := e.symbols.Get(name)
+	if ok {
 		return sym, nil
 	}
 
-	if v, ok := e.resolvedArgs[s]; ok {
+	if v, ok := e.resolvedArgs[name]; ok {
 		return &Constant{Value: v}, nil
 	}
 
 	if e.parent != nil {
-		return e.parent.GetSymbol(s)
+		return e.parent.GetSymbol(name)
 	}
 
-	return e.file.GetSymbol(s)
+	return e.file.GetSymbol(name)
 }
 
 func (e ElementDefinition) Args() []Argument {
@@ -101,7 +102,7 @@ func (e ElementDefinition) Properties() map[string]Property {
 	return e.properties
 }
 
-func (e ElementDefinition) Symbols() map[string]Symbol {
+func (e ElementDefinition) Symbols() SymbolContainer {
 	return e.symbols
 }
 
@@ -110,31 +111,32 @@ type TypeDefinition struct {
 
 	type_      string
 	properties map[string]Property
-	symbols    map[string]Symbol
+	symbols    SymbolContainer
 
 	params       []Parameter
 	args         []Argument
 	resolvedArgs map[string]Expression
 }
 
-func (t *TypeDefinition) GetSymbol(s string) (Symbol, error) {
-	if strings.Contains(s, ".") {
+func (t *TypeDefinition) GetSymbol(name string) (Symbol, error) {
+	if strings.Contains(name, ".") {
 		panic("To be implemented")
 	}
 
-	if sym, ok := t.symbols[s]; ok {
+	sym, ok := t.symbols.Get(name)
+	if ok {
 		return sym, nil
 	}
 
-	if v, ok := t.resolvedArgs[s]; ok {
+	if v, ok := t.resolvedArgs[name]; ok {
 		return &Constant{Value: v}, nil
 	}
 
 	if t.parent != nil {
-		return t.parent.GetSymbol(s)
+		return t.parent.GetSymbol(name)
 	}
 
-	return t.file.GetSymbol(s)
+	return t.file.GetSymbol(name)
 }
 
 func (t TypeDefinition) Type() string {
@@ -161,6 +163,6 @@ func (t TypeDefinition) Properties() map[string]Property {
 	return t.properties
 }
 
-func (t TypeDefinition) Symbols() map[string]Symbol {
+func (t TypeDefinition) Symbols() SymbolContainer {
 	return t.symbols
 }

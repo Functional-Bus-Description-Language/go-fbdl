@@ -1,5 +1,5 @@
 package prs
 
 type Searchable interface {
-	GetSymbol(s string) (Symbol, error)
+	GetSymbol(name string) (Symbol, error)
 }

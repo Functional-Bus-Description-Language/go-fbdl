@@ -19,8 +19,9 @@ func resolveArgumentLists(packages prs.Packages) error {
 	return nil
 }
 
-func resolveArgumentListsInSymbols(symbols map[string]prs.Symbol) error {
-	for name, s := range symbols {
+func resolveArgumentListsInSymbols(symbols prs.SymbolContainer) error {
+	for _, s := range symbols {
+		name := s.Name()
 		e, ok := s.(prs.Element)
 		if !ok {
 			continue

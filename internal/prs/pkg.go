@@ -14,7 +14,7 @@ type Package struct {
 	addFileMutex   sync.Mutex
 	Files          []*File
 	addSymbolMutex sync.Mutex
-	Symbols        map[string]Symbol
+	Symbols        SymbolContainer
 }
 
 func (p *Package) AddFile(f *File) {
@@ -27,23 +27,22 @@ func (p *Package) AddSymbol(s Symbol) error {
 	p.addSymbolMutex.Lock()
 	defer p.addSymbolMutex.Unlock()
 
-	name := s.Name()
-
-	if _, ok := p.Symbols[name]; ok {
+	if !p.Symbols.Add(s) {
 		msg := `symbol '%s' defined at least twice in package '%s', first occurence line %d, second line %d`
-		return fmt.Errorf(msg, name, p.Name, p.Symbols[name].LineNumber(), s.LineNumber())
+		first, _ := p.Symbols.Get(s.Name())
+		return fmt.Errorf(msg, s.Name(), p.Name, first.LineNumber(), s.LineNumber())
 	}
-	p.Symbols[name] = s
 
 	return nil
 }
 
-func (p *Package) GetSymbol(s string) (Symbol, error) {
-	if sym, ok := p.Symbols[s]; ok {
+func (p *Package) GetSymbol(name string) (Symbol, error) {
+	sym, ok := p.Symbols.Get(name)
+	if ok {
 		return sym, nil
 	}
 
-	return nil, fmt.Errorf("symbol '%s' not found in package '%s'", s, p.Name)
+	return nil, fmt.Errorf("symbol '%s' not found in package '%s'", name, p.Name)
 }
 
 func GetName(path_ string) string {
