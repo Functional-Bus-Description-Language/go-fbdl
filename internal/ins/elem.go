@@ -15,7 +15,7 @@ type Element struct {
 	Count      int64
 	Properties map[string]val.Value
 	Constants  map[string]val.Value
-	Elements   map[string]*Element
+	Elements   ElementContainer
 }
 
 func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Expression) error {
@@ -76,14 +76,12 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 			)
 		}
 
-		if _, ok := elem.Elements[e.Name]; ok {
+		if !elem.Elements.Add(e) {
 			return fmt.Errorf(
 				"cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types",
 				e.Name,
 			)
 		}
-
-		elem.Elements[e.Name] = e
 	}
 
 	if ed, ok := type_.(*prs.ElementDefinition); ok {

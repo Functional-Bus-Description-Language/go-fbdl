@@ -83,15 +83,15 @@ func Instantiate(packages prs.Packages) *Element {
 		}
 	}
 
-	if _, exists := main_bus.Elements["x_uuid_x"]; exists {
+	if _, exists := main_bus.Elements.Get("x_uuid_x"); exists {
 		panic("x_uuid_x is reserved element name")
 	}
-	main_bus.Elements["x_uuid_x"] = x_uuid_x()
+	main_bus.Elements.Add(x_uuid_x())
 
-	if _, exists := main_bus.Elements["x_timestamp_x"]; exists {
+	if _, exists := main_bus.Elements.Get("x_timestamp_x"); exists {
 		panic("x_timestamp_x is reserved element name")
 	}
-	main_bus.Elements["x_timestamp_x"] = x_timestamp_x()
+	main_bus.Elements.Add(x_timestamp_x())
 
 	return main_bus
 }
@@ -134,7 +134,7 @@ func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	inst := &Element{
 		Properties: map[string]val.Value{},
 		Constants:  map[string]val.Value{},
-		Elements:   map[string]*Element{},
+		Elements:   ElementContainer{},
 	}
 
 	for i, t := range tc {

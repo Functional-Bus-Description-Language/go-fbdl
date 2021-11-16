@@ -44,7 +44,7 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
-	uuid := insBus.Elements["x_uuid_x"]
+	uuid, _ := insBus.Elements.Get("x_uuid_x")
 	regBus.addStatus(
 		&Status{
 			Name:    uuid.Name,
@@ -56,7 +56,7 @@ func Registerify(insBus *ins.Element) *Block {
 		},
 	)
 
-	ts := insBus.Elements["x_timestamp_x"]
+	ts, _ := insBus.Elements.Get("x_timestamp_x")
 	regBus.addStatus(
 		&Status{
 			Name:    ts.Name,
@@ -90,16 +90,10 @@ func registerifyFunctionalities(block *Block, insElem *ins.Element, addr int64) 
 }
 
 func registerifyFuncs(block *Block, insElem *ins.Element, addr int64) int64 {
-	names := []string{}
-	for name, ie := range insElem.Elements {
-		if ie.BaseType == "func" {
-			names = append(names, name)
-		}
-	}
-	sort.Strings(names)
+	funcs := insElem.Elements.GetAllByBaseType("func")
 
-	for _, name := range names {
-		addr = registerifyFunc(block, insElem.Elements[name], addr)
+	for _, f := range funcs {
+		addr = registerifyFunc(block, f, addr)
 	}
 
 	return addr
@@ -169,24 +163,11 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 
 // Current approach is trivial. Even groups are not respected.
 func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
-	// Collect names instead of elements because the results must be reproducable.
-	// Keys from a dictionary are returned in random order, so collect names and sort them.
-	names := []string{}
-	for name, ie := range insElem.Elements {
-		if name == "x_timestamp_x" || name == "x_uuid_x" {
-			continue
-		}
+	statuses := insElem.Elements.GetAllByBaseType("status")
 
-		if ie.BaseType == "status" {
-			names = append(names, name)
-		}
-	}
-	sort.Strings(names)
-
-	for _, name := range names {
-		st := insElem.Elements[name]
+	for _, st := range statuses {
 		s := Status{
-			Name:   name,
+			Name:   st.Name,
 			Count:  insElem.Count,
 			Atomic: bool(st.Properties["atomic"].(val.Bool)),
 			Width:  int64(st.Properties["width"].(val.Int)),
