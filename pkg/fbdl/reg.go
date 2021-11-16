@@ -5,7 +5,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"log"
-	"sort"
 )
 
 var busWidth int64
@@ -100,25 +99,10 @@ func registerifyFuncs(block *Block, insElem *ins.Element, addr int64) int64 {
 }
 
 func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
-	// Sort params based on the Line Number.
-	params := []*ins.Element{}
-	for _, param := range insElem.Elements {
-		params = append(params, param)
-	}
-
-	sortFunc := func(i, j int) bool {
-		if params[i].LineNumber < params[j].LineNumber {
-			return true
-		}
-		return false
-	}
-	sort.Slice(params, sortFunc)
-
 	f := Func{
 		Name:    insElem.Name,
 		IsArray: insElem.IsArray,
 		Count:   insElem.Count,
-		//Doc:     string(insElem.Properties["doc"].(val.Str)),
 	}
 
 	if doc, ok := insElem.Properties["doc"]; ok {
@@ -126,6 +110,8 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 	}
 
 	block.addFunc(&f)
+
+	params := insElem.Elements.GetAllByBaseType("param")
 
 	baseBit := int64(0)
 	for _, param := range params {
