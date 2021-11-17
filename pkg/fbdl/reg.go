@@ -129,9 +129,9 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 			p.Access = makeAccessSingle(addr, baseBit, p.Width)
 		}
 
-		if p.Access.LastBitPos() < busWidth-1 {
+		if p.Access.EndBit() < busWidth-1 {
 			addr += p.Access.Count() - 1
-			baseBit = p.Access.LastBitPos() + 1
+			baseBit = p.Access.EndBit() + 1
 		} else {
 			addr += p.Access.Count()
 			baseBit = 0
@@ -144,7 +144,7 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 	// TODO: This is a potential place for adding a gap struct instance
 	// for further address space optimization.
 	lastAccess := f.Params[len(f.Params)-1].Access
-	if lastAccess.LastBitPos() < busWidth-1 {
+	if lastAccess.EndBit() < busWidth-1 {
 		addr += 1
 	}
 
