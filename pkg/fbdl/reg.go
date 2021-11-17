@@ -124,16 +124,17 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 		}
 
 		if p.IsArray {
-			panic("param array not yet supported")
+			p.Access = makeAccessArrayContinuous(p.Count, addr, baseBit, p.Width)
 		} else {
 			p.Access = makeAccessSingle(addr, baseBit, p.Width)
-			if p.Access.LastBitPos() < busWidth-1 {
-				addr += p.Access.Count() - 1
-				baseBit = p.Access.LastBitPos() + 1
-			} else {
-				addr += p.Access.Count()
-				baseBit = 0
-			}
+		}
+
+		if p.Access.LastBitPos() < busWidth-1 {
+			addr += p.Access.Count() - 1
+			baseBit = p.Access.LastBitPos() + 1
+		} else {
+			addr += p.Access.Count()
+			baseBit = 0
 		}
 
 		f.Params = append(f.Params, &p)
@@ -169,7 +170,8 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		width := int64(st.Properties["width"].(val.Int))
 
 		if st.IsArray {
-			s.Access = makeAccessArray(st.Count, addr, width)
+			panic("status array not yet implemented")
+			//s.Access = makeAccessArray(st.Count, addr, width)
 		} else {
 			s.Access = makeAccessSingle(addr, 0, width)
 		}

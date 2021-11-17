@@ -3,7 +3,7 @@ package fbdl
 import (
 	"encoding/json"
 	"fmt"
-	"math"
+	_ "math"
 )
 
 type Mask struct {
@@ -18,20 +18,20 @@ type Access interface {
 
 // AccessSingleSingle describes access to ...
 type AccessSingleSingle struct {
-	Address int64
-	Mask    Mask
+	Addr int64
+	Mask Mask
 }
 
 func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy string
 		Count    int64
-		Address  int64
+		Addr     int64
 		Mask     Mask
 	}{
 		Strategy: "Single",
 		Count:    1,
-		Address:  ass.Address,
+		Addr:     ass.Addr,
 		Mask:     ass.Mask,
 	})
 
@@ -53,8 +53,8 @@ func makeAccessSingleSingle(addr int64, startBit int64, width int64) Access {
 	}
 
 	return AccessSingleSingle{
-		Address: addr,
-		Mask:    Mask{Upper: startBit + width - 1, Lower: startBit},
+		Addr: addr,
+		Mask: Mask{Upper: startBit + width - 1, Lower: startBit},
 	}
 }
 
@@ -62,24 +62,24 @@ func makeAccessSingleSingle(addr int64, startBit int64, width int64) Access {
 type AccessSingleContinuous struct {
 	count int64 // count is the number of occupied registers.
 
-	StartAddress int64 // Address of the first register.
-	StartMask    Mask  // Mask for the first register.
-	EndMask      Mask  // Mask for the last register.
+	StartAddr int64 // Address of the first register.
+	StartMask Mask  // Mask for the first register.
+	EndMask   Mask  // Mask for the last register.
 }
 
 func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
-		Strategy     string
-		Count        int64
-		StartAddress int64
-		StartMask    Mask
-		EndMask      Mask
+		Strategy  string
+		Count     int64
+		StartAddr int64
+		StartMask Mask
+		EndMask   Mask
 	}{
-		Strategy:     "Continuous",
-		Count:        asc.count,
-		StartAddress: asc.StartAddress,
-		StartMask:    asc.StartMask,
-		EndMask:      asc.EndMask,
+		Strategy:  "Continuous",
+		Count:     asc.count,
+		StartAddr: asc.StartAddr,
+		StartMask: asc.StartMask,
+		EndMask:   asc.EndMask,
 	})
 
 	if err != nil {
@@ -110,10 +110,10 @@ func makeAccessSingleContinuous(addr int64, startBit int64, width int64) Access 
 	}
 
 	return AccessSingleContinuous{
-		count:        count,
-		StartAddress: addr,
-		StartMask:    startMask,
-		EndMask:      endMask,
+		count:     count,
+		StartAddr: addr,
+		StartMask: startMask,
+		EndMask:   endMask,
 	}
 }
 
@@ -129,6 +129,104 @@ func makeAccessSingle(addr int64, startBit int64, width int64) Access {
 	}
 }
 
+type AccessArraySingle struct {
+	count int64 // count is the number of occupied registers.
+
+	StartAddr int64
+	Mask      Mask
+}
+
+func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
+	j, err := json.Marshal(struct {
+		Strategy  string
+		Count     int64
+		StartAddr int64
+		Mask      Mask
+	}{
+		Strategy:  "Single",
+		Count:     aas.count,
+		StartAddr: aas.StartAddr,
+		Mask:      aas.Mask,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return j, nil
+}
+
+func (aas AccessArraySingle) Count() int64      { return aas.count }
+func (aas AccessArraySingle) IsArray() bool     { return true }
+func (aas AccessArraySingle) LastBitPos() int64 { return aas.Mask.Upper }
+
+func makeAccessArraySingle(count int64, addr int64, startBit int64, width int64) AccessArraySingle {
+	if startBit+width > busWidth {
+		msg := `cannot make AccessArraySingle, startBit + width > busWidth, (%d + %d > %d)`
+		panic(fmt.Sprintf(msg, startBit, width, busWidth))
+	}
+
+	return AccessArraySingle{
+		count:     count,
+		StartAddr: addr,
+		Mask:      Mask{Upper: startBit + width - 1, Lower: startBit},
+	}
+}
+
+type AccessArrayContinuous struct {
+	count int64
+
+	StartAddr int64
+	StartBit  int64
+	Width     int64
+}
+
+func (aac AccessArrayContinuous) MarshalJSON() ([]byte, error) {
+	j, err := json.Marshal(struct {
+		Strategy  string
+		Count     int64
+		StartAddr int64
+		StartBit  int64
+		Width     int64
+	}{
+		Strategy:  "Continuous",
+		Count:     aac.count,
+		StartAddr: aac.StartAddr,
+		StartBit:  aac.StartBit,
+		Width:     aac.Width,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return j, nil
+}
+
+func (aac AccessArrayContinuous) Count() int64  { return aac.count }
+func (aac AccessArrayContinuous) IsArray() bool { return true }
+
+func (aac AccessArrayContinuous) LastBitPos() int64 {
+	return ((aac.StartBit + aac.count*aac.Width) % busWidth) - 1
+}
+
+func makeAccessArrayContinuous(count int64, startAddr int64, startBit int64, width int64) Access {
+	return AccessArrayContinuous{
+		count:     count,
+		StartAddr: startAddr,
+		StartBit:  startBit,
+		Width:     width,
+	}
+}
+
+/*
+// AccessIdx returns access to item with given index.
+func AccessIdx(int64 idx) {
+
+}
+*/
+
+/*
 type AccessArray struct {
 	Strategy string
 
@@ -178,3 +276,4 @@ func makeAccessArray(count int64, baseAddr int64, width int64) *AccessArray {
 
 	return &aa
 }
+*/
