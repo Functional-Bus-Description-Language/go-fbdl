@@ -124,7 +124,7 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 		}
 
 		if p.IsArray {
-			panic("parram array not yet supported")
+			panic("param array not yet supported")
 		} else {
 			p.Access = makeAccessSingle(addr, baseBit, p.Width)
 			as := p.Access.(*AccessSingle)
