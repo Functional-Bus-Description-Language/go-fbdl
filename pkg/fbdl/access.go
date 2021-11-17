@@ -13,6 +13,7 @@ type Mask struct {
 type Access interface {
 	Count() int64 // Count returns the number of occupied registers.
 	IsArray() bool
+	StartAddr() int64
 	EndAddr() int64
 	LastBitPos() int64
 }
@@ -45,6 +46,7 @@ func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
 
 func (ass AccessSingleSingle) Count() int64      { return 1 }
 func (ass AccessSingleSingle) IsArray() bool     { return false }
+func (ass AccessSingleSingle) StartAddr() int64  { return ass.Addr }
 func (ass AccessSingleSingle) EndAddr() int64    { return ass.Addr }
 func (ass AccessSingleSingle) LastBitPos() int64 { return ass.Mask.Upper }
 
@@ -64,7 +66,7 @@ func makeAccessSingleSingle(addr int64, startBit int64, width int64) Access {
 type AccessSingleContinuous struct {
 	count int64 // count is the number of occupied registers.
 
-	StartAddr int64 // Address of the first register.
+	startAddr int64 // Address of the first register.
 	StartMask Mask  // Mask for the first register.
 	EndMask   Mask  // Mask for the last register.
 }
@@ -79,7 +81,7 @@ func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
 	}{
 		Strategy:  "Continuous",
 		Count:     asc.count,
-		StartAddr: asc.StartAddr,
+		StartAddr: asc.startAddr,
 		StartMask: asc.StartMask,
 		EndMask:   asc.EndMask,
 	})
@@ -93,7 +95,8 @@ func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
 
 func (asc AccessSingleContinuous) Count() int64      { return asc.count }
 func (asc AccessSingleContinuous) IsArray() bool     { return false }
-func (asc AccessSingleContinuous) EndAddr() int64    { return asc.StartAddr + asc.count - 1 }
+func (asc AccessSingleContinuous) StartAddr() int64  { return asc.startAddr }
+func (asc AccessSingleContinuous) EndAddr() int64    { return asc.startAddr + asc.count - 1 }
 func (asc AccessSingleContinuous) LastBitPos() int64 { return asc.EndMask.Upper }
 
 func makeAccessSingleContinuous(addr int64, startBit int64, width int64) Access {
@@ -114,7 +117,7 @@ func makeAccessSingleContinuous(addr int64, startBit int64, width int64) Access 
 
 	return AccessSingleContinuous{
 		count:     count,
-		StartAddr: addr,
+		startAddr: addr,
 		StartMask: startMask,
 		EndMask:   endMask,
 	}
@@ -135,7 +138,7 @@ func makeAccessSingle(addr int64, startBit int64, width int64) Access {
 type AccessArraySingle struct {
 	count int64 // count is the number of occupied registers.
 
-	StartAddr int64
+	startAddr int64
 	Mask      Mask
 }
 
@@ -148,7 +151,7 @@ func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
 	}{
 		Strategy:  "Single",
 		Count:     aas.count,
-		StartAddr: aas.StartAddr,
+		StartAddr: aas.startAddr,
 		Mask:      aas.Mask,
 	})
 
@@ -161,7 +164,8 @@ func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
 
 func (aas AccessArraySingle) Count() int64      { return aas.count }
 func (aas AccessArraySingle) IsArray() bool     { return true }
-func (aas AccessArraySingle) EndAddr() int64    { return aas.StartAddr + aas.count - 1 }
+func (aas AccessArraySingle) StartAddr() int64  { return aas.startAddr }
+func (aas AccessArraySingle) EndAddr() int64    { return aas.startAddr + aas.count - 1 }
 func (aas AccessArraySingle) LastBitPos() int64 { return aas.Mask.Upper }
 
 func makeAccessArraySingle(count int64, addr int64, startBit int64, width int64) AccessArraySingle {
@@ -172,7 +176,7 @@ func makeAccessArraySingle(count int64, addr int64, startBit int64, width int64)
 
 	return AccessArraySingle{
 		count:     count,
-		StartAddr: addr,
+		startAddr: addr,
 		Mask:      Mask{Upper: startBit + width - 1, Lower: startBit},
 	}
 }
@@ -182,7 +186,7 @@ type AccessArrayContinuous struct {
 
 	ItemCount int64
 	ItemWidth int64
-	StartAddr int64
+	startAddr int64
 	StartBit  int64
 }
 
@@ -199,7 +203,7 @@ func (aac AccessArrayContinuous) MarshalJSON() ([]byte, error) {
 		Count:     aac.count,
 		ItemCount: aac.ItemCount,
 		ItemWidth: aac.ItemWidth,
-		StartAddr: aac.StartAddr,
+		StartAddr: aac.startAddr,
 		StartBit:  aac.StartBit,
 	})
 
@@ -210,9 +214,10 @@ func (aac AccessArrayContinuous) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (aac AccessArrayContinuous) Count() int64   { return aac.count }
-func (aac AccessArrayContinuous) IsArray() bool  { return true }
-func (aac AccessArrayContinuous) EndAddr() int64 { return aac.StartAddr + aac.count - 1 }
+func (aac AccessArrayContinuous) Count() int64     { return aac.count }
+func (aac AccessArrayContinuous) IsArray() bool    { return true }
+func (aac AccessArrayContinuous) StartAddr() int64 { return aac.startAddr }
+func (aac AccessArrayContinuous) EndAddr() int64   { return aac.startAddr + aac.count - 1 }
 
 func (aac AccessArrayContinuous) LastBitPos() int64 {
 	return ((aac.StartBit + aac.count*aac.ItemWidth) % busWidth) - 1
@@ -222,7 +227,7 @@ func makeAccessArrayContinuous(count int64, startAddr int64, startBit int64, wid
 	aac := AccessArrayContinuous{
 		ItemCount: count,
 		ItemWidth: width,
-		StartAddr: startAddr,
+		startAddr: startAddr,
 		StartBit:  startBit,
 	}
 
