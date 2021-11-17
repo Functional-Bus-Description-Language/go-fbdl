@@ -127,12 +127,11 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 			panic("param array not yet supported")
 		} else {
 			p.Access = makeAccessSingle(addr, baseBit, p.Width)
-			as := p.Access.(*AccessSingle)
-			if as.LastMask.Upper < busWidth-1 {
-				addr += as.Count() - 1
-				baseBit = as.LastMask.Upper + 1
+			if p.Access.LastBitPos() < busWidth-1 {
+				addr += p.Access.Count() - 1
+				baseBit = p.Access.LastBitPos() + 1
 			} else {
-				addr += as.Count()
+				addr += p.Access.Count()
 				baseBit = 0
 			}
 		}
@@ -143,8 +142,8 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 	// If the last register is not fully occupied go to next address.
 	// TODO: This is a potential place for adding a gap struct instance
 	// for further address space optimization.
-	lastAs := f.Params[len(f.Params)-1].Access.(*AccessSingle)
-	if lastAs.LastMask.Upper < busWidth-1 {
+	lastAccess := f.Params[len(f.Params)-1].Access
+	if lastAccess.LastBitPos() < busWidth-1 {
 		addr += 1
 	}
 

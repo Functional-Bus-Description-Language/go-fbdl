@@ -2,6 +2,7 @@ package fbdl
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 )
 
@@ -10,33 +11,28 @@ type Mask struct {
 }
 
 type Access interface {
-	// Count returns the number of occupied registers.
-	Count() int64
+	Count() int64 // Count returns the number of occupied registers.
 	IsArray() bool
+	LastBitPos() int64
 }
 
-type AccessSingle struct {
-	Strategy string
-
-	Address   int64 // Address is the base address - address of the first register.
-	count     int64 // count is the number of occupied registers.
-	FirstMask Mask  // Mask for the first register.
-	LastMask  Mask  // Mask for the last register.
+// AccessSingleSingle describes access to ...
+type AccessSingleSingle struct {
+	Address int64
+	Mask    Mask
 }
 
-func (as AccessSingle) MarshalJSON() ([]byte, error) {
+func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
-		Strategy  string
-		Address   int64
-		Count     int64
-		FirstMask Mask
-		LastMask  Mask
+		Strategy string
+		Count    int64
+		Address  int64
+		Mask     Mask
 	}{
-		Strategy:  as.Strategy,
-		Address:   as.Address,
-		Count:     as.count,
-		FirstMask: as.FirstMask,
-		LastMask:  as.LastMask,
+		Strategy: "Single",
+		Count:    1,
+		Address:  ass.Address,
+		Mask:     ass.Mask,
 	})
 
 	if err != nil {
@@ -46,47 +42,90 @@ func (as AccessSingle) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (as *AccessSingle) Count() int64 { return as.count }
+func (ass AccessSingleSingle) Count() int64      { return 1 }
+func (ass AccessSingleSingle) IsArray() bool     { return false }
+func (ass AccessSingleSingle) LastBitPos() int64 { return ass.Mask.Upper }
 
-func (as *AccessSingle) IsArray() bool { return false }
+func makeAccessSingleSingle(addr int64, startBit int64, width int64) Access {
+	if startBit+width > busWidth {
+		msg := `cannot make AccessSingleSingle, startBit + width > busWidth, (%d + %d > %d)`
+		panic(fmt.Sprintf(msg, startBit, width, busWidth))
+	}
 
-func makeAccessSingle(baseAddr int64, baseBit int64, width int64) *AccessSingle {
-	//remainder := width % busWidth
-	firstRegRemainder := busWidth - baseBit
+	return AccessSingleSingle{
+		Address: addr,
+		Mask:    Mask{Upper: startBit + width - 1, Lower: startBit},
+	}
+}
 
-	var strategy string
-	var count int64
-	var firstMask Mask
-	var lastMask Mask
+// AccessSingleSingle describes access to ...
+type AccessSingleContinuous struct {
+	count int64 // count is the number of occupied registers.
 
-	if width <= firstRegRemainder {
-		strategy = "Single"
-		count = 1
-		firstMask = Mask{Upper: baseBit + width - 1, Lower: baseBit}
-		lastMask = firstMask
-	} else {
-		strategy = "Linear"
-		firstMask = Mask{Upper: busWidth - 1, Lower: baseBit}
-		count = 1
+	StartAddress int64 // Address of the first register.
+	StartMask    Mask  // Mask for the first register.
+	EndMask      Mask  // Mask for the last register.
+}
 
-		w := firstRegRemainder
-		for {
-			count += 1
-			if w+busWidth < width {
-				w += busWidth
-			} else {
-				lastMask = Mask{Upper: (width - w) - 1, Lower: 0}
-				break
-			}
+func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
+	j, err := json.Marshal(struct {
+		Strategy     string
+		Count        int64
+		StartAddress int64
+		StartMask    Mask
+		EndMask      Mask
+	}{
+		Strategy:     "Continuous",
+		Count:        asc.count,
+		StartAddress: asc.StartAddress,
+		StartMask:    asc.StartMask,
+		EndMask:      asc.EndMask,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return j, nil
+}
+
+func (asc AccessSingleContinuous) Count() int64      { return asc.count }
+func (asc AccessSingleContinuous) IsArray() bool     { return false }
+func (asc AccessSingleContinuous) LastBitPos() int64 { return asc.EndMask.Upper }
+
+func makeAccessSingleContinuous(addr int64, startBit int64, width int64) Access {
+	startMask := Mask{Upper: busWidth - 1, Lower: startBit}
+	count := int64(1)
+
+	var endMask Mask
+	w := busWidth - startBit
+	for {
+		count += 1
+		if w+busWidth < width {
+			w += busWidth
+		} else {
+			endMask = Mask{Upper: (width - w) - 1, Lower: 0}
+			break
 		}
 	}
 
-	return &AccessSingle{
-		Address:   baseAddr,
-		count:     count,
-		Strategy:  strategy,
-		FirstMask: firstMask,
-		LastMask:  lastMask,
+	return AccessSingleContinuous{
+		count:        count,
+		StartAddress: addr,
+		StartMask:    startMask,
+		EndMask:      endMask,
+	}
+}
+
+// makeAccessSingle makes AccessSingleSingle or AccessSingleContinuous depending on the argument values.
+func makeAccessSingle(addr int64, startBit int64, width int64) Access {
+	//remainder := width % busWidth
+	firstRegRemainder := busWidth - startBit
+
+	if width <= firstRegRemainder {
+		return makeAccessSingleSingle(addr, startBit, width)
+	} else {
+		return makeAccessSingleContinuous(addr, startBit, width)
 	}
 }
 
@@ -105,9 +144,9 @@ type AccessArray struct {
 	Mask Mask
 }
 
-func (aa *AccessArray) Count() int64 { return aa.count }
-
-func (aa *AccessArray) IsArray() bool { return true }
+func (aa *AccessArray) Count() int64      { return aa.count }
+func (aa *AccessArray) IsArray() bool     { return true }
+func (aa *AccessArray) LastBitPos() int64 { return 1 } // FIXME
 
 func makeAccessArray(count int64, baseAddr int64, width int64) *AccessArray {
 	aa := AccessArray{
