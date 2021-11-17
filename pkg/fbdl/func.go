@@ -19,3 +19,16 @@ func (f *Func) StartAddr() int64 {
 func (f *Func) EndAddr() int64 {
 	return f.Params[len(f.Params)-1].Access.EndAddr()
 }
+
+// AreAllParamsSingleSingle returns true if accesses to all parameters are of type AccessSingleSingle.
+func (f *Func) AreAllParamsSingleSingle() bool {
+	for _, p := range f.Params {
+		switch p.Access.(type) {
+		case AccessSingleSingle:
+			continue
+		default:
+			return false
+		}
+	}
+	return true
+}
