@@ -3,7 +3,7 @@ package fbdl
 import (
 	"encoding/json"
 	"fmt"
-	_ "math"
+	"math"
 )
 
 type Mask struct {
@@ -13,6 +13,7 @@ type Mask struct {
 type Access interface {
 	Count() int64 // Count returns the number of occupied registers.
 	IsArray() bool
+	EndAddr() int64
 	LastBitPos() int64
 }
 
@@ -44,6 +45,7 @@ func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
 
 func (ass AccessSingleSingle) Count() int64      { return 1 }
 func (ass AccessSingleSingle) IsArray() bool     { return false }
+func (ass AccessSingleSingle) EndAddr() int64    { return ass.Addr }
 func (ass AccessSingleSingle) LastBitPos() int64 { return ass.Mask.Upper }
 
 func makeAccessSingleSingle(addr int64, startBit int64, width int64) Access {
@@ -91,6 +93,7 @@ func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
 
 func (asc AccessSingleContinuous) Count() int64      { return asc.count }
 func (asc AccessSingleContinuous) IsArray() bool     { return false }
+func (asc AccessSingleContinuous) EndAddr() int64    { return asc.StartAddr + asc.count - 1 }
 func (asc AccessSingleContinuous) LastBitPos() int64 { return asc.EndMask.Upper }
 
 func makeAccessSingleContinuous(addr int64, startBit int64, width int64) Access {
@@ -158,6 +161,7 @@ func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
 
 func (aas AccessArraySingle) Count() int64      { return aas.count }
 func (aas AccessArraySingle) IsArray() bool     { return true }
+func (aas AccessArraySingle) EndAddr() int64    { return aas.StartAddr + aas.count - 1 }
 func (aas AccessArraySingle) LastBitPos() int64 { return aas.Mask.Upper }
 
 func makeAccessArraySingle(count int64, addr int64, startBit int64, width int64) AccessArraySingle {
@@ -176,24 +180,27 @@ func makeAccessArraySingle(count int64, addr int64, startBit int64, width int64)
 type AccessArrayContinuous struct {
 	count int64
 
+	ItemCount int64
+	ItemWidth int64
 	StartAddr int64
 	StartBit  int64
-	Width     int64
 }
 
 func (aac AccessArrayContinuous) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy  string
 		Count     int64
+		ItemCount int64
+		ItemWidth int64
 		StartAddr int64
 		StartBit  int64
-		Width     int64
 	}{
 		Strategy:  "Continuous",
 		Count:     aac.count,
+		ItemCount: aac.ItemCount,
+		ItemWidth: aac.ItemWidth,
 		StartAddr: aac.StartAddr,
 		StartBit:  aac.StartBit,
-		Width:     aac.Width,
 	})
 
 	if err != nil {
@@ -203,20 +210,28 @@ func (aac AccessArrayContinuous) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (aac AccessArrayContinuous) Count() int64  { return aac.count }
-func (aac AccessArrayContinuous) IsArray() bool { return true }
+func (aac AccessArrayContinuous) Count() int64   { return aac.count }
+func (aac AccessArrayContinuous) IsArray() bool  { return true }
+func (aac AccessArrayContinuous) EndAddr() int64 { return aac.StartAddr + aac.count - 1 }
 
 func (aac AccessArrayContinuous) LastBitPos() int64 {
-	return ((aac.StartBit + aac.count*aac.Width) % busWidth) - 1
+	return ((aac.StartBit + aac.count*aac.ItemWidth) % busWidth) - 1
 }
 
 func makeAccessArrayContinuous(count int64, startAddr int64, startBit int64, width int64) Access {
-	return AccessArrayContinuous{
-		count:     count,
+	aac := AccessArrayContinuous{
+		ItemCount: count,
+		ItemWidth: width,
 		StartAddr: startAddr,
 		StartBit:  startBit,
-		Width:     width,
 	}
+
+	totalWidth := count * width
+	firstRegWidth := busWidth - startBit
+
+	aac.count = int64(math.Ceil((float64(totalWidth)-float64(firstRegWidth))/float64(busWidth))) + 1
+
+	return aac
 }
 
 /*

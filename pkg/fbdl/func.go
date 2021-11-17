@@ -11,3 +11,7 @@ type Func struct {
 
 	Params []*Param
 }
+
+func (f *Func) EndAddr() int64 {
+	return f.Params[len(f.Params)-1].Access.EndAddr()
+}

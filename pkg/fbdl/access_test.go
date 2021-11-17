@@ -58,3 +58,62 @@ func TestMakeAccessSingle(t *testing.T) {
 		}
 	}
 }
+
+func TestMakeAccessArrayContinuous(t *testing.T) {
+	var tests = []struct {
+		startAddr int64
+		count     int64
+		startBit  int64
+		width     int64
+		want      Access
+	}{
+		{0, 1, 0, 32,
+			AccessArrayContinuous{
+				count:     1,
+				ItemCount: 1,
+				ItemWidth: 32,
+				StartAddr: 0,
+				StartBit:  0,
+			},
+		},
+		{1, 4, 0, 5,
+			AccessArrayContinuous{
+				count:     1,
+				ItemCount: 4,
+				ItemWidth: 5,
+				StartAddr: 1,
+				StartBit:  0,
+			},
+		},
+		{2, 2, 20, 23,
+			AccessArrayContinuous{
+				count:     3,
+				ItemCount: 2,
+				ItemWidth: 23,
+				StartAddr: 2,
+				StartBit:  20,
+			},
+		},
+		{3, 2, 20, 22,
+			AccessArrayContinuous{
+				count:     2,
+				ItemCount: 2,
+				ItemWidth: 22,
+				StartAddr: 3,
+				StartBit:  20,
+			},
+		},
+	}
+
+	for i, test := range tests {
+		got := makeAccessArrayContinuous(test.count, test.startAddr, test.startBit, test.width)
+
+		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
+			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
+		}
+
+		if got != test.want {
+			t.Errorf("[%d] got %v, want %v", i, got, test.want)
+		}
+	}
+}
