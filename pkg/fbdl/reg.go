@@ -164,7 +164,14 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 			Name:   st.Name,
 			Count:  insElem.Count,
 			Atomic: bool(st.Properties["atomic"].(val.Bool)),
+			Groups: []string{},
 			Width:  int64(st.Properties["width"].(val.Int)),
+		}
+
+		if groups, ok := st.Properties["groups"].(val.List); ok {
+			for _, g := range groups {
+				s.Groups = append(s.Groups, string(g.(val.Str)))
+			}
 		}
 
 		width := int64(st.Properties["width"].(val.Int))
