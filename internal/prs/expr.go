@@ -288,7 +288,7 @@ func (sl StringLiteral) Eval() (val.Value, error) {
 }
 
 func MakeStringLiteral(n ts.Node) StringLiteral {
-	return StringLiteral{v: n.Content()}
+	return StringLiteral{v: n.Content()[1 : len(n.Content())-1]}
 }
 
 type Subscript struct {
