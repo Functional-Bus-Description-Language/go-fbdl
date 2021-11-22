@@ -161,11 +161,12 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		}
 
 		s := Status{
-			Name:   st.Name,
-			Count:  st.Count,
-			Atomic: bool(st.Properties["atomic"].(val.Bool)),
-			Groups: []string{},
-			Width:  int64(st.Properties["width"].(val.Int)),
+			Name:    st.Name,
+			IsArray: st.IsArray,
+			Count:   st.Count,
+			Atomic:  bool(st.Properties["atomic"].(val.Bool)),
+			Groups:  []string{},
+			Width:   int64(st.Properties["width"].(val.Int)),
 		}
 
 		if groups, ok := st.Properties["groups"].(val.List); ok {
