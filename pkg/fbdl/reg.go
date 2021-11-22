@@ -181,6 +181,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 
 			} else if busWidth%width == 0 {
 				s.Access = makeAccessArrayMultiple(s.Count, addr, width)
+				// TODO: This is a place for adding a potential Gap.
 			} else {
 				panic("not yet implemented")
 			}
