@@ -162,7 +162,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 
 		s := Status{
 			Name:   st.Name,
-			Count:  insElem.Count,
+			Count:  st.Count,
 			Atomic: bool(st.Properties["atomic"].(val.Bool)),
 			Groups: []string{},
 			Width:  int64(st.Properties["width"].(val.Int)),
@@ -177,8 +177,13 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		width := int64(st.Properties["width"].(val.Int))
 
 		if st.IsArray {
-			panic("status array not yet implemented")
-			//s.Access = makeAccessArray(st.Count, addr, width)
+			if width == busWidth {
+
+			} else if busWidth%width == 0 {
+				s.Access = makeAccessArrayMultiple(s.Count, addr, width)
+			} else {
+				panic("not yet implemented")
+			}
 		} else {
 			s.Access = makeAccessSingle(addr, 0, width)
 		}

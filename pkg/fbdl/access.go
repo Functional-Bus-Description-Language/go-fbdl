@@ -220,7 +220,7 @@ func (aac AccessArrayContinuous) StartAddr() int64 { return aac.startAddr }
 func (aac AccessArrayContinuous) EndAddr() int64   { return aac.startAddr + aac.count - 1 }
 
 func (aac AccessArrayContinuous) EndBit() int64 {
-	return ((aac.StartBit + aac.count*aac.ItemWidth) % busWidth) - 1
+	return ((aac.StartBit + aac.count*aac.ItemWidth - 1) % busWidth)
 }
 
 func makeAccessArrayContinuous(count int64, startAddr int64, startBit int64, width int64) Access {
@@ -239,29 +239,58 @@ func makeAccessArrayContinuous(count int64, startAddr int64, startBit int64, wid
 	return aac
 }
 
-/*
-// AccessIdx returns access to item with given index.
-func AccessIdx(int64 idx) {
+type AccessArrayMultiple struct {
+	count int64
 
-}
-*/
-
-/*
-type AccessArray struct {
-	Strategy string
-
-	Address int64
-	count   int64 // count is the number of occupied registers.
-
-	AccessesPerItem int64
-	ItemsPerAccess  int64
-
-	BunchSize        int64
-	AccessesPerBunch int64
-
-	Mask Mask
+	ItemCount int64
+	ItemWidth int64
+	startAddr int64
 }
 
+func (aam AccessArrayMultiple) MarshalJSON() ([]byte, error) {
+	j, err := json.Marshal(struct {
+		Strategy  string
+		Count     int64
+		ItemCount int64
+		ItemWidth int64
+		StartAddr int64
+	}{
+		Strategy:  "Multiple",
+		Count:     aam.count,
+		ItemCount: aam.ItemCount,
+		ItemWidth: aam.ItemWidth,
+		StartAddr: aam.startAddr,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return j, nil
+}
+
+func (aam AccessArrayMultiple) Count() int64     { return aam.count }
+func (aam AccessArrayMultiple) IsArray() bool    { return true }
+func (aam AccessArrayMultiple) StartAddr() int64 { return aam.startAddr }
+func (aam AccessArrayMultiple) EndAddr() int64   { return aam.startAddr + aam.count - 1 }
+
+func (aam AccessArrayMultiple) EndBit() int64 {
+	return ((aam.ItemCount*aam.ItemWidth - 1) % busWidth)
+}
+
+func makeAccessArrayMultiple(count int64, startAddr int64, width int64) Access {
+	aam := AccessArrayMultiple{
+		ItemCount: count,
+		ItemWidth: width,
+		startAddr: startAddr,
+	}
+
+	aam.count = int64(math.Ceil(float64(count) * float64(width) / float64(busWidth)))
+
+	return aam
+}
+
+/*
 func (aa *AccessArray) Count() int64      { return aa.count }
 func (aa *AccessArray) IsArray() bool     { return true }
 func (aa *AccessArray) EndBit() int64 { return 1 } // FIXME
