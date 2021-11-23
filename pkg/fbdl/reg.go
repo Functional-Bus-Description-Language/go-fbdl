@@ -180,7 +180,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		if st.IsArray {
 			if width == busWidth {
 
-			} else if busWidth%width == 0 {
+			} else if busWidth%width == 0 || st.Count < busWidth/width {
 				s.Access = makeAccessArrayMultiple(s.Count, addr, width)
 				// TODO: This is a place for adding a potential Gap.
 			} else {
