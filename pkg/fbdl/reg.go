@@ -77,19 +77,19 @@ func Registerify(insBus *ins.Element) *Block {
 	return &regBus
 }
 
-func registerifyFunctionalities(blk *Block, insElem *ins.Element, addr int64) int64 {
-	if len(insElem.Elements) == 0 {
+func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
+	if len(insBlk.Elements) == 0 {
 		return addr
 	}
 
-	addr = registerifyFuncs(blk, insElem, addr)
-	addr = registerifyStatuses(blk, insElem, addr)
+	addr = registerifyFuncs(blk, insBlk, addr)
+	addr = registerifyStatuses(blk, insBlk, addr)
 
 	return addr
 }
 
-func registerifyFuncs(blk *Block, insElem *ins.Element, addr int64) int64 {
-	funcs := insElem.Elements.GetAllByBaseType("func")
+func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
+	funcs := insBlk.Elements.GetAllByBaseType("func")
 
 	for _, f := range funcs {
 		addr = registerifyFunc(blk, f, addr)
@@ -98,20 +98,20 @@ func registerifyFuncs(blk *Block, insElem *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func registerifyFunc(blk *Block, insElem *ins.Element, addr int64) int64 {
-	f := Func{
-		Name:    insElem.Name,
-		IsArray: insElem.IsArray,
-		Count:   insElem.Count,
+func registerifyFunc(blk *Block, insFunc *ins.Element, addr int64) int64 {
+	fun := Func{
+		Name:    insFunc.Name,
+		IsArray: insFunc.IsArray,
+		Count:   insFunc.Count,
 	}
 
-	if doc, ok := insElem.Properties["doc"]; ok {
-		f.Doc = string(doc.(val.Str))
+	if doc, ok := insFunc.Properties["doc"]; ok {
+		fun.Doc = string(doc.(val.Str))
 	}
 
-	blk.addFunc(&f)
+	blk.addFunc(&fun)
 
-	params := insElem.Elements.GetAllByBaseType("param")
+	params := insFunc.Elements.GetAllByBaseType("param")
 
 	baseBit := int64(0)
 	for _, param := range params {
@@ -137,13 +137,13 @@ func registerifyFunc(blk *Block, insElem *ins.Element, addr int64) int64 {
 			baseBit = 0
 		}
 
-		f.Params = append(f.Params, &p)
+		fun.Params = append(fun.Params, &p)
 	}
 
 	// If the last register is not fully occupied go to next address.
 	// TODO: This is a potential place for adding a gap struct instance
 	// for further address space optimization.
-	lastAccess := f.Params[len(f.Params)-1].Access
+	lastAccess := fun.Params[len(fun.Params)-1].Access
 	if lastAccess.EndBit() < busWidth-1 {
 		addr += 1
 	}
@@ -152,8 +152,8 @@ func registerifyFunc(blk *Block, insElem *ins.Element, addr int64) int64 {
 }
 
 // Current approach is trivial. Even groups are not respected.
-func registerifyStatuses(blk *Block, insElem *ins.Element, addr int64) int64 {
-	statuses := insElem.Elements.GetAllByBaseType("status")
+func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
+	statuses := insBlk.Elements.GetAllByBaseType("status")
 
 	for _, st := range statuses {
 		if st.Name == "x_uuid_x" || st.Name == "x_timestamp_x" {
@@ -197,19 +197,19 @@ func registerifyStatuses(blk *Block, insElem *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func registerifyBlock(insBlock *ins.Element) (*Block, Sizes) {
+func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 	addr := int64(0)
 
 	b := Block{
-		Name:    insBlock.Name,
-		IsArray: insBlock.IsArray,
-		Count:   int64(insBlock.Count),
+		Name:    insBlk.Name,
+		IsArray: insBlk.IsArray,
+		Count:   int64(insBlk.Count),
 	}
 
-	addr = registerifyFunctionalities(&b, insBlock, addr)
+	addr = registerifyFunctionalities(&b, insBlk, addr)
 	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
-	for _, e := range insBlock.Elements {
+	for _, e := range insBlk.Elements {
 		if e.BaseType == "block" {
 			sb, s := registerifyBlock(e)
 			sizes.Compact += e.Count * s.Compact
