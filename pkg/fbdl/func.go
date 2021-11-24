@@ -38,20 +38,18 @@ func (f *Func) AreAllParamsSingleSingle() bool {
 	return true
 }
 
-func registerifyFunc(blk *Block, insElem *ins.Element, addr int64) int64 {
-	f := Func{
-		Name:    insElem.Name,
-		IsArray: insElem.IsArray,
-		Count:   insElem.Count,
+func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
+	fun := Func{
+		Name:    insFun.Name,
+		IsArray: insFun.IsArray,
+		Count:   insFun.Count,
 	}
 
-	if doc, ok := insElem.Properties["doc"]; ok {
-		f.Doc = string(doc.(val.Str))
+	if doc, ok := insFun.Properties["doc"]; ok {
+		fun.Doc = string(doc.(val.Str))
 	}
 
-	blk.addFunc(&f)
-
-	params := insElem.Elements.GetAllByBaseType("param")
+	params := insFun.Elements.GetAllByBaseType("param")
 
 	baseBit := int64(0)
 	for _, param := range params {
@@ -77,16 +75,16 @@ func registerifyFunc(blk *Block, insElem *ins.Element, addr int64) int64 {
 			baseBit = 0
 		}
 
-		f.Params = append(f.Params, &p)
+		fun.Params = append(fun.Params, &p)
 	}
 
 	// If the last register is not fully occupied go to next address.
 	// TODO: This is a potential place for adding a gap struct instance
 	// for further address space optimization.
-	lastAccess := f.Params[len(f.Params)-1].Access
+	lastAccess := fun.Params[len(fun.Params)-1].Access
 	if lastAccess.EndBit() < busWidth-1 {
 		addr += 1
 	}
 
-	return addr
+	return &fun, addr
 }

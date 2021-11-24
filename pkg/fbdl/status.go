@@ -21,8 +21,8 @@ type Status struct {
 	Width   int64
 }
 
-func registerifyStatus(blk *Block, insSt *ins.Element, addr int64) int64 {
-	s := Status{
+func registerifyStatus(insSt *ins.Element, addr int64) (*Status, int64) {
+	st := Status{
 		Name:    insSt.Name,
 		IsArray: insSt.IsArray,
 		Count:   insSt.Count,
@@ -33,7 +33,7 @@ func registerifyStatus(blk *Block, insSt *ins.Element, addr int64) int64 {
 
 	if groups, ok := insSt.Properties["groups"].(val.List); ok {
 		for _, g := range groups {
-			s.Groups = append(s.Groups, string(g.(val.Str)))
+			st.Groups = append(st.Groups, string(g.(val.Str)))
 		}
 	}
 
@@ -43,17 +43,15 @@ func registerifyStatus(blk *Block, insSt *ins.Element, addr int64) int64 {
 		if width == busWidth {
 
 		} else if busWidth%width == 0 || insSt.Count < busWidth/width {
-			s.Access = makeAccessArrayMultiple(s.Count, addr, width)
+			st.Access = makeAccessArrayMultiple(st.Count, addr, width)
 			// TODO: This is a place for adding a potential Gap.
 		} else {
 			panic("not yet implemented")
 		}
 	} else {
-		s.Access = makeAccessSingle(addr, 0, width)
+		st.Access = makeAccessSingle(addr, 0, width)
 	}
-	addr += s.Access.Count()
+	addr += st.Access.Count()
 
-	blk.addStatus(&s)
-
-	return addr
+	return &st, addr
 }

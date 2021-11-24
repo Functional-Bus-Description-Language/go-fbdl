@@ -89,10 +89,13 @@ func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int
 }
 
 func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	funcs := insBlk.Elements.GetAllByBaseType("func")
+	insFuncs := insBlk.Elements.GetAllByBaseType("func")
 
-	for _, f := range funcs {
-		addr = registerifyFunc(blk, f, addr)
+	var fun *Func
+
+	for _, insFun := range insFuncs {
+		fun, addr = registerifyFunc(insFun, addr)
+		blk.addFunc(fun)
 	}
 
 	return addr
@@ -100,14 +103,17 @@ func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 
 // Current approach is trivial. Even groups are not respected.
 func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	statuses := insBlk.Elements.GetAllByBaseType("status")
+	insStatuses := insBlk.Elements.GetAllByBaseType("status")
 
-	for _, st := range statuses {
-		if st.Name == "x_uuid_x" || st.Name == "x_timestamp_x" {
+	var st *Status
+
+	for _, insSt := range insStatuses {
+		if insSt.Name == "x_uuid_x" || insSt.Name == "x_timestamp_x" {
 			continue
 		}
 
-		addr = registerifyStatus(blk, st, addr)
+		st, addr = registerifyStatus(insSt, addr)
+		blk.addStatus(st)
 	}
 
 	return addr
