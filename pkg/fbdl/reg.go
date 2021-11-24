@@ -98,59 +98,6 @@ func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func registerifyFunc(blk *Block, insFunc *ins.Element, addr int64) int64 {
-	fun := Func{
-		Name:    insFunc.Name,
-		IsArray: insFunc.IsArray,
-		Count:   insFunc.Count,
-	}
-
-	if doc, ok := insFunc.Properties["doc"]; ok {
-		fun.Doc = string(doc.(val.Str))
-	}
-
-	blk.addFunc(&fun)
-
-	params := insFunc.Elements.GetAllByBaseType("param")
-
-	baseBit := int64(0)
-	for _, param := range params {
-		p := Param{
-			Name:    param.Name,
-			IsArray: param.IsArray,
-			Count:   param.Count,
-			//Doc: string(param.Properties["doc"].(val.Str)),
-			Width: int64(param.Properties["width"].(val.Int)),
-		}
-
-		if p.IsArray {
-			p.Access = makeAccessArrayContinuous(p.Count, addr, baseBit, p.Width)
-		} else {
-			p.Access = makeAccessSingle(addr, baseBit, p.Width)
-		}
-
-		if p.Access.EndBit() < busWidth-1 {
-			addr += p.Access.Count() - 1
-			baseBit = p.Access.EndBit() + 1
-		} else {
-			addr += p.Access.Count()
-			baseBit = 0
-		}
-
-		fun.Params = append(fun.Params, &p)
-	}
-
-	// If the last register is not fully occupied go to next address.
-	// TODO: This is a potential place for adding a gap struct instance
-	// for further address space optimization.
-	lastAccess := fun.Params[len(fun.Params)-1].Access
-	if lastAccess.EndBit() < busWidth-1 {
-		addr += 1
-	}
-
-	return addr
-}
-
 // Current approach is trivial. Even groups are not respected.
 func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	statuses := insBlk.Elements.GetAllByBaseType("status")
@@ -160,38 +107,7 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 			continue
 		}
 
-		s := Status{
-			Name:    st.Name,
-			IsArray: st.IsArray,
-			Count:   st.Count,
-			Atomic:  bool(st.Properties["atomic"].(val.Bool)),
-			Groups:  []string{},
-			Width:   int64(st.Properties["width"].(val.Int)),
-		}
-
-		if groups, ok := st.Properties["groups"].(val.List); ok {
-			for _, g := range groups {
-				s.Groups = append(s.Groups, string(g.(val.Str)))
-			}
-		}
-
-		width := int64(st.Properties["width"].(val.Int))
-
-		if st.IsArray {
-			if width == busWidth {
-
-			} else if busWidth%width == 0 || st.Count < busWidth/width {
-				s.Access = makeAccessArrayMultiple(s.Count, addr, width)
-				// TODO: This is a place for adding a potential Gap.
-			} else {
-				panic("not yet implemented")
-			}
-		} else {
-			s.Access = makeAccessSingle(addr, 0, width)
-		}
-		addr += s.Access.Count()
-
-		blk.addStatus(&s)
+		addr = registerifyStatus(blk, st, addr)
 	}
 
 	return addr
