@@ -15,22 +15,26 @@ type Block struct {
 
 	// Elements
 	Subblocks []*Block
-	//Configs  []*Config
-	Funcs []*Func
-	//Masks    []*Mask
-	Statuses []*Status
+	Configs   []*Config
+	Funcs     []*Func
+	Statuses  []*Status
+	//Masks     []*Mask
 }
 
 func (b *Block) addSubblock(sb *Block) {
 	b.Subblocks = append(b.Subblocks, sb)
 }
 
-func (b *Block) addStatus(s *Status) {
-	b.Statuses = append(b.Statuses, s)
+func (b *Block) addConfig(c *Config) {
+	b.Configs = append(b.Configs, c)
 }
 
 func (b *Block) addFunc(f *Func) {
 	b.Funcs = append(b.Funcs, f)
+}
+
+func (b *Block) addStatus(s *Status) {
+	b.Statuses = append(b.Statuses, s)
 }
 
 func (b *Block) hasElement(name string) bool {

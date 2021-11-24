@@ -84,6 +84,7 @@ func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int
 
 	addr = registerifyFuncs(blk, insBlk, addr)
 	addr = registerifyStatuses(blk, insBlk, addr)
+	addr = registerifyConfigs(blk, insBlk, addr)
 
 	return addr
 }
@@ -101,7 +102,6 @@ func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	return addr
 }
 
-// Current approach is trivial. Even groups are not respected.
 func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	insStatuses := insBlk.Elements.GetAllByBaseType("status")
 
@@ -114,6 +114,19 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 
 		st, addr = registerifyStatus(insSt, addr)
 		blk.addStatus(st)
+	}
+
+	return addr
+}
+
+func registerifyConfigs(blk *Block, insBlk *ins.Element, addr int64) int64 {
+	insConfigs := insBlk.Elements.GetAllByBaseType("config")
+
+	var cfg *Config
+
+	for _, insCfg := range insConfigs {
+		cfg, addr = registerifyConfig(insCfg, addr)
+		blk.addConfig(cfg)
 	}
 
 	return addr
