@@ -77,28 +77,28 @@ func Registerify(insBus *ins.Element) *Block {
 	return &regBus
 }
 
-func registerifyFunctionalities(block *Block, insElem *ins.Element, addr int64) int64 {
+func registerifyFunctionalities(blk *Block, insElem *ins.Element, addr int64) int64 {
 	if len(insElem.Elements) == 0 {
 		return addr
 	}
 
-	addr = registerifyFuncs(block, insElem, addr)
-	addr = registerifyStatuses(block, insElem, addr)
+	addr = registerifyFuncs(blk, insElem, addr)
+	addr = registerifyStatuses(blk, insElem, addr)
 
 	return addr
 }
 
-func registerifyFuncs(block *Block, insElem *ins.Element, addr int64) int64 {
+func registerifyFuncs(blk *Block, insElem *ins.Element, addr int64) int64 {
 	funcs := insElem.Elements.GetAllByBaseType("func")
 
 	for _, f := range funcs {
-		addr = registerifyFunc(block, f, addr)
+		addr = registerifyFunc(blk, f, addr)
 	}
 
 	return addr
 }
 
-func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
+func registerifyFunc(blk *Block, insElem *ins.Element, addr int64) int64 {
 	f := Func{
 		Name:    insElem.Name,
 		IsArray: insElem.IsArray,
@@ -109,7 +109,7 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 		f.Doc = string(doc.(val.Str))
 	}
 
-	block.addFunc(&f)
+	blk.addFunc(&f)
 
 	params := insElem.Elements.GetAllByBaseType("param")
 
@@ -152,7 +152,7 @@ func registerifyFunc(block *Block, insElem *ins.Element, addr int64) int64 {
 }
 
 // Current approach is trivial. Even groups are not respected.
-func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
+func registerifyStatuses(blk *Block, insElem *ins.Element, addr int64) int64 {
 	statuses := insElem.Elements.GetAllByBaseType("status")
 
 	for _, st := range statuses {
@@ -191,7 +191,7 @@ func registerifyStatuses(block *Block, insElem *ins.Element, addr int64) int64 {
 		}
 		addr += s.Access.Count()
 
-		block.addStatus(&s)
+		blk.addStatus(&s)
 	}
 
 	return addr
