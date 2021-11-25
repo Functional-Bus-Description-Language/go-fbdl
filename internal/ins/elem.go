@@ -133,6 +133,13 @@ func (elem *Element) makeGroups() error {
 		}
 	}
 
+	// Check for element and group names conflict.
+	for grpName, _ := range elem.Groups {
+		if _, ok := elem.Elements.Get(grpName); ok {
+			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
+		}
+	}
+
 	// Check for groups with single element.
 	for name, g := range elem.Groups {
 		if len(g) == 1 {
