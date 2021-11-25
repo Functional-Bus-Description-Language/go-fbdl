@@ -106,6 +106,13 @@ func instantiateElement(e prs.Element) *Element {
 		)
 	}
 
+	if instance.Count < 0 {
+		log.Fatalf(
+			"%s: line %d: negative size (%d) of '%s' array",
+			e.FilePath(), e.LineNumber(), instance.Count, e.Name(),
+		)
+	}
+
 	fillProperties(instance)
 
 	return instance
