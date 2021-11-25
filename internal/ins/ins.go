@@ -98,7 +98,7 @@ func Instantiate(packages prs.Packages) *Element {
 
 func instantiateElement(e prs.Element) *Element {
 	typeChain := resolveToBaseType(e)
-	instance, err := instantiateTypeChain(typeChain)
+	elem, err := instantiateTypeChain(typeChain)
 	if err != nil {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s': %v",
@@ -106,16 +106,23 @@ func instantiateElement(e prs.Element) *Element {
 		)
 	}
 
-	if instance.Count < 0 {
+	if elem.Count < 0 {
 		log.Fatalf(
 			"%s: line %d: negative size (%d) of '%s' array",
-			e.FilePath(), e.LineNumber(), instance.Count, e.Name(),
+			e.FilePath(), e.LineNumber(), elem.Count, e.Name(),
 		)
 	}
 
-	fillProperties(instance)
+	fillProperties(elem)
 
-	return instance
+	if err = elem.makeGroups(); err != nil {
+		log.Fatalf(
+			"%s: line %d: instantiating element '%s': %v",
+			e.FilePath(), e.LineNumber(), e.Name(), err,
+		)
+	}
+
+	return elem
 }
 
 func resolveToBaseType(e prs.Element) []prs.Element {

@@ -15,6 +15,7 @@ type Element struct {
 	Properties map[string]val.Value
 	Constants  map[string]val.Value
 	Elements   ElementContainer
+	Groups     map[string][]*Element
 }
 
 func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Expression) error {
@@ -100,6 +101,75 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 			elem.Count = int64(count.(val.Int))
 		} else {
 			elem.Count = int64(1)
+		}
+	}
+
+	return nil
+}
+
+func (elem *Element) makeGroups() error {
+	elemsWithGroups := []*Element{}
+
+	for _, e := range elem.Elements {
+		if _, ok := e.Properties["groups"]; ok {
+			elemsWithGroups = append(elemsWithGroups, e)
+		}
+	}
+
+	if len(elemsWithGroups) == 0 {
+		return nil
+	}
+
+	elem.Groups = make(map[string][]*Element)
+
+	for _, e := range elemsWithGroups {
+		groups := e.Properties["groups"].(val.List)
+		for _, g := range groups {
+			g := string(g.(val.Str))
+			if _, ok := elem.Groups[g]; !ok {
+				elem.Groups[g] = []*Element{}
+			}
+			elem.Groups[g] = append(elem.Groups[g], e)
+		}
+	}
+
+	// Check for groups with single element.
+	for name, g := range elem.Groups {
+		if len(g) == 1 {
+			return fmt.Errorf("group %q has only one element '%s'", name, g[0].Name)
+		}
+	}
+
+	// Check groups order.
+	for i, e1 := range elemsWithGroups[:len(elemsWithGroups)-1] {
+		groups1 := e1.Properties["groups"].(val.List)
+		for _, e2 := range elemsWithGroups[i+1:] {
+			groups2 := e2.Properties["groups"].(val.List)
+			indexes := []int{}
+			for _, g1 := range groups1 {
+				for j2, g2 := range groups2 {
+					if string(g1.(val.Str)) == string(g2.(val.Str)) {
+						indexes = append(indexes, j2)
+					}
+				}
+			}
+
+			prevId := -1
+			for _, id := range indexes {
+				if id <= prevId {
+					return fmt.Errorf(
+						"conflicting order of groups, "+
+							"group %q is after group %q in element '%s', "+
+							"but before group %q in element '%s'",
+						string(groups2[id].(val.Str)),
+						string(groups2[id+1].(val.Str)),
+						e1.Name,
+						string(groups2[id+1].(val.Str)),
+						e2.Name,
+					)
+				}
+				prevId = id
+			}
 		}
 	}
 
