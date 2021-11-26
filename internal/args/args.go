@@ -86,7 +86,7 @@ var helpMsg string = `Functional Bus Description Language compiler front-end wri
 Version: %s
 
 Usage:
-  fbdl [-h] [-v] [-p [path]] [-i [path]] [-r [path]] /path/to/main/fbd/file
+  fbdl [-h] [-v] [-d] [-p [path]] [-i [path]] [-r [path]] /path/to/main/fbd/file
 
 Flags:
   -h, --help     Display help.
