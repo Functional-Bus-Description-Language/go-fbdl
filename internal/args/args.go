@@ -66,12 +66,19 @@ func Parse() map[string]string {
 					args[s] = "reg.json"
 				}
 			}
+		case "-d", "--debug":
+			args["--debug"] = ""
 		default:
 			log.Fatalf("invalid option %s", s)
 		}
 	}
 
 	args["mainFile"] = os.Args[argsLen-1]
+
+	if args["mainFile"][0] == '-' {
+		printHelp()
+	}
+
 	return args
 }
 
@@ -84,6 +91,7 @@ Usage:
 Flags:
   -h, --help     Display help.
   -v, --version  Display version.
+  -d, --debug    Print debug messages.
 
 Options:
   -p [path]  Dump parse results to a file (default path is prs.txt).

@@ -9,16 +9,40 @@ import (
 	"github.com/davecgh/go-spew/spew"
 
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 )
 
-type logWriter struct{}
+var printDebug bool = false
+
+type fbdlLogger struct{}
+
+func (l fbdlLogger) Write(p []byte) (int, error) {
+	print := true
+
+	if string(p)[:5] == "debug" {
+		print = printDebug
+	}
+
+	if print {
+		fmt.Fprintf(os.Stderr, string(p))
+	}
+
+	return len(p), nil
+}
 
 func main() {
+	logger := fbdlLogger{}
+	log.SetOutput(logger)
 	log.SetFlags(0)
 
 	cmdLineArgs := args.Parse()
+
+	if _, ok := cmdLineArgs["--debug"]; ok {
+		printDebug = true
+	}
+	log.Printf("debug: Dupa")
 
 	spew.Config.Indent = "\t"
 	spew.Config.DisablePointerAddresses = true
