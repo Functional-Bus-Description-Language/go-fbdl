@@ -21,7 +21,7 @@ type fbdlLogger struct{}
 func (l fbdlLogger) Write(p []byte) (int, error) {
 	print := true
 
-	if string(p)[:5] == "debug" {
+	if len(p) > 4 && string(p)[:5] == "debug" {
 		print = printDebug
 	}
 
@@ -42,7 +42,6 @@ func main() {
 	if _, ok := cmdLineArgs["--debug"]; ok {
 		printDebug = true
 	}
-	log.Printf("debug: Dupa")
 
 	spew.Config.Indent = "\t"
 	spew.Config.DisablePointerAddresses = true
