@@ -87,7 +87,7 @@ func DiscoverPackages(main string) Packages {
 		pkgsCount += len(pkgs)
 	}
 
-	dbgMsg = fmt.Sprintf("debug: found following %d packages:\n", len(pathsToLook))
+	dbgMsg = fmt.Sprintf("debug: found following %d packages:\n", pkgsCount)
 	for _, pkgs := range packages {
 		for _, pkg := range pkgs {
 			dbgMsg += fmt.Sprintf("  %s: %s\n", pkg.Name, pkg.Path)

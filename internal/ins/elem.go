@@ -5,6 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"log"
 )
 
 type Element struct {
@@ -15,7 +16,7 @@ type Element struct {
 	Properties map[string]val.Value
 	Constants  map[string]val.Value
 	Elements   ElementContainer
-	Groups     map[string][]*Element
+	Groups     []*Group
 }
 
 func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Expression) error {
@@ -120,28 +121,28 @@ func (elem *Element) makeGroups() error {
 		return nil
 	}
 
-	elem.Groups = make(map[string][]*Element)
+	groups := make(map[string][]*Element)
 
 	for _, e := range elemsWithGroups {
-		groups := e.Properties["groups"].(val.List)
-		for _, g := range groups {
+		grps := e.Properties["groups"].(val.List)
+		for _, g := range grps {
 			g := string(g.(val.Str))
-			if _, ok := elem.Groups[g]; !ok {
-				elem.Groups[g] = []*Element{}
+			if _, ok := groups[g]; !ok {
+				groups[g] = []*Element{}
 			}
-			elem.Groups[g] = append(elem.Groups[g], e)
+			groups[g] = append(groups[g], e)
 		}
 	}
 
 	// Check for element and group names conflict.
-	for grpName, _ := range elem.Groups {
+	for grpName, _ := range groups {
 		if _, ok := elem.Elements.Get(grpName); ok {
 			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
 		}
 	}
 
 	// Check for groups with single element.
-	for name, g := range elem.Groups {
+	for name, g := range groups {
 		if len(g) == 1 {
 			return fmt.Errorf("group %q has only one element '%s'", name, g[0].Name)
 		}
@@ -149,12 +150,12 @@ func (elem *Element) makeGroups() error {
 
 	// Check groups order.
 	for i, e1 := range elemsWithGroups[:len(elemsWithGroups)-1] {
-		groups1 := e1.Properties["groups"].(val.List)
+		grps1 := e1.Properties["groups"].(val.List)
 		for _, e2 := range elemsWithGroups[i+1:] {
-			groups2 := e2.Properties["groups"].(val.List)
+			grps2 := e2.Properties["groups"].(val.List)
 			indexes := []int{}
-			for _, g1 := range groups1 {
-				for j2, g2 := range groups2 {
+			for _, g1 := range grps1 {
+				for j2, g2 := range grps2 {
 					if string(g1.(val.Str)) == string(g2.(val.Str)) {
 						indexes = append(indexes, j2)
 					}
@@ -168,16 +169,49 @@ func (elem *Element) makeGroups() error {
 						"conflicting order of groups, "+
 							"group %q is after group %q in element '%s', "+
 							"but before group %q in element '%s'",
-						string(groups2[id].(val.Str)),
-						string(groups2[id+1].(val.Str)),
+						string(grps2[id].(val.Str)),
+						string(grps2[id+1].(val.Str)),
 						e1.Name,
-						string(groups2[id+1].(val.Str)),
+						string(grps2[id+1].(val.Str)),
 						e2.Name,
 					)
 				}
 				prevId = id
 			}
 		}
+	}
+
+	var groupsOrder []string
+
+	if _, ok := elem.Properties["groupsOrder"]; ok {
+		panic("not yet implemented")
+	} else {
+		graph := newGrpGraph()
+
+		for _, e := range elemsWithGroups {
+			grps := e.Properties["groups"].(val.List)
+			var prevGrp string = ""
+			for _, g := range grps {
+				g := string(g.(val.Str))
+				graph.addEdge(prevGrp, g)
+				prevGrp = g
+			}
+		}
+
+		groupsOrder = graph.sort()
+	}
+
+	log.Printf("debug: groups order for element '%s': %v", elem.Name, groupsOrder)
+
+	elem.Groups = []*Group{}
+	for _, grpName := range groupsOrder {
+		elem.Groups = append(
+			elem.Groups,
+			&Group{
+				Name:     grpName,
+				Elements: groups[grpName],
+			},
+		)
 	}
 
 	return nil
