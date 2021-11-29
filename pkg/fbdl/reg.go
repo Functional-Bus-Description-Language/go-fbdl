@@ -82,9 +82,26 @@ func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int
 		return addr
 	}
 
+	addr = registerifyGroups(blk, insBlk, addr)
 	addr = registerifyFuncs(blk, insBlk, addr)
 	addr = registerifyStatuses(blk, insBlk, addr)
 	addr = registerifyConfigs(blk, insBlk, addr)
+
+	return addr
+}
+
+func registerifyGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
+	var grp Group
+	for _, group := range insBlk.Groups {
+		if group.IsStatus() && group.IsArray() {
+			grp, addr = registerifyGroupStatusArray(blk, group, addr)
+		}
+
+		blk.addGroup(grp)
+		for _, st := range grp.Statuses() {
+			blk.addStatus(st)
+		}
+	}
 
 	return addr
 }
@@ -111,7 +128,10 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 		if insSt.Name == "x_uuid_x" || insSt.Name == "x_timestamp_x" {
 			continue
 		}
-
+		// Omit elements that have been already registerified as group members.
+		if blk.hasElement(insSt.Name) {
+			continue
+		}
 		st, addr = registerifyStatus(insSt, addr)
 		blk.addStatus(st)
 	}
@@ -125,6 +145,10 @@ func registerifyConfigs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	var cfg *Config
 
 	for _, insCfg := range insConfigs {
+		// Omit elements that have been already registerified as group members.
+		if blk.hasElement(insCfg.Name) {
+			continue
+		}
 		cfg, addr = registerifyConfig(insCfg, addr)
 		blk.addConfig(cfg)
 	}

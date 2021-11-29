@@ -55,3 +55,28 @@ func registerifyStatus(insSt *ins.Element, addr int64) (*Status, int64) {
 
 	return &st, addr
 }
+
+func registerifyStatusArraySingle(insSt *ins.Element, addr, startBit int64) (*Status, int64) {
+	st := Status{
+		Name:    insSt.Name,
+		IsArray: insSt.IsArray,
+		Count:   insSt.Count,
+		Atomic:  bool(insSt.Properties["atomic"].(val.Bool)),
+		Groups:  []string{},
+		Width:   int64(insSt.Properties["width"].(val.Int)),
+	}
+
+	if groups, ok := insSt.Properties["groups"].(val.List); ok {
+		for _, g := range groups {
+			st.Groups = append(st.Groups, string(g.(val.Str)))
+		}
+	}
+
+	width := int64(insSt.Properties["width"].(val.Int))
+
+	st.Access = makeAccessArraySingle(insSt.Count, addr, startBit, width)
+
+	addr += st.Access.RegCount()
+
+	return &st, addr
+}

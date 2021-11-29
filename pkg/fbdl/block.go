@@ -19,6 +19,8 @@ type Block struct {
 	Funcs     []*Func
 	Statuses  []*Status
 	//Masks     []*Mask
+
+	Groups []Group `json:"-"`
 }
 
 func (b *Block) addSubblock(sb *Block) {
@@ -35,6 +37,10 @@ func (b *Block) addFunc(f *Func) {
 
 func (b *Block) addStatus(s *Status) {
 	b.Statuses = append(b.Statuses, s)
+}
+
+func (b *Block) addGroup(g Group) {
+	b.Groups = append(b.Groups, g)
 }
 
 func (b *Block) hasElement(name string) bool {
