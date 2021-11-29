@@ -5,6 +5,28 @@ type Group struct {
 	Elements []*Element
 }
 
+// IsStatus returns true if group contains only status elements.
+func (g *Group) IsStatus() bool {
+	for _, e := range g.Elements {
+		if e.BaseType != "status" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// IsConfig returns true if group contains only config elements.
+func (g *Group) IsConfig() bool {
+	for _, e := range g.Elements {
+		if e.BaseType != "config" {
+			return false
+		}
+	}
+
+	return true
+}
+
 type grpNode map[string]bool
 
 type grpGraph struct {
