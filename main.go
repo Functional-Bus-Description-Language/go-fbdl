@@ -16,9 +16,9 @@ import (
 
 var printDebug bool = false
 
-type fbdlLogger struct{}
+type Logger struct{}
 
-func (l fbdlLogger) Write(p []byte) (int, error) {
+func (l Logger) Write(p []byte) (int, error) {
 	print := true
 
 	if len(p) > 4 && string(p)[:5] == "debug" {
@@ -33,7 +33,7 @@ func (l fbdlLogger) Write(p []byte) (int, error) {
 }
 
 func main() {
-	logger := fbdlLogger{}
+	logger := Logger{}
 	log.SetOutput(logger)
 	log.SetFlags(0)
 
