@@ -118,7 +118,7 @@ func TestMakeAccessArrayContinuous(t *testing.T) {
 	}
 }
 
-func TestMakeAccessArrayMultiple(t *testing.T) {
+func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 	var tests = []struct {
 		startAddr int64
 		count     int64
@@ -127,48 +127,78 @@ func TestMakeAccessArrayMultiple(t *testing.T) {
 	}{
 		{0, 1, 32,
 			AccessArrayMultiple{
-				count:     1,
-				ItemCount: 1,
-				ItemWidth: 32,
-				startAddr: 0,
+				count:          1,
+				ItemCount:      1,
+				ItemWidth:      32,
+				ItemsPerAccess: 1,
+				startAddr:      0,
+				startBit:       0,
 			},
 		},
 		{1, 4, 8,
 			AccessArrayMultiple{
-				count:     1,
-				ItemCount: 4,
-				ItemWidth: 8,
-				startAddr: 1,
+				count:          1,
+				ItemCount:      4,
+				ItemWidth:      8,
+				ItemsPerAccess: 4,
+				startAddr:      1,
+				startBit:       0,
 			},
 		},
 		{2, 3, 16,
 			AccessArrayMultiple{
-				count:     2,
-				ItemCount: 3,
-				ItemWidth: 16,
-				startAddr: 2,
+				count:          2,
+				ItemCount:      3,
+				ItemWidth:      16,
+				ItemsPerAccess: 2,
+				startAddr:      2,
+				startBit:       0,
 			},
 		},
 		{3, 4, 4,
 			AccessArrayMultiple{
-				count:     1,
-				ItemCount: 4,
-				ItemWidth: 4,
-				startAddr: 3,
+				count:          1,
+				ItemCount:      4,
+				ItemWidth:      4,
+				ItemsPerAccess: 8,
+				startAddr:      3,
+				startBit:       0,
 			},
 		},
 		{4, 5, 8,
 			AccessArrayMultiple{
-				count:     2,
-				ItemCount: 5,
-				ItemWidth: 8,
-				startAddr: 4,
+				count:          2,
+				ItemCount:      5,
+				ItemWidth:      8,
+				ItemsPerAccess: 4,
+				startAddr:      4,
+				startBit:       0,
+			},
+		},
+		{5, 10, 7,
+			AccessArrayMultiple{
+				count:          3,
+				ItemCount:      10,
+				ItemWidth:      7,
+				ItemsPerAccess: 4,
+				startAddr:      5,
+				startBit:       0,
+			},
+		},
+		{6, 50, 3,
+			AccessArrayMultiple{
+				count:          5,
+				ItemCount:      50,
+				ItemWidth:      3,
+				ItemsPerAccess: 10,
+				startAddr:      6,
+				startBit:       0,
 			},
 		},
 	}
 
 	for i, test := range tests {
-		got := makeAccessArrayMultiple(test.count, test.startAddr, test.width)
+		got := makeAccessArrayMultiplePacked(test.count, test.startAddr, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
