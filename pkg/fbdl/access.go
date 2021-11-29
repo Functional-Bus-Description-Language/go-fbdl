@@ -50,7 +50,7 @@ func (ass AccessSingleSingle) StartAddr() int64 { return ass.Addr }
 func (ass AccessSingleSingle) EndAddr() int64   { return ass.Addr }
 func (ass AccessSingleSingle) EndBit() int64    { return ass.Mask.Upper }
 
-func makeAccessSingleSingle(addr int64, startBit int64, width int64) Access {
+func makeAccessSingleSingle(addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
 		msg := `cannot make AccessSingleSingle, startBit + width > busWidth, (%d + %d > %d)`
 		panic(fmt.Sprintf(msg, startBit, width, busWidth))
@@ -99,7 +99,7 @@ func (asc AccessSingleContinuous) StartAddr() int64 { return asc.startAddr }
 func (asc AccessSingleContinuous) EndAddr() int64   { return asc.startAddr + asc.count - 1 }
 func (asc AccessSingleContinuous) EndBit() int64    { return asc.EndMask.Upper }
 
-func makeAccessSingleContinuous(addr int64, startBit int64, width int64) Access {
+func makeAccessSingleContinuous(addr, startBit, width int64) Access {
 	startMask := Mask{Upper: busWidth - 1, Lower: startBit}
 	count := int64(1)
 
@@ -124,7 +124,7 @@ func makeAccessSingleContinuous(addr int64, startBit int64, width int64) Access 
 }
 
 // makeAccessSingle makes AccessSingleSingle or AccessSingleContinuous depending on the argument values.
-func makeAccessSingle(addr int64, startBit int64, width int64) Access {
+func makeAccessSingle(addr, startBit, width int64) Access {
 	//remainder := width % busWidth
 	firstRegRemainder := busWidth - startBit
 
@@ -168,7 +168,7 @@ func (aas AccessArraySingle) StartAddr() int64 { return aas.startAddr }
 func (aas AccessArraySingle) EndAddr() int64   { return aas.startAddr + aas.count - 1 }
 func (aas AccessArraySingle) EndBit() int64    { return aas.Mask.Upper }
 
-func makeAccessArraySingle(count int64, addr int64, startBit int64, width int64) AccessArraySingle {
+func makeAccessArraySingle(count, addr, startBit, width int64) AccessArraySingle {
 	if startBit+width > busWidth {
 		msg := `cannot make AccessArraySingle, startBit + width > busWidth, (%d + %d > %d)`
 		panic(fmt.Sprintf(msg, startBit, width, busWidth))
@@ -223,7 +223,7 @@ func (aac AccessArrayContinuous) EndBit() int64 {
 	return ((aac.StartBit + aac.count*aac.ItemWidth - 1) % busWidth)
 }
 
-func makeAccessArrayContinuous(count int64, startAddr int64, startBit int64, width int64) Access {
+func makeAccessArrayContinuous(count, startAddr, startBit, width int64) Access {
 	aac := AccessArrayContinuous{
 		ItemCount: count,
 		ItemWidth: width,
@@ -293,7 +293,7 @@ func (aam AccessArrayMultiple) EndBit() int64 {
 
 // makeAccessArrayMultiplePacked makes AccessArrayMultiple starting from bit 0,
 // and placing as many items within single register as possible.
-func makeAccessArrayMultiplePacked(count int64, startAddr int64, width int64) Access {
+func makeAccessArrayMultiplePacked(count, startAddr, width int64) Access {
 	aam := AccessArrayMultiple{
 		ItemCount:      count,
 		ItemWidth:      width,
