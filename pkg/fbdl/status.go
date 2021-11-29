@@ -42,8 +42,8 @@ func registerifyStatus(insSt *ins.Element, addr int64) (*Status, int64) {
 	if insSt.IsArray {
 		if width == busWidth {
 
-		} else if busWidth%width == 0 || insSt.Count < busWidth/width {
-			st.Access = makeAccessArrayMultiple(st.Count, addr, width)
+		} else if busWidth%width == 0 || insSt.Count <= busWidth/width || width < busWidth/2 {
+			st.Access = makeAccessArrayMultiplePacked(st.Count, addr, width)
 			// TODO: This is a place for adding a potential Gap.
 		} else {
 			panic("not yet implemented")

@@ -242,24 +242,30 @@ func makeAccessArrayContinuous(count int64, startAddr int64, startBit int64, wid
 type AccessArrayMultiple struct {
 	count int64
 
-	ItemCount int64
-	ItemWidth int64
-	startAddr int64
+	ItemCount      int64
+	ItemWidth      int64
+	ItemsPerAccess int64
+	startAddr      int64
+	startBit       int64
 }
 
 func (aam AccessArrayMultiple) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
-		Strategy  string
-		Count     int64
-		ItemCount int64
-		ItemWidth int64
-		StartAddr int64
+		Strategy       string
+		Count          int64
+		ItemCount      int64
+		ItemWidth      int64
+		ItemsPerAccess int64
+		StartAddr      int64
+		StartBit       int64
 	}{
-		Strategy:  "Multiple",
-		Count:     aam.count,
-		ItemCount: aam.ItemCount,
-		ItemWidth: aam.ItemWidth,
-		StartAddr: aam.startAddr,
+		Strategy:       "Multiple",
+		Count:          aam.count,
+		ItemCount:      aam.ItemCount,
+		ItemWidth:      aam.ItemWidth,
+		ItemsPerAccess: aam.ItemsPerAccess,
+		StartAddr:      aam.startAddr,
+		StartBit:       aam.startBit,
 	})
 
 	if err != nil {
@@ -275,17 +281,32 @@ func (aam AccessArrayMultiple) StartAddr() int64 { return aam.startAddr }
 func (aam AccessArrayMultiple) EndAddr() int64   { return aam.startAddr + aam.count - 1 }
 
 func (aam AccessArrayMultiple) EndBit() int64 {
-	return ((aam.ItemCount*aam.ItemWidth - 1) % busWidth)
+	if aam.count == 1 {
+		return aam.startBit + aam.ItemCount*aam.ItemWidth - 1
+	} else if aam.ItemCount%aam.ItemsPerAccess == 0 {
+		return aam.startBit + aam.ItemsPerAccess*aam.ItemWidth - 1
+	} else {
+		itemsInLast := aam.ItemCount % aam.ItemsPerAccess
+		return aam.startBit + itemsInLast*aam.ItemWidth - 1
+	}
 }
 
-func makeAccessArrayMultiple(count int64, startAddr int64, width int64) Access {
+// makeAccessArrayMultiplePacked makes AccessArrayMultiple starting from bit 0,
+// and placing as many items within single register as possible.
+func makeAccessArrayMultiplePacked(count int64, startAddr int64, width int64) Access {
 	aam := AccessArrayMultiple{
-		ItemCount: count,
-		ItemWidth: width,
-		startAddr: startAddr,
+		ItemCount:      count,
+		ItemWidth:      width,
+		ItemsPerAccess: busWidth / width,
+		startAddr:      startAddr,
+		startBit:       0,
 	}
 
-	aam.count = int64(math.Ceil(float64(count) * float64(width) / float64(busWidth)))
+	if count <= aam.ItemsPerAccess {
+		aam.count = 1
+	} else {
+		aam.count = int64(math.Ceil(float64(count) / float64(aam.ItemsPerAccess)))
+	}
 
 	return aam
 }
