@@ -55,7 +55,7 @@ func registerifyConfig(insCfg *ins.Element, addr int64) (*Config, int64) {
 	} else {
 		cfg.Access = makeAccessSingle(addr, 0, width)
 	}
-	addr += cfg.Access.Count()
+	addr += cfg.Access.RegCount()
 
 	return &cfg, addr
 }

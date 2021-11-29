@@ -68,10 +68,10 @@ func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 		}
 
 		if p.Access.EndBit() < busWidth-1 {
-			addr += p.Access.Count() - 1
+			addr += p.Access.RegCount() - 1
 			baseBit = p.Access.EndBit() + 1
 		} else {
-			addr += p.Access.Count()
+			addr += p.Access.RegCount()
 			baseBit = 0
 		}
 

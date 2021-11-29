@@ -11,7 +11,7 @@ type Mask struct {
 }
 
 type Access interface {
-	Count() int64 // Count returns the number of occupied registers.
+	RegCount() int64 // RegCount returns the number of occupied registers.
 	IsArray() bool
 	StartAddr() int64
 	EndAddr() int64
@@ -44,7 +44,7 @@ func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (ass AccessSingleSingle) Count() int64     { return 1 }
+func (ass AccessSingleSingle) RegCount() int64  { return 1 }
 func (ass AccessSingleSingle) IsArray() bool    { return false }
 func (ass AccessSingleSingle) StartAddr() int64 { return ass.Addr }
 func (ass AccessSingleSingle) EndAddr() int64   { return ass.Addr }
@@ -64,7 +64,7 @@ func makeAccessSingleSingle(addr, startBit, width int64) Access {
 
 // AccessSingleSingle describes access to ...
 type AccessSingleContinuous struct {
-	count int64 // count is the number of occupied registers.
+	regCount int64
 
 	startAddr int64 // Address of the first register.
 	StartMask Mask  // Mask for the first register.
@@ -74,13 +74,13 @@ type AccessSingleContinuous struct {
 func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy  string
-		Count     int64
+		RegCount  int64
 		StartAddr int64
 		StartMask Mask
 		EndMask   Mask
 	}{
 		Strategy:  "Continuous",
-		Count:     asc.count,
+		RegCount:  asc.regCount,
 		StartAddr: asc.startAddr,
 		StartMask: asc.StartMask,
 		EndMask:   asc.EndMask,
@@ -93,20 +93,20 @@ func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (asc AccessSingleContinuous) Count() int64     { return asc.count }
+func (asc AccessSingleContinuous) RegCount() int64  { return asc.regCount }
 func (asc AccessSingleContinuous) IsArray() bool    { return false }
 func (asc AccessSingleContinuous) StartAddr() int64 { return asc.startAddr }
-func (asc AccessSingleContinuous) EndAddr() int64   { return asc.startAddr + asc.count - 1 }
+func (asc AccessSingleContinuous) EndAddr() int64   { return asc.startAddr + asc.regCount - 1 }
 func (asc AccessSingleContinuous) EndBit() int64    { return asc.EndMask.Upper }
 
 func makeAccessSingleContinuous(addr, startBit, width int64) Access {
 	startMask := Mask{Upper: busWidth - 1, Lower: startBit}
-	count := int64(1)
+	regCount := int64(1)
 
 	var endMask Mask
 	w := busWidth - startBit
 	for {
-		count += 1
+		regCount += 1
 		if w+busWidth < width {
 			w += busWidth
 		} else {
@@ -116,7 +116,7 @@ func makeAccessSingleContinuous(addr, startBit, width int64) Access {
 	}
 
 	return AccessSingleContinuous{
-		count:     count,
+		regCount:  regCount,
 		startAddr: addr,
 		StartMask: startMask,
 		EndMask:   endMask,
@@ -136,7 +136,7 @@ func makeAccessSingle(addr, startBit, width int64) Access {
 }
 
 type AccessArraySingle struct {
-	count int64 // count is the number of occupied registers.
+	regCount int64
 
 	startAddr int64
 	Mask      Mask
@@ -145,12 +145,12 @@ type AccessArraySingle struct {
 func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy  string
-		Count     int64
+		RegCount  int64
 		StartAddr int64
 		Mask      Mask
 	}{
 		Strategy:  "Single",
-		Count:     aas.count,
+		RegCount:  aas.regCount,
 		StartAddr: aas.startAddr,
 		Mask:      aas.Mask,
 	})
@@ -162,27 +162,27 @@ func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (aas AccessArraySingle) Count() int64     { return aas.count }
+func (aas AccessArraySingle) RegCount() int64  { return aas.regCount }
 func (aas AccessArraySingle) IsArray() bool    { return true }
 func (aas AccessArraySingle) StartAddr() int64 { return aas.startAddr }
-func (aas AccessArraySingle) EndAddr() int64   { return aas.startAddr + aas.count - 1 }
+func (aas AccessArraySingle) EndAddr() int64   { return aas.startAddr + aas.regCount - 1 }
 func (aas AccessArraySingle) EndBit() int64    { return aas.Mask.Upper }
 
-func makeAccessArraySingle(count, addr, startBit, width int64) AccessArraySingle {
+func makeAccessArraySingle(itemCount, addr, startBit, width int64) AccessArraySingle {
 	if startBit+width > busWidth {
 		msg := `cannot make AccessArraySingle, startBit + width > busWidth, (%d + %d > %d)`
 		panic(fmt.Sprintf(msg, startBit, width, busWidth))
 	}
 
 	return AccessArraySingle{
-		count:     count,
+		regCount:  itemCount,
 		startAddr: addr,
 		Mask:      Mask{Upper: startBit + width - 1, Lower: startBit},
 	}
 }
 
 type AccessArrayContinuous struct {
-	count int64
+	regCount int64
 
 	ItemCount int64
 	ItemWidth int64
@@ -193,14 +193,14 @@ type AccessArrayContinuous struct {
 func (aac AccessArrayContinuous) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy  string
-		Count     int64
+		RegCount  int64
 		ItemCount int64
 		ItemWidth int64
 		StartAddr int64
 		StartBit  int64
 	}{
 		Strategy:  "Continuous",
-		Count:     aac.count,
+		RegCount:  aac.regCount,
 		ItemCount: aac.ItemCount,
 		ItemWidth: aac.ItemWidth,
 		StartAddr: aac.startAddr,
@@ -214,45 +214,45 @@ func (aac AccessArrayContinuous) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (aac AccessArrayContinuous) Count() int64     { return aac.count }
+func (aac AccessArrayContinuous) RegCount() int64  { return aac.regCount }
 func (aac AccessArrayContinuous) IsArray() bool    { return true }
 func (aac AccessArrayContinuous) StartAddr() int64 { return aac.startAddr }
-func (aac AccessArrayContinuous) EndAddr() int64   { return aac.startAddr + aac.count - 1 }
+func (aac AccessArrayContinuous) EndAddr() int64   { return aac.startAddr + aac.regCount - 1 }
 
 func (aac AccessArrayContinuous) EndBit() int64 {
-	return ((aac.StartBit + aac.count*aac.ItemWidth - 1) % busWidth)
+	return ((aac.StartBit + aac.regCount*aac.ItemWidth - 1) % busWidth)
 }
 
-func makeAccessArrayContinuous(count, startAddr, startBit, width int64) Access {
+func makeAccessArrayContinuous(itemCount, startAddr, startBit, width int64) Access {
 	aac := AccessArrayContinuous{
-		ItemCount: count,
+		ItemCount: itemCount,
 		ItemWidth: width,
 		startAddr: startAddr,
 		StartBit:  startBit,
 	}
 
-	totalWidth := count * width
+	totalWidth := itemCount * width
 	firstRegWidth := busWidth - startBit
 
-	aac.count = int64(math.Ceil((float64(totalWidth)-float64(firstRegWidth))/float64(busWidth))) + 1
+	aac.regCount = int64(math.Ceil((float64(totalWidth)-float64(firstRegWidth))/float64(busWidth))) + 1
 
 	return aac
 }
 
 type AccessArrayMultiple struct {
-	count int64
+	regCount int64
 
 	ItemCount      int64
 	ItemWidth      int64
 	ItemsPerAccess int64
 	startAddr      int64
-	startBit       int64
+	StartBit       int64
 }
 
 func (aam AccessArrayMultiple) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy       string
-		Count          int64
+		RegCount       int64
 		ItemCount      int64
 		ItemWidth      int64
 		ItemsPerAccess int64
@@ -260,12 +260,12 @@ func (aam AccessArrayMultiple) MarshalJSON() ([]byte, error) {
 		StartBit       int64
 	}{
 		Strategy:       "Multiple",
-		Count:          aam.count,
+		RegCount:       aam.regCount,
 		ItemCount:      aam.ItemCount,
 		ItemWidth:      aam.ItemWidth,
 		ItemsPerAccess: aam.ItemsPerAccess,
 		StartAddr:      aam.startAddr,
-		StartBit:       aam.startBit,
+		StartBit:       aam.StartBit,
 	})
 
 	if err != nil {
@@ -275,75 +275,38 @@ func (aam AccessArrayMultiple) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (aam AccessArrayMultiple) Count() int64     { return aam.count }
+func (aam AccessArrayMultiple) RegCount() int64  { return aam.regCount }
 func (aam AccessArrayMultiple) IsArray() bool    { return true }
 func (aam AccessArrayMultiple) StartAddr() int64 { return aam.startAddr }
-func (aam AccessArrayMultiple) EndAddr() int64   { return aam.startAddr + aam.count - 1 }
+func (aam AccessArrayMultiple) EndAddr() int64   { return aam.startAddr + aam.regCount - 1 }
 
 func (aam AccessArrayMultiple) EndBit() int64 {
-	if aam.count == 1 {
-		return aam.startBit + aam.ItemCount*aam.ItemWidth - 1
+	if aam.regCount == 1 {
+		return aam.StartBit + aam.ItemCount*aam.ItemWidth - 1
 	} else if aam.ItemCount%aam.ItemsPerAccess == 0 {
-		return aam.startBit + aam.ItemsPerAccess*aam.ItemWidth - 1
+		return aam.StartBit + aam.ItemsPerAccess*aam.ItemWidth - 1
 	} else {
 		itemsInLast := aam.ItemCount % aam.ItemsPerAccess
-		return aam.startBit + itemsInLast*aam.ItemWidth - 1
+		return aam.StartBit + itemsInLast*aam.ItemWidth - 1
 	}
 }
 
 // makeAccessArrayMultiplePacked makes AccessArrayMultiple starting from bit 0,
 // and placing as many items within single register as possible.
-func makeAccessArrayMultiplePacked(count, startAddr, width int64) Access {
+func makeAccessArrayMultiplePacked(itemCount, startAddr, width int64) Access {
 	aam := AccessArrayMultiple{
-		ItemCount:      count,
+		ItemCount:      itemCount,
 		ItemWidth:      width,
 		ItemsPerAccess: busWidth / width,
 		startAddr:      startAddr,
-		startBit:       0,
+		StartBit:       0,
 	}
 
-	if count <= aam.ItemsPerAccess {
-		aam.count = 1
+	if itemCount <= aam.ItemsPerAccess {
+		aam.regCount = 1
 	} else {
-		aam.count = int64(math.Ceil(float64(count) / float64(aam.ItemsPerAccess)))
+		aam.regCount = int64(math.Ceil(float64(itemCount) / float64(aam.ItemsPerAccess)))
 	}
 
 	return aam
 }
-
-/*
-func (aa *AccessArray) Count() int64      { return aa.count }
-func (aa *AccessArray) IsArray() bool     { return true }
-func (aa *AccessArray) EndBit() int64 { return 1 } // FIXME
-
-func makeAccessArray(count int64, baseAddr int64, width int64) *AccessArray {
-	aa := AccessArray{
-		Address:         baseAddr,
-		AccessesPerItem: int64(math.Ceil(float64(width) / float64(busWidth))),
-		ItemsPerAccess:  busWidth / width,
-	}
-
-	if aa.AccessesPerItem == 1 && aa.ItemsPerAccess == 1 {
-		aa.Strategy = "Single"
-		aa.count = count
-		aa.Mask = Mask{Upper: width - 1, Lower: 0}
-	} else if aa.AccessesPerItem == 1 && aa.ItemsPerAccess > 1 {
-		aa.Strategy = "Multiple"
-		aa.count = int64(math.Ceil(float64(count) / float64(aa.ItemsPerAccess)))
-	} else {
-		aa.Strategy = "Bunch"
-		// TODO: Calculate it correctly.
-		aa.count = 0
-		// Number of items in bunch.
-		if (width % busWidth) == 0 {
-			aa.BunchSize = 1
-		} else {
-			aa.BunchSize = busWidth / (width % busWidth)
-		}
-		// Number of accesses for bunch transfer.
-		aa.AccessesPerBunch = aa.BunchSize*width/busWidth + 1
-	}
-
-	return &aa
-}
-*/

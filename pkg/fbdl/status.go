@@ -51,7 +51,7 @@ func registerifyStatus(insSt *ins.Element, addr int64) (*Status, int64) {
 	} else {
 		st.Access = makeAccessSingle(addr, 0, width)
 	}
-	addr += st.Access.Count()
+	addr += st.Access.RegCount()
 
 	return &st, addr
 }
