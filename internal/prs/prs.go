@@ -436,7 +436,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 		nc := n.Child(i)
 		t := nc.Type()
 		switch t {
-		case "property_assignment":
+		case "single_property_assignment":
 			name := nc.Child(0).Content()
 			if _, ok := props[name]; ok {
 				return props,
@@ -447,7 +447,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 			if err != nil {
 				return props,
 					symbols,
-					fmt.Errorf("line %d: property assignment: %v", nc.LineNumber(), err)
+					fmt.Errorf("line %d: single property assignment: %v", nc.LineNumber(), err)
 			}
 			props[name] = Property{LineNumber: nc.LineNumber(), Value: expr}
 		default:
