@@ -574,22 +574,31 @@ func parseElementTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) 
 func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	var symbols []Symbol
 
-	for i := 0; i < (int(n.ChildCount())-1)/3; i++ {
-		c := &Constant{
-			base: base{
-				lineNumber: n.Child(i*3 + 1).LineNumber(),
-				name:       n.Child(i*3 + 1).Content(),
-			},
+	var c *Constant
+
+	for i := 0; i < int(n.ChildCount()); i++ {
+		child := n.Child(i)
+
+		switch child.Type() {
+		case "const", "comment":
+			continue
+		case "identifier":
+			c = &Constant{
+				base: base{
+					lineNumber: child.LineNumber(),
+					name:       child.Content(),
+				},
+			}
+		case "primary_expression", "expression_list":
+			expr, err := MakeExpression(child, c)
+			if err != nil {
+				return nil, fmt.Errorf("line %d: constant %s: %v", c.LineNumber(), c.name, err)
+			}
+
+			c.Value = expr
+
+			symbols = append(symbols, c)
 		}
-
-		expr, err := MakeExpression(n.Child(i*3+3), c)
-		if err != nil {
-			return nil, fmt.Errorf("line %d: %v", n.Child(i*3+1).LineNumber(), err)
-		}
-
-		c.Value = expr
-
-		symbols = append(symbols, c)
 	}
 
 	return symbols, nil
