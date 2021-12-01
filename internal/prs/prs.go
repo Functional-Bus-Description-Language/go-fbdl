@@ -162,8 +162,10 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	var symbols []Symbol
 	for {
 		switch node.Type() {
-		case "element_anonymous_instantiation":
-			symbols, err = parseElementAnonymousInstantiation(node, &file)
+		case "element_anonymous_multi_line_instantiation":
+			symbols, err = parseElementAnonymousMultiLineInstantiation(node, &file)
+		case "element_anonymous_single_line_instantiation":
+			symbols, err = parseElementAnonymousSingleLineInstantiation(node, &file)
 		case "element_definitive_instantiation":
 			symbols, err = parseElementDefinitiveInstantiation(node, &file)
 		case "element_type_definition":
@@ -185,7 +187,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		case "ERROR":
 			log.Fatalf("%s: line %d: invalid syntax, tree-sitter ERROR", path, node.LineNumber())
 		default:
-			log.Fatalf("parsing %s not yet supported", node.Type())
+			panic(fmt.Sprintf("parsing %q not yet supported", node.Type()))
 		}
 
 		if err != nil {
@@ -272,7 +274,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 	return args, nil
 }
 
-func parseElementAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+func parseElementAnonymousMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
 	var err error
 
 	isArray := false
@@ -314,9 +316,9 @@ func parseElementAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol,
 
 	var props map[string]Property
 	var symbols SymbolContainer
-	last_node := n.LastChild()
-	if last_node.Type() == "element_body" {
-		props, symbols, err = parseElementBody(last_node, &elem)
+	lastNode := n.LastChild()
+	if lastNode.Type() == "element_body" {
+		props, symbols, err = parseElementBody(lastNode, &elem)
 		if err != nil {
 			return nil, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
 		}
@@ -341,6 +343,72 @@ func parseElementAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol,
 			elem.symbols[name].SetParent(&elem)
 		}
 	}
+
+	return []Symbol{&elem}, nil
+}
+
+func parseElementAnonymousSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+	var err error
+
+	isArray := false
+	var count Expression
+	if n.Child(1).Type() == "[" {
+		isArray = true
+		expr, err := MakeExpression(n.Child(2), parent)
+		if err != nil {
+			return nil, fmt.Errorf(": %v", err)
+		}
+		count = expr
+	}
+
+	var type_ string
+	if n.Child(1).Type() == "element_type" {
+		type_ = n.Child(1).Content()
+	} else {
+		type_ = n.Child(4).Content()
+	}
+
+	if util.IsBaseType(type_) == false {
+		return nil,
+			fmt.Errorf(
+				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
+				n.LineNumber(), type_,
+			)
+	}
+
+	elem := ElementDefinition{
+		base: base{
+			lineNumber: n.LineNumber(),
+			name:       n.Child(0).Content(),
+		},
+		IsArray:           isArray,
+		Count:             count,
+		type_:             type_,
+		InstantiationType: Anonymous,
+	}
+
+	var props map[string]Property
+
+	lastNode := n.LastChild()
+	if lastNode.Type() == "multi_property_assignment" {
+		props, err = parseMultiPropertyAssignment(lastNode, &elem)
+		if err != nil {
+			return nil, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
+		}
+
+		for prop, v := range props {
+			if err = util.IsValidProperty(prop, type_); err != nil {
+				return nil,
+					fmt.Errorf(
+						"line %d: element anonymous instantiation: "+
+							"line %d: %v",
+						n.LineNumber(), v.LineNumber, err,
+					)
+			}
+		}
+	}
+
+	elem.properties = props
 
 	return []Symbol{&elem}, nil
 }
@@ -455,8 +523,10 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 			switch t {
 			case "element_type_definition":
 				ss, err = parseElementTypeDefinition(nc, element)
-			case "element_anonymous_instantiation":
-				ss, err = parseElementAnonymousInstantiation(nc, element)
+			case "element_anonymous_multi_line_instantiation":
+				ss, err = parseElementAnonymousMultiLineInstantiation(nc, element)
+			case "element_anonymous_single_line_instantiation":
+				ss, err = parseElementAnonymousSingleLineInstantiation(nc, element)
 			case "element_definitive_instantiation":
 				ss, err = parseElementDefinitiveInstantiation(nc, element)
 			case "single_constant_definition":
@@ -602,6 +672,32 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	}
 
 	return symbols, nil
+}
+
+func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Property, error) {
+	props := make(map[string]Property)
+
+	for i := 0; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		switch nc.Type() {
+		case "identifier":
+			name := nc.Content()
+			if _, ok := props[name]; ok {
+				return props,
+					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
+			}
+			expr, err := MakeExpression(n.Child(i+2), element)
+			if err != nil {
+				return props,
+					fmt.Errorf("line %d: '%s' property assignment: %v", nc.LineNumber(), name, err)
+			}
+			props[name] = Property{LineNumber: nc.LineNumber(), Value: expr}
+		default:
+			continue
+		}
+	}
+
+	return props, nil
 }
 
 func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
