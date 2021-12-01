@@ -4,7 +4,7 @@ import (
 	gots "github.com/smacker/go-tree-sitter"
 )
 
-// Node is a wrapper for tree-sitter node.
+// Node is a wrapper for go-tree-sitter Node.
 type Node struct {
 	n    *gots.Node
 	code []byte
