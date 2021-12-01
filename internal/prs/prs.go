@@ -98,12 +98,16 @@ func getIndent(line string) (uint32, error) {
 	return indent, nil
 }
 
-func checkIndent(code []string) error {
+func checkIndentAndTrailingSemicolon(code []string) error {
 	var currentIndent uint32 = 0
 
 	for i, line := range code {
 		if line == "\n" {
 			continue
+		}
+
+		if len(line) > 0 && line[len(line)-1] == ';' {
+			return fmt.Errorf("line %d: extra ';' at end of line", i)
 		}
 
 		indent, err := getIndent(line)
@@ -127,7 +131,7 @@ func readFile(path string) []string {
 	io_scanner := bufio.NewScanner(f)
 	var code []string
 	for io_scanner.Scan() {
-		code = append(code, io_scanner.Text())
+		code = append(code, strings.TrimRight(io_scanner.Text(), " \t"))
 	}
 
 	err = f.Close()
@@ -144,7 +148,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	codeLines := readFile(path)
 
-	err = checkIndent(codeLines)
+	err = checkIndentAndTrailingSemicolon(codeLines)
 	if err != nil {
 		log.Fatalf("%s: %v", path, err)
 	}
