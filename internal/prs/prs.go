@@ -285,6 +285,12 @@ func parseElementAnonymousMultiLineInstantiation(n ts.Node, parent Searchable) (
 	var count Expression
 	if n.Child(1).Type() == "[" {
 		isArray = true
+		if n.Child(2).Child(0).IsMissing() {
+			return nil, fmt.Errorf(
+				"line %d: '%s' element, missing array size expression",
+				n.Child(2).LineNumber(), n.Child(0).Content(),
+			)
+		}
 		expr, err := MakeExpression(n.Child(2), parent)
 		if err != nil {
 			return nil, fmt.Errorf(": %v", err)
@@ -324,7 +330,9 @@ func parseElementAnonymousMultiLineInstantiation(n ts.Node, parent Searchable) (
 	if lastNode.Type() == "element_body" {
 		props, symbols, err = parseElementBody(lastNode, &elem)
 		if err != nil {
-			return nil, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf(
+				"line %d: '%s' element anonymous instantiation: %v", n.LineNumber(), elem.name, err,
+			)
 		}
 
 		for prop, v := range props {
@@ -358,6 +366,12 @@ func parseElementAnonymousSingleLineInstantiation(n ts.Node, parent Searchable) 
 	var count Expression
 	if n.Child(1).Type() == "[" {
 		isArray = true
+		if n.Child(2).Child(0).IsMissing() {
+			return nil, fmt.Errorf(
+				"line %d: '%s' element, missing array size expression",
+				n.Child(2).LineNumber(), n.Child(0).Content(),
+			)
+		}
 		expr, err := MakeExpression(n.Child(2), parent)
 		if err != nil {
 			return nil, fmt.Errorf(": %v", err)
@@ -397,16 +411,18 @@ func parseElementAnonymousSingleLineInstantiation(n ts.Node, parent Searchable) 
 	if lastNode.Type() == "multi_property_assignment" {
 		props, err = parseMultiPropertyAssignment(lastNode, &elem)
 		if err != nil {
-			return nil, fmt.Errorf("line %d: element anonymous instantiation: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf(
+				"line %d: '%s' element anonymous instantiation: %v", n.LineNumber(), elem.name, err,
+			)
 		}
 
 		for prop, v := range props {
 			if err = util.IsValidProperty(prop, type_); err != nil {
 				return nil,
 					fmt.Errorf(
-						"line %d: element anonymous instantiation: "+
+						"line %d: '%s' element anonymous instantiation: "+
 							"line %d: %v",
-						n.LineNumber(), v.LineNumber, err,
+						n.LineNumber(), elem.name, v.LineNumber, err,
 					)
 			}
 		}
@@ -424,6 +440,12 @@ func parseElementDefinitiveInstantiation(n ts.Node, parent Searchable) ([]Symbol
 	var count Expression
 	if n.Child(1).Type() == "[" {
 		isArray = true
+		if n.Child(2).Child(0).IsMissing() {
+			return nil, fmt.Errorf(
+				"line %d: '%s' element, missing array size expression",
+				n.Child(2).LineNumber(), n.Child(0).Content(),
+			)
+		}
 		count, err = MakeExpression(n.Child(2), parent)
 		if err != nil {
 			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
@@ -619,7 +641,9 @@ func parseElementTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) 
 		}
 
 		if err != nil {
-			return nil, fmt.Errorf("line %d: element type definition: %v", n.LineNumber(), err)
+			return nil, fmt.Errorf(
+				"line %d: '%s' element type definition: %v", n.LineNumber(), type__.name, err,
+			)
 		}
 	}
 

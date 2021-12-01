@@ -14,7 +14,6 @@ func MakeRootNode(code_bytes []byte) Node {
 	parser := gots.NewParser()
 	parser.SetLanguage(GetLanguage())
 
-	//	tree := parser.Parse(nil, []byte(code_bytes))
 	tree := parser.Parse(nil, code_bytes)
 	root := tree.RootNode()
 	tsnode := root.Child(0)
@@ -22,11 +21,21 @@ func MakeRootNode(code_bytes []byte) Node {
 		panic("TODO")
 	}
 
+	parser.Close()
+
 	return Node{n: tsnode, code: code_bytes}
 }
 
 func (n Node) Content() string {
 	return n.n.Content(n.code)
+}
+
+func (n Node) HasError() bool {
+	return n.n.HasError()
+}
+
+func (n Node) IsMissing() bool {
+	return n.n.IsMissing()
 }
 
 func (n Node) Type() string {
