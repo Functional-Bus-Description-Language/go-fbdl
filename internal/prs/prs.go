@@ -530,6 +530,15 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 		nc := n.Child(i)
 		t := nc.Type()
 		switch t {
+		case "ERROR":
+			if nc.PrevSibling().Type() == "element_anonymous_single_line_instantiation" &&
+				nc.NextSibling().Type() == "single_property_assignment" {
+				return props, symbols, fmt.Errorf(
+					"line %d: column %d: missing ';' or newline", nc.LineNumber(), nc.Column()-1,
+				)
+			} else {
+				panic("implement me")
+			}
 		case "single_property_assignment":
 			name := nc.Child(0).Content()
 			if _, ok := props[name]; ok {

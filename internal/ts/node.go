@@ -63,6 +63,10 @@ func (n Node) LineNumber() uint32 {
 	return n.n.StartPoint().Row + 1
 }
 
+func (n Node) Column() uint32 {
+	return n.n.StartPoint().Column + 1
+}
+
 func (n Node) HasNextSibling() bool {
 	tsn := n.n.NextSibling()
 
@@ -75,4 +79,8 @@ func (n Node) HasNextSibling() bool {
 
 func (n Node) NextSibling() Node {
 	return Node{n: n.n.NextSibling(), code: n.code}
+}
+
+func (n Node) PrevSibling() Node {
+	return Node{n: n.n.PrevSibling(), code: n.code}
 }
