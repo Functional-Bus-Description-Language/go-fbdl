@@ -1,1 +1,1 @@
-bus.fbd: line 1: element type definition: parameter 'A' defined at least twice
+bus.fbd: line 1: 'my_mask' element type definition: parameter 'A' defined at least twice
