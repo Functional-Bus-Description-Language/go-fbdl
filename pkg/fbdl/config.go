@@ -28,9 +28,12 @@ func registerifyConfig(insCfg *ins.Element, addr int64) (*Config, int64) {
 		IsArray: insCfg.IsArray,
 		Count:   insCfg.Count,
 		Atomic:  bool(insCfg.Properties["atomic"].(val.Bool)),
-		Default: MakeBitStr(insCfg.Properties["default"].(val.BitStr)),
 		Groups:  []string{},
 		Width:   int64(insCfg.Properties["width"].(val.Int)),
+	}
+
+	if dflt, ok := insCfg.Properties["default"].(val.BitStr); ok {
+		cfg.Default = MakeBitStr(dflt)
 	}
 
 	if groups, ok := insCfg.Properties["groups"].(val.List); ok {
