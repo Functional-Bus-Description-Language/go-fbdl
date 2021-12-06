@@ -291,6 +291,10 @@ func (aam AccessArrayMultiple) EndBit() int64 {
 	}
 }
 
+func (aam AccessArrayMultiple) ItemsInLastReg() int64 {
+	return aam.ItemCount % aam.ItemsPerAccess
+}
+
 // makeAccessArrayMultiplePacked makes AccessArrayMultiple starting from bit 0,
 // and placing as many items within single register as possible.
 func makeAccessArrayMultiplePacked(itemCount, startAddr, width int64) Access {
