@@ -7,9 +7,15 @@ import (
 )
 
 func x_timestamp_x() *Element {
-	timestamp := val.Int(time.Now().Unix() & int64(math.Pow(2, float64(busWidth))-1))
+	width := busWidth
+	// Limit timestamp width. 36 bits is enough, do not waste resources.
+	if width > 36 {
+		width = 36
+	}
 
-	dflt, err := val.BitStrFromInt(timestamp, busWidth)
+	timestamp := val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
+
+	dflt, err := val.BitStrFromInt(timestamp, width)
 	if err != nil {
 		panic("x_timestamp_x")
 	}
@@ -21,7 +27,7 @@ func x_timestamp_x() *Element {
 		Properties: map[string]val.Value{
 			"atomic":  val.Bool(false),
 			"default": dflt,
-			"width":   val.Int(busWidth),
+			"width":   val.Int(width),
 		},
 	}
 }
