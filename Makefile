@@ -8,15 +8,15 @@ build:
 	go build -v -o $(PROJECT_NAME) .
 
 help:
-	@echo "Build related targets:"
+	@echo "Build targets:"
 	@echo "  all      Run fmt vet build."
 	@echo "  build    Build binary."
 	@echo "  default  Run build."
-	@echo "Quality related targets:"
+	@echo "Quality targets:"
 	@echo "  fmt       Format files with go fmt."
 	@echo "  vet       Examine go sources with go vet."
 	@echo "  errcheck  Examine go sources with errcheck."
-	@echo "Test related targets:"
+	@echo "Test targets:"
 	@echo "  test-all            Run all tests."
 	@echo "  test                Run go test."
 	@echo "  test-instantiating  Run instantiating tests."
