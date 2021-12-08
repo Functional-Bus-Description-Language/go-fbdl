@@ -107,14 +107,14 @@ func checkIndentAndTrailingSemicolon(code []string) error {
 		}
 
 		if len(line) > 0 && line[len(line)-1] == ';' {
-			return fmt.Errorf("line %d: extra ';' at end of line", i)
+			return fmt.Errorf("line %d: extra ';' at end of line", i+1)
 		}
 
 		indent, err := getIndent(line)
 		if err != nil {
 			return fmt.Errorf("line %d: %v", i, err)
 		} else if indent > currentIndent+1 {
-			return fmt.Errorf("line %d: multi indent detected", i)
+			return fmt.Errorf("line %d: multi indent detected", i+1)
 		}
 		currentIndent = indent
 	}
