@@ -244,5 +244,5 @@ func (elem *Element) processDefault() error {
 		elem.Properties["default"] = bs
 	}
 
-	panic("should never happen")
+	return nil
 }
