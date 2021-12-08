@@ -216,3 +216,33 @@ func (elem *Element) makeGroups() error {
 
 	return nil
 }
+
+// processDefault processes the 'default' property.
+// If element has no 'default' property it immediately returns.
+// Otherwise it checks the type of 'default' value.
+// If the value is BitStr, it checks whether its width is not greater than value of 'width' property.
+// If the value is Int, it tries to convert it to BitStr with width of 'width' property value.
+func (elem *Element) processDefault() error {
+	dflt, ok := elem.Properties["default"]
+
+	if !ok {
+		return nil
+	}
+
+	width := int64(elem.Properties["width"].(val.Int))
+
+	if bs, ok := dflt.(val.BitStr); ok {
+		if bs.Width() > width {
+			return fmt.Errorf("width of 'default' BitStr is greater than value of 'width' property")
+		}
+	}
+	if i, ok := dflt.(val.Int); ok {
+		bs, err := val.BitStrFromInt(i, width)
+		if err != nil {
+			return fmt.Errorf("processing 'default' property: %v", err)
+		}
+		elem.Properties["default"] = bs
+	}
+
+	panic("should never happen")
+}

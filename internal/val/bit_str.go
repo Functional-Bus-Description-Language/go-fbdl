@@ -105,13 +105,13 @@ func BitStrFromInt(v Int, width int64) (BitStr, error) {
 	if i > max {
 		return BitStr(""),
 			fmt.Errorf(
-				"%d is too large to be converted to bit string of width %d, max = %d",
+				"value %d is too large to be converted to bit string of width %d, max = %d",
 				i, width, max,
 			)
 	} else if i < min {
 		return BitStr(""),
 			fmt.Errorf(
-				"%d is too small to be converted to bit string of width %d, min = %d",
+				"value %d is too small to be converted to bit string of width %d, min = %d",
 				i, width, min,
 			)
 	}

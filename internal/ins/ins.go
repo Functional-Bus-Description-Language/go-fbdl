@@ -122,6 +122,14 @@ func instantiateElement(e prs.Element) *Element {
 		)
 	}
 
+	err = elem.processDefault()
+	if err != nil {
+		log.Fatalf(
+			"%s: line %d: instantiating element '%s': %v",
+			e.FilePath(), e.LineNumber(), e.Name(), err,
+		)
+	}
+
 	return elem
 }
 
