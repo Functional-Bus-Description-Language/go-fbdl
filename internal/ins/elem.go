@@ -232,8 +232,11 @@ func (elem *Element) processDefault() error {
 	width := int64(elem.Properties["width"].(val.Int))
 
 	if bs, ok := dflt.(val.BitStr); ok {
-		if bs.Width() > width {
-			return fmt.Errorf("width of 'default' BitStr is greater than value of 'width' property")
+		if bs.BitWidth() > width {
+			return fmt.Errorf(
+				"width of 'default' bit string (%d) is greater than value of 'width' property (%d)",
+				bs.BitWidth(), width,
+			)
 		}
 	}
 	if i, ok := dflt.(val.Int); ok {

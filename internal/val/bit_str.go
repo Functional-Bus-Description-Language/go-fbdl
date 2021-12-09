@@ -13,22 +13,29 @@ func (bs BitStr) Type() string {
 	return "bit string"
 }
 
-// Width returns bit width of the bit string.
-func (bs BitStr) Width() int64 {
+// BitWidth returns bit width of the bit string.
+func (bs BitStr) BitWidth() int64 {
 	var width int64
 
+	width = int64(len(bs)) - 3
+
 	switch string(bs)[0] {
-	case 'b', 'B':
-		width = int64(len(bs)) - 3
-	case 'o', 'O':
-		panic("not implemented")
-	case 'x', 'X':
-		panic("not implemented")
+	case 'b':
+		width *= 1
+	case 'o':
+		width *= 3
+	case 'x':
+		width *= 4
 	default:
 		panic("should never happen")
 	}
 
 	return width
+}
+
+// CharWidth returns character width of the bit string excluding format specifier and leading and trailing '"'.
+func (bs BitStr) CharWidth() int64 {
+	return int64(len(bs)) - 3
 }
 
 func MakeBitStr(s string) (BitStr, error) {
@@ -75,22 +82,45 @@ func MakeBitStr(s string) (BitStr, error) {
 func makeBinBitStr(s string) (BitStr, error) {
 	for i := 2; i < len(s)-1; i++ {
 		switch s[i] {
-		case '0', '1', 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
+		case '0', '1':
+		case 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
 			break
 		default:
 			return BitStr(""), fmt.Errorf("invalid character '%c' in binary bit literal", s[i])
 		}
 	}
 
-	return BitStr(s), nil
+	return BitStr("b" + s[1:]), nil
 }
 
 func makeOctalBitStr(s string) (BitStr, error) {
-	return BitStr(""), fmt.Errorf("makeOctalBitStr not yet implemented")
+	for i := 2; i < len(s)-1; i++ {
+		switch s[i] {
+		case '0', '1', '2', '3', '4', '5', '6', '7':
+		case 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
+			break
+		default:
+			return BitStr(""), fmt.Errorf("invalid character '%c' in hex bit literal", s[i])
+		}
+	}
+
+	return BitStr("o" + s[1:]), nil
 }
 
 func makeHexBitStr(s string) (BitStr, error) {
-	return BitStr(""), fmt.Errorf("makeHexBitStr not yet implemented")
+	for i := 2; i < len(s)-1; i++ {
+		switch s[i] {
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		case 'a', 'b', 'c', 'd', 'e', 'f':
+		case 'A', 'B', 'C', 'D', 'E', 'F':
+		case 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
+			break
+		default:
+			return BitStr(""), fmt.Errorf("invalid character '%c' in hex bit literal", s[i])
+		}
+	}
+
+	return BitStr("x" + s[1:]), nil
 }
 
 // BitStrFromInt converts val.Int to BitStr.
