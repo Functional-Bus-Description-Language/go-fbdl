@@ -52,7 +52,8 @@ func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr int64) {
 	sort.Slice(block.Subblocks, sortFunc)
 
 	subblockBaseAddr := block.AddrSpace.End() + 1
-	for i, _ := range block.Subblocks {
+	// Iterate subblocks in decreasing size order.
+	for i := len(block.Subblocks) - 1; i >= 0; i-- {
 		sb := block.Subblocks[i]
 		subblockBaseAddr -= sb.Count * sb.Sizes.BlockAligned
 		assignGlobalAccessAddressesBlockAlign(sb, subblockBaseAddr)
