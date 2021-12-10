@@ -163,6 +163,7 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 		Name:    insBlk.Name,
 		IsArray: insBlk.IsArray,
 		Count:   int64(insBlk.Count),
+		Masters: int64(insBlk.Properties["masters"].(val.Int)),
 	}
 
 	addr = registerifyFunctionalities(&b, insBlk, addr)
