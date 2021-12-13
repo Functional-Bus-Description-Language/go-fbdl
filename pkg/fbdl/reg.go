@@ -18,12 +18,16 @@ func Registerify(insBus *ins.Element) *Block {
 	busWidth = int64(insBus.Properties["width"].(val.Int))
 
 	regBus := Block{
-		Name:    "main",
-		IsArray: insBus.IsArray,
-		Count:   int64(insBus.Count),
-		Masters: int64(insBus.Properties["masters"].(val.Int)),
-		Width:   int64(insBus.Properties["width"].(val.Int)),
+		Name:         "main",
+		IsArray:      insBus.IsArray,
+		Count:        int64(insBus.Count),
+		Masters:      int64(insBus.Properties["masters"].(val.Int)),
+		Width:        int64(insBus.Properties["width"].(val.Int)),
+		IntConsts:    map[string]int64{},
+		StringConsts: map[string]string{},
 	}
+
+	regBus.addConsts(insBus)
 
 	// addr is current block internal access address, not global address.
 	// 0 and 1 are reserved for x_uuid_x and x_timestamp_x.
@@ -160,11 +164,15 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 	addr := int64(0)
 
 	b := Block{
-		Name:    insBlk.Name,
-		IsArray: insBlk.IsArray,
-		Count:   int64(insBlk.Count),
-		Masters: int64(insBlk.Properties["masters"].(val.Int)),
+		Name:         insBlk.Name,
+		IsArray:      insBlk.IsArray,
+		Count:        int64(insBlk.Count),
+		Masters:      int64(insBlk.Properties["masters"].(val.Int)),
+		IntConsts:    map[string]int64{},
+		StringConsts: map[string]string{},
 	}
+
+	b.addConsts(insBlk)
 
 	addr = registerifyFunctionalities(&b, insBlk, addr)
 	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}

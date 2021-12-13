@@ -62,6 +62,22 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 	}
 
 	for _, s := range type_.Symbols() {
+		if c, ok := s.(*prs.Constant); ok {
+			if _, has := elem.Constants[c.Name()]; has {
+				return fmt.Errorf(
+					"const '%s' is already defined in one of ancestor types", c.Name(),
+				)
+			}
+
+			val, err := c.Value.Eval()
+			if err != nil {
+				return fmt.Errorf(
+					"cannot evaluate expression for const '%s': %v", c.Name(), err,
+				)
+			}
+			elem.Constants[c.Name()] = val
+		}
+
 		pe, ok := s.(*prs.ElementDefinition)
 		if !ok {
 			continue

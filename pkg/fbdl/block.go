@@ -1,5 +1,10 @@
 package fbdl
 
+import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+)
+
 // Block represents block element as well as bus element.
 type Block struct {
 	Name      string
@@ -12,6 +17,10 @@ type Block struct {
 	Doc     string
 	Masters int64
 	Width   int64
+
+	// Constants
+	IntConsts    map[string]int64
+	StringConsts map[string]string
 
 	// Elements
 	Subblocks []*Block
@@ -42,7 +51,6 @@ func (b *Block) addStatus(s *Status) {
 func (b *Block) addGroup(g Group) {
 	b.Groups = append(b.Groups, g)
 }
-
 func (b *Block) hasElement(name string) bool {
 	for i, _ := range b.Statuses {
 		if b.Statuses[i].Name == name {
@@ -51,4 +59,31 @@ func (b *Block) hasElement(name string) bool {
 	}
 
 	return false
+}
+
+func (b *Block) addIntConst(name string, value int64) {
+	b.IntConsts[name] = value
+}
+
+func (b *Block) addStringConst(name, value string) {
+	b.StringConsts[name] = value
+}
+
+func (b *Block) addConsts(insBlk *ins.Element) {
+	for name, v := range insBlk.Constants {
+		switch v.(type) {
+		case val.BitStr:
+			panic("not yet implemented")
+		case val.Bool:
+			panic("not yet implemented")
+		case val.Int:
+			b.addIntConst(name, int64(v.(val.Int)))
+		case val.List:
+			panic("not yet implemented")
+		case val.Str:
+			b.addStringConst(name, string(v.(val.Str)))
+		default:
+			panic("should never happen")
+		}
+	}
 }
