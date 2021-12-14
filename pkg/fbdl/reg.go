@@ -18,13 +18,13 @@ func Registerify(insBus *ins.Element) *Block {
 	busWidth = int64(insBus.Properties["width"].(val.Int))
 
 	regBus := Block{
-		Name:         "main",
-		IsArray:      insBus.IsArray,
-		Count:        int64(insBus.Count),
-		Masters:      int64(insBus.Properties["masters"].(val.Int)),
-		Width:        int64(insBus.Properties["width"].(val.Int)),
-		IntConsts:    map[string]int64{},
-		StringConsts: map[string]string{},
+		Name:      "main",
+		IsArray:   insBus.IsArray,
+		Count:     int64(insBus.Count),
+		Masters:   int64(insBus.Properties["masters"].(val.Int)),
+		Width:     int64(insBus.Properties["width"].(val.Int)),
+		IntConsts: map[string]int64{},
+		StrConsts: map[string]string{},
 	}
 
 	regBus.addConsts(insBus)
@@ -164,12 +164,12 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 	addr := int64(0)
 
 	b := Block{
-		Name:         insBlk.Name,
-		IsArray:      insBlk.IsArray,
-		Count:        int64(insBlk.Count),
-		Masters:      int64(insBlk.Properties["masters"].(val.Int)),
-		IntConsts:    map[string]int64{},
-		StringConsts: map[string]string{},
+		Name:      insBlk.Name,
+		IsArray:   insBlk.IsArray,
+		Count:     int64(insBlk.Count),
+		Masters:   int64(insBlk.Properties["masters"].(val.Int)),
+		IntConsts: map[string]int64{},
+		StrConsts: map[string]string{},
 	}
 
 	b.addConsts(insBlk)

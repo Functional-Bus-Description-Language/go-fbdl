@@ -19,8 +19,8 @@ type Block struct {
 	Width   int64
 
 	// Constants
-	IntConsts    map[string]int64
-	StringConsts map[string]string
+	IntConsts map[string]int64
+	StrConsts map[string]string
 
 	// Elements
 	Subblocks []*Block
@@ -66,7 +66,7 @@ func (b *Block) addIntConst(name string, value int64) {
 }
 
 func (b *Block) addStringConst(name, value string) {
-	b.StringConsts[name] = value
+	b.StrConsts[name] = value
 }
 
 func (b *Block) addConsts(insBlk *ins.Element) {

@@ -52,7 +52,7 @@ func Parse() map[string]string {
 		}
 
 		switch s {
-		case "-p", "-i", "-r":
+		case "-p", "-i", "-r", "-c":
 			if i < argsLen-3 && !strings.HasPrefix(osArgs[i+1], "-") {
 				args[s] = osArgs[i+1]
 				skipNext = true
@@ -64,6 +64,8 @@ func Parse() map[string]string {
 					args[s] = "ins.txt"
 				case "-r":
 					args[s] = "reg.json"
+				case "-c":
+					args[s] = "const.json"
 				}
 			}
 		case "-d", "--debug":
@@ -97,6 +99,7 @@ Options:
   -p [path]  Dump parse results to a file (default path is prs.txt).
   -i [path]  Dump instantiation results to a file (default path is ins.txt).
   -r [path]  Dump registerification results to a file (default path is reg.json).
+  -c [path]  Dump packages constants to a file (default path is const.json).
 `
 
 func printHelp() {

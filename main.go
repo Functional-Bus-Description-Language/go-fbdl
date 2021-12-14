@@ -100,4 +100,28 @@ func main() {
 			log.Fatalf("dump registerification results: %v", err)
 		}
 	}
+
+	pkgsConsts := fbdl.ConstifyPackages(packages)
+
+	if path, ok := cmdLineArgs["-c"]; ok {
+		f, err := os.Create(path)
+		if err != nil {
+			panic(err)
+		}
+
+		byteArray, err := json.MarshalIndent(pkgsConsts, "", "\t")
+		if err != nil {
+			log.Fatalf("marshal packages constants: %v", err)
+		}
+
+		_, err = f.Write(byteArray)
+		if err != nil {
+			log.Fatalf("dump packages constants: %v", err)
+		}
+
+		err = f.Close()
+		if err != nil {
+			log.Fatalf("dump packages constants: %v", err)
+		}
+	}
 }

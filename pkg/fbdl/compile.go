@@ -6,7 +6,7 @@ import (
 )
 
 // Compile compiles functional bus description for a main bus located in the file which path is provided as mainPath.
-func Compile(mainPath string) *Block {
+func Compile(mainPath string) (*Block, map[string]Package) {
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
@@ -14,5 +14,7 @@ func Compile(mainPath string) *Block {
 
 	regBus := Registerify(insBus)
 
-	return regBus
+	pkgsConsts := ConstifyPackages(packages)
+
+	return regBus, pkgsConsts
 }
