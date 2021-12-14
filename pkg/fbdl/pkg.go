@@ -10,6 +10,17 @@ type Package struct {
 	StrConsts map[string]string
 }
 
+func (p Package) HasConsts() bool {
+	if len(p.IntConsts) != 0 {
+		return true
+	}
+	if len(p.StrConsts) != 0 {
+		return true
+	}
+
+	return false
+}
+
 func ConstifyPackages(packages prs.Packages) map[string]Package {
 	cPkgs := map[string]Package{}
 
