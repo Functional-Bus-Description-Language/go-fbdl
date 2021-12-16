@@ -6,7 +6,7 @@ import (
 	"math"
 )
 
-type Mask struct {
+type AccessMask struct {
 	Upper, Lower int64
 }
 
@@ -21,7 +21,7 @@ type Access interface {
 // AccessSingleSingle describes access to ...
 type AccessSingleSingle struct {
 	Addr int64
-	Mask Mask
+	Mask AccessMask
 }
 
 func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
@@ -29,7 +29,7 @@ func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
 		Strategy string
 		Count    int64
 		Addr     int64
-		Mask     Mask
+		Mask     AccessMask
 	}{
 		Strategy: "Single",
 		Count:    1,
@@ -58,7 +58,7 @@ func makeAccessSingleSingle(addr, startBit, width int64) Access {
 
 	return AccessSingleSingle{
 		Addr: addr,
-		Mask: Mask{Upper: startBit + width - 1, Lower: startBit},
+		Mask: AccessMask{Upper: startBit + width - 1, Lower: startBit},
 	}
 }
 
@@ -66,9 +66,9 @@ func makeAccessSingleSingle(addr, startBit, width int64) Access {
 type AccessSingleContinuous struct {
 	regCount int64
 
-	startAddr int64 // Address of the first register.
-	StartMask Mask  // Mask for the first register.
-	EndMask   Mask  // Mask for the last register.
+	startAddr int64      // Address of the first register.
+	StartMask AccessMask // Mask for the first register.
+	EndMask   AccessMask // Mask for the last register.
 }
 
 func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
@@ -76,8 +76,8 @@ func (asc AccessSingleContinuous) MarshalJSON() ([]byte, error) {
 		Strategy  string
 		RegCount  int64
 		StartAddr int64
-		StartMask Mask
-		EndMask   Mask
+		StartMask AccessMask
+		EndMask   AccessMask
 	}{
 		Strategy:  "Continuous",
 		RegCount:  asc.regCount,
@@ -100,17 +100,17 @@ func (asc AccessSingleContinuous) EndAddr() int64   { return asc.startAddr + asc
 func (asc AccessSingleContinuous) EndBit() int64    { return asc.EndMask.Upper }
 
 func makeAccessSingleContinuous(addr, startBit, width int64) Access {
-	startMask := Mask{Upper: busWidth - 1, Lower: startBit}
+	startMask := AccessMask{Upper: busWidth - 1, Lower: startBit}
 	regCount := int64(1)
 
-	var endMask Mask
+	var endMask AccessMask
 	w := busWidth - startBit
 	for {
 		regCount += 1
 		if w+busWidth < width {
 			w += busWidth
 		} else {
-			endMask = Mask{Upper: (width - w) - 1, Lower: 0}
+			endMask = AccessMask{Upper: (width - w) - 1, Lower: 0}
 			break
 		}
 	}
@@ -139,7 +139,7 @@ type AccessArraySingle struct {
 	regCount int64
 
 	startAddr int64
-	Mask      Mask
+	Mask      AccessMask
 }
 
 func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
@@ -147,7 +147,7 @@ func (aas AccessArraySingle) MarshalJSON() ([]byte, error) {
 		Strategy  string
 		RegCount  int64
 		StartAddr int64
-		Mask      Mask
+		Mask      AccessMask
 	}{
 		Strategy:  "Single",
 		RegCount:  aas.regCount,
@@ -177,7 +177,7 @@ func makeAccessArraySingle(itemCount, addr, startBit, width int64) AccessArraySi
 	return AccessArraySingle{
 		regCount:  itemCount,
 		startAddr: addr,
-		Mask:      Mask{Upper: startBit + width - 1, Lower: startBit},
+		Mask:      AccessMask{Upper: startBit + width - 1, Lower: startBit},
 	}
 }
 

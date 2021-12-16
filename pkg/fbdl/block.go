@@ -23,11 +23,11 @@ type Block struct {
 	StrConsts map[string]string
 
 	// Elements
-	Subblocks []*Block
-	Configs   []*Config
-	Funcs     []*Func
+	Configs []*Config
+	Funcs   []*Func
+	// Masks     []*Mask
 	Statuses  []*Status
-	//Masks     []*Mask
+	Subblocks []*Block
 
 	Groups []Group `json:"-"`
 }
