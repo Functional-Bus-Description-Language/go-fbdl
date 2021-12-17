@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-// Config represents status element.
+// Config represents config element.
 type Config struct {
 	Name    string
 	IsArray bool

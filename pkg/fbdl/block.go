@@ -23,9 +23,9 @@ type Block struct {
 	StrConsts map[string]string
 
 	// Elements
-	Configs []*Config
-	Funcs   []*Func
-	// Masks     []*Mask
+	Configs   []*Config
+	Funcs     []*Func
+	Masks     []*Mask
 	Statuses  []*Status
 	Subblocks []*Block
 
@@ -42,6 +42,10 @@ func (b *Block) addConfig(c *Config) {
 
 func (b *Block) addFunc(f *Func) {
 	b.Funcs = append(b.Funcs, f)
+}
+
+func (b *Block) addMask(m *Mask) {
+	b.Masks = append(b.Masks, m)
 }
 
 func (b *Block) addStatus(s *Status) {
@@ -62,10 +66,17 @@ func (b *Block) hasElement(name string) bool {
 }
 
 func (b *Block) addIntConst(name string, value int64) {
+	if b.IntConsts == nil {
+		b.IntConsts = map[string]int64{name: value}
+	}
+
 	b.IntConsts[name] = value
 }
 
 func (b *Block) addStringConst(name, value string) {
+	if b.StrConsts == nil {
+		b.StrConsts = map[string]string{name: value}
+	}
 	b.StrConsts[name] = value
 }
 

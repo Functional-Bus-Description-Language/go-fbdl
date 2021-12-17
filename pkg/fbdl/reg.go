@@ -18,13 +18,11 @@ func Registerify(insBus *ins.Element) *Block {
 	busWidth = int64(insBus.Properties["width"].(val.Int))
 
 	regBus := Block{
-		Name:      "main",
-		IsArray:   insBus.IsArray,
-		Count:     int64(insBus.Count),
-		Masters:   int64(insBus.Properties["masters"].(val.Int)),
-		Width:     int64(insBus.Properties["width"].(val.Int)),
-		IntConsts: map[string]int64{},
-		StrConsts: map[string]string{},
+		Name:    "main",
+		IsArray: insBus.IsArray,
+		Count:   int64(insBus.Count),
+		Masters: int64(insBus.Properties["masters"].(val.Int)),
+		Width:   int64(insBus.Properties["width"].(val.Int)),
 	}
 
 	regBus.addConsts(insBus)
@@ -87,9 +85,10 @@ func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int
 	}
 
 	addr = registerifyGroups(blk, insBlk, addr)
-	addr = registerifyFuncs(blk, insBlk, addr)
-	addr = registerifyStatuses(blk, insBlk, addr)
 	addr = registerifyConfigs(blk, insBlk, addr)
+	addr = registerifyFuncs(blk, insBlk, addr)
+	addr = registerifyMasks(blk, insBlk, addr)
+	addr = registerifyStatuses(blk, insBlk, addr)
 
 	return addr
 }
@@ -118,6 +117,19 @@ func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	for _, insFun := range insFuncs {
 		fun, addr = registerifyFunc(insFun, addr)
 		blk.addFunc(fun)
+	}
+
+	return addr
+}
+
+func registerifyMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
+	insMasks := insBlk.Elements.GetAllByBaseType("mask")
+
+	var mask *Mask
+
+	for _, insMask := range insMasks {
+		mask, addr = registerifyMask(insMask, addr)
+		blk.addMask(mask)
 	}
 
 	return addr
@@ -164,12 +176,10 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 	addr := int64(0)
 
 	b := Block{
-		Name:      insBlk.Name,
-		IsArray:   insBlk.IsArray,
-		Count:     int64(insBlk.Count),
-		Masters:   int64(insBlk.Properties["masters"].(val.Int)),
-		IntConsts: map[string]int64{},
-		StrConsts: map[string]string{},
+		Name:    insBlk.Name,
+		IsArray: insBlk.IsArray,
+		Count:   int64(insBlk.Count),
+		Masters: int64(insBlk.Properties["masters"].(val.Int)),
 	}
 
 	b.addConsts(insBlk)
