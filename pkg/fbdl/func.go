@@ -7,9 +7,10 @@ import (
 
 // Struct represents func element.
 type Func struct {
-	Name    string
-	IsArray bool
-	Count   int64
+	Name     string
+	IsArray  bool
+	Count    int64
+	CallAddr int64
 
 	// Properties
 	Doc string
@@ -18,11 +19,15 @@ type Func struct {
 }
 
 func (f *Func) StartAddr() int64 {
-	return f.Params[0].Access.StartAddr()
+	if len(f.Params) == 0 {
+		return f.CallAddr
+	} else {
+		return f.Params[0].Access.StartAddr()
+	}
 }
 
 func (f *Func) EndAddr() int64 {
-	return f.Params[len(f.Params)-1].Access.EndAddr()
+	return f.CallAddr
 }
 
 // AreAllParamsSingleSingle returns true if accesses to all parameters are of type AccessSingleSingle.
@@ -78,12 +83,18 @@ func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 		fun.Params = append(fun.Params, &p)
 	}
 
-	// If the last register is not fully occupied go to next address.
-	// TODO: This is a potential place for adding a gap struct instance
-	// for further address space optimization.
-	lastAccess := fun.Params[len(fun.Params)-1].Access
-	if lastAccess.EndBit() < busWidth-1 {
+	if len(fun.Params) == 0 {
+		fun.CallAddr = addr
 		addr += 1
+	} else {
+		fun.CallAddr = fun.Params[len(fun.Params)-1].Access.EndAddr()
+		// If the last register is not fully occupied go to next address.
+		// TODO: This is a potential place for adding a gap struct instance
+		// for further address space optimization.
+		lastAccess := fun.Params[len(fun.Params)-1].Access
+		if lastAccess.EndBit() < busWidth-1 {
+			addr += 1
+		}
 	}
 
 	return &fun, addr
