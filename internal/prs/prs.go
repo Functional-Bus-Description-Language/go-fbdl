@@ -670,6 +670,19 @@ func parseElementTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) 
 		}
 	}
 
+	if util.IsBaseType(type_) {
+		for prop, v := range props {
+			if err = util.IsValidProperty(prop, type_); err != nil {
+				return nil,
+					fmt.Errorf(
+						"line %d: element type definition: "+
+							"line %d: %v",
+						n.LineNumber(), v.LineNumber, err,
+					)
+			}
+		}
+	}
+
 	type__.type_ = type_
 	type__.properties = props
 	type__.symbols = symbols

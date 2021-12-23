@@ -137,7 +137,13 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 	typeChain := []prs.Element{}
 
 	if !util.IsBaseType(e.Type()) {
-		s, err := e.Parent().GetSymbol(e.Type())
+		var s prs.Symbol
+		var err error
+		if e.Parent() != nil {
+			s, err = e.Parent().GetSymbol(e.Type())
+		} else {
+			s, err = e.File().GetSymbol(e.Type())
+		}
 		if err != nil {
 			log.Fatalf("cannot get symbol '%s': %v", e.Type(), err)
 		}

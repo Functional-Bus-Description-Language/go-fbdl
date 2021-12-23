@@ -38,8 +38,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 
 	for name, prop := range type_.Properties() {
 		if err := util.IsValidProperty(name, elem.BaseType); err != nil {
-			panic("improve error message")
-			return fmt.Errorf("'%s' is not valid property", name)
+			return fmt.Errorf(": %v", err)
 		}
 		err := checkProperty(name, prop)
 		if err != nil {

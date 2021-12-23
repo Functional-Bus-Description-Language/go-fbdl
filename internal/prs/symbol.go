@@ -7,6 +7,7 @@ type Symbol interface {
 	SetParent(s Symbol)
 	Parent() Searchable
 	SetFile(f *File)
+	File() *File
 	FilePath() string
 }
 
@@ -39,6 +40,10 @@ func (b *base) SetFile(f *File) {
 	}
 
 	b.file = f
+}
+
+func (b *base) File() *File {
+	return b.file
 }
 
 func (b base) FilePath() string {
