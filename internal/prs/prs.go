@@ -571,6 +571,8 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 				ss, err = parseSingleConstantDefinition(nc)
 			case "multi_constant_definition":
 				panic("not yet implemented")
+			case "comment":
+				continue
 			case "ERROR":
 				return props, symbols, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", n.LineNumber())
 			default:
