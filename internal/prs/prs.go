@@ -191,6 +191,8 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			}
 			file.Imports[i.ImportName] = i
 			goto nextNode
+		case "comment":
+			symbols = []Symbol{}
 		case "ERROR":
 			log.Fatalf("%s: line %d: invalid syntax, tree-sitter ERROR", path, node.LineNumber())
 		default:
