@@ -2,7 +2,6 @@ package prs
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -41,21 +40,35 @@ func DiscoverPackages(main string) Packages {
 	packages := make(Packages)
 
 	for _, checkPath := range pathsToLook {
-		content, err := ioutil.ReadDir(checkPath)
+		content, err := os.ReadDir(checkPath)
 		if err != nil {
 			panic(err)
 		}
 
 		for _, c := range content {
+			pkgPath := path.Join(checkPath, c.Name())
+
 			if c.IsDir() == false {
-				continue
+				fileInfo, err := os.Lstat(pkgPath)
+				if err != nil {
+					panic(err)
+				}
+				if fileInfo.Mode()&os.ModeSymlink != 0 {
+					pointee, err := os.Readlink(path.Join(checkPath, c.Name()))
+					if err != nil {
+						panic(err)
+					}
+					pkgPath = path.Join(checkPath, pointee)
+				} else {
+					continue
+				}
 			}
 
 			pkgName := c.Name()
 			if strings.HasPrefix(pkgName, "fbd-") {
 				pkgName = pkgName[4:]
 			}
-			innerContent, err := ioutil.ReadDir(path.Join(checkPath, pkgName))
+			innerContent, err := os.ReadDir(path.Join(checkPath, pkgName))
 			if err != nil {
 				panic(err)
 			}
@@ -65,7 +78,7 @@ func DiscoverPackages(main string) Packages {
 				}
 				fileName := ic.Name()
 				if strings.HasSuffix(fileName, ".fbd") {
-					pkg := Package{Name: pkgName, Path: path.Join(checkPath, c.Name()), Symbols: SymbolContainer{}}
+					pkg := Package{Name: pkgName, Path: pkgPath, Symbols: SymbolContainer{}}
 					if list, ok := packages[pkgName]; ok {
 						list = append(list, &pkg)
 					} else {
