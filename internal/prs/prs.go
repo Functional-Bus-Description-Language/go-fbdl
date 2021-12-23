@@ -4,8 +4,6 @@ package prs
 import (
 	"bufio"
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,6 +11,9 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
 func ParsePackages(packages Packages) {

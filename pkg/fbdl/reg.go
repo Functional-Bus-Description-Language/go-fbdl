@@ -1,10 +1,11 @@
 package fbdl
 
 import (
+	"log"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"log"
 )
 
 var busWidth int64

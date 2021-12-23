@@ -2,10 +2,11 @@ package prs
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"math"
 	"strconv"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
 type Expression interface {

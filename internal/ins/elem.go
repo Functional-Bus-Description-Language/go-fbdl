@@ -2,10 +2,11 @@ package ins
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"log"
 )
 
 type Element struct {

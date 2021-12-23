@@ -1,9 +1,10 @@
 package ins
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"math"
 	"time"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
 func x_timestamp_x() *Element {

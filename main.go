@@ -1,17 +1,17 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/args"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
 
 	"github.com/davecgh/go-spew/spew"
-
-	"encoding/json"
-	"fmt"
-	"log"
-	"os"
 )
 
 var printDebug bool = false
