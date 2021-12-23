@@ -62,10 +62,6 @@ func (e ElementDefinition) Type() string {
 }
 
 func (e *ElementDefinition) GetSymbol(name string) (Symbol, error) {
-	if strings.Contains(name, ".") {
-		panic("To be implemented")
-	}
-
 	sym, ok := e.symbols.Get(name)
 	if ok {
 		return sym, nil

@@ -50,12 +50,12 @@ func resolveArguments(symbol prs.Element) (map[string]prs.Expression, error) {
 	resolvedArgs := make(map[string]prs.Expression)
 	inPositionalArgs := true
 
-	type_symbol, err := symbol.GetSymbol(symbol.Type())
+	typeSymbol, err := symbol.GetSymbol(symbol.Type())
 	if err != nil {
-		return nil, fmt.Errorf("cannot get symbol '%s'", symbol.Type())
+		return nil, fmt.Errorf("cannot get symbol '%s' for element type: %v", symbol.Type(), err)
 	}
 
-	params := type_symbol.(prs.Element).Params()
+	params := typeSymbol.(prs.Element).Params()
 
 	var argName string
 	var argHasName bool

@@ -648,6 +648,8 @@ func parseElementTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) 
 			args, err = parseArgumentList(nc, parent)
 		case "element_body":
 			props, symbols, err = parseElementBody(nc, &type__)
+		case "ERROR":
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		default:
 			panic("should never happen")
 		}

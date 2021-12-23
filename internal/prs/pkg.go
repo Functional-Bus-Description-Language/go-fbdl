@@ -67,7 +67,6 @@ func GetName(path_ string) string {
 	if name[:3] == "fbd-" {
 		name = name[4:]
 	}
-	fmt.Println("name")
 
 	return name
 }

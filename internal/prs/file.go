@@ -2,6 +2,7 @@ package prs
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Import struct {
@@ -31,6 +32,19 @@ func (f *File) AddSymbol(s Symbol) error {
 }
 
 func (f *File) GetSymbol(name string) (Symbol, error) {
+	if strings.Contains(name, ".") {
+		parts := strings.Split(name, ".")
+		pkgName := parts[0]
+		symName := parts[1]
+
+		pkg, ok := f.Imports[pkgName]
+		if !ok {
+			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
+		}
+
+		return pkg.Package.GetSymbol(symName)
+	}
+
 	sym, ok := f.Symbols.Get(name)
 	if ok {
 		return sym, nil
