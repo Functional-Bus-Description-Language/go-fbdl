@@ -3,10 +3,26 @@ package prs
 import (
 	"fmt"
 	"path"
+	"strings"
 	"sync"
 )
 
 type Packages map[string][]*Package
+
+// GetMatching returns list of pointers to packages which Path contains path suffix.
+func (packages Packages) GetMatching(path string) []*Package {
+	ret := []*Package{}
+
+	for _, pkgs := range packages {
+		for _, pkg := range pkgs {
+			if strings.HasSuffix(pkg.Path, path) {
+				ret = append(ret, pkg)
+			}
+		}
+	}
+
+	return ret
+}
 
 type Package struct {
 	Name           string

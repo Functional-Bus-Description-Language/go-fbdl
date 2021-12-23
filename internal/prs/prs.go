@@ -17,7 +17,6 @@ import (
 
 func ParsePackages(packages Packages) {
 	var wg sync.WaitGroup
-	defer wg.Wait()
 
 	for name, _ := range packages {
 		for i, _ := range packages[name] {
@@ -25,6 +24,10 @@ func ParsePackages(packages Packages) {
 			go parsePackage(packages[name][i], &wg)
 		}
 	}
+
+	wg.Wait()
+
+	bindImports(packages)
 }
 
 func parsePackage(pkg *Package, wg *sync.WaitGroup) {
