@@ -178,6 +178,8 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			symbols, err = parseElementDefinitiveInstantiation(node, &file)
 		case "multi_line_type_definition":
 			symbols, err = parseMultiLineTypeDefinition(node, &file)
+		case "single_line_type_definition":
+			symbols, err = parseSingleLineTypeDefinition(node, &file)
 		case "multi_constant_definition":
 			symbols, err = parseMultiConstantDefinition(node)
 		case "single_constant_definition":
@@ -564,6 +566,8 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 			switch t {
 			case "multi_line_type_definition":
 				ss, err = parseMultiLineTypeDefinition(nc, element)
+			case "single_line_type_definition":
+				ss, err = parseSingleLineTypeDefinition(nc, element)
 			case "multi_line_anonymous_instantiation":
 				ss, err = parseMultiLineAnonymousInstantiation(nc, element)
 			case "single_line_anonymous_instantiation":
@@ -697,6 +701,99 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 			type__.symbols[name].SetParent(&type__)
 		}
 	}
+
+	return []Symbol{&type__}, nil
+}
+
+func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) {
+	name := n.Child(1).Content()
+	if util.IsBaseType(name) {
+		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
+	}
+
+	type__ := TypeDefinition{
+		base: base{
+			lineNumber: n.LineNumber(),
+			name:       name,
+		},
+	}
+
+	args := []Argument{}
+	params := []Parameter{}
+	props := map[string]Property{}
+
+	var err error
+	var type_ string
+
+	for i := 2; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		t := nc.Type()
+
+		switch t {
+		case "parameter_list":
+			params, err = parseParameterList(nc, parent)
+		case "identifier":
+			type_ = nc.Content()
+		case "qualified_identifier":
+			type_ = nc.Content()
+			aux := strings.Split(type_, ".")
+			pkg := aux[0]
+			id := aux[1]
+			if unicode.IsUpper([]rune(id)[0]) == false {
+				return nil,
+					fmt.Errorf(
+						"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
+						nc.LineNumber(), id, pkg,
+					)
+			}
+		case "argument_list":
+			args, err = parseArgumentList(nc, parent)
+		case ";":
+			continue
+		case "multi_property_assignment":
+			props, err = parseMultiPropertyAssignment(nc, &type__)
+			if err != nil {
+				return nil, fmt.Errorf(
+					"line %d: '%s' type definition: %v", n.LineNumber(), type__.name, err,
+				)
+			}
+		case "ERROR":
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
+		default:
+			fmt.Println(t)
+			panic("should never happen")
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf(
+				"line %d: '%s' type definition: %v", n.LineNumber(), type__.name, err,
+			)
+		}
+	}
+
+	if len(args) > 0 && util.IsBaseType(type_) {
+		return nil,
+			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), type_)
+	}
+
+	type__.type_ = type_
+	type__.params = params
+	type__.args = args
+
+	if util.IsBaseType(type_) {
+		for prop, v := range props {
+			if err = util.IsValidProperty(prop, type_); err != nil {
+				return nil,
+					fmt.Errorf(
+						"line %d: '%s' single line type definition: "+
+							"line %d: %v",
+						n.LineNumber(), type__.name, v.LineNumber, err,
+					)
+			}
+		}
+	}
+
+	type__.properties = props
 
 	return []Symbol{&type__}, nil
 }
