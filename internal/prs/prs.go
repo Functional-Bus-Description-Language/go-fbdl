@@ -170,10 +170,10 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	var symbols []Symbol
 	for {
 		switch node.Type() {
-		case "element_anonymous_multi_line_instantiation":
-			symbols, err = parseElementAnonymousMultiLineInstantiation(node, &file)
-		case "element_anonymous_single_line_instantiation":
-			symbols, err = parseElementAnonymousSingleLineInstantiation(node, &file)
+		case "multi_line_anonymous_instantiation":
+			symbols, err = parseMultiLineAnonymousInstantiation(node, &file)
+		case "single_line_anonymous_instantiation":
+			symbols, err = parseSingleLineAnonymousInstantiation(node, &file)
 		case "element_definitive_instantiation":
 			symbols, err = parseElementDefinitiveInstantiation(node, &file)
 		case "multi_line_type_definition":
@@ -284,7 +284,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 	return args, nil
 }
 
-func parseElementAnonymousMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+func parseMultiLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
 	var err error
 
 	isArray := false
@@ -365,7 +365,7 @@ func parseElementAnonymousMultiLineInstantiation(n ts.Node, parent Searchable) (
 	return []Symbol{&elem}, nil
 }
 
-func parseElementAnonymousSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+func parseSingleLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
 	var err error
 
 	isArray := false
@@ -564,10 +564,10 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 			switch t {
 			case "multi_line_type_definition":
 				ss, err = parseMultiLineTypeDefinition(nc, element)
-			case "element_anonymous_multi_line_instantiation":
-				ss, err = parseElementAnonymousMultiLineInstantiation(nc, element)
-			case "element_anonymous_single_line_instantiation":
-				ss, err = parseElementAnonymousSingleLineInstantiation(nc, element)
+			case "multi_line_anonymous_instantiation":
+				ss, err = parseMultiLineAnonymousInstantiation(nc, element)
+			case "single_line_anonymous_instantiation":
+				ss, err = parseSingleLineAnonymousInstantiation(nc, element)
 			case "element_definitive_instantiation":
 				ss, err = parseElementDefinitiveInstantiation(nc, element)
 			case "single_constant_definition":
