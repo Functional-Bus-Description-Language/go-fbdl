@@ -752,11 +752,6 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 			continue
 		case "multi_property_assignment":
 			props, err = parseMultiPropertyAssignment(nc, &type__)
-			if err != nil {
-				return nil, fmt.Errorf(
-					"line %d: '%s' type definition: %v", n.LineNumber(), type__.name, err,
-				)
-			}
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		default:
