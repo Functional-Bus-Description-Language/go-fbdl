@@ -176,8 +176,8 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			symbols, err = parseElementAnonymousSingleLineInstantiation(node, &file)
 		case "element_definitive_instantiation":
 			symbols, err = parseElementDefinitiveInstantiation(node, &file)
-		case "element_type_definition":
-			symbols, err = parseElementTypeDefinition(node, &file)
+		case "multi_line_type_definition":
+			symbols, err = parseMultiLineTypeDefinition(node, &file)
 		case "multi_constant_definition":
 			symbols, err = parseMultiConstantDefinition(node)
 		case "single_constant_definition":
@@ -562,8 +562,8 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 		default:
 			var ss []Symbol
 			switch t {
-			case "element_type_definition":
-				ss, err = parseElementTypeDefinition(nc, element)
+			case "multi_line_type_definition":
+				ss, err = parseMultiLineTypeDefinition(nc, element)
 			case "element_anonymous_multi_line_instantiation":
 				ss, err = parseElementAnonymousMultiLineInstantiation(nc, element)
 			case "element_anonymous_single_line_instantiation":
@@ -607,7 +607,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 	return props, symbols, nil
 }
 
-func parseElementTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) {
+func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) {
 	args := []Argument{}
 	params := []Parameter{}
 	props := make(map[string]Property)
