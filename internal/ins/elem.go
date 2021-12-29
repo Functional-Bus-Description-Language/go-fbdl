@@ -20,30 +20,30 @@ type Element struct {
 	Groups     []*Group
 }
 
-func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Expression) error {
+func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expression) error {
 	if elem.BaseType == "" {
-		if !util.IsBaseType(type_.Type()) {
-			return fmt.Errorf("cannot start element instantiation from non base type '%s'", type_.Type())
+		if !util.IsBaseType(typ.Type()) {
+			return fmt.Errorf("cannot start element instantiation from non base type '%s'", typ.Type())
 		}
 
-		elem.BaseType = type_.Type()
+		elem.BaseType = typ.Type()
 	}
 
-	if def, ok := type_.(*prs.ElementDefinition); ok {
+	if def, ok := typ.(*prs.ElementDefinition); ok {
 		elem.Name = def.Name()
 	}
 
 	if resolvedArgs != nil {
-		type_.SetResolvedArgs(resolvedArgs)
+		typ.SetResolvedArgs(resolvedArgs)
 	}
 
-	for name, prop := range type_.Properties() {
+	for name, prop := range typ.Properties() {
 		if err := util.IsValidProperty(name, elem.BaseType); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
 		err := checkProperty(name, prop)
 		if err != nil {
-			return fmt.Errorf("\n  %s: line %d: %v", type_.FilePath(), prop.LineNumber, err)
+			return fmt.Errorf("\n  %s: line %d: %v", typ.FilePath(), prop.LineNumber, err)
 		}
 		if _, exist := elem.Properties[name]; exist {
 			return fmt.Errorf(
@@ -62,7 +62,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 		elem.Properties[name] = v
 	}
 
-	for _, s := range type_.Symbols() {
+	for _, s := range typ.Symbols() {
 		if c, ok := s.(*prs.Constant); ok {
 			if _, has := elem.Constants[c.Name()]; has {
 				return fmt.Errorf(
@@ -101,7 +101,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 		}
 	}
 
-	if ed, ok := type_.(*prs.ElementDefinition); ok {
+	if ed, ok := typ.(*prs.ElementDefinition); ok {
 		if elem.IsArray {
 			panic("should never happen")
 		}
@@ -114,7 +114,7 @@ func (elem *Element) applyType(type_ prs.Element, resolvedArgs map[string]prs.Ex
 			}
 
 			if err != nil {
-				return fmt.Errorf("applying type '%s': %v", type_.Name(), err)
+				return fmt.Errorf("applying type '%s': %v", typ.Name(), err)
 			}
 			elem.Count = int64(count.(val.Int))
 		} else {

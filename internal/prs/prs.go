@@ -68,12 +68,12 @@ func checkInstantiations(pkg *Package) {
 	for _, f := range pkg.Files {
 		for _, symbol := range f.Symbols {
 			if e, ok := symbol.(*ElementDefinition); ok {
-				if e.type_ != "bus" && util.IsBaseType(e.type_) {
+				if e.typ != "bus" && util.IsBaseType(e.typ) {
 					log.Fatalf(
 						"%s: line %d: element of type '%s' cannot be instantiated at package level",
 						f.Path, e.LineNumber(), e.Type(),
 					)
-				} else if e.type_ == "bus" {
+				} else if e.typ == "bus" {
 					if e.Name() != "main" || pkg.Name != "main" {
 						log.Fatalf(
 							"%s: line %d: bus instantiation must be named 'main' and must be placed in 'main' package",
@@ -306,18 +306,18 @@ func parseMultiLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbo
 		count = expr
 	}
 
-	var type_ string
+	var typ string
 	if n.Child(1).Type() == "element_type" {
-		type_ = n.Child(1).Content()
+		typ = n.Child(1).Content()
 	} else {
-		type_ = n.Child(4).Content()
+		typ = n.Child(4).Content()
 	}
 
-	if util.IsBaseType(type_) == false {
+	if util.IsBaseType(typ) == false {
 		return nil,
 			fmt.Errorf(
 				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
-				n.LineNumber(), type_,
+				n.LineNumber(), typ,
 			)
 	}
 
@@ -328,7 +328,7 @@ func parseMultiLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbo
 		},
 		IsArray:           isArray,
 		Count:             count,
-		type_:             type_,
+		typ:               typ,
 		InstantiationType: Anonymous,
 	}
 
@@ -342,7 +342,7 @@ func parseMultiLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbo
 		}
 
 		for prop, v := range elem.properties {
-			if err = util.IsValidProperty(prop, type_); err != nil {
+			if err = util.IsValidProperty(prop, typ); err != nil {
 				return nil,
 					fmt.Errorf(
 						"line %d: element anonymous instantiation: "+
@@ -382,18 +382,18 @@ func parseSingleLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symb
 		count = expr
 	}
 
-	var type_ string
+	var typ string
 	if n.Child(1).Type() == "element_type" {
-		type_ = n.Child(1).Content()
+		typ = n.Child(1).Content()
 	} else {
-		type_ = n.Child(4).Content()
+		typ = n.Child(4).Content()
 	}
 
-	if util.IsBaseType(type_) == false {
+	if util.IsBaseType(typ) == false {
 		return nil,
 			fmt.Errorf(
 				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
-				n.LineNumber(), type_,
+				n.LineNumber(), typ,
 			)
 	}
 
@@ -404,7 +404,7 @@ func parseSingleLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symb
 		},
 		IsArray:           isArray,
 		Count:             count,
-		type_:             type_,
+		typ:               typ,
 		InstantiationType: Anonymous,
 	}
 
@@ -418,7 +418,7 @@ func parseSingleLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symb
 		}
 
 		for prop, v := range elem.properties {
-			if err = util.IsValidProperty(prop, type_); err != nil {
+			if err = util.IsValidProperty(prop, typ); err != nil {
 				return nil,
 					fmt.Errorf(
 						"line %d: '%s' element anonymous instantiation: "+
@@ -451,15 +451,15 @@ func parseElementDefinitiveInstantiation(n ts.Node, parent Searchable) ([]Symbol
 		}
 	}
 
-	var type_ string
+	var typ string
 	if n.Child(1).Type() == "identifier" || n.Child(1).Type() == "qualified_identifier" {
-		type_ = n.Child(1).Content()
+		typ = n.Child(1).Content()
 	} else {
-		type_ = n.Child(4).Content()
+		typ = n.Child(4).Content()
 	}
 
-	if strings.Contains(type_, ".") {
-		aux := strings.Split(type_, ".")
+	if strings.Contains(typ, ".") {
+		aux := strings.Split(typ, ".")
 		pkg := aux[0]
 		id := aux[1]
 		if unicode.IsUpper([]rune(id)[0]) == false {
@@ -494,7 +494,7 @@ func parseElementDefinitiveInstantiation(n ts.Node, parent Searchable) ([]Symbol
 		},
 		IsArray:           isArray,
 		Count:             count,
-		type_:             type_,
+		typ:               typ,
 		InstantiationType: Definitive,
 		args:              args,
 	}
@@ -624,10 +624,10 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 		case "parameter_list":
 			t.params, err = parseParameterList(nc, parent)
 		case "identifier":
-			t.type_ = nc.Content()
+			t.typ = nc.Content()
 		case "qualified_identifier":
-			t.type_ = nc.Content()
-			aux := strings.Split(t.type_, ".")
+			t.typ = nc.Content()
+			aux := strings.Split(t.typ, ".")
 			pkg := aux[0]
 			id := aux[1]
 			if unicode.IsUpper([]rune(id)[0]) == false {
@@ -654,14 +654,14 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 		}
 	}
 
-	if len(t.args) > 0 && util.IsBaseType(t.type_) {
+	if len(t.args) > 0 && util.IsBaseType(t.typ) {
 		return nil,
-			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.type_)
+			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.typ)
 	}
 
-	if util.IsBaseType(t.type_) {
+	if util.IsBaseType(t.typ) {
 		for prop, v := range t.properties {
-			if err = util.IsValidProperty(prop, t.type_); err != nil {
+			if err = util.IsValidProperty(prop, t.typ); err != nil {
 				return nil,
 					fmt.Errorf(
 						"line %d: type definition: line %d: %v",
@@ -702,10 +702,10 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		case "parameter_list":
 			t.params, err = parseParameterList(nc, parent)
 		case "identifier":
-			t.type_ = nc.Content()
+			t.typ = nc.Content()
 		case "qualified_identifier":
-			t.type_ = nc.Content()
-			aux := strings.Split(t.type_, ".")
+			t.typ = nc.Content()
+			aux := strings.Split(t.typ, ".")
 			pkg := aux[0]
 			id := aux[1]
 			if unicode.IsUpper([]rune(id)[0]) == false {
@@ -734,14 +734,14 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		}
 	}
 
-	if len(t.args) > 0 && util.IsBaseType(t.type_) {
+	if len(t.args) > 0 && util.IsBaseType(t.typ) {
 		return nil,
-			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.type_)
+			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.typ)
 	}
 
-	if util.IsBaseType(t.type_) {
+	if util.IsBaseType(t.typ) {
 		for prop, v := range t.properties {
-			if err = util.IsValidProperty(prop, t.type_); err != nil {
+			if err = util.IsValidProperty(prop, t.typ); err != nil {
 				return nil,
 					fmt.Errorf(
 						"line %d: '%s' type definition: line %d: %v",

@@ -44,7 +44,7 @@ type Element interface {
 type ElementDefinition struct {
 	base
 
-	type_             string
+	typ               string
 	InstantiationType ElementInstantiationType
 	IsArray           bool
 	Count             Expression
@@ -58,7 +58,7 @@ type ElementDefinition struct {
 }
 
 func (e ElementDefinition) Type() string {
-	return e.type_
+	return e.typ
 }
 
 func (e *ElementDefinition) GetSymbol(name string) (Symbol, error) {
@@ -105,7 +105,7 @@ func (e ElementDefinition) Symbols() SymbolContainer {
 type TypeDefinition struct {
 	base
 
-	type_      string
+	typ        string
 	properties map[string]Property
 	symbols    SymbolContainer
 
@@ -136,7 +136,7 @@ func (t *TypeDefinition) GetSymbol(name string) (Symbol, error) {
 }
 
 func (t TypeDefinition) Type() string {
-	return t.type_
+	return t.typ
 }
 
 func (t TypeDefinition) Args() []Argument {

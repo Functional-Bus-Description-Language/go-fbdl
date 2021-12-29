@@ -27,11 +27,11 @@ func (ec *ElementContainer) Get(name string) (*Element, bool) {
 	return nil, false
 }
 
-func (ec *ElementContainer) GetAllByBaseType(type_ string) []*Element {
+func (ec *ElementContainer) GetAllByBaseType(typ string) []*Element {
 	ret := []*Element{}
 
 	for _, e := range *ec {
-		if e.BaseType == type_ {
+		if e.BaseType == typ {
 			ret = append(ret, e)
 		}
 	}
