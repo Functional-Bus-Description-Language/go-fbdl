@@ -612,17 +612,12 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 }
 
 func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) {
-	args := []Argument{}
-	params := []Parameter{}
-	props := make(map[string]Property)
-	symbols := SymbolContainer{}
-
 	name := n.Child(1).Content()
 	if util.IsBaseType(name) {
 		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
 	}
 
-	type__ := TypeDefinition{
+	t := TypeDefinition{
 		base: base{
 			lineNumber: n.LineNumber(),
 			name:       name,
@@ -630,20 +625,18 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 	}
 
 	var err error
-	var type_ string
 
 	for i := 2; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
-		t := nc.Type()
 
-		switch t {
+		switch nc.Type() {
 		case "parameter_list":
-			params, err = parseParameterList(nc, parent)
+			t.params, err = parseParameterList(nc, parent)
 		case "identifier":
-			type_ = nc.Content()
+			t.type_ = nc.Content()
 		case "qualified_identifier":
-			type_ = nc.Content()
-			aux := strings.Split(type_, ".")
+			t.type_ = nc.Content()
+			aux := strings.Split(t.type_, ".")
 			pkg := aux[0]
 			id := aux[1]
 			if unicode.IsUpper([]rune(id)[0]) == false {
@@ -654,9 +647,9 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 					)
 			}
 		case "argument_list":
-			args, err = parseArgumentList(nc, parent)
+			t.args, err = parseArgumentList(nc, parent)
 		case "element_body":
-			props, symbols, err = parseElementBody(nc, &type__)
+			t.properties, t.symbols, err = parseElementBody(nc, &t)
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		default:
@@ -665,44 +658,35 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' element type definition: %v", n.LineNumber(), type__.name, err,
+				"line %d: '%s' type definition: %v", n.LineNumber(), t.name, err,
 			)
 		}
 	}
 
-	if len(args) > 0 {
-		if util.IsBaseType(type_) {
-			return nil,
-				fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), type_)
-		}
+	if len(t.args) > 0 && util.IsBaseType(t.type_) {
+		return nil,
+			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.type_)
 	}
 
-	if util.IsBaseType(type_) {
-		for prop, v := range props {
-			if err = util.IsValidProperty(prop, type_); err != nil {
+	if util.IsBaseType(t.type_) {
+		for prop, v := range t.properties {
+			if err = util.IsValidProperty(prop, t.type_); err != nil {
 				return nil,
 					fmt.Errorf(
-						"line %d: element type definition: "+
-							"line %d: %v",
+						"line %d: type definition: line %d: %v",
 						n.LineNumber(), v.LineNumber, err,
 					)
 			}
 		}
 	}
 
-	type__.type_ = type_
-	type__.properties = props
-	type__.symbols = symbols
-	type__.params = params
-	type__.args = args
-
-	if len(type__.symbols) > 0 {
-		for name, _ := range type__.symbols {
-			type__.symbols[name].SetParent(&type__)
+	if len(t.symbols) > 0 {
+		for name, _ := range t.symbols {
+			t.symbols[name].SetParent(&t)
 		}
 	}
 
-	return []Symbol{&type__}, nil
+	return []Symbol{&t}, nil
 }
 
 func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) {
@@ -711,32 +695,26 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
 	}
 
-	type__ := TypeDefinition{
+	t := TypeDefinition{
 		base: base{
 			lineNumber: n.LineNumber(),
 			name:       name,
 		},
 	}
 
-	args := []Argument{}
-	params := []Parameter{}
-	props := map[string]Property{}
-
 	var err error
-	var type_ string
 
 	for i := 2; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
-		t := nc.Type()
 
-		switch t {
+		switch nc.Type() {
 		case "parameter_list":
-			params, err = parseParameterList(nc, parent)
+			t.params, err = parseParameterList(nc, parent)
 		case "identifier":
-			type_ = nc.Content()
+			t.type_ = nc.Content()
 		case "qualified_identifier":
-			type_ = nc.Content()
-			aux := strings.Split(type_, ".")
+			t.type_ = nc.Content()
+			aux := strings.Split(t.type_, ".")
 			pkg := aux[0]
 			id := aux[1]
 			if unicode.IsUpper([]rune(id)[0]) == false {
@@ -747,50 +725,42 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 					)
 			}
 		case "argument_list":
-			args, err = parseArgumentList(nc, parent)
+			t.args, err = parseArgumentList(nc, parent)
 		case ";":
 			continue
 		case "multi_property_assignment":
-			props, err = parseMultiPropertyAssignment(nc, &type__)
+			t.properties, err = parseMultiPropertyAssignment(nc, &t)
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		default:
-			fmt.Println(t)
 			panic("should never happen")
 		}
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' type definition: %v", n.LineNumber(), type__.name, err,
+				"line %d: '%s' type definition: %v", n.LineNumber(), t.name, err,
 			)
 		}
 	}
 
-	if len(args) > 0 && util.IsBaseType(type_) {
+	if len(t.args) > 0 && util.IsBaseType(t.type_) {
 		return nil,
-			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), type_)
+			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.type_)
 	}
 
-	type__.type_ = type_
-	type__.params = params
-	type__.args = args
-
-	if util.IsBaseType(type_) {
-		for prop, v := range props {
-			if err = util.IsValidProperty(prop, type_); err != nil {
+	if util.IsBaseType(t.type_) {
+		for prop, v := range t.properties {
+			if err = util.IsValidProperty(prop, t.type_); err != nil {
 				return nil,
 					fmt.Errorf(
-						"line %d: '%s' single line type definition: "+
-							"line %d: %v",
-						n.LineNumber(), type__.name, v.LineNumber, err,
+						"line %d: '%s' type definition: line %d: %v",
+						n.LineNumber(), t.name, v.LineNumber, err,
 					)
 			}
 		}
 	}
 
-	type__.properties = props
-
-	return []Symbol{&type__}, nil
+	return []Symbol{&t}, nil
 }
 
 func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {

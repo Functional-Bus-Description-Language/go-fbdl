@@ -1,1 +1,1 @@
-bus.fbd: line 1: 'my_status' element type definition: line 3: property 'width' assigned at least twice in the same element body
+bus.fbd: line 1: 'my_status' type definition: line 3: property 'width' assigned at least twice in the same element body

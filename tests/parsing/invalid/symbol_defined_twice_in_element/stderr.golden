@@ -1,1 +1,1 @@
-bus.fbd: line 1: 'my_bus' element type definition: line 4: symbol 'a' defined at least twice in the same element body, first occurrence line 2
+bus.fbd: line 1: 'my_bus' type definition: line 4: symbol 'a' defined at least twice in the same element body, first occurrence line 2
