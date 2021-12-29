@@ -332,18 +332,16 @@ func parseMultiLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbo
 		InstantiationType: Anonymous,
 	}
 
-	var props map[string]Property
-	var symbols SymbolContainer
 	lastNode := n.LastChild()
 	if lastNode.Type() == "element_body" {
-		props, symbols, err = parseElementBody(lastNode, &elem)
+		elem.properties, elem.symbols, err = parseElementBody(lastNode, &elem)
 		if err != nil {
 			return nil, fmt.Errorf(
 				"line %d: '%s' element anonymous instantiation: %v", n.LineNumber(), elem.name, err,
 			)
 		}
 
-		for prop, v := range props {
+		for prop, v := range elem.properties {
 			if err = util.IsValidProperty(prop, type_); err != nil {
 				return nil,
 					fmt.Errorf(
@@ -354,9 +352,6 @@ func parseMultiLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbo
 			}
 		}
 	}
-
-	elem.properties = props
-	elem.symbols = symbols
 
 	if len(elem.symbols) > 0 {
 		for name, _ := range elem.symbols {
@@ -413,18 +408,16 @@ func parseSingleLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symb
 		InstantiationType: Anonymous,
 	}
 
-	var props map[string]Property
-
 	lastNode := n.LastChild()
 	if lastNode.Type() == "multi_property_assignment" {
-		props, err = parseMultiPropertyAssignment(lastNode, &elem)
+		elem.properties, err = parseMultiPropertyAssignment(lastNode, &elem)
 		if err != nil {
 			return nil, fmt.Errorf(
 				"line %d: '%s' element anonymous instantiation: %v", n.LineNumber(), elem.name, err,
 			)
 		}
 
-		for prop, v := range props {
+		for prop, v := range elem.properties {
 			if err = util.IsValidProperty(prop, type_); err != nil {
 				return nil,
 					fmt.Errorf(
@@ -435,8 +428,6 @@ func parseSingleLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symb
 			}
 		}
 	}
-
-	elem.properties = props
 
 	return []Symbol{&elem}, nil
 }
