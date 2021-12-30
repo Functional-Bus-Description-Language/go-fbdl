@@ -4,12 +4,13 @@ import (
 	"strings"
 )
 
-type Constant struct {
+// Const represents constant definition.
+type Const struct {
 	base
 	Value Expr
 }
 
-func (c Constant) GetSymbol(s string) (Symbol, error) {
+func (c Const) GetSymbol(s string) (Symbol, error) {
 	if strings.Contains(s, ".") {
 		panic("To be implemented")
 	}

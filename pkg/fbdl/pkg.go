@@ -35,7 +35,7 @@ func ConstifyPackages(packages prs.Packages) map[string]Package {
 				StrConsts: map[string]string{},
 			}
 			for _, s := range pkg.Symbols {
-				if c, ok := s.(*prs.Constant); ok {
+				if c, ok := s.(*prs.Const); ok {
 					v, err := c.Value.Eval()
 					if err != nil {
 						panic("not yet implemented")

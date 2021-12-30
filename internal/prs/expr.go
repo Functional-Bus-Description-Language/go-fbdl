@@ -243,7 +243,7 @@ func (di DeclaredIdentifier) Eval() (val.Value, error) {
 		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.v, err)
 	}
 
-	if c, ok := id.(*Constant); ok {
+	if c, ok := id.(*Const); ok {
 		v, err := c.Value.Eval()
 		if err != nil {
 			return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.v, err)
@@ -314,7 +314,7 @@ func (s Subscript) Eval() (val.Value, error) {
 		return val.Int(0), fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
 	}
 
-	cons, ok := sym.(*Constant)
+	cons, ok := sym.(*Const)
 	if !ok {
 		return val.Int(0), fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
 	}

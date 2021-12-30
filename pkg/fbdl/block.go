@@ -81,7 +81,7 @@ func (b *Block) addStringConst(name, value string) {
 }
 
 func (b *Block) addConsts(insBlk *ins.Element) {
-	for name, v := range insBlk.Constants {
+	for name, v := range insBlk.Consts {
 		switch v.(type) {
 		case val.BitStr:
 			panic("not yet implemented")

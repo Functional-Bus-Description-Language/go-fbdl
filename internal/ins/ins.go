@@ -162,7 +162,7 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	inst := &Element{
 		Properties: map[string]val.Value{},
-		Constants:  map[string]val.Value{},
+		Consts:     map[string]val.Value{},
 		Elements:   ElementContainer{},
 	}
 

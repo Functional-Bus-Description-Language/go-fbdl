@@ -11,6 +11,7 @@ type Parameter struct {
 	DfltValue    Expr
 }
 
+// Type represents type definition.
 type Type struct {
 	base
 
@@ -34,7 +35,7 @@ func (t *Type) GetSymbol(name string) (Symbol, error) {
 	}
 
 	if v, ok := t.resolvedArgs[name]; ok {
-		return &Constant{Value: v}, nil
+		return &Const{Value: v}, nil
 	}
 
 	if t.parent != nil {

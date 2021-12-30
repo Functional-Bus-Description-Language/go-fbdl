@@ -15,7 +15,7 @@ type Element struct {
 	IsArray    bool
 	Count      int64
 	Properties map[string]val.Value
-	Constants  map[string]val.Value
+	Consts     map[string]val.Value
 	Elements   ElementContainer
 	Groups     []*Group
 }
@@ -63,8 +63,8 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 	}
 
 	for _, s := range typ.Symbols() {
-		if c, ok := s.(*prs.Constant); ok {
-			if _, has := elem.Constants[c.Name()]; has {
+		if c, ok := s.(*prs.Const); ok {
+			if _, has := elem.Consts[c.Name()]; has {
 				return fmt.Errorf(
 					"const '%s' is already defined in one of ancestor types", c.Name(),
 				)
@@ -76,7 +76,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 					"cannot evaluate expression for const '%s': %v", c.Name(), err,
 				)
 			}
-			elem.Constants[c.Name()] = val
+			elem.Consts[c.Name()] = val
 		}
 
 		pe, ok := s.(*prs.Inst)

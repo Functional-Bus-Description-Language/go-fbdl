@@ -32,7 +32,7 @@ func (i *Inst) GetSymbol(name string) (Symbol, error) {
 	}
 
 	if v, ok := i.resolvedArgs[name]; ok {
-		return &Constant{Value: v}, nil
+		return &Const{Value: v}, nil
 	}
 
 	if i.parent != nil {

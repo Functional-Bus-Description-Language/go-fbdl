@@ -621,7 +621,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	var symbols []Symbol
 
-	var c *Constant
+	var c *Const
 
 	for i := 0; i < int(n.ChildCount()); i++ {
 		child := n.Child(i)
@@ -630,7 +630,7 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 		case "const", "comment":
 			continue
 		case "identifier":
-			c = &Constant{
+			c = &Const{
 				base: base{
 					lineNumber: child.LineNumber(),
 					name:       child.Content(),
@@ -737,7 +737,7 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 }
 
 func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
-	c := &Constant{
+	c := &Const{
 		base: base{
 			lineNumber: n.LineNumber(),
 			name:       n.Child(1).Content(),
