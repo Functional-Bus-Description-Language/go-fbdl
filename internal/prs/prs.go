@@ -284,7 +284,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 	return args, nil
 }
 
-func parseArrayMark(n ts.Node, parent Searchable) (Expression, error) {
+func parseArrayMarker(n ts.Node, parent Searchable) (Expression, error) {
 	var count Expression
 
 	if n.Child(0).Type() == "[" {
@@ -315,7 +315,7 @@ func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error)
 			e.name = nc.Content()
 		case "array_marker":
 			e.IsArray = true
-			e.Count, err = parseArrayMark(nc, parent)
+			e.Count, err = parseArrayMarker(nc, parent)
 		case "declared_identifier":
 			e.typ = nc.Content()
 		case "qualified_identifier":
@@ -364,7 +364,7 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 			e.name = nc.Content()
 		case "array_marker":
 			e.IsArray = true
-			e.Count, err = parseArrayMark(nc, parent)
+			e.Count, err = parseArrayMarker(nc, parent)
 		case "declared_identifier":
 			e.typ = nc.Content()
 		case "qualified_identifier":
