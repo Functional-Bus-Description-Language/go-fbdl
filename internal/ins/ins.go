@@ -62,7 +62,7 @@ func Instantiate(packages prs.Packages) *Element {
 
 	var mainBus *Element
 
-	for pkg_name, pkgs := range packages {
+	for pkgName, pkgs := range packages {
 		for _, pkg := range pkgs {
 			for _, symbol := range pkg.Symbols {
 				name := symbol.Name()
@@ -77,7 +77,7 @@ func Instantiate(packages prs.Packages) *Element {
 
 				elem := instantiateElement(e)
 
-				if pkg_name == "main" && name == "main" {
+				if pkgName == "main" && name == "main" {
 					mainBus = elem
 				}
 			}

@@ -8,10 +8,10 @@ import (
 )
 
 func IsBaseType(t string) bool {
-	base_types := [...]string{"block", "bus", "config", "func", "mask", "param", "status"}
+	baseTypes := [...]string{"block", "bus", "config", "func", "mask", "param", "status"}
 
-	for i, _ := range base_types {
-		if t == base_types[i] {
+	for i, _ := range baseTypes {
+		if t == baseTypes[i] {
 			return true
 		}
 	}

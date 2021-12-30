@@ -34,12 +34,12 @@ func ParsePackages(packages Packages) {
 func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	var files_wg sync.WaitGroup
-	defer files_wg.Wait()
+	var filesWG sync.WaitGroup
+	defer filesWG.Wait()
 
 	if pkg.Name == "main" {
-		files_wg.Add(1)
-		parseFile(pkg.Path, pkg, &files_wg)
+		filesWG.Add(1)
+		parseFile(pkg.Path, pkg, &filesWG)
 		checkInstantiations(pkg)
 		return
 	}
@@ -57,8 +57,8 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 			continue
 		}
 
-		files_wg.Add(1)
-		parseFile(path.Join(pkg.Path, file.Name()), pkg, &files_wg)
+		filesWG.Add(1)
+		parseFile(path.Join(pkg.Path, file.Name()), pkg, &filesWG)
 	}
 
 	checkInstantiations(pkg)
@@ -132,10 +132,10 @@ func readFile(path string) []string {
 		panic(err)
 	}
 
-	io_scanner := bufio.NewScanner(f)
+	ioScanner := bufio.NewScanner(f)
 	var code []string
-	for io_scanner.Scan() {
-		code = append(code, strings.TrimRight(io_scanner.Text(), " \t"))
+	for ioScanner.Scan() {
+		code = append(code, strings.TrimRight(ioScanner.Text(), " \t"))
 	}
 
 	err = f.Close()
@@ -252,8 +252,8 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Arg, error) {
 			}
 		}
 
-		next_node_type := n.Child(i + 1).Type()
-		if next_node_type == "," || next_node_type == ")" {
+		nextNodeType := n.Child(i + 1).Type()
+		if nextNodeType == "," || nextNodeType == ")" {
 			if name != "" {
 				for i, _ := range names {
 					if name == names[i] {
@@ -707,8 +707,8 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Param, error) {
 			hasDfltValue = true
 		}
 
-		next_node_type := n.Child(i + 1).Type()
-		if next_node_type == "," || next_node_type == ")" {
+		nextNodeType := n.Child(i + 1).Type()
+		if nextNodeType == "," || nextNodeType == ")" {
 			for i, _ := range params {
 				if name == params[i].Name {
 					return nil, fmt.Errorf("parameter '%s' defined at least twice", name)
