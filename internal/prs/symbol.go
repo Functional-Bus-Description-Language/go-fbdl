@@ -8,7 +8,6 @@ type Symbol interface {
 	Parent() Searchable
 	SetFile(f *File)
 	File() *File
-	FilePath() string
 }
 
 type base struct {
@@ -44,12 +43,4 @@ func (b *base) SetFile(f *File) {
 
 func (b *base) File() *File {
 	return b.file
-}
-
-func (b base) FilePath() string {
-	if b.file != nil {
-		return b.file.Path
-	}
-
-	return b.parent.(Symbol).FilePath()
 }
