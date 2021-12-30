@@ -246,7 +246,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 			name = nc.Content()
 			hasName = true
 		} else {
-			val, err = MakeExpression(nc, parent)
+			val, err = MakeExpr(nc, parent)
 			if err != nil {
 				return args, fmt.Errorf("argument list: %v", err)
 			}
@@ -291,7 +291,7 @@ func parseArrayMarker(n ts.Node, parent Searchable) (Expr, error) {
 		if n.Child(1).Child(0).IsMissing() || n.Child(1).Content() == "" {
 			return nil, fmt.Errorf("missing array size expression")
 		}
-		expr, err := MakeExpression(n.Child(1), parent)
+		expr, err := MakeExpr(n.Child(1), parent)
 		if err != nil {
 			return nil, fmt.Errorf(": %v", err)
 		}
@@ -420,7 +420,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 					symbols,
 					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
 			}
-			expr, err := MakeExpression(nc.Child(2), element)
+			expr, err := MakeExpr(nc.Child(2), element)
 			if err != nil {
 				return props,
 					symbols,
@@ -637,7 +637,7 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 				},
 			}
 		case "primary_expression", "expression_list":
-			expr, err := MakeExpression(child, c)
+			expr, err := MakeExpr(child, c)
 			if err != nil {
 				return nil, fmt.Errorf("line %d: constant %s: %v", c.LineNumber(), c.name, err)
 			}
@@ -663,7 +663,7 @@ func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Pro
 				return props,
 					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
 			}
-			expr, err := MakeExpression(n.Child(i+2), element)
+			expr, err := MakeExpr(n.Child(i+2), element)
 			if err != nil {
 				return props,
 					fmt.Errorf("line %d: '%s' property assignment: %v", nc.LineNumber(), name, err)
@@ -699,7 +699,7 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 		if t == "identifier" {
 			name = nc.Content()
 		} else {
-			dfltValue, err = MakeExpression(nc, parent)
+			dfltValue, err = MakeExpr(nc, parent)
 			if err != nil {
 				return nil, fmt.Errorf("parameter list: %v", err)
 			}
@@ -744,7 +744,7 @@ func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
 		},
 	}
 
-	v, err := MakeExpression(n.Child(3), c)
+	v, err := MakeExpr(n.Child(3), c)
 	if err != nil {
 		return nil, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
 	}

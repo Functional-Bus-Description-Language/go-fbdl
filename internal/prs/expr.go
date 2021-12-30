@@ -13,7 +13,7 @@ type Expr interface {
 	Eval() (val.Value, error)
 }
 
-func MakeExpression(n ts.Node, s Searchable) (Expr, error) {
+func MakeExpr(n ts.Node, s Searchable) (Expr, error) {
 	var err error = nil
 	var expr Expr
 
@@ -25,7 +25,7 @@ func MakeExpression(n ts.Node, s Searchable) (Expr, error) {
 	case "decimal_literal":
 		expr, err = MakeDecimalLiteral(n)
 	case "expression_list":
-		expr, err = MakeExpressionList(n, s)
+		expr, err = MakeExprList(n, s)
 	case "false":
 		expr = MakeFalse()
 	case "declared_identifier":
@@ -110,12 +110,12 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 }
 
 func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
-	left, err := MakeExpression(n.Child(0), s)
+	left, err := MakeExpr(n.Child(0), s)
 	if err != nil {
 		return BinaryOperation{}, fmt.Errorf("make binary operation: left operand: %v", err)
 	}
 
-	right, err := MakeExpression(n.Child(2), s)
+	right, err := MakeExpr(n.Child(2), s)
 	if err != nil {
 		return BinaryOperation{}, fmt.Errorf("make binary operation: right operand: %v", err)
 	}
@@ -198,7 +198,7 @@ func (el ExpressionList) Eval() (val.Value, error) {
 	return val.List(vals), nil
 }
 
-func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
+func MakeExprList(n ts.Node, s Searchable) (ExpressionList, error) {
 	exprs := []Expr{}
 
 	itemIdx := 0
@@ -210,7 +210,7 @@ func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
 			continue
 		}
 
-		e, err := MakeExpression(nc, s)
+		e, err := MakeExpr(nc, s)
 		if err != nil {
 			return ExpressionList{}, fmt.Errorf("make expression list: item %d: %v", itemIdx, err)
 		}
@@ -272,7 +272,7 @@ func (pe PrimaryExpression) Eval() (val.Value, error) {
 }
 
 func MakePrimaryExpression(n ts.Node, s Searchable) (PrimaryExpression, error) {
-	v, err := MakeExpression(n.Child(0), s)
+	v, err := MakeExpr(n.Child(0), s)
 	if err != nil {
 		return PrimaryExpression{}, fmt.Errorf("make primary expression: %v", err)
 	}
@@ -335,7 +335,7 @@ func (s Subscript) Eval() (val.Value, error) {
 func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
 	name := n.Child(0).Content()
 
-	idx, err := MakeExpression(n.Child(2), s)
+	idx, err := MakeExpr(n.Child(2), s)
 	if err != nil {
 		return Subscript{}, fmt.Errorf("make subscript: %v", err)
 	}
@@ -396,7 +396,7 @@ func MakeUnaryOperation(n ts.Node, s Searchable) (UnaryOperation, error) {
 		return UnaryOperation{}, fmt.Errorf("make unary operation: invalid operator %s", op)
 	}
 
-	operand, err := MakeExpression(n.Child(1), s)
+	operand, err := MakeExpr(n.Child(1), s)
 	if err != nil {
 		return UnaryOperation{}, fmt.Errorf("make unary operation: operand: %v", err)
 	}
