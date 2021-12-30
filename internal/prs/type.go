@@ -44,30 +44,10 @@ func (t *TypeDefinition) GetSymbol(name string) (Symbol, error) {
 	return t.file.GetSymbol(name)
 }
 
-func (t TypeDefinition) Type() string {
-	return t.typ
-}
-
-func (t TypeDefinition) Args() []Argument {
-	return t.args
-}
-
-func (t TypeDefinition) Params() []Parameter {
-	return t.params
-}
-
-func (t *TypeDefinition) SetResolvedArgs(ra map[string]Expression) {
-	t.resolvedArgs = ra
-}
-
-func (t TypeDefinition) ResolvedArgs() map[string]Expression {
-	return t.resolvedArgs
-}
-
-func (t TypeDefinition) Properties() map[string]Property {
-	return t.properties
-}
-
-func (t TypeDefinition) Symbols() SymbolContainer {
-	return t.symbols
-}
+func (t TypeDefinition) Type() string                              { return t.typ }
+func (t TypeDefinition) Args() []Argument                          { return t.args }
+func (t TypeDefinition) Params() []Parameter                       { return t.params }
+func (t *TypeDefinition) SetResolvedArgs(ra map[string]Expression) { t.resolvedArgs = ra }
+func (t TypeDefinition) ResolvedArgs() map[string]Expression       { return t.resolvedArgs }
+func (t TypeDefinition) Properties() map[string]Property           { return t.properties }
+func (t TypeDefinition) Symbols() SymbolContainer                  { return t.symbols }
