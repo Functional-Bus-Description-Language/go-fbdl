@@ -1,7 +1,7 @@
 package prs
 
-// Argument represents argument in the argument list.
-type Argument struct {
+// Arg represents argument in the argument list.
+type Arg struct {
 	HasName bool
 	Name    string
 	Value   Expr
@@ -16,7 +16,7 @@ type Element interface {
 	Searchable
 	Symbol
 	Type() string
-	Args() []Argument
+	Args() []Arg
 	Params() []Param
 	SetResolvedArgs(args map[string]Expr)
 	ResolvedArgs() map[string]Expr

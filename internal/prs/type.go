@@ -20,7 +20,7 @@ type Type struct {
 	symbols    SymbolContainer
 
 	params       []Param
-	args         []Argument
+	args         []Arg
 	resolvedArgs map[string]Expr
 }
 
@@ -46,7 +46,7 @@ func (t *Type) GetSymbol(name string) (Symbol, error) {
 }
 
 func (t Type) Type() string                        { return t.typ }
-func (t Type) Args() []Argument                    { return t.args }
+func (t Type) Args() []Arg                         { return t.args }
 func (t Type) Params() []Param                     { return t.params }
 func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
 func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }

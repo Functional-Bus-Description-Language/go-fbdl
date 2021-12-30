@@ -17,7 +17,7 @@ type Inst struct {
 	properties map[string]Property
 	symbols    SymbolContainer
 
-	args         []Argument
+	args         []Arg
 	resolvedArgs map[string]Expr
 }
 
@@ -42,7 +42,7 @@ func (i *Inst) GetSymbol(name string) (Symbol, error) {
 	return i.file.GetSymbol(name)
 }
 
-func (i Inst) Args() []Argument                    { return i.args }
+func (i Inst) Args() []Arg                         { return i.args }
 func (i *Inst) SetResolvedArgs(ra map[string]Expr) { i.resolvedArgs = ra }
 func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
 func (i Inst) Properties() map[string]Property     { return i.properties }

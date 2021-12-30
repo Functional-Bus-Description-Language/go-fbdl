@@ -226,8 +226,8 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	pkg.AddFile(&file)
 }
 
-func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
-	args := []Argument{}
+func parseArgumentList(n ts.Node, parent Searchable) ([]Arg, error) {
+	args := []Arg{}
 
 	names := []string{}
 	var err error
@@ -263,7 +263,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 			}
 
 			names = append(names, name)
-			args = append(args, Argument{HasName: hasName, Name: name, Value: val})
+			args = append(args, Arg{HasName: hasName, Name: name, Value: val})
 			hasName = false
 			name = ""
 		}
