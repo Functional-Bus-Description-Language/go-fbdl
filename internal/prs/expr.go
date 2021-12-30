@@ -28,8 +28,8 @@ func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
 		expr, err = MakeExpressionList(n, s)
 	case "false":
 		expr = MakeFalse()
-	case "identifier":
-		expr = MakeIdentifier(n, s)
+	case "declared_identifier":
+		expr = MakeDeclaredIdentifier(n, s)
 	case "primary_expression":
 		expr, err = MakePrimaryExpression(n, s)
 	case "string_literal":
@@ -232,21 +232,21 @@ func MakeFalse() False {
 	return False{}
 }
 
-type Identifier struct {
+type DeclaredIdentifier struct {
 	v string
 	s Searchable
 }
 
-func (i Identifier) Eval() (val.Value, error) {
-	id, err := i.s.GetSymbol(i.v)
+func (di DeclaredIdentifier) Eval() (val.Value, error) {
+	id, err := di.s.GetSymbol(di.v)
 	if err != nil {
-		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", i.v, err)
+		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.v, err)
 	}
 
 	if c, ok := id.(*Constant); ok {
 		v, err := c.Value.Eval()
 		if err != nil {
-			return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", i.v, err)
+			return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.v, err)
 		}
 		return v, nil
 	} else {
@@ -254,8 +254,8 @@ func (i Identifier) Eval() (val.Value, error) {
 	}
 }
 
-func MakeIdentifier(n ts.Node, s Searchable) Identifier {
-	return Identifier{v: n.Content(), s: s}
+func MakeDeclaredIdentifier(n ts.Node, s Searchable) DeclaredIdentifier {
+	return DeclaredIdentifier{v: n.Content(), s: s}
 }
 
 type PrimaryExpression struct {

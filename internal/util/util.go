@@ -3,6 +3,8 @@ package util
 import (
 	"fmt"
 	"math"
+	"strings"
+	"unicode"
 )
 
 func IsBaseType(t string) bool {
@@ -82,4 +84,20 @@ func IsValidType(ot string, it string) bool {
 
 func AlignToPowerOf2(n int64) int64 {
 	return int64(math.Pow(2, math.Ceil(math.Log2(float64(n)))))
+}
+
+// IsValidQualifiedIdentifier returns an error if given qualified identifier is not valid.
+// For example, if symbol name starts with lower case letter.
+func IsValidQualifiedIdentifier(qi string) error {
+	aux := strings.Split(qi, ".")
+	pkg := aux[0]
+	sym := aux[1]
+	if unicode.IsUpper([]rune(sym)[0]) == false {
+		return fmt.Errorf(
+			"symbol '%s' imported from package '%s' starts with lower case letter",
+			sym, pkg,
+		)
+	}
+
+	return nil
 }

@@ -1,7 +1,9 @@
 package prs
 
 import (
-	"strings"
+	"fmt"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
 // Argument represents argument in the argument list.
@@ -11,24 +13,10 @@ type Argument struct {
 	Value   Expression
 }
 
-// Parameter represents parameter in the parameter list, not 'param' element.
-type Parameter struct {
-	Name            string
-	HasDefaultValue bool
-	DefaultValue    Expression
-}
-
 type Property struct {
 	LineNumber uint32
 	Value      Expression
 }
-
-type ElementInstantiationType uint8
-
-const (
-	Anonymous ElementInstantiationType = iota
-	Definitive
-)
 
 type Element interface {
 	Symbol
@@ -44,10 +32,9 @@ type Element interface {
 type ElementDefinition struct {
 	base
 
-	typ               string
-	InstantiationType ElementInstantiationType
-	IsArray           bool
-	Count             Expression
+	typ     string
+	IsArray bool
+	Count   Expression
 
 	properties map[string]Property
 	symbols    SymbolContainer
@@ -78,87 +65,30 @@ func (e *ElementDefinition) GetSymbol(name string) (Symbol, error) {
 	return e.file.GetSymbol(name)
 }
 
-func (e ElementDefinition) Args() []Argument {
-	return e.args
-}
+func (e ElementDefinition) Args() []Argument                          { return e.args }
+func (e ElementDefinition) Params() []Parameter                       { return e.params }
+func (e *ElementDefinition) SetResolvedArgs(ra map[string]Expression) { e.resolvedArgs = ra }
+func (e ElementDefinition) ResolvedArgs() map[string]Expression       { return e.resolvedArgs }
+func (e ElementDefinition) Properties() map[string]Property           { return e.properties }
+func (e ElementDefinition) Symbols() SymbolContainer                  { return e.symbols }
 
-func (e ElementDefinition) Params() []Parameter {
-	return e.params
-}
-
-func (e *ElementDefinition) SetResolvedArgs(ra map[string]Expression) {
-	e.resolvedArgs = ra
-}
-
-func (e ElementDefinition) ResolvedArgs() map[string]Expression {
-	return e.resolvedArgs
-}
-
-func (e ElementDefinition) Properties() map[string]Property {
-	return e.properties
-}
-
-func (e ElementDefinition) Symbols() SymbolContainer {
-	return e.symbols
-}
-
-type TypeDefinition struct {
-	base
-
-	typ        string
-	properties map[string]Property
-	symbols    SymbolContainer
-
-	params       []Parameter
-	args         []Argument
-	resolvedArgs map[string]Expression
-}
-
-func (t *TypeDefinition) GetSymbol(name string) (Symbol, error) {
-	if strings.Contains(name, ".") {
-		panic("To be implemented")
+// validate checks whether given element definition is valid.
+// For example, whether given properties are valid for given element type.
+func (e ElementDefinition) validate() error {
+	if !util.IsBaseType(e.typ) {
+		return nil
 	}
 
-	sym, ok := t.symbols.Get(name)
-	if ok {
-		return sym, nil
+	// Checks specific for base type only.
+	if len(e.args) != 0 {
+		return fmt.Errorf("base type '%s' does not accept arguments", e.typ)
 	}
 
-	if v, ok := t.resolvedArgs[name]; ok {
-		return &Constant{Value: v}, nil
+	for prop, v := range e.properties {
+		if err := util.IsValidProperty(prop, e.typ); err != nil {
+			return fmt.Errorf("line %d: %v", v.LineNumber, err)
+		}
 	}
 
-	if t.parent != nil {
-		return t.parent.GetSymbol(name)
-	}
-
-	return t.file.GetSymbol(name)
-}
-
-func (t TypeDefinition) Type() string {
-	return t.typ
-}
-
-func (t TypeDefinition) Args() []Argument {
-	return t.args
-}
-
-func (t TypeDefinition) Params() []Parameter {
-	return t.params
-}
-
-func (t *TypeDefinition) SetResolvedArgs(ra map[string]Expression) {
-	t.resolvedArgs = ra
-}
-
-func (t TypeDefinition) ResolvedArgs() map[string]Expression {
-	return t.resolvedArgs
-}
-
-func (t TypeDefinition) Properties() map[string]Property {
-	return t.properties
-}
-
-func (t TypeDefinition) Symbols() SymbolContainer {
-	return t.symbols
+	return nil
 }

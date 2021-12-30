@@ -170,12 +170,10 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	var symbols []Symbol
 	for {
 		switch node.Type() {
-		case "multi_line_anonymous_instantiation":
-			symbols, err = parseMultiLineAnonymousInstantiation(node, &file)
-		case "single_line_anonymous_instantiation":
-			symbols, err = parseSingleLineAnonymousInstantiation(node, &file)
-		case "element_definitive_instantiation":
-			symbols, err = parseElementDefinitiveInstantiation(node, &file)
+		case "multi_line_instantiation":
+			symbols, err = parseMultiLineInstantiation(node, &file)
+		case "single_line_instantiation":
+			symbols, err = parseSingleLineInstantiation(node, &file)
 		case "multi_line_type_definition":
 			symbols, err = parseMultiLineTypeDefinition(node, &file)
 		case "single_line_type_definition":
@@ -244,7 +242,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 			continue
 		}
 
-		if t == "identifier" {
+		if t == "declared_identifier" {
 			name = nc.Content()
 			hasName = true
 		} else {
@@ -272,252 +270,129 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 	}
 
 	// Check if arguments without name precede arguments with name.
-	with_name := false
+	withName := false
 	for _, a := range args {
-		if with_name && a.HasName == false {
+		if withName && a.HasName == false {
 			return args, fmt.Errorf("arguments without name must precede the ones with name")
 		}
 
 		if a.HasName {
-			with_name = true
+			withName = true
 		}
 	}
 
 	return args, nil
 }
 
-func parseMultiLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
-	var err error
-
-	isArray := false
+func parseArrayMark(n ts.Node, parent Searchable) (Expression, error) {
 	var count Expression
-	if n.Child(1).Type() == "[" {
-		isArray = true
-		if n.Child(2).Child(0).IsMissing() {
-			return nil, fmt.Errorf(
-				"line %d: '%s' element, missing array size expression",
-				n.Child(2).LineNumber(), n.Child(0).Content(),
-			)
+
+	if n.Child(0).Type() == "[" {
+		if n.Child(1).Child(0).IsMissing() {
+			return nil, fmt.Errorf("missing array size expression")
 		}
-		expr, err := MakeExpression(n.Child(2), parent)
+		expr, err := MakeExpression(n.Child(1), parent)
 		if err != nil {
 			return nil, fmt.Errorf(": %v", err)
 		}
 		count = expr
 	}
 
-	var typ string
-	if n.Child(1).Type() == "element_type" {
-		typ = n.Child(1).Content()
-	} else {
-		typ = n.Child(4).Content()
-	}
-
-	if util.IsBaseType(typ) == false {
-		return nil,
-			fmt.Errorf(
-				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
-				n.LineNumber(), typ,
-			)
-	}
-
-	elem := ElementDefinition{
-		base: base{
-			lineNumber: n.LineNumber(),
-			name:       n.Child(0).Content(),
-		},
-		IsArray:           isArray,
-		Count:             count,
-		typ:               typ,
-		InstantiationType: Anonymous,
-	}
-
-	lastNode := n.LastChild()
-	if lastNode.Type() == "element_body" {
-		elem.properties, elem.symbols, err = parseElementBody(lastNode, &elem)
-		if err != nil {
-			return nil, fmt.Errorf(
-				"line %d: '%s' element anonymous instantiation: %v", n.LineNumber(), elem.name, err,
-			)
-		}
-
-		for prop, v := range elem.properties {
-			if err = util.IsValidProperty(prop, typ); err != nil {
-				return nil,
-					fmt.Errorf(
-						"line %d: element anonymous instantiation: "+
-							"line %d: %v",
-						n.LineNumber(), v.LineNumber, err,
-					)
-			}
-		}
-	}
-
-	if len(elem.symbols) > 0 {
-		for name, _ := range elem.symbols {
-			elem.symbols[name].SetParent(&elem)
-		}
-	}
-
-	return []Symbol{&elem}, nil
+	return count, nil
 }
 
-func parseSingleLineAnonymousInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+	e := ElementDefinition{base: base{lineNumber: n.LineNumber()}}
+
 	var err error
 
-	isArray := false
-	var count Expression
-	if n.Child(1).Type() == "[" {
-		isArray = true
-		if n.Child(2).Child(0).IsMissing() {
-			return nil, fmt.Errorf(
-				"line %d: '%s' element, missing array size expression",
-				n.Child(2).LineNumber(), n.Child(0).Content(),
-			)
+	for i := 0; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		switch nc.Type() {
+		case "ERROR":
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
+		case "identifier":
+			e.name = nc.Content()
+		case "array_marker":
+			e.IsArray = true
+			e.Count, err = parseArrayMark(nc, parent)
+		case "declared_identifier":
+			e.typ = nc.Content()
+		case "qualified_identifier":
+			e.typ = nc.Content()
+			err = util.IsValidQualifiedIdentifier(e.typ)
+		case "argument_list":
+			e.args, err = parseArgumentList(nc, parent)
+		case "element_body":
+			e.properties, e.symbols, err = parseElementBody(nc, &e)
+		default:
+			panic("should never happen")
 		}
-		expr, err := MakeExpression(n.Child(2), parent)
-		if err != nil {
-			return nil, fmt.Errorf(": %v", err)
-		}
-		count = expr
-	}
 
-	var typ string
-	if n.Child(1).Type() == "element_type" {
-		typ = n.Child(1).Content()
-	} else {
-		typ = n.Child(4).Content()
-	}
-
-	if util.IsBaseType(typ) == false {
-		return nil,
-			fmt.Errorf(
-				"line %d: invalid type '%s', only base types can be used in anonymous instantiation",
-				n.LineNumber(), typ,
-			)
-	}
-
-	elem := ElementDefinition{
-		base: base{
-			lineNumber: n.LineNumber(),
-			name:       n.Child(0).Content(),
-		},
-		IsArray:           isArray,
-		Count:             count,
-		typ:               typ,
-		InstantiationType: Anonymous,
-	}
-
-	lastNode := n.LastChild()
-	if lastNode.Type() == "multi_property_assignment" {
-		elem.properties, err = parseMultiPropertyAssignment(lastNode, &elem)
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' element anonymous instantiation: %v", n.LineNumber(), elem.name, err,
+				"line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err,
 			)
-		}
-
-		for prop, v := range elem.properties {
-			if err = util.IsValidProperty(prop, typ); err != nil {
-				return nil,
-					fmt.Errorf(
-						"line %d: '%s' element anonymous instantiation: "+
-							"line %d: %v",
-						n.LineNumber(), elem.name, v.LineNumber, err,
-					)
-			}
 		}
 	}
 
-	return []Symbol{&elem}, nil
+	err = e.validate()
+	if err != nil {
+		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err)
+	}
+
+	if len(e.symbols) > 0 {
+		for name, _ := range e.symbols {
+			e.symbols[name].SetParent(&e)
+		}
+	}
+
+	return []Symbol{&e}, nil
 }
 
-func parseElementDefinitiveInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
+	e := ElementDefinition{base: base{lineNumber: n.LineNumber()}}
+
 	var err error
 
-	isArray := false
-	var count Expression
-	if n.Child(1).Type() == "[" {
-		isArray = true
-		if n.Child(2).Child(0).IsMissing() {
+	for i := 0; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		switch nc.Type() {
+		case "ERROR":
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
+		case "identifier":
+			e.name = nc.Content()
+		case "array_marker":
+			e.IsArray = true
+			e.Count, err = parseArrayMark(nc, parent)
+		case "declared_identifier":
+			e.typ = nc.Content()
+		case "qualified_identifier":
+			e.typ = nc.Content()
+			err = util.IsValidQualifiedIdentifier(e.typ)
+		case "argument_list":
+			e.args, err = parseArgumentList(nc, parent)
+		case ";":
+			continue
+		case "multi_property_assignment":
+			e.properties, err = parseMultiPropertyAssignment(nc, &e)
+		default:
+			panic("should never happen")
+		}
+
+		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' element, missing array size expression",
-				n.Child(2).LineNumber(), n.Child(0).Content(),
+				"line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err,
 			)
 		}
-		count, err = MakeExpression(n.Child(2), parent)
-		if err != nil {
-			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
-		}
 	}
 
-	var typ string
-	if n.Child(1).Type() == "identifier" || n.Child(1).Type() == "qualified_identifier" {
-		typ = n.Child(1).Content()
-	} else {
-		typ = n.Child(4).Content()
+	err = e.validate()
+	if err != nil {
+		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err)
 	}
 
-	if strings.Contains(typ, ".") {
-		aux := strings.Split(typ, ".")
-		pkg := aux[0]
-		id := aux[1]
-		if unicode.IsUpper([]rune(id)[0]) == false {
-			return nil,
-				fmt.Errorf(
-					"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
-					n.LineNumber(), id, pkg,
-				)
-		}
-	}
-
-	args := []Argument{}
-	if n.Child(int(n.ChildCount()-2)).Type() == "argument_list" {
-		args, err = parseArgumentList(n.Child(int(n.ChildCount()-2)), parent)
-		if err != nil {
-			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
-		}
-	}
-
-	last_child := n.LastChild()
-	if last_child.Type() == "argument_list" {
-		args, err = parseArgumentList(last_child, parent)
-		if err != nil {
-			return nil, fmt.Errorf("line %d: element definitive instantiation: %v", n.LineNumber(), err)
-		}
-	}
-
-	elem := ElementDefinition{
-		base: base{
-			lineNumber: n.LineNumber(),
-			name:       n.Child(0).Content(),
-		},
-		IsArray:           isArray,
-		Count:             count,
-		typ:               typ,
-		InstantiationType: Definitive,
-		args:              args,
-	}
-
-	props := make(map[string]Property)
-	symbols := SymbolContainer{}
-	if last_child.Type() == "element_body" {
-		props, symbols, err = parseElementBody(last_child, &elem)
-		if err != nil {
-			return nil, fmt.Errorf("line %d: element definitve instantiation: %v", n.LineNumber(), err)
-		}
-	}
-
-	elem.properties = props
-	elem.symbols = symbols
-
-	if len(elem.symbols) > 0 {
-		for name, _ := range elem.symbols {
-			elem.symbols[name].SetParent(&elem)
-		}
-	}
-
-	return []Symbol{&elem}, nil
+	return []Symbol{&e}, nil
 }
 
 func parseElementBody(n ts.Node, element Searchable) (map[string]Property, SymbolContainer, error) {
@@ -536,7 +411,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 					"line %d: column %d: missing ';' or newline", nc.LineNumber(), nc.Column()-1,
 				)
 			} else {
-				panic("implement me")
+				return props, symbols, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", n.LineNumber())
 			}
 		case "single_property_assignment":
 			name := nc.Child(0).Content()
@@ -559,20 +434,16 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 				ss, err = parseMultiLineTypeDefinition(nc, element)
 			case "single_line_type_definition":
 				ss, err = parseSingleLineTypeDefinition(nc, element)
-			case "multi_line_anonymous_instantiation":
-				ss, err = parseMultiLineAnonymousInstantiation(nc, element)
-			case "single_line_anonymous_instantiation":
-				ss, err = parseSingleLineAnonymousInstantiation(nc, element)
-			case "element_definitive_instantiation":
-				ss, err = parseElementDefinitiveInstantiation(nc, element)
+			case "multi_line_instantiation":
+				ss, err = parseMultiLineInstantiation(nc, element)
+			case "single_line_instantiation":
+				ss, err = parseSingleLineInstantiation(nc, element)
 			case "single_constant_definition":
 				ss, err = parseSingleConstantDefinition(nc)
 			case "multi_constant_definition":
 				panic("not yet implemented")
 			case "comment":
 				continue
-			case "ERROR":
-				return props, symbols, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", n.LineNumber())
 			default:
 				panic("this should never happen %s")
 			}
@@ -625,18 +496,11 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 			t.params, err = parseParameterList(nc, parent)
 		case "identifier":
 			t.typ = nc.Content()
+		case "declared_identifier":
+			t.typ = nc.Content()
 		case "qualified_identifier":
 			t.typ = nc.Content()
-			aux := strings.Split(t.typ, ".")
-			pkg := aux[0]
-			id := aux[1]
-			if unicode.IsUpper([]rune(id)[0]) == false {
-				return nil,
-					fmt.Errorf(
-						"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
-						nc.LineNumber(), id, pkg,
-					)
-			}
+			err = util.IsValidQualifiedIdentifier(t.typ)
 		case "argument_list":
 			t.args, err = parseArgumentList(nc, parent)
 		case "element_body":
@@ -892,20 +756,20 @@ func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
 
 func parseSingleImportStatement(n ts.Node) Import {
 	var path string
-	var import_name string
+	var name string
 
 	if n.ChildCount() == 2 {
 		path = n.Child(1).Content()
 		path = path[1 : len(path)-1]
-		import_name = strings.Split(path, "/")[0]
-		if len(import_name) > 4 && import_name[0:3] == "fbd-" {
-			import_name = import_name[4:]
+		name = strings.Split(path, "/")[0]
+		if len(name) > 4 && name[0:3] == "fbd-" {
+			name = name[4:]
 		}
 	} else {
 		path = n.Child(2).Content()
-		path = path[1 : len(path)-2]
-		import_name = n.Child(1).Content()
+		path = path[1 : len(path)-1]
+		name = n.Child(1).Content()
 	}
 
-	return Import{Path: path, ImportName: import_name}
+	return Import{Path: path, ImportName: name}
 }
