@@ -1,0 +1,1 @@
+bus.fbd: line 1: 'main' instantiation: element body: line 2: 'st' instantiation: missing array size expression

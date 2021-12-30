@@ -288,7 +288,7 @@ func parseArrayMarker(n ts.Node, parent Searchable) (Expression, error) {
 	var count Expression
 
 	if n.Child(0).Type() == "[" {
-		if n.Child(1).Child(0).IsMissing() {
+		if n.Child(1).Child(0).IsMissing() || n.Child(1).Content() == "" {
 			return nil, fmt.Errorf("missing array size expression")
 		}
 		expr, err := MakeExpression(n.Child(1), parent)
