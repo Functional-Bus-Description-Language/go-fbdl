@@ -39,7 +39,6 @@ type ElementDefinition struct {
 	properties map[string]Property
 	symbols    SymbolContainer
 
-	params       []Parameter
 	args         []Argument
 	resolvedArgs map[string]Expression
 }
@@ -66,11 +65,14 @@ func (e *ElementDefinition) GetSymbol(name string) (Symbol, error) {
 }
 
 func (e ElementDefinition) Args() []Argument                          { return e.args }
-func (e ElementDefinition) Params() []Parameter                       { return e.params }
 func (e *ElementDefinition) SetResolvedArgs(ra map[string]Expression) { e.resolvedArgs = ra }
 func (e ElementDefinition) ResolvedArgs() map[string]Expression       { return e.resolvedArgs }
 func (e ElementDefinition) Properties() map[string]Property           { return e.properties }
 func (e ElementDefinition) Symbols() SymbolContainer                  { return e.symbols }
+
+func (e ElementDefinition) Params() []Parameter {
+	panic("should never happen, element definition cannot have parameters")
+}
 
 // validate checks whether given element definition is valid.
 // For example, whether given properties are valid for given element type.
