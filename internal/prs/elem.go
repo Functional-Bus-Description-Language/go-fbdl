@@ -19,6 +19,7 @@ type Property struct {
 }
 
 type Element interface {
+	Searchable
 	Symbol
 	Type() string
 	Args() []Argument

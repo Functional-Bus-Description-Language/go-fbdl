@@ -1,10 +1,9 @@
 package prs
 
 type Symbol interface {
-	Searchable
 	Name() string
 	LineNumber() uint32
-	SetParent(s Symbol)
+	SetParent(s Searchable)
 	Parent() Searchable
 	SetFile(f *File)
 	File() *File
@@ -22,7 +21,7 @@ func (b base) LineNumber() uint32 { return b.lineNumber }
 func (b base) Parent() Searchable { return b.parent }
 func (b base) File() *File        { return b.file }
 
-func (b *base) SetParent(s Symbol) {
+func (b *base) SetParent(s Searchable) {
 	if b.parent != nil {
 		panic("should never happen")
 	}
