@@ -15,9 +15,9 @@ type Param struct {
 type Type struct {
 	base
 
-	typ        string
-	properties map[string]Property
-	symbols    SymbolContainer
+	typ     string
+	props   map[string]Prop
+	symbols SymbolContainer
 
 	params       []Param
 	args         []Arg
@@ -50,5 +50,5 @@ func (t Type) Args() []Arg                         { return t.args }
 func (t Type) Params() []Param                     { return t.params }
 func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
 func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
-func (t Type) Properties() map[string]Property     { return t.properties }
+func (t Type) Props() map[string]Prop              { return t.props }
 func (t Type) Symbols() SymbolContainer            { return t.symbols }

@@ -8,7 +8,7 @@ import (
 )
 
 // Check property value type and value.
-func checkProperty(name string, prop prs.Property) error {
+func checkProperty(name string, prop prs.Prop) error {
 	pv, err := prop.Value.Eval()
 	if err != nil {
 		return fmt.Errorf("cannot evaluate expression: %v", err)
@@ -103,7 +103,7 @@ func checkProperty(name string, prop prs.Property) error {
 
 func checkPropertyConflict(elem *Element, prop string) error {
 	msg := `cannot set '%s' property, because '%s' property is already set in one of ancestor types`
-	if _, ok := elem.Properties["width"]; ok {
+	if _, ok := elem.Props["width"]; ok {
 		if prop == "range" {
 			return fmt.Errorf(msg, "range", "width")
 		}

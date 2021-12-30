@@ -10,14 +10,14 @@ import (
 )
 
 type Element struct {
-	Name       string
-	BaseType   string
-	IsArray    bool
-	Count      int64
-	Properties map[string]val.Value
-	Consts     map[string]val.Value
-	Elements   ElementContainer
-	Groups     []*Group
+	Name     string
+	BaseType string
+	IsArray  bool
+	Count    int64
+	Props    map[string]val.Value
+	Consts   map[string]val.Value
+	Elements ElementContainer
+	Groups   []*Group
 }
 
 func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr) error {
@@ -37,7 +37,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		typ.SetResolvedArgs(resolvedArgs)
 	}
 
-	for name, prop := range typ.Properties() {
+	for name, prop := range typ.Props() {
 		if err := util.IsValidProperty(name, elem.BaseType); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
@@ -45,7 +45,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		if err != nil {
 			return fmt.Errorf("\n  %s: line %d: %v", typ.File().Path, prop.LineNumber, err)
 		}
-		if _, exist := elem.Properties[name]; exist {
+		if _, exist := elem.Props[name]; exist {
 			return fmt.Errorf(
 				"cannot set property '%s', property is already set in one of ancestor types",
 				name,
@@ -59,7 +59,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		if err != nil {
 			return fmt.Errorf("line %d: %v", prop.LineNumber, err)
 		}
-		elem.Properties[name] = v
+		elem.Props[name] = v
 	}
 
 	for _, s := range typ.Symbols() {
@@ -129,7 +129,7 @@ func (elem *Element) makeGroups() error {
 	elemsWithGroups := []*Element{}
 
 	for _, e := range elem.Elements {
-		if _, ok := e.Properties["groups"]; ok {
+		if _, ok := e.Props["groups"]; ok {
 			elemsWithGroups = append(elemsWithGroups, e)
 		}
 	}
@@ -141,7 +141,7 @@ func (elem *Element) makeGroups() error {
 	groups := make(map[string][]*Element)
 
 	for _, e := range elemsWithGroups {
-		grps := e.Properties["groups"].(val.List)
+		grps := e.Props["groups"].(val.List)
 		for _, g := range grps {
 			g := string(g.(val.Str))
 			if _, ok := groups[g]; !ok {
@@ -167,9 +167,9 @@ func (elem *Element) makeGroups() error {
 
 	// Check groups order.
 	for i, e1 := range elemsWithGroups[:len(elemsWithGroups)-1] {
-		grps1 := e1.Properties["groups"].(val.List)
+		grps1 := e1.Props["groups"].(val.List)
 		for _, e2 := range elemsWithGroups[i+1:] {
-			grps2 := e2.Properties["groups"].(val.List)
+			grps2 := e2.Props["groups"].(val.List)
 			indexes := []int{}
 			for _, g1 := range grps1 {
 				for j2, g2 := range grps2 {
@@ -200,13 +200,13 @@ func (elem *Element) makeGroups() error {
 
 	var groupsOrder []string
 
-	if _, ok := elem.Properties["groupsOrder"]; ok {
+	if _, ok := elem.Props["groupsOrder"]; ok {
 		panic("not yet implemented")
 	} else {
 		graph := newGrpGraph()
 
 		for _, e := range elemsWithGroups {
-			grps := e.Properties["groups"].(val.List)
+			grps := e.Props["groups"].(val.List)
 			var prevGrp string = ""
 			for _, g := range grps {
 				g := string(g.(val.Str))
@@ -240,13 +240,13 @@ func (elem *Element) makeGroups() error {
 // If the value is BitStr, it checks whether its width is not greater than value of 'width' property.
 // If the value is Int, it tries to convert it to BitStr with width of 'width' property value.
 func (elem *Element) processDefault() error {
-	dflt, ok := elem.Properties["default"]
+	dflt, ok := elem.Props["default"]
 
 	if !ok {
 		return nil
 	}
 
-	width := int64(elem.Properties["width"].(val.Int))
+	width := int64(elem.Props["width"].(val.Int))
 
 	if bs, ok := dflt.(val.BitStr); ok {
 		if bs.BitWidth() > width {
@@ -261,7 +261,7 @@ func (elem *Element) processDefault() error {
 		if err != nil {
 			return fmt.Errorf("processing 'default' property: %v", err)
 		}
-		elem.Properties["default"] = bs
+		elem.Props["default"] = bs
 	}
 
 	return nil

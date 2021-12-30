@@ -14,7 +14,7 @@ type Inst struct {
 	IsArray bool
 	Count   Expr
 
-	properties map[string]Property
+	properties map[string]Prop
 	symbols    SymbolContainer
 
 	args         []Arg
@@ -45,7 +45,7 @@ func (i *Inst) GetSymbol(name string) (Symbol, error) {
 func (i Inst) Args() []Arg                         { return i.args }
 func (i *Inst) SetResolvedArgs(ra map[string]Expr) { i.resolvedArgs = ra }
 func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
-func (i Inst) Properties() map[string]Property     { return i.properties }
+func (i Inst) Props() map[string]Prop              { return i.properties }
 func (i Inst) Symbols() SymbolContainer            { return i.symbols }
 
 func (i Inst) Params() []Param {

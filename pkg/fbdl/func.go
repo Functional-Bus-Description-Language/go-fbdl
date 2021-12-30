@@ -50,7 +50,7 @@ func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 		Count:   insFun.Count,
 	}
 
-	if doc, ok := insFun.Properties["doc"]; ok {
+	if doc, ok := insFun.Props["doc"]; ok {
 		fun.Doc = string(doc.(val.Str))
 	}
 
@@ -62,8 +62,8 @@ func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 			Name:    param.Name,
 			IsArray: param.IsArray,
 			Count:   param.Count,
-			//Doc: string(param.Properties["doc"].(val.Str)),
-			Width: int64(param.Properties["width"].(val.Int)),
+			//Doc: string(param.Props["doc"].(val.Str)),
+			Width: int64(param.Props["width"].(val.Int)),
 		}
 
 		if p.IsArray {

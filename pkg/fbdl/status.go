@@ -26,18 +26,18 @@ func registerifyStatus(insSt *ins.Element, addr int64) (*Status, int64) {
 		Name:    insSt.Name,
 		IsArray: insSt.IsArray,
 		Count:   insSt.Count,
-		Atomic:  bool(insSt.Properties["atomic"].(val.Bool)),
+		Atomic:  bool(insSt.Props["atomic"].(val.Bool)),
 		Groups:  []string{},
-		Width:   int64(insSt.Properties["width"].(val.Int)),
+		Width:   int64(insSt.Props["width"].(val.Int)),
 	}
 
-	if groups, ok := insSt.Properties["groups"].(val.List); ok {
+	if groups, ok := insSt.Props["groups"].(val.List); ok {
 		for _, g := range groups {
 			st.Groups = append(st.Groups, string(g.(val.Str)))
 		}
 	}
 
-	width := int64(insSt.Properties["width"].(val.Int))
+	width := int64(insSt.Props["width"].(val.Int))
 
 	if insSt.IsArray {
 		if busWidth/2 < width && width <= busWidth {
@@ -62,18 +62,18 @@ func registerifyStatusArraySingle(insSt *ins.Element, addr, startBit int64) (*St
 		Name:    insSt.Name,
 		IsArray: insSt.IsArray,
 		Count:   insSt.Count,
-		Atomic:  bool(insSt.Properties["atomic"].(val.Bool)),
+		Atomic:  bool(insSt.Props["atomic"].(val.Bool)),
 		Groups:  []string{},
-		Width:   int64(insSt.Properties["width"].(val.Int)),
+		Width:   int64(insSt.Props["width"].(val.Int)),
 	}
 
-	if groups, ok := insSt.Properties["groups"].(val.List); ok {
+	if groups, ok := insSt.Props["groups"].(val.List); ok {
 		for _, g := range groups {
 			st.Groups = append(st.Groups, string(g.(val.Str)))
 		}
 	}
 
-	width := int64(insSt.Properties["width"].(val.Int))
+	width := int64(insSt.Props["width"].(val.Int))
 
 	st.Access = makeAccessArraySingle(insSt.Count, addr, startBit, width)
 

@@ -26,22 +26,22 @@ func registerifyMask(insMask *ins.Element, addr int64) (*Mask, int64) {
 		Name:    insMask.Name,
 		IsArray: insMask.IsArray,
 		Count:   insMask.Count,
-		Atomic:  bool(insMask.Properties["atomic"].(val.Bool)),
+		Atomic:  bool(insMask.Props["atomic"].(val.Bool)),
 		Groups:  []string{},
-		Width:   int64(insMask.Properties["width"].(val.Int)),
+		Width:   int64(insMask.Props["width"].(val.Int)),
 	}
 
-	if dflt, ok := insMask.Properties["default"].(val.BitStr); ok {
+	if dflt, ok := insMask.Props["default"].(val.BitStr); ok {
 		mask.Default = MakeBitStr(dflt)
 	}
 
-	if groups, ok := insMask.Properties["groups"].(val.List); ok {
+	if groups, ok := insMask.Props["groups"].(val.List); ok {
 		for _, g := range groups {
 			mask.Groups = append(mask.Groups, string(g.(val.Str)))
 		}
 	}
 
-	width := int64(insMask.Properties["width"].(val.Int))
+	width := int64(insMask.Props["width"].(val.Int))
 
 	if insMask.IsArray {
 		panic("not yet implemented")

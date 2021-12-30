@@ -27,22 +27,22 @@ func registerifyConfig(insCfg *ins.Element, addr int64) (*Config, int64) {
 		Name:    insCfg.Name,
 		IsArray: insCfg.IsArray,
 		Count:   insCfg.Count,
-		Atomic:  bool(insCfg.Properties["atomic"].(val.Bool)),
+		Atomic:  bool(insCfg.Props["atomic"].(val.Bool)),
 		Groups:  []string{},
-		Width:   int64(insCfg.Properties["width"].(val.Int)),
+		Width:   int64(insCfg.Props["width"].(val.Int)),
 	}
 
-	if dflt, ok := insCfg.Properties["default"].(val.BitStr); ok {
+	if dflt, ok := insCfg.Props["default"].(val.BitStr); ok {
 		cfg.Default = MakeBitStr(dflt)
 	}
 
-	if groups, ok := insCfg.Properties["groups"].(val.List); ok {
+	if groups, ok := insCfg.Props["groups"].(val.List); ok {
 		for _, g := range groups {
 			cfg.Groups = append(cfg.Groups, string(g.(val.Str)))
 		}
 	}
 
-	width := int64(insCfg.Properties["width"].(val.Int))
+	width := int64(insCfg.Props["width"].(val.Int))
 
 	if insCfg.IsArray {
 		panic("not yet implemented")

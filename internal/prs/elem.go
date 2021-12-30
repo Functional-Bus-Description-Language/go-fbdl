@@ -7,7 +7,8 @@ type Arg struct {
 	Value   Expr
 }
 
-type Property struct {
+// Prop represents element property.
+type Prop struct {
 	LineNumber uint32
 	Value      Expr
 }
@@ -20,6 +21,6 @@ type Element interface {
 	Params() []Param
 	SetResolvedArgs(args map[string]Expr)
 	ResolvedArgs() map[string]Expr
-	Properties() map[string]Property
+	Props() map[string]Prop
 	Symbols() SymbolContainer
 }

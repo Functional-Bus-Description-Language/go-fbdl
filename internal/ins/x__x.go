@@ -25,7 +25,7 @@ func x_timestamp_x() *Element {
 		Name:     "x_timestamp_x",
 		BaseType: "status",
 		Count:    int64(1),
-		Properties: map[string]val.Value{
+		Props: map[string]val.Value{
 			"atomic":  val.Bool(false),
 			"default": dflt,
 			"width":   val.Int(width),
@@ -44,7 +44,7 @@ func x_uuid_x() *Element {
 		Name:     "x_uuid_x",
 		BaseType: "status",
 		Count:    int64(1),
-		Properties: map[string]val.Value{
+		Props: map[string]val.Value{
 			"atomic":  val.Bool(false),
 			"default": dflt,
 			"width":   val.Int(busWidth),

@@ -20,7 +20,7 @@ func setBusWidth(main prs.Symbol) error {
 		panic("FIX ME")
 	}
 
-	prop, ok := e.Properties()["width"]
+	prop, ok := e.Props()["width"]
 	if !ok {
 		busWidth = defaultBusWidth
 		return nil
@@ -161,9 +161,9 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 
 func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	inst := &Element{
-		Properties: map[string]val.Value{},
-		Consts:     map[string]val.Value{},
-		Elements:   ElementContainer{},
+		Props:    map[string]val.Value{},
+		Consts:   map[string]val.Value{},
+		Elements: ElementContainer{},
 	}
 
 	for i, t := range tc {

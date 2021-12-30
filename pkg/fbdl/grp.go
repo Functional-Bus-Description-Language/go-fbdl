@@ -59,7 +59,7 @@ func registerifyGroupStatusArraySameSizes(blk *Block, group *ins.Group, addr int
 	singleIndexWidth := int64(0)
 
 	for _, e := range group.Elements {
-		w := int64(e.Properties["width"].(val.Int))
+		w := int64(e.Props["width"].(val.Int))
 		widths = append(widths, w)
 		singleIndexWidth += w
 	}

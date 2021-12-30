@@ -395,9 +395,9 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 	return []Symbol{&i}, nil
 }
 
-func parseElementBody(n ts.Node, element Searchable) (map[string]Property, SymbolContainer, error) {
+func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolContainer, error) {
 	var err error
-	props := make(map[string]Property)
+	props := make(map[string]Prop)
 	symbols := SymbolContainer{}
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
@@ -426,7 +426,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Property, Symbo
 					symbols,
 					fmt.Errorf("line %d: single property assignment: %v", nc.LineNumber(), err)
 			}
-			props[name] = Property{LineNumber: nc.LineNumber(), Value: expr}
+			props[name] = Prop{LineNumber: nc.LineNumber(), Value: expr}
 		default:
 			var ss []Symbol
 			switch t {
@@ -504,7 +504,7 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 		case "argument_list":
 			t.args, err = parseArgumentList(nc, parent)
 		case "element_body":
-			t.properties, t.symbols, err = parseElementBody(nc, &t)
+			t.props, t.symbols, err = parseElementBody(nc, &t)
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		default:
@@ -524,7 +524,7 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 	}
 
 	if util.IsBaseType(t.typ) {
-		for prop, v := range t.properties {
+		for prop, v := range t.props {
 			if err = util.IsValidProperty(prop, t.typ); err != nil {
 				return nil,
 					fmt.Errorf(
@@ -584,7 +584,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		case ";":
 			continue
 		case "multi_property_assignment":
-			t.properties, err = parseMultiPropertyAssignment(nc, &t)
+			t.props, err = parseMultiPropertyAssignment(nc, &t)
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		default:
@@ -604,7 +604,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 	}
 
 	if util.IsBaseType(t.typ) {
-		for prop, v := range t.properties {
+		for prop, v := range t.props {
 			if err = util.IsValidProperty(prop, t.typ); err != nil {
 				return nil,
 					fmt.Errorf(
@@ -651,8 +651,8 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	return symbols, nil
 }
 
-func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Property, error) {
-	props := make(map[string]Property)
+func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Prop, error) {
+	props := make(map[string]Prop)
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
@@ -668,7 +668,7 @@ func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Pro
 				return props,
 					fmt.Errorf("line %d: '%s' property assignment: %v", nc.LineNumber(), name, err)
 			}
-			props[name] = Property{LineNumber: nc.LineNumber(), Value: expr}
+			props[name] = Prop{LineNumber: nc.LineNumber(), Value: expr}
 		default:
 			continue
 		}

@@ -16,14 +16,14 @@ func Registerify(insBus *ins.Element) *Block {
 		return nil
 	}
 
-	busWidth = int64(insBus.Properties["width"].(val.Int))
+	busWidth = int64(insBus.Props["width"].(val.Int))
 
 	regBus := Block{
 		Name:    "main",
 		IsArray: insBus.IsArray,
 		Count:   int64(insBus.Count),
-		Masters: int64(insBus.Properties["masters"].(val.Int)),
-		Width:   int64(insBus.Properties["width"].(val.Int)),
+		Masters: int64(insBus.Props["masters"].(val.Int)),
+		Width:   int64(insBus.Props["width"].(val.Int)),
 	}
 
 	regBus.addConsts(insBus)
@@ -52,9 +52,9 @@ func Registerify(insBus *ins.Element) *Block {
 			Name:    uuid.Name,
 			Count:   uuid.Count,
 			Access:  makeAccessSingle(0, 0, busWidth),
-			Atomic:  bool(uuid.Properties["atomic"].(val.Bool)),
-			Width:   int64(uuid.Properties["width"].(val.Int)),
-			Default: MakeBitStr(uuid.Properties["default"].(val.BitStr)),
+			Atomic:  bool(uuid.Props["atomic"].(val.Bool)),
+			Width:   int64(uuid.Props["width"].(val.Int)),
+			Default: MakeBitStr(uuid.Props["default"].(val.BitStr)),
 		},
 	)
 
@@ -64,9 +64,9 @@ func Registerify(insBus *ins.Element) *Block {
 			Name:    ts.Name,
 			Count:   ts.Count,
 			Access:  makeAccessSingle(1, 0, busWidth),
-			Atomic:  bool(ts.Properties["atomic"].(val.Bool)),
-			Width:   int64(ts.Properties["width"].(val.Int)),
-			Default: MakeBitStr(ts.Properties["default"].(val.BitStr)),
+			Atomic:  bool(ts.Props["atomic"].(val.Bool)),
+			Width:   int64(ts.Props["width"].(val.Int)),
+			Default: MakeBitStr(ts.Props["default"].(val.BitStr)),
 		},
 	)
 
@@ -180,7 +180,7 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 		Name:    insBlk.Name,
 		IsArray: insBlk.IsArray,
 		Count:   int64(insBlk.Count),
-		Masters: int64(insBlk.Properties["masters"].(val.Int)),
+		Masters: int64(insBlk.Props["masters"].(val.Int)),
 	}
 
 	b.addConsts(insBlk)
