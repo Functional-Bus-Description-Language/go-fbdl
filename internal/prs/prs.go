@@ -67,7 +67,7 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 func checkInstantiations(pkg *Package) {
 	for _, f := range pkg.Files {
 		for _, symbol := range f.Symbols {
-			if e, ok := symbol.(*ElementDefinition); ok {
+			if e, ok := symbol.(*Inst); ok {
 				if e.typ != "bus" && util.IsBaseType(e.typ) {
 					log.Fatalf(
 						"%s: line %d: element of type '%s' cannot be instantiated at package level",
@@ -302,97 +302,97 @@ func parseArrayMarker(n ts.Node, parent Searchable) (Expr, error) {
 }
 
 func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
-	e := ElementDefinition{base: base{lineNumber: n.LineNumber()}}
+	i := Inst{base: base{lineNumber: n.LineNumber()}}
 
 	var err error
 
-	for i := 0; uint32(i) < n.ChildCount(); i++ {
-		nc := n.Child(i)
+	for j := 0; uint32(j) < n.ChildCount(); j++ {
+		nc := n.Child(j)
 		switch nc.Type() {
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		case "identifier":
-			e.name = nc.Content()
+			i.name = nc.Content()
 		case "array_marker":
-			e.IsArray = true
-			e.Count, err = parseArrayMarker(nc, parent)
+			i.IsArray = true
+			i.Count, err = parseArrayMarker(nc, parent)
 		case "declared_identifier":
-			e.typ = nc.Content()
+			i.typ = nc.Content()
 		case "qualified_identifier":
-			e.typ = nc.Content()
-			err = util.IsValidQualifiedIdentifier(e.typ)
+			i.typ = nc.Content()
+			err = util.IsValidQualifiedIdentifier(i.typ)
 		case "argument_list":
-			e.args, err = parseArgumentList(nc, parent)
+			i.args, err = parseArgumentList(nc, parent)
 		case "element_body":
-			e.properties, e.symbols, err = parseElementBody(nc, &e)
+			i.properties, i.symbols, err = parseElementBody(nc, &i)
 		default:
 			panic("should never happen")
 		}
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err,
+				"line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err,
 			)
 		}
 	}
 
-	err = e.validate()
+	err = i.validate()
 	if err != nil {
-		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err)
+		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err)
 	}
 
-	if len(e.symbols) > 0 {
-		for name, _ := range e.symbols {
-			e.symbols[name].SetParent(&e)
+	if len(i.symbols) > 0 {
+		for name, _ := range i.symbols {
+			i.symbols[name].SetParent(&i)
 		}
 	}
 
-	return []Symbol{&e}, nil
+	return []Symbol{&i}, nil
 }
 
 func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
-	e := ElementDefinition{base: base{lineNumber: n.LineNumber()}}
+	i := Inst{base: base{lineNumber: n.LineNumber()}}
 
 	var err error
 
-	for i := 0; uint32(i) < n.ChildCount(); i++ {
-		nc := n.Child(i)
+	for j := 0; uint32(j) < n.ChildCount(); j++ {
+		nc := n.Child(j)
 		switch nc.Type() {
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
 		case "identifier":
-			e.name = nc.Content()
+			i.name = nc.Content()
 		case "array_marker":
-			e.IsArray = true
-			e.Count, err = parseArrayMarker(nc, parent)
+			i.IsArray = true
+			i.Count, err = parseArrayMarker(nc, parent)
 		case "declared_identifier":
-			e.typ = nc.Content()
+			i.typ = nc.Content()
 		case "qualified_identifier":
-			e.typ = nc.Content()
-			err = util.IsValidQualifiedIdentifier(e.typ)
+			i.typ = nc.Content()
+			err = util.IsValidQualifiedIdentifier(i.typ)
 		case "argument_list":
-			e.args, err = parseArgumentList(nc, parent)
+			i.args, err = parseArgumentList(nc, parent)
 		case ";":
 			continue
 		case "multi_property_assignment":
-			e.properties, err = parseMultiPropertyAssignment(nc, &e)
+			i.properties, err = parseMultiPropertyAssignment(nc, &i)
 		default:
 			panic("should never happen")
 		}
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err,
+				"line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err,
 			)
 		}
 	}
 
-	err = e.validate()
+	err = i.validate()
 	if err != nil {
-		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), e.name, err)
+		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err)
 	}
 
-	return []Symbol{&e}, nil
+	return []Symbol{&i}, nil
 }
 
 func parseElementBody(n ts.Node, element Searchable) (map[string]Property, SymbolContainer, error) {

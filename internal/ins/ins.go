@@ -15,7 +15,7 @@ const defaultBusWidth int64 = 32
 var busWidth int64
 
 func setBusWidth(main prs.Symbol) error {
-	e, ok := main.(*prs.ElementDefinition)
+	e, ok := main.(*prs.Inst)
 	if !ok {
 		panic("FIX ME")
 	}

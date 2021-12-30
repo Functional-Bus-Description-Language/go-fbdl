@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-// Parameter represents parameter in the parameter list, not 'param' element.
+// Parameter represents parameter in the type definition parameter list, not 'param' element.
 type Parameter struct {
 	Name         string
 	HasDfltValue bool

@@ -29,8 +29,8 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		elem.BaseType = typ.Type()
 	}
 
-	if def, ok := typ.(*prs.ElementDefinition); ok {
-		elem.Name = def.Name()
+	if i, ok := typ.(*prs.Inst); ok {
+		elem.Name = i.Name()
 	}
 
 	if resolvedArgs != nil {
@@ -79,7 +79,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 			elem.Constants[c.Name()] = val
 		}
 
-		pe, ok := s.(*prs.ElementDefinition)
+		pe, ok := s.(*prs.Inst)
 		if !ok {
 			continue
 		}
@@ -101,13 +101,13 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		}
 	}
 
-	if ed, ok := typ.(*prs.ElementDefinition); ok {
+	if inst, ok := typ.(*prs.Inst); ok {
 		if elem.IsArray {
 			panic("should never happen")
 		}
-		if ed.IsArray {
+		if inst.IsArray {
 			elem.IsArray = true
-			count, err := ed.Count.Eval()
+			count, err := inst.Count.Eval()
 
 			if count.Type() != "integer" {
 				return fmt.Errorf("size of array must be of 'integer' type, current type '%s'", count.Type())
