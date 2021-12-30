@@ -60,7 +60,7 @@ func Instantiate(packages prs.Packages) *Element {
 		log.Fatalf("instantiation: %v", err)
 	}
 
-	var main_bus *Element
+	var mainBus *Element
 
 	for pkg_name, pkgs := range packages {
 		for _, pkg := range pkgs {
@@ -78,23 +78,23 @@ func Instantiate(packages prs.Packages) *Element {
 				elem := instantiateElement(e)
 
 				if pkg_name == "main" && name == "main" {
-					main_bus = elem
+					mainBus = elem
 				}
 			}
 		}
 	}
 
-	if _, exists := main_bus.Elements.Get("x_uuid_x"); exists {
+	if _, exists := mainBus.Elements.Get("x_uuid_x"); exists {
 		panic("x_uuid_x is reserved element name")
 	}
-	main_bus.Elements.Add(x_uuid_x())
+	mainBus.Elements.Add(x_uuid_x())
 
-	if _, exists := main_bus.Elements.Get("x_timestamp_x"); exists {
+	if _, exists := mainBus.Elements.Get("x_timestamp_x"); exists {
 		panic("x_timestamp_x is reserved element name")
 	}
-	main_bus.Elements.Add(x_timestamp_x())
+	mainBus.Elements.Add(x_timestamp_x())
 
-	return main_bus
+	return mainBus
 }
 
 func instantiateElement(e prs.Element) *Element {
