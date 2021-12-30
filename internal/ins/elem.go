@@ -20,7 +20,7 @@ type Element struct {
 	Groups     []*Group
 }
 
-func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expression) error {
+func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr) error {
 	if elem.BaseType == "" {
 		if !util.IsBaseType(typ.Type()) {
 			return fmt.Errorf("cannot start element instantiation from non base type '%s'", typ.Type())

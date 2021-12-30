@@ -233,7 +233,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 	var err error
 	var hasName = false
 	name := ""
-	var val Expression
+	var val Expr
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
 		t := nc.Type()
@@ -284,8 +284,8 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Argument, error) {
 	return args, nil
 }
 
-func parseArrayMarker(n ts.Node, parent Searchable) (Expression, error) {
-	var count Expression
+func parseArrayMarker(n ts.Node, parent Searchable) (Expr, error) {
+	var count Expr
 
 	if n.Child(0).Type() == "[" {
 		if n.Child(1).Child(0).IsMissing() || n.Child(1).Content() == "" {
@@ -683,7 +683,7 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 	var err error
 	var name string
 	var hasDefaultValue bool
-	var defaultValue Expression
+	var defaultValue Expr
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
@@ -722,14 +722,14 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 	}
 
 	// Check if parameters without default value precede parameters with default value.
-	with_default := false
+	withDefault := false
 	for i, p := range params {
-		if with_default && p.HasDefaultValue == false {
+		if withDefault && p.HasDefaultValue == false {
 			return nil, fmt.Errorf("parameters without default value must precede the ones with default value")
 		}
 
 		if params[i].HasDefaultValue {
-			with_default = true
+			withDefault = true
 		}
 	}
 

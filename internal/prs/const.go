@@ -6,7 +6,7 @@ import (
 
 type Constant struct {
 	base
-	Value Expression
+	Value Expr
 }
 
 func (c Constant) GetSymbol(s string) (Symbol, error) {

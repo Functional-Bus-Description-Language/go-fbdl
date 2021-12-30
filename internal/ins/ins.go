@@ -167,7 +167,7 @@ func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	}
 
 	for i, t := range tc {
-		resolvedArgs := make(map[string]prs.Expression)
+		resolvedArgs := make(map[string]prs.Expr)
 		if (i+1) < len(tc) && tc[i+1].ResolvedArgs() != nil {
 			resolvedArgs = tc[i+1].ResolvedArgs()
 		}

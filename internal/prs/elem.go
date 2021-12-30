@@ -10,12 +10,12 @@ import (
 type Argument struct {
 	HasName bool
 	Name    string
-	Value   Expression
+	Value   Expr
 }
 
 type Property struct {
 	LineNumber uint32
-	Value      Expression
+	Value      Expr
 }
 
 type Element interface {
@@ -24,8 +24,8 @@ type Element interface {
 	Type() string
 	Args() []Argument
 	Params() []Parameter
-	SetResolvedArgs(args map[string]Expression)
-	ResolvedArgs() map[string]Expression
+	SetResolvedArgs(args map[string]Expr)
+	ResolvedArgs() map[string]Expr
 	Properties() map[string]Property
 	Symbols() SymbolContainer
 }
@@ -35,13 +35,13 @@ type ElementDefinition struct {
 
 	typ     string
 	IsArray bool
-	Count   Expression
+	Count   Expr
 
 	properties map[string]Property
 	symbols    SymbolContainer
 
 	args         []Argument
-	resolvedArgs map[string]Expression
+	resolvedArgs map[string]Expr
 }
 
 func (e ElementDefinition) Type() string {
@@ -65,11 +65,11 @@ func (e *ElementDefinition) GetSymbol(name string) (Symbol, error) {
 	return e.file.GetSymbol(name)
 }
 
-func (e ElementDefinition) Args() []Argument                          { return e.args }
-func (e *ElementDefinition) SetResolvedArgs(ra map[string]Expression) { e.resolvedArgs = ra }
-func (e ElementDefinition) ResolvedArgs() map[string]Expression       { return e.resolvedArgs }
-func (e ElementDefinition) Properties() map[string]Property           { return e.properties }
-func (e ElementDefinition) Symbols() SymbolContainer                  { return e.symbols }
+func (e ElementDefinition) Args() []Argument                    { return e.args }
+func (e *ElementDefinition) SetResolvedArgs(ra map[string]Expr) { e.resolvedArgs = ra }
+func (e ElementDefinition) ResolvedArgs() map[string]Expr       { return e.resolvedArgs }
+func (e ElementDefinition) Properties() map[string]Property     { return e.properties }
+func (e ElementDefinition) Symbols() SymbolContainer            { return e.symbols }
 
 func (e ElementDefinition) Params() []Parameter {
 	panic("should never happen, element definition cannot have parameters")

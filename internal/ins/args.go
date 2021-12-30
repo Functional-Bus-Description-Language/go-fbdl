@@ -45,10 +45,10 @@ func resolveArgumentListsInSymbols(symbols prs.SymbolContainer) error {
 	return nil
 }
 
-func resolveArguments(symbol prs.Element) (map[string]prs.Expression, error) {
+func resolveArguments(symbol prs.Element) (map[string]prs.Expr, error) {
 	var err error
 	args := symbol.Args()
-	resolvedArgs := make(map[string]prs.Expression)
+	resolvedArgs := make(map[string]prs.Expr)
 	inPositionalArgs := true
 
 	typeSymbol, err := symbol.GetSymbol(symbol.Type())

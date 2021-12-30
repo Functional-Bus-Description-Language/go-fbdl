@@ -9,13 +9,13 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-type Expression interface {
+type Expr interface {
 	Eval() (val.Value, error)
 }
 
-func MakeExpression(n ts.Node, s Searchable) (Expression, error) {
+func MakeExpression(n ts.Node, s Searchable) (Expr, error) {
 	var err error = nil
-	var expr Expression
+	var expr Expr
 
 	switch t := n.Type(); t {
 	case "binary_operation":
@@ -63,7 +63,7 @@ const (
 )
 
 type BinaryOperation struct {
-	left, right Expression
+	left, right Expr
 	operator    BinaryOperator
 }
 
@@ -180,7 +180,7 @@ func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
 }
 
 type ExpressionList struct {
-	exprs []Expression
+	exprs []Expr
 }
 
 func (el ExpressionList) Eval() (val.Value, error) {
@@ -199,7 +199,7 @@ func (el ExpressionList) Eval() (val.Value, error) {
 }
 
 func MakeExpressionList(n ts.Node, s Searchable) (ExpressionList, error) {
-	exprs := []Expression{}
+	exprs := []Expr{}
 
 	itemIdx := 0
 	for i := 1; uint32(i) < n.ChildCount(); i++ {
@@ -259,7 +259,7 @@ func MakeDeclaredIdentifier(n ts.Node, s Searchable) DeclaredIdentifier {
 }
 
 type PrimaryExpression struct {
-	v Expression
+	v Expr
 }
 
 func (pe PrimaryExpression) Eval() (val.Value, error) {
@@ -294,7 +294,7 @@ func MakeStringLiteral(n ts.Node) StringLiteral {
 
 type Subscript struct {
 	name string
-	idx  Expression
+	idx  Expr
 	s    Searchable
 }
 
@@ -362,7 +362,7 @@ const (
 
 type UnaryOperation struct {
 	operator UnaryOperator
-	operand  Expression
+	operand  Expr
 }
 
 func (uo UnaryOperation) Eval() (val.Value, error) {
