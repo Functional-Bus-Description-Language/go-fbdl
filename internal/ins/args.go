@@ -83,14 +83,14 @@ func resolveArguments(symbol prs.Element) (map[string]prs.Expr, error) {
 						}
 					}
 					if !found {
-						resolvedArgs[p.Name] = p.DefaultValue
+						resolvedArgs[p.Name] = p.DfltValue
 					}
 				}
 			} else {
 				if i < len(args) {
 					resolvedArgs[p.Name] = args[i].Value
 				} else {
-					resolvedArgs[p.Name] = p.DefaultValue
+					resolvedArgs[p.Name] = p.DfltValue
 				}
 			}
 		} else {
@@ -102,7 +102,7 @@ func resolveArguments(symbol prs.Element) (map[string]prs.Expr, error) {
 				}
 			}
 			if !found {
-				resolvedArgs[p.Name] = p.DefaultValue
+				resolvedArgs[p.Name] = p.DfltValue
 			}
 		}
 	}

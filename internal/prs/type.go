@@ -6,9 +6,9 @@ import (
 
 // Parameter represents parameter in the parameter list, not 'param' element.
 type Parameter struct {
-	Name            string
-	HasDefaultValue bool
-	DefaultValue    Expr
+	Name         string
+	HasDfltValue bool
+	DfltValue    Expr
 }
 
 type Type struct {

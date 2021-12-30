@@ -682,8 +682,8 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 
 	var err error
 	var name string
-	var hasDefaultValue bool
-	var defaultValue Expr
+	var hasDfltValue bool
+	var dfltValue Expr
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
@@ -694,17 +694,17 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 			continue
 		}
 
-		hasDefaultValue = false
+		hasDfltValue = false
 
 		if t == "identifier" {
 			name = nc.Content()
 		} else {
-			defaultValue, err = MakeExpression(nc, parent)
+			dfltValue, err = MakeExpression(nc, parent)
 			if err != nil {
 				return nil, fmt.Errorf("parameter list: %v", err)
 			}
 
-			hasDefaultValue = true
+			hasDfltValue = true
 		}
 
 		next_node_type := n.Child(i + 1).Type()
@@ -716,20 +716,20 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 			}
 			params = append(
 				params,
-				Parameter{Name: name, HasDefaultValue: hasDefaultValue, DefaultValue: defaultValue},
+				Parameter{Name: name, HasDfltValue: hasDfltValue, DfltValue: dfltValue},
 			)
 		}
 	}
 
 	// Check if parameters without default value precede parameters with default value.
-	withDefault := false
+	withDflt := false
 	for i, p := range params {
-		if withDefault && p.HasDefaultValue == false {
+		if withDflt && p.HasDfltValue == false {
 			return nil, fmt.Errorf("parameters without default value must precede the ones with default value")
 		}
 
-		if params[i].HasDefaultValue {
-			withDefault = true
+		if params[i].HasDfltValue {
+			withDflt = true
 		}
 	}
 
