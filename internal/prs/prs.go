@@ -479,7 +479,7 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
 	}
 
-	t := TypeDefinition{
+	t := Type{
 		base: base{
 			lineNumber: n.LineNumber(),
 			name:       name,
@@ -550,7 +550,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
 	}
 
-	t := TypeDefinition{
+	t := Type{
 		base: base{
 			lineNumber: n.LineNumber(),
 			name:       name,

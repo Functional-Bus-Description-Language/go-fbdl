@@ -11,7 +11,7 @@ type Parameter struct {
 	DefaultValue    Expr
 }
 
-type TypeDefinition struct {
+type Type struct {
 	base
 
 	typ        string
@@ -23,7 +23,7 @@ type TypeDefinition struct {
 	resolvedArgs map[string]Expr
 }
 
-func (t *TypeDefinition) GetSymbol(name string) (Symbol, error) {
+func (t *Type) GetSymbol(name string) (Symbol, error) {
 	if strings.Contains(name, ".") {
 		panic("To be implemented")
 	}
@@ -44,10 +44,10 @@ func (t *TypeDefinition) GetSymbol(name string) (Symbol, error) {
 	return t.file.GetSymbol(name)
 }
 
-func (t TypeDefinition) Type() string                        { return t.typ }
-func (t TypeDefinition) Args() []Argument                    { return t.args }
-func (t TypeDefinition) Params() []Parameter                 { return t.params }
-func (t *TypeDefinition) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
-func (t TypeDefinition) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
-func (t TypeDefinition) Properties() map[string]Property     { return t.properties }
-func (t TypeDefinition) Symbols() SymbolContainer            { return t.symbols }
+func (t Type) Type() string                        { return t.typ }
+func (t Type) Args() []Argument                    { return t.args }
+func (t Type) Params() []Parameter                 { return t.params }
+func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
+func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
+func (t Type) Properties() map[string]Property     { return t.properties }
+func (t Type) Symbols() SymbolContainer            { return t.symbols }
