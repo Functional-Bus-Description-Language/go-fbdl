@@ -54,7 +54,7 @@ func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 		fun.Doc = string(doc.(val.Str))
 	}
 
-	params := insFun.Elements.GetAllByBaseType("param")
+	params := insFun.Elements.GetAllByType("param")
 
 	baseBit := int64(0)
 	for _, param := range params {

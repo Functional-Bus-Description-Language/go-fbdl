@@ -9,7 +9,7 @@ import (
 // fillProperties fills required properties that have not been set by the user.
 // Some properties have default values and user is not obliged to set them explicitly.
 func fillProperties(e *Element) {
-	switch e.BaseType {
+	switch e.Type {
 	case "block":
 		fillPropertiesBlock(e)
 	case "bus":
@@ -24,7 +24,7 @@ func fillProperties(e *Element) {
 		fillPropertiesParam(e)
 	default:
 		msg := `no implementation for base type '%s'`
-		msg = fmt.Sprintf(msg, e.BaseType)
+		msg = fmt.Sprintf(msg, e.Type)
 		panic(msg)
 	}
 }

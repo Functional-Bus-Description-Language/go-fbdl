@@ -8,7 +8,7 @@ type Group struct {
 // IsStatus returns true if group contains only status elements.
 func (g *Group) IsStatus() bool {
 	for _, e := range g.Elements {
-		if e.BaseType != "status" {
+		if e.Type != "status" {
 			return false
 		}
 	}
@@ -18,7 +18,7 @@ func (g *Group) IsStatus() bool {
 // IsConfig returns true if group contains only config elements.
 func (g *Group) IsConfig() bool {
 	for _, e := range g.Elements {
-		if e.BaseType != "config" {
+		if e.Type != "config" {
 			return false
 		}
 	}

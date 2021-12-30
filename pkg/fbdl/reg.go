@@ -38,7 +38,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.Sizes.Own = addr
 
 	for _, e := range insBus.Elements {
-		if e.BaseType == "block" {
+		if e.Type == "block" {
 			sb, sizes := registerifyBlock(e)
 			regBus.Sizes.Compact += e.Count * sizes.Compact
 			regBus.Sizes.BlockAligned += e.Count * sizes.BlockAligned
@@ -111,7 +111,7 @@ func registerifyGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insFuncs := insBlk.Elements.GetAllByBaseType("func")
+	insFuncs := insBlk.Elements.GetAllByType("func")
 
 	var fun *Func
 
@@ -124,7 +124,7 @@ func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insMasks := insBlk.Elements.GetAllByBaseType("mask")
+	insMasks := insBlk.Elements.GetAllByType("mask")
 
 	var mask *Mask
 
@@ -137,7 +137,7 @@ func registerifyMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insStatuses := insBlk.Elements.GetAllByBaseType("status")
+	insStatuses := insBlk.Elements.GetAllByType("status")
 
 	var st *Status
 
@@ -157,7 +157,7 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyConfigs(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insConfigs := insBlk.Elements.GetAllByBaseType("config")
+	insConfigs := insBlk.Elements.GetAllByType("config")
 
 	var cfg *Config
 
@@ -189,7 +189,7 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
 	for _, e := range insBlk.Elements {
-		if e.BaseType == "block" {
+		if e.Type == "block" {
 			sb, s := registerifyBlock(e)
 			sizes.Compact += e.Count * s.Compact
 			sizes.BlockAligned += e.Count * s.BlockAligned

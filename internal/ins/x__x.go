@@ -22,9 +22,9 @@ func x_timestamp_x() *Element {
 	}
 
 	return &Element{
-		Name:     "x_timestamp_x",
-		BaseType: "status",
-		Count:    int64(1),
+		Name:  "x_timestamp_x",
+		Type:  "status",
+		Count: int64(1),
 		Props: map[string]val.Value{
 			"atomic":  val.Bool(false),
 			"default": dflt,
@@ -41,9 +41,9 @@ func x_uuid_x() *Element {
 	}
 
 	return &Element{
-		Name:     "x_uuid_x",
-		BaseType: "status",
-		Count:    int64(1),
+		Name:  "x_uuid_x",
+		Type:  "status",
+		Count: int64(1),
 		Props: map[string]val.Value{
 			"atomic":  val.Bool(false),
 			"default": dflt,

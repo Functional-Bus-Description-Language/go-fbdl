@@ -11,7 +11,7 @@ import (
 
 type Element struct {
 	Name     string
-	BaseType string
+	Type     string // ins.Element type can only be base type
 	IsArray  bool
 	Count    int64
 	Props    map[string]val.Value
@@ -21,12 +21,12 @@ type Element struct {
 }
 
 func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr) error {
-	if elem.BaseType == "" {
+	if elem.Type == "" {
 		if !util.IsBaseType(typ.Type()) {
 			return fmt.Errorf("cannot start element instantiation from non base type '%s'", typ.Type())
 		}
 
-		elem.BaseType = typ.Type()
+		elem.Type = typ.Type()
 	}
 
 	if i, ok := typ.(*prs.Inst); ok {
@@ -38,7 +38,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 	}
 
 	for name, prop := range typ.Props() {
-		if err := util.IsValidProperty(name, elem.BaseType); err != nil {
+		if err := util.IsValidProperty(name, elem.Type); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
 		err := checkProperty(name, prop)
@@ -86,10 +86,10 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 
 		e := instantiateElement(pe)
 
-		if util.IsValidType(elem.BaseType, e.BaseType) == false {
+		if util.IsValidType(elem.Type, e.Type) == false {
 			return fmt.Errorf(
 				"element '%s' of base type '%s' cannot be instantiated in element of base type '%s'",
-				e.Name, e.BaseType, elem.BaseType,
+				e.Name, e.Type, elem.Type,
 			)
 		}
 
