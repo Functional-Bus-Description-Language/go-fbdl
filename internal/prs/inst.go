@@ -48,7 +48,7 @@ func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
 func (i Inst) Properties() map[string]Property     { return i.properties }
 func (i Inst) Symbols() SymbolContainer            { return i.symbols }
 
-func (i Inst) Params() []Parameter {
+func (i Inst) Params() []Param {
 	panic("should never happen, element definition cannot have parameters")
 }
 

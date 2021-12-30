@@ -17,7 +17,7 @@ type Element interface {
 	Symbol
 	Type() string
 	Args() []Argument
-	Params() []Parameter
+	Params() []Param
 	SetResolvedArgs(args map[string]Expr)
 	ResolvedArgs() map[string]Expr
 	Properties() map[string]Property

@@ -44,12 +44,12 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 		return
 	}
 
-	pkg_dir_content, err := ioutil.ReadDir(pkg.Path)
+	pkgDirContent, err := ioutil.ReadDir(pkg.Path)
 	if err != nil {
 		panic(err)
 	}
 
-	for _, file := range pkg_dir_content {
+	for _, file := range pkgDirContent {
 		if file.IsDir() {
 			continue
 		}
@@ -677,8 +677,8 @@ func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Pro
 	return props, nil
 }
 
-func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
-	params := []Parameter{}
+func parseParameterList(n ts.Node, parent Searchable) ([]Param, error) {
+	params := []Param{}
 
 	var err error
 	var name string
@@ -716,7 +716,7 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Parameter, error) {
 			}
 			params = append(
 				params,
-				Parameter{Name: name, HasDfltValue: hasDfltValue, DfltValue: dfltValue},
+				Param{Name: name, HasDfltValue: hasDfltValue, DfltValue: dfltValue},
 			)
 		}
 	}

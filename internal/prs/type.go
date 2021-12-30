@@ -4,8 +4,8 @@ import (
 	"strings"
 )
 
-// Parameter represents parameter in the type definition parameter list, not 'param' element.
-type Parameter struct {
+// Param represents parameter in the type definition parameter list, not 'param' element.
+type Param struct {
 	Name         string
 	HasDfltValue bool
 	DfltValue    Expr
@@ -19,7 +19,7 @@ type Type struct {
 	properties map[string]Property
 	symbols    SymbolContainer
 
-	params       []Parameter
+	params       []Param
 	args         []Argument
 	resolvedArgs map[string]Expr
 }
@@ -47,7 +47,7 @@ func (t *Type) GetSymbol(name string) (Symbol, error) {
 
 func (t Type) Type() string                        { return t.typ }
 func (t Type) Args() []Argument                    { return t.args }
-func (t Type) Params() []Parameter                 { return t.params }
+func (t Type) Params() []Param                     { return t.params }
 func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
 func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
 func (t Type) Properties() map[string]Property     { return t.properties }
