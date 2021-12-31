@@ -123,7 +123,7 @@ func instantiateElement(e prs.Element) *Element {
 		)
 	}
 
-	err = elem.processDefault()
+	err = elem.processDflt()
 	if err != nil {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s': %v",

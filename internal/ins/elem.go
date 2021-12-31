@@ -234,19 +234,19 @@ func (elem *Element) makeGrps() error {
 	return nil
 }
 
-// processDefault processes the 'default' property.
+// processDflt processes the 'default' property.
 // If element has no 'default' property it immediately returns.
 // Otherwise it checks the type of 'default' value.
 // If the value is BitStr, it checks whether its width is not greater than value of 'width' property.
 // If the value is Int, it tries to convert it to BitStr with width of 'width' property value.
-func (elem *Element) processDefault() error {
-	dflt, ok := elem.Props["default"]
+func (e *Element) processDflt() error {
+	dflt, ok := e.Props["default"]
 
 	if !ok {
 		return nil
 	}
 
-	width := int64(elem.Props["width"].(val.Int))
+	width := int64(e.Props["width"].(val.Int))
 
 	if bs, ok := dflt.(val.BitStr); ok {
 		if bs.BitWidth() > width {
@@ -261,7 +261,7 @@ func (elem *Element) processDefault() error {
 		if err != nil {
 			return fmt.Errorf("processing 'default' property: %v", err)
 		}
-		elem.Props["default"] = bs
+		e.Props["default"] = bs
 	}
 
 	return nil
