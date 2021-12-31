@@ -13,6 +13,8 @@ type Prop struct {
 	Value      Expr
 }
 
+// Element is common interface for Inst and Type structs.
+// Type is actually an element, but not instantiated.
 type Element interface {
 	Searchable
 	Symbol
