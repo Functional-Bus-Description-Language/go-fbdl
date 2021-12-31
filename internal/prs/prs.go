@@ -10,7 +10,6 @@ import (
 	"path"
 	"strings"
 	"sync"
-	"unicode"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
@@ -445,7 +444,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 			case "comment":
 				continue
 			default:
-				panic("this should never happen %s")
+				panic("should never happen")
 			}
 
 			if err != nil {
@@ -569,16 +568,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 			t.typ = nc.Content()
 		case "qualified_identifier":
 			t.typ = nc.Content()
-			aux := strings.Split(t.typ, ".")
-			pkg := aux[0]
-			id := aux[1]
-			if unicode.IsUpper([]rune(id)[0]) == false {
-				return nil,
-					fmt.Errorf(
-						"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
-						nc.LineNum(), id, pkg,
-					)
-			}
+			err = util.IsValidQualifiedIdentifier(t.typ)
 		case "argument_list":
 			t.args, err = parseArgumentList(nc, parent)
 		case ";":
