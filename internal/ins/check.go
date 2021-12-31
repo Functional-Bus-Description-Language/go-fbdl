@@ -8,7 +8,7 @@ import (
 )
 
 // Check property value type and value.
-func checkProperty(name string, prop prs.Prop) error {
+func checkProp(name string, prop prs.Prop) error {
 	pv, err := prop.Value.Eval()
 	if err != nil {
 		return fmt.Errorf("cannot evaluate expression: %v", err)
@@ -93,7 +93,7 @@ func checkProperty(name string, prop prs.Prop) error {
 			return fmt.Errorf("'width' property must be natural, current value (%d)", v)
 		}
 	default:
-		msg := `checkProperty() for property '%s' not yet implemented`
+		msg := `checkProp() for property '%s' not yet implemented`
 		msg = fmt.Sprintf(msg, name)
 		panic(msg)
 	}
@@ -101,7 +101,7 @@ func checkProperty(name string, prop prs.Prop) error {
 	return nil
 }
 
-func checkPropertyConflict(elem *Element, prop string) error {
+func checkPropConflict(elem *Element, prop string) error {
 	msg := `cannot set '%s' property, because '%s' property is already set in one of ancestor types`
 	if _, ok := elem.Props["width"]; ok {
 		if prop == "range" {

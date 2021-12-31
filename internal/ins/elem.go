@@ -16,7 +16,7 @@ type Element struct {
 	Count   int64
 	Props   map[string]val.Value
 	Consts  map[string]val.Value
-	Elems   ElementContainer
+	Elems   ElemContainer
 	Grps    []*Group
 }
 
@@ -41,7 +41,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		if err := util.IsValidProperty(name, elem.Type); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		err := checkProperty(name, prop)
+		err := checkProp(name, prop)
 		if err != nil {
 			return fmt.Errorf("\n  %s: line %d: %v", typ.File().Path, prop.LineNumber, err)
 		}
@@ -55,7 +55,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
-		err = checkPropertyConflict(elem, name)
+		err = checkPropConflict(elem, name)
 		if err != nil {
 			return fmt.Errorf("line %d: %v", prop.LineNumber, err)
 		}
@@ -125,22 +125,22 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 	return nil
 }
 
-func (elem *Element) makeGroups() error {
-	elemsWithGroups := []*Element{}
+func (elem *Element) makeGrps() error {
+	elemsWithGrps := []*Element{}
 
 	for _, e := range elem.Elems {
 		if _, ok := e.Props["groups"]; ok {
-			elemsWithGroups = append(elemsWithGroups, e)
+			elemsWithGrps = append(elemsWithGrps, e)
 		}
 	}
 
-	if len(elemsWithGroups) == 0 {
+	if len(elemsWithGrps) == 0 {
 		return nil
 	}
 
 	groups := make(map[string][]*Element)
 
-	for _, e := range elemsWithGroups {
+	for _, e := range elemsWithGrps {
 		grps := e.Props["groups"].(val.List)
 		for _, g := range grps {
 			g := string(g.(val.Str))
@@ -166,9 +166,9 @@ func (elem *Element) makeGroups() error {
 	}
 
 	// Check groups order.
-	for i, e1 := range elemsWithGroups[:len(elemsWithGroups)-1] {
+	for i, e1 := range elemsWithGrps[:len(elemsWithGrps)-1] {
 		grps1 := e1.Props["groups"].(val.List)
-		for _, e2 := range elemsWithGroups[i+1:] {
+		for _, e2 := range elemsWithGrps[i+1:] {
 			grps2 := e2.Props["groups"].(val.List)
 			indexes := []int{}
 			for _, g1 := range grps1 {
@@ -198,14 +198,14 @@ func (elem *Element) makeGroups() error {
 		}
 	}
 
-	var groupsOrder []string
+	var grpsOrder []string
 
 	if _, ok := elem.Props["groupsOrder"]; ok {
 		panic("not yet implemented")
 	} else {
 		graph := newGrpGraph()
 
-		for _, e := range elemsWithGroups {
+		for _, e := range elemsWithGrps {
 			grps := e.Props["groups"].(val.List)
 			var prevGrp string = ""
 			for _, g := range grps {
@@ -215,13 +215,13 @@ func (elem *Element) makeGroups() error {
 			}
 		}
 
-		groupsOrder = graph.sort()
+		grpsOrder = graph.sort()
 	}
 
-	log.Printf("debug: groups order for element '%s': %v", elem.Name, groupsOrder)
+	log.Printf("debug: groups order for element '%s': %v", elem.Name, grpsOrder)
 
 	elem.Grps = []*Group{}
-	for _, grpName := range groupsOrder {
+	for _, grpName := range grpsOrder {
 		elem.Grps = append(
 			elem.Grps,
 			&Group{

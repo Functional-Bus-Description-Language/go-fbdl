@@ -7,10 +7,10 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
-func resolveArgumentLists(packages prs.Packages) error {
+func resolveArgLists(packages prs.Packages) error {
 	for name, pkgs := range packages {
 		for _, pkg := range pkgs {
-			err := resolveArgumentListsInSymbols(pkg.Symbols)
+			err := resolveArgListsInSymbols(pkg.Symbols)
 			if err != nil {
 				return fmt.Errorf("package '%s': %v", name, err)
 			}
@@ -20,7 +20,7 @@ func resolveArgumentLists(packages prs.Packages) error {
 	return nil
 }
 
-func resolveArgumentListsInSymbols(symbols prs.SymbolContainer) error {
+func resolveArgListsInSymbols(symbols prs.SymbolContainer) error {
 	for _, s := range symbols {
 		name := s.Name()
 		e, ok := s.(prs.Element)
@@ -29,7 +29,7 @@ func resolveArgumentListsInSymbols(symbols prs.SymbolContainer) error {
 		}
 
 		if !util.IsBaseType(e.Type()) {
-			resolvedArgs, err := resolveArguments(e)
+			resolvedArgs, err := resolveArgs(e)
 			if err != nil {
 				return fmt.Errorf("cannot resolve argument list for symbol '%s': %v", name, err)
 			}
@@ -38,14 +38,14 @@ func resolveArgumentListsInSymbols(symbols prs.SymbolContainer) error {
 		}
 
 		if len(e.Symbols()) > 0 {
-			return resolveArgumentListsInSymbols(e.Symbols())
+			return resolveArgListsInSymbols(e.Symbols())
 		}
 	}
 
 	return nil
 }
 
-func resolveArguments(symbol prs.Element) (map[string]prs.Expr, error) {
+func resolveArgs(symbol prs.Element) (map[string]prs.Expr, error) {
 	var err error
 	args := symbol.Args()
 	resolvedArgs := make(map[string]prs.Expr)

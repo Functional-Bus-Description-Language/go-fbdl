@@ -1,11 +1,11 @@
 package ins
 
-type ElementContainer []*Element
+type ElemContainer []*Element
 
-// Add adds element to ElementContainer.
+// Add adds element to ElemContainer.
 // If element with given name already exists it returns false.
 // If the operation is successful it returns true.
-func (ec *ElementContainer) Add(elem *Element) bool {
+func (ec *ElemContainer) Add(elem *Element) bool {
 	for _, e := range *ec {
 		if e.Name == elem.Name {
 			return false
@@ -17,7 +17,7 @@ func (ec *ElementContainer) Add(elem *Element) bool {
 	return true
 }
 
-func (ec *ElementContainer) Get(name string) (*Element, bool) {
+func (ec *ElemContainer) Get(name string) (*Element, bool) {
 	for _, e := range *ec {
 		if e.Name == name {
 			return e, true
@@ -27,7 +27,7 @@ func (ec *ElementContainer) Get(name string) (*Element, bool) {
 	return nil, false
 }
 
-func (ec *ElementContainer) GetAllByType(typ string) []*Element {
+func (ec *ElemContainer) GetAllByType(typ string) []*Element {
 	ret := []*Element{}
 
 	for _, e := range *ec {

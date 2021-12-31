@@ -10,7 +10,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-const defaultBusWidth int64 = 32
+const dfltBusWidth int64 = 32
 
 var busWidth int64
 
@@ -22,7 +22,7 @@ func setBusWidth(main prs.Symbol) error {
 
 	prop, ok := e.Props()["width"]
 	if !ok {
-		busWidth = defaultBusWidth
+		busWidth = dfltBusWidth
 		return nil
 	}
 
@@ -55,7 +55,7 @@ func Instantiate(packages prs.Packages) *Element {
 		log.Fatalf("instantiation: %v", err)
 	}
 
-	err = resolveArgumentLists(packages)
+	err = resolveArgLists(packages)
 	if err != nil {
 		log.Fatalf("instantiation: %v", err)
 	}
@@ -114,9 +114,9 @@ func instantiateElement(e prs.Element) *Element {
 		)
 	}
 
-	fillProperties(elem)
+	fillProps(elem)
 
-	if err = elem.makeGroups(); err != nil {
+	if err = elem.makeGrps(); err != nil {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s': %v",
 			e.File().Path, e.LineNumber(), e.Name(), err,
@@ -163,7 +163,7 @@ func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	inst := &Element{
 		Props:  map[string]val.Value{},
 		Consts: map[string]val.Value{},
-		Elems:  ElementContainer{},
+		Elems:  ElemContainer{},
 	}
 
 	for i, t := range tc {

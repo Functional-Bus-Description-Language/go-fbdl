@@ -6,22 +6,22 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-// fillProperties fills required properties that have not been set by the user.
+// fillProps fills required properties that have not been set by the user.
 // Some properties have default values and user is not obliged to set them explicitly.
-func fillProperties(e *Element) {
+func fillProps(e *Element) {
 	switch e.Type {
 	case "block":
-		fillPropertiesBlock(e)
+		fillPropsBlock(e)
 	case "bus":
-		fillPropertiesBus(e)
+		fillPropsBus(e)
 	case "config", "status":
-		fillPropertiesConfig(e)
+		fillPropsConfig(e)
 	case "func":
-		fillPropertiesFunc(e)
+		fillPropsFunc(e)
 	case "mask":
-		fillPropertiesMask(e)
+		fillPropsMask(e)
 	case "param":
-		fillPropertiesParam(e)
+		fillPropsParam(e)
 	default:
 		msg := `no implementation for base type '%s'`
 		msg = fmt.Sprintf(msg, e.Type)
@@ -29,13 +29,13 @@ func fillProperties(e *Element) {
 	}
 }
 
-func fillPropertiesBlock(b *Element) {
+func fillPropsBlock(b *Element) {
 	if _, ok := b.Props["masters"]; !ok {
 		b.Props["masters"] = val.Int(1)
 	}
 }
 
-func fillPropertiesBus(b *Element) {
+func fillPropsBus(b *Element) {
 	if _, ok := b.Props["masters"]; !ok {
 		b.Props["masters"] = val.Int(1)
 	}
@@ -45,7 +45,7 @@ func fillPropertiesBus(b *Element) {
 	}
 }
 
-func fillPropertiesConfig(c *Element) {
+func fillPropsConfig(c *Element) {
 	if _, ok := c.Props["width"]; !ok {
 		c.Props["width"] = val.Int(int64(busWidth))
 	}
@@ -59,11 +59,11 @@ func fillPropertiesConfig(c *Element) {
 	}
 }
 
-func fillPropertiesFunc(f *Element) {
+func fillPropsFunc(f *Element) {
 	return
 }
 
-func fillPropertiesMask(m *Element) {
+func fillPropsMask(m *Element) {
 	if _, ok := m.Props["width"]; !ok {
 		m.Props["width"] = val.Int(int64(busWidth))
 	}
@@ -77,7 +77,7 @@ func fillPropertiesMask(m *Element) {
 	}
 }
 
-func fillPropertiesParam(p *Element) {
+func fillPropsParam(p *Element) {
 	if _, ok := p.Props["width"]; !ok {
 		p.Props["width"] = val.Int(int64(busWidth))
 	}
