@@ -17,7 +17,7 @@ type Element struct {
 	Props   map[string]val.Value
 	Consts  map[string]val.Value
 	Elems   ElementContainer
-	Groups  []*Group
+	Grps    []*Group
 }
 
 func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr) error {
@@ -220,10 +220,10 @@ func (elem *Element) makeGroups() error {
 
 	log.Printf("debug: groups order for element '%s': %v", elem.Name, groupsOrder)
 
-	elem.Groups = []*Group{}
+	elem.Grps = []*Group{}
 	for _, grpName := range groupsOrder {
-		elem.Groups = append(
-			elem.Groups,
+		elem.Grps = append(
+			elem.Grps,
 			&Group{
 				Name:     grpName,
 				Elements: groups[grpName],

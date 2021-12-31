@@ -96,9 +96,9 @@ func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int
 
 func registerifyGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	var grp Group
-	for _, group := range insBlk.Groups {
-		if group.IsStatus() && group.IsArray() {
-			grp, addr = registerifyGroupStatusArray(blk, group, addr)
+	for _, g := range insBlk.Grps {
+		if g.IsStatus() && g.IsArray() {
+			grp, addr = registerifyGroupStatusArray(blk, g, addr)
 		}
 
 		blk.addGroup(grp)
