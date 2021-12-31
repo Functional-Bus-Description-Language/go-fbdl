@@ -371,7 +371,7 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 			err = util.IsValidQualifiedIdentifier(i.typ)
 		case "argument_list":
 			i.args, err = parseArgumentList(nc, parent)
-		case ";":
+		case ";", "comment":
 			continue
 		case "multi_property_assignment":
 			i.properties, err = parseMultiPropertyAssignment(nc, &i)
@@ -578,6 +578,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNum())
 		default:
+			println(nc.Type())
 			panic("should never happen")
 		}
 
