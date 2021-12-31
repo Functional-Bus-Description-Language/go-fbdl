@@ -37,7 +37,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.Sizes.Compact = addr
 	regBus.Sizes.Own = addr
 
-	for _, e := range insBus.Elements {
+	for _, e := range insBus.Elems {
 		if e.Type == "block" {
 			sb, sizes := registerifyBlock(e)
 			regBus.Sizes.Compact += e.Count * sizes.Compact
@@ -46,7 +46,7 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
-	uuid, _ := insBus.Elements.Get("x_uuid_x")
+	uuid, _ := insBus.Elems.Get("x_uuid_x")
 	regBus.addStatus(
 		&Status{
 			Name:    uuid.Name,
@@ -58,7 +58,7 @@ func Registerify(insBus *ins.Element) *Block {
 		},
 	)
 
-	ts, _ := insBus.Elements.Get("x_timestamp_x")
+	ts, _ := insBus.Elems.Get("x_timestamp_x")
 	regBus.addStatus(
 		&Status{
 			Name:    ts.Name,
@@ -81,7 +81,7 @@ func Registerify(insBus *ins.Element) *Block {
 }
 
 func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	if len(insBlk.Elements) == 0 {
+	if len(insBlk.Elems) == 0 {
 		return addr
 	}
 
@@ -111,7 +111,7 @@ func registerifyGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insFuncs := insBlk.Elements.GetAllByType("func")
+	insFuncs := insBlk.Elems.GetAllByType("func")
 
 	var fun *Func
 
@@ -124,7 +124,7 @@ func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insMasks := insBlk.Elements.GetAllByType("mask")
+	insMasks := insBlk.Elems.GetAllByType("mask")
 
 	var mask *Mask
 
@@ -137,7 +137,7 @@ func registerifyMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insStatuses := insBlk.Elements.GetAllByType("status")
+	insStatuses := insBlk.Elems.GetAllByType("status")
 
 	var st *Status
 
@@ -157,7 +157,7 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 }
 
 func registerifyConfigs(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	insConfigs := insBlk.Elements.GetAllByType("config")
+	insConfigs := insBlk.Elems.GetAllByType("config")
 
 	var cfg *Config
 
@@ -188,7 +188,7 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 	addr = registerifyFunctionalities(&b, insBlk, addr)
 	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
-	for _, e := range insBlk.Elements {
+	for _, e := range insBlk.Elems {
 		if e.Type == "block" {
 			sb, s := registerifyBlock(e)
 			sizes.Compact += e.Count * s.Compact

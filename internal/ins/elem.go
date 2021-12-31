@@ -10,14 +10,14 @@ import (
 )
 
 type Element struct {
-	Name     string
-	Type     string // ins.Element type can only be base type
-	IsArray  bool
-	Count    int64
-	Props    map[string]val.Value
-	Consts   map[string]val.Value
-	Elements ElementContainer
-	Groups   []*Group
+	Name    string
+	Type    string // ins.Element type can only be base type
+	IsArray bool
+	Count   int64
+	Props   map[string]val.Value
+	Consts  map[string]val.Value
+	Elems   ElementContainer
+	Groups  []*Group
 }
 
 func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr) error {
@@ -93,7 +93,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 			)
 		}
 
-		if !elem.Elements.Add(e) {
+		if !elem.Elems.Add(e) {
 			return fmt.Errorf(
 				"cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types",
 				e.Name,
@@ -128,7 +128,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 func (elem *Element) makeGroups() error {
 	elemsWithGroups := []*Element{}
 
-	for _, e := range elem.Elements {
+	for _, e := range elem.Elems {
 		if _, ok := e.Props["groups"]; ok {
 			elemsWithGroups = append(elemsWithGroups, e)
 		}
@@ -153,7 +153,7 @@ func (elem *Element) makeGroups() error {
 
 	// Check for element and group names conflict.
 	for grpName, _ := range groups {
-		if _, ok := elem.Elements.Get(grpName); ok {
+		if _, ok := elem.Elems.Get(grpName); ok {
 			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
 		}
 	}
