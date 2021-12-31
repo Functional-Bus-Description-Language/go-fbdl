@@ -73,7 +73,7 @@ func (b *Block) addIntConst(name string, value int64) {
 	b.IntConsts[name] = value
 }
 
-func (b *Block) addStringConst(name, value string) {
+func (b *Block) addStrConst(name, value string) {
 	if b.StrConsts == nil {
 		b.StrConsts = map[string]string{name: value}
 	}
@@ -92,7 +92,7 @@ func (b *Block) addConsts(insBlk *ins.Element) {
 		case val.List:
 			panic("not yet implemented")
 		case val.Str:
-			b.addStringConst(name, string(v.(val.Str)))
+			b.addStrConst(name, string(v.(val.Str)))
 		default:
 			panic("should never happen")
 		}
