@@ -43,7 +43,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		}
 		err := checkProp(name, prop)
 		if err != nil {
-			return fmt.Errorf("\n  %s: line %d: %v", typ.File().Path, prop.LineNumber, err)
+			return fmt.Errorf("\n  %s: line %d: %v", typ.File().Path, prop.LineNum, err)
 		}
 		if _, exist := elem.Props[name]; exist {
 			return fmt.Errorf(
@@ -57,7 +57,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		}
 		err = checkPropConflict(elem, name)
 		if err != nil {
-			return fmt.Errorf("line %d: %v", prop.LineNumber, err)
+			return fmt.Errorf("line %d: %v", prop.LineNum, err)
 		}
 		elem.Props[name] = v
 	}

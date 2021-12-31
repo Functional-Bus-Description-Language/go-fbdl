@@ -2,7 +2,7 @@ package prs
 
 type Symbol interface {
 	Name() string
-	LineNumber() uint32
+	LineNum() uint32
 	SetParent(s Searchable)
 	Parent() Searchable
 	SetFile(f *File)
@@ -10,14 +10,14 @@ type Symbol interface {
 }
 
 type base struct {
-	file       *File
-	lineNumber uint32
-	name       string
-	parent     Searchable
+	file    *File
+	lineNum uint32
+	name    string
+	parent  Searchable
 }
 
 func (b base) Name() string       { return b.name }
-func (b base) LineNumber() uint32 { return b.lineNumber }
+func (b base) LineNum() uint32    { return b.lineNum }
 func (b base) Parent() Searchable { return b.parent }
 func (b base) File() *File        { return b.file }
 

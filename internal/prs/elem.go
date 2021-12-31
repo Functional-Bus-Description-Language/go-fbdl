@@ -9,8 +9,8 @@ type Arg struct {
 
 // Prop represents element property.
 type Prop struct {
-	LineNumber uint32
-	Value      Expr
+	LineNum uint32
+	Value   Expr
 }
 
 // Element is common interface for Inst and Type structs.

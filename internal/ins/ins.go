@@ -36,7 +36,7 @@ func setBusWidth(main prs.Symbol) error {
 	} else {
 		log.Fatalf(
 			"%s: line %d: 'main' bus 'width' property must be of type 'integer'",
-			main.File().Path, prop.LineNumber,
+			main.File().Path, prop.LineNum,
 		)
 	}
 
@@ -103,14 +103,14 @@ func instantiateElement(e prs.Element) *Element {
 	if err != nil {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s': %v",
-			e.File().Path, e.LineNumber(), e.Name(), err,
+			e.File().Path, e.LineNum(), e.Name(), err,
 		)
 	}
 
 	if elem.Count < 0 {
 		log.Fatalf(
 			"%s: line %d: negative size (%d) of '%s' array",
-			e.File().Path, e.LineNumber(), elem.Count, e.Name(),
+			e.File().Path, e.LineNum(), elem.Count, e.Name(),
 		)
 	}
 
@@ -119,7 +119,7 @@ func instantiateElement(e prs.Element) *Element {
 	if err = elem.makeGrps(); err != nil {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s': %v",
-			e.File().Path, e.LineNumber(), e.Name(), err,
+			e.File().Path, e.LineNum(), e.Name(), err,
 		)
 	}
 
@@ -127,7 +127,7 @@ func instantiateElement(e prs.Element) *Element {
 	if err != nil {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s': %v",
-			e.File().Path, e.LineNumber(), e.Name(), err,
+			e.File().Path, e.LineNum(), e.Name(), err,
 		)
 	}
 

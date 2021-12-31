@@ -59,7 +59,7 @@ func (n Node) Child(idx int) Node {
 	return Node{n: tsn, code: n.code}
 }
 
-func (n Node) LineNumber() uint32 {
+func (n Node) LineNum() uint32 {
 	return n.n.StartPoint().Row + 1
 }
 

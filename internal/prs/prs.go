@@ -71,13 +71,13 @@ func checkInstantiations(pkg *Package) {
 				if e.typ != "bus" && util.IsBaseType(e.typ) {
 					log.Fatalf(
 						"%s: line %d: element of type '%s' cannot be instantiated at package level",
-						f.Path, e.LineNumber(), e.Type(),
+						f.Path, e.LineNum(), e.Type(),
 					)
 				} else if e.typ == "bus" {
 					if e.Name() != "main" || pkg.Name != "main" {
 						log.Fatalf(
 							"%s: line %d: bus instantiation must be named 'main' and must be placed in 'main' package",
-							f.Path, e.LineNumber(),
+							f.Path, e.LineNum(),
 						)
 					}
 				}
@@ -187,7 +187,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			if _, exist := file.Imports[i.ImportName]; exist {
 				log.Fatalf(
 					"%s: line %d: at least two packages imported as '%s'",
-					path, node.LineNumber(), i.ImportName,
+					path, node.LineNum(), i.ImportName,
 				)
 			}
 			file.Imports[i.ImportName] = i
@@ -195,7 +195,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		case "comment":
 			symbols = []Symbol{}
 		case "ERROR":
-			log.Fatalf("%s: line %d: invalid syntax, tree-sitter ERROR", path, node.LineNumber())
+			log.Fatalf("%s: line %d: invalid syntax, tree-sitter ERROR", path, node.LineNum())
 		default:
 			panic(fmt.Sprintf("parsing %q not yet supported", node.Type()))
 		}
@@ -302,7 +302,7 @@ func parseArrayMarker(n ts.Node, parent Searchable) (Expr, error) {
 }
 
 func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
-	i := Inst{base: base{lineNumber: n.LineNumber()}}
+	i := Inst{base: base{lineNum: n.LineNum()}}
 
 	var err error
 
@@ -310,7 +310,7 @@ func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error)
 		nc := n.Child(j)
 		switch nc.Type() {
 		case "ERROR":
-			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNum())
 		case "identifier":
 			i.name = nc.Content()
 		case "array_marker":
@@ -331,14 +331,14 @@ func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error)
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err,
+				"line %d: '%s' instantiation: %v", n.LineNum(), i.name, err,
 			)
 		}
 	}
 
 	err = i.validate()
 	if err != nil {
-		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err)
+		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNum(), i.name, err)
 	}
 
 	if len(i.symbols) > 0 {
@@ -351,7 +351,7 @@ func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error)
 }
 
 func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error) {
-	i := Inst{base: base{lineNumber: n.LineNumber()}}
+	i := Inst{base: base{lineNum: n.LineNum()}}
 
 	var err error
 
@@ -359,7 +359,7 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 		nc := n.Child(j)
 		switch nc.Type() {
 		case "ERROR":
-			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNum())
 		case "identifier":
 			i.name = nc.Content()
 		case "array_marker":
@@ -382,14 +382,14 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err,
+				"line %d: '%s' instantiation: %v", n.LineNum(), i.name, err,
 			)
 		}
 	}
 
 	err = i.validate()
 	if err != nil {
-		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNumber(), i.name, err)
+		return nil, fmt.Errorf("line %d: '%s' instantiation: %v", n.LineNum(), i.name, err)
 	}
 
 	return []Symbol{&i}, nil
@@ -408,25 +408,25 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 			if nc.PrevSibling().Type() == "element_anonymous_single_line_instantiation" &&
 				nc.NextSibling().Type() == "single_property_assignment" {
 				return props, symbols, fmt.Errorf(
-					"line %d: column %d: missing ';' or newline", nc.LineNumber(), nc.Column()-1,
+					"line %d: column %d: missing ';' or newline", nc.LineNum(), nc.Column()-1,
 				)
 			} else {
-				return props, symbols, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", n.LineNumber())
+				return props, symbols, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", n.LineNum())
 			}
 		case "single_property_assignment":
 			name := nc.Child(0).Content()
 			if _, ok := props[name]; ok {
 				return props,
 					symbols,
-					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
+					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNum(), name)
 			}
 			expr, err := MakeExpr(nc.Child(2), element)
 			if err != nil {
 				return props,
 					symbols,
-					fmt.Errorf("line %d: single property assignment: %v", nc.LineNumber(), err)
+					fmt.Errorf("line %d: single property assignment: %v", nc.LineNum(), err)
 			}
-			props[name] = Prop{LineNumber: nc.LineNumber(), Value: expr}
+			props[name] = Prop{LineNum: nc.LineNum(), Value: expr}
 		default:
 			var ss []Symbol
 			switch t {
@@ -462,7 +462,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 						fmt.Errorf(
 							"line %d: symbol '%s' defined at least twice in the same element body, "+
 								"first occurrence line %d",
-							nc.LineNumber(), ss[i].Name(), s.LineNumber(),
+							nc.LineNum(), ss[i].Name(), s.LineNum(),
 						)
 				}
 				_ = symbols.Add(ss[i])
@@ -476,13 +476,13 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) {
 	name := n.Child(1).Content()
 	if util.IsBaseType(name) {
-		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
+		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNum(), name)
 	}
 
 	t := Type{
 		base: base{
-			lineNumber: n.LineNumber(),
-			name:       name,
+			lineNum: n.LineNum(),
+			name:    name,
 		},
 	}
 
@@ -506,21 +506,21 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 		case "element_body":
 			t.props, t.symbols, err = parseElementBody(nc, &t)
 		case "ERROR":
-			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNum())
 		default:
 			panic("should never happen")
 		}
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' type definition: %v", n.LineNumber(), t.name, err,
+				"line %d: '%s' type definition: %v", n.LineNum(), t.name, err,
 			)
 		}
 	}
 
 	if len(t.args) > 0 && util.IsBaseType(t.typ) {
 		return nil,
-			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.typ)
+			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNum(), t.typ)
 	}
 
 	if util.IsBaseType(t.typ) {
@@ -529,7 +529,7 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 				return nil,
 					fmt.Errorf(
 						"line %d: type definition: line %d: %v",
-						n.LineNumber(), v.LineNumber, err,
+						n.LineNum(), v.LineNum, err,
 					)
 			}
 		}
@@ -547,13 +547,13 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error) {
 	name := n.Child(1).Content()
 	if util.IsBaseType(name) {
-		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNumber(), name)
+		return nil, fmt.Errorf("line %d: invalid type name '%s', type name cannot be the same as base type", n.LineNum(), name)
 	}
 
 	t := Type{
 		base: base{
-			lineNumber: n.LineNumber(),
-			name:       name,
+			lineNum: n.LineNum(),
+			name:    name,
 		},
 	}
 
@@ -576,7 +576,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 				return nil,
 					fmt.Errorf(
 						"line %d: symbol '%s' imported from package '%s' starts with lower case letter",
-						nc.LineNumber(), id, pkg,
+						nc.LineNum(), id, pkg,
 					)
 			}
 		case "argument_list":
@@ -586,21 +586,21 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		case "multi_property_assignment":
 			t.props, err = parseMultiPropertyAssignment(nc, &t)
 		case "ERROR":
-			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNumber())
+			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNum())
 		default:
 			panic("should never happen")
 		}
 
 		if err != nil {
 			return nil, fmt.Errorf(
-				"line %d: '%s' type definition: %v", n.LineNumber(), t.name, err,
+				"line %d: '%s' type definition: %v", n.LineNum(), t.name, err,
 			)
 		}
 	}
 
 	if len(t.args) > 0 && util.IsBaseType(t.typ) {
 		return nil,
-			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNumber(), t.typ)
+			fmt.Errorf("line %d: base type '%s' does not accept argument list", n.LineNum(), t.typ)
 	}
 
 	if util.IsBaseType(t.typ) {
@@ -609,7 +609,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 				return nil,
 					fmt.Errorf(
 						"line %d: '%s' type definition: line %d: %v",
-						n.LineNumber(), t.name, v.LineNumber, err,
+						n.LineNum(), t.name, v.LineNum, err,
 					)
 			}
 		}
@@ -632,14 +632,14 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 		case "identifier":
 			c = &Const{
 				base: base{
-					lineNumber: child.LineNumber(),
-					name:       child.Content(),
+					lineNum: child.LineNum(),
+					name:    child.Content(),
 				},
 			}
 		case "primary_expression", "expression_list":
 			expr, err := MakeExpr(child, c)
 			if err != nil {
-				return nil, fmt.Errorf("line %d: constant %s: %v", c.LineNumber(), c.name, err)
+				return nil, fmt.Errorf("line %d: constant %s: %v", c.LineNum(), c.name, err)
 			}
 
 			c.Value = expr
@@ -661,14 +661,14 @@ func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Pro
 			name := nc.Content()
 			if _, ok := props[name]; ok {
 				return props,
-					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNumber(), name)
+					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNum(), name)
 			}
 			expr, err := MakeExpr(n.Child(i+2), element)
 			if err != nil {
 				return props,
-					fmt.Errorf("line %d: '%s' property assignment: %v", nc.LineNumber(), name, err)
+					fmt.Errorf("line %d: '%s' property assignment: %v", nc.LineNum(), name, err)
 			}
-			props[name] = Prop{LineNumber: nc.LineNumber(), Value: expr}
+			props[name] = Prop{LineNum: nc.LineNum(), Value: expr}
 		default:
 			continue
 		}
@@ -739,14 +739,14 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Param, error) {
 func parseSingleConstantDefinition(n ts.Node) ([]Symbol, error) {
 	c := &Const{
 		base: base{
-			lineNumber: n.LineNumber(),
-			name:       n.Child(1).Content(),
+			lineNum: n.LineNum(),
+			name:    n.Child(1).Content(),
 		},
 	}
 
 	v, err := MakeExpr(n.Child(3), c)
 	if err != nil {
-		return nil, fmt.Errorf("line %d: single constant definition: %v", n.LineNumber(), err)
+		return nil, fmt.Errorf("line %d: single constant definition: %v", n.LineNum(), err)
 	}
 
 	c.Value = v

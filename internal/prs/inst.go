@@ -66,7 +66,7 @@ func (i Inst) validate() error {
 
 	for prop, v := range i.properties {
 		if err := util.IsValidProperty(prop, i.typ); err != nil {
-			return fmt.Errorf("line %d: %v", v.LineNumber, err)
+			return fmt.Errorf("line %d: %v", v.LineNum, err)
 		}
 	}
 

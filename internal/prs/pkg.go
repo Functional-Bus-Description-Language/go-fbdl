@@ -46,7 +46,7 @@ func (p *Package) AddSymbol(s Symbol) error {
 	if !p.Symbols.Add(s) {
 		msg := `symbol '%s' defined at least twice in package '%s', first occurence line %d, second line %d`
 		first, _ := p.Symbols.Get(s.Name())
-		return fmt.Errorf(msg, s.Name(), p.Name, first.LineNumber(), s.LineNumber())
+		return fmt.Errorf(msg, s.Name(), p.Name, first.LineNum(), s.LineNum())
 	}
 
 	return nil
