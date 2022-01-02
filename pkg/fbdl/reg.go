@@ -20,6 +20,7 @@ func Registerify(insBus *ins.Element) *Block {
 
 	regBus := Block{
 		Name:    "main",
+		Doc:     insBus.Doc,
 		IsArray: insBus.IsArray,
 		Count:   int64(insBus.Count),
 		Masters: int64(insBus.Props["masters"].(val.Int)),
@@ -50,6 +51,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.addStatus(
 		&Status{
 			Name:    uuid.Name,
+			Doc:     uuid.Doc,
 			Count:   uuid.Count,
 			Access:  makeAccessSingle(0, 0, busWidth),
 			Atomic:  bool(uuid.Props["atomic"].(val.Bool)),
@@ -62,6 +64,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.addStatus(
 		&Status{
 			Name:    ts.Name,
+			Doc:     ts.Doc,
 			Count:   ts.Count,
 			Access:  makeAccessSingle(1, 0, busWidth),
 			Atomic:  bool(ts.Props["atomic"].(val.Bool)),
@@ -178,6 +181,7 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 
 	b := Block{
 		Name:    insBlk.Name,
+		Doc:     insBlk.Doc,
 		IsArray: insBlk.IsArray,
 		Count:   int64(insBlk.Count),
 		Masters: int64(insBlk.Props["masters"].(val.Int)),

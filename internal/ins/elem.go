@@ -11,6 +11,7 @@ import (
 
 type Element struct {
 	Name    string
+	Doc     string
 	Type    string // ins.Element type can only be base type
 	IsArray bool
 	Count   int64

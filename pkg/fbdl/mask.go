@@ -8,6 +8,7 @@ import (
 // Mask represents mask element.
 type Mask struct {
 	Name    string
+	Doc     string
 	IsArray bool
 	Count   int64
 	Access  Access
@@ -15,7 +16,6 @@ type Mask struct {
 	// Properties
 	Atomic  bool
 	Default BitStr
-	Doc     string
 	Groups  []string
 	Once    bool
 	Width   int64
@@ -24,6 +24,7 @@ type Mask struct {
 func registerifyMask(insMask *ins.Element, addr int64) (*Mask, int64) {
 	mask := Mask{
 		Name:    insMask.Name,
+		Doc:     insMask.Doc,
 		IsArray: insMask.IsArray,
 		Count:   insMask.Count,
 		Atomic:  bool(insMask.Props["atomic"].(val.Bool)),

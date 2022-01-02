@@ -8,6 +8,7 @@ import (
 type Const struct {
 	base
 	Value Expr
+	doc   string
 }
 
 func (c Const) GetSymbol(s string) (Symbol, error) {

@@ -8,13 +8,13 @@ import (
 // Block represents block element as well as bus element.
 type Block struct {
 	Name      string
+	Doc       string
 	IsArray   bool
 	Count     int64
 	Sizes     Sizes
 	AddrSpace AddrSpace
 
 	// Properties
-	Doc     string
 	Masters int64
 	Width   int64
 

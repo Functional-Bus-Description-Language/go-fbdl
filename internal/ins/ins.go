@@ -177,5 +177,9 @@ func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 		}
 	}
 
+	if tc[len(tc)-1].Doc() != "" {
+		inst.Doc = tc[len(tc)-1].Doc()
+	}
+
 	return inst, nil
 }

@@ -8,6 +8,7 @@ import (
 // Status represents status element.
 type Status struct {
 	Name    string
+	Doc     string
 	IsArray bool
 	Count   int64
 	Access  Access
@@ -15,7 +16,6 @@ type Status struct {
 	// Properties
 	Atomic  bool
 	Default BitStr
-	Doc     string
 	Groups  []string
 	Once    bool
 	Width   int64
@@ -24,6 +24,7 @@ type Status struct {
 func registerifyStatus(insSt *ins.Element, addr int64) (*Status, int64) {
 	st := Status{
 		Name:    insSt.Name,
+		Doc:     insSt.Doc,
 		IsArray: insSt.IsArray,
 		Count:   insSt.Count,
 		Atomic:  bool(insSt.Props["atomic"].(val.Bool)),

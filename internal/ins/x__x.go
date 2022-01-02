@@ -23,6 +23,7 @@ func x_timestamp_x() *Element {
 
 	return &Element{
 		Name:  "x_timestamp_x",
+		Doc:   "Bus generation timestamp.",
 		Type:  "status",
 		Count: int64(1),
 		Props: map[string]val.Value{
@@ -42,6 +43,7 @@ func x_uuid_x() *Element {
 
 	return &Element{
 		Name:  "x_uuid_x",
+		Doc:   "Bus universally unique identifier.",
 		Type:  "status",
 		Count: int64(1),
 		Props: map[string]val.Value{

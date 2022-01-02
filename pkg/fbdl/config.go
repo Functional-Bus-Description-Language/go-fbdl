@@ -8,6 +8,7 @@ import (
 // Config represents config element.
 type Config struct {
 	Name    string
+	Doc     string
 	IsArray bool
 	Count   int64
 	Access  Access
@@ -15,7 +16,6 @@ type Config struct {
 	// Properties
 	Atomic  bool
 	Default BitStr
-	Doc     string
 	Groups  []string
 	Range   [2]int64
 	Once    bool
@@ -25,6 +25,7 @@ type Config struct {
 func registerifyConfig(insCfg *ins.Element, addr int64) (*Config, int64) {
 	cfg := Config{
 		Name:    insCfg.Name,
+		Doc:     insCfg.Doc,
 		IsArray: insCfg.IsArray,
 		Count:   insCfg.Count,
 		Atomic:  bool(insCfg.Props["atomic"].(val.Bool)),

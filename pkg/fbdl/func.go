@@ -8,12 +8,12 @@ import (
 // Struct represents func element.
 type Func struct {
 	Name     string
+	Doc      string
 	IsArray  bool
 	Count    int64
 	CallAddr int64
 
 	// Properties
-	Doc string
 
 	Params []*Param
 }
@@ -46,6 +46,7 @@ func (f *Func) AreAllParamsSingleSingle() bool {
 func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 	fun := Func{
 		Name:    insFun.Name,
+		Doc:     insFun.Doc,
 		IsArray: insFun.IsArray,
 		Count:   insFun.Count,
 	}
@@ -60,6 +61,7 @@ func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 	for _, param := range params {
 		p := Param{
 			Name:    param.Name,
+			Doc:     param.Doc,
 			IsArray: param.IsArray,
 			Count:   param.Count,
 			//Doc: string(param.Props["doc"].(val.Str)),

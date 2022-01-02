@@ -28,10 +28,6 @@ func checkProp(name string, prop prs.Prop) error {
 		default:
 			return fmt.Errorf(invalidTypeMsg, name, "integer or bit string", pv.Type())
 		}
-	case "doc":
-		if _, ok := pv.(val.Str); !ok {
-			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
-		}
 	case "groups":
 		groups, ok := pv.(val.List)
 		if !ok {

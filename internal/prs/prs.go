@@ -167,6 +167,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	file := File{Path: path, Pkg: pkg, Symbols: SymbolContainer{}, Imports: make(map[string]Import)}
 
 	var symbols []Symbol
+	var cmnt comment
 	for {
 		switch node.Type() {
 		case "multi_line_instantiation":
@@ -192,6 +193,13 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			file.Imports[i.ImportName] = i
 			goto nextNode
 		case "comment":
+			if cmnt.isEmpty() {
+				cmnt = makeComment(node.Content(), node.LineNum())
+			} else if node.LineNum() == cmnt.endLineNum+1 {
+				cmnt.append(node.Content())
+			} else {
+				cmnt = makeComment(node.Content(), node.LineNum())
+			}
 			symbols = []Symbol{}
 		case "ERROR":
 			log.Fatalf("%s: line %d: invalid syntax, tree-sitter ERROR", path, node.LineNum())
@@ -201,6 +209,13 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 		if err != nil {
 			log.Fatalf("%s: %v", path, err)
+		}
+
+		// Attach comment to symbol as its documentation.
+		if len(symbols) == 1 {
+			if symbols[0].LineNum() == cmnt.endLineNum+1 {
+				symbols[0].SetDoc(cmnt)
+			}
 		}
 
 		for i := 0; i < len(symbols); i++ {
@@ -399,6 +414,8 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 	props := make(map[string]Prop)
 	symbols := SymbolContainer{}
 
+	var cmnt comment
+
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
 		t := nc.Type()
@@ -442,7 +459,13 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 			case "multi_constant_definition":
 				panic("not yet implemented")
 			case "comment":
-				continue
+				if cmnt.isEmpty() {
+					cmnt = makeComment(nc.Content(), nc.LineNum())
+				} else if nc.LineNum() == cmnt.endLineNum+1 {
+					cmnt.append(nc.Content())
+				} else {
+					cmnt = makeComment(nc.Content(), nc.LineNum())
+				}
 			default:
 				panic("should never happen")
 			}
@@ -451,6 +474,13 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 				return props,
 					symbols,
 					fmt.Errorf("element body: %v", err)
+			}
+
+			// Attach comment to symbol as its documentation.
+			if len(ss) == 1 {
+				if ss[0].LineNum() == cmnt.endLineNum+1 {
+					ss[0].SetDoc(cmnt)
+				}
 			}
 
 			for i := 0; i < len(ss); i++ {
@@ -614,18 +644,36 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 
 	var c *Const
 
+	var doc comment
+
 	for i := 0; i < int(n.ChildCount()); i++ {
 		child := n.Child(i)
 
 		switch child.Type() {
-		case "const", "comment":
+		case "const":
 			continue
 		case "identifier":
+			if c != nil {
+				symbols = append(symbols, c)
+			}
+
 			c = &Const{
 				base: base{
 					lineNum: child.LineNum(),
 					name:    child.Content(),
 				},
+			}
+			if c.lineNum == doc.endLineNum+1 {
+				c.doc = doc.msg
+			}
+			doc = emptyComment()
+		case "comment":
+			if c == nil || child.LineNum() != c.lineNum {
+				if doc.isEmpty() {
+					doc = makeComment(child.Content(), child.LineNum())
+				} else {
+					doc.append(child.Content())
+				}
 			}
 		case "primary_expression", "expression_list":
 			expr, err := MakeExpr(child, c)
@@ -634,10 +682,10 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 			}
 
 			c.Value = expr
-
-			symbols = append(symbols, c)
 		}
 	}
+
+	symbols = append(symbols, c)
 
 	return symbols, nil
 }

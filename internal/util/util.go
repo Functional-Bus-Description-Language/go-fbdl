@@ -22,15 +22,15 @@ func IsBaseType(t string) bool {
 // IsValidProperty returns true if given property is valid for given base type.
 func IsValidProperty(p string, t string) error {
 	validProps := map[string][]string{
-		"block":  []string{"doc"},
-		"bus":    []string{"doc", "masters", "width"},
-		"config": []string{"atomic", "default", "doc", "groups", "range", "once", "width"},
-		"func":   []string{"doc"},
-		"mask":   []string{"atomic", "default", "doc", "groups", "once", "width"},
+		"block":  []string{},
+		"bus":    []string{"masters", "width"},
+		"config": []string{"atomic", "default", "groups", "range", "once", "width"},
+		"func":   []string{},
+		"mask":   []string{"atomic", "default", "groups", "once", "width"},
 		// TODO: Decide if "default" should be possible for param.
 		// It creates some problems as not all programming languges support it.
-		"param":  []string{"doc", "range", "width"},
-		"status": []string{"atomic", "doc", "groups", "once", "width"},
+		"param":  []string{"range", "width"},
+		"status": []string{"atomic", "groups", "once", "width"},
 	}
 
 	if list, ok := validProps[t]; ok {
