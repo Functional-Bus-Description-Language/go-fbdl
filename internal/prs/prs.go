@@ -594,7 +594,7 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		switch nc.Type() {
 		case "parameter_list":
 			t.params, err = parseParameterList(nc, parent)
-		case "identifier":
+		case "declared_identifier":
 			t.typ = nc.Content()
 		case "qualified_identifier":
 			t.typ = nc.Content()
@@ -608,7 +608,6 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNum())
 		default:
-			println(nc.Type())
 			panic("should never happen")
 		}
 
