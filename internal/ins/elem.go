@@ -226,8 +226,8 @@ func (elem *Element) makeGrps() error {
 		elem.Grps = append(
 			elem.Grps,
 			&Group{
-				Name:     grpName,
-				Elements: groups[grpName],
+				Name:  grpName,
+				Elems: groups[grpName],
 			},
 		)
 	}

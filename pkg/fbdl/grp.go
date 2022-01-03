@@ -18,15 +18,15 @@ type GroupStatusArraySameSizesSingle struct {
 func (g *GroupStatusArraySameSizesSingle) Name() string        { return g.name }
 func (g *GroupStatusArraySameSizesSingle) Statuses() []*Status { return g.statuses }
 
-func makeGroupStatusArraySameSizesSingle(group *ins.Group, addr int64) (Group, int64) {
+func makeGroupStatusArraySameSizesSingle(insGrp *ins.Group, addr int64) (Group, int64) {
 	grp := GroupStatusArraySameSizesSingle{
-		name:     group.Name,
+		name:     insGrp.Name,
 		statuses: []*Status{},
 	}
 
 	startBit := int64(0)
 
-	for _, e := range group.Elements {
+	for _, e := range insGrp.Elems {
 		st, _ := registerifyStatusArraySingle(e, addr, startBit)
 		startBit += st.Width
 		grp.statuses = append(grp.statuses, st)
@@ -35,10 +35,10 @@ func makeGroupStatusArraySameSizesSingle(group *ins.Group, addr int64) (Group, i
 	return &grp, addr
 }
 
-func registerifyGroupStatusArray(blk *Block, group *ins.Group, addr int64) (Group, int64) {
+func registerifyGroupStatusArray(blk *Block, insGrp *ins.Group, addr int64) (Group, int64) {
 	sameSizes := true
-	for _, e := range group.Elements {
-		if e.Count != group.Elements[0].Count {
+	for _, e := range insGrp.Elems {
+		if e.Count != insGrp.Elems[0].Count {
 			sameSizes = false
 			break
 		}
@@ -46,7 +46,7 @@ func registerifyGroupStatusArray(blk *Block, group *ins.Group, addr int64) (Grou
 
 	var grp Group
 	if sameSizes {
-		grp, addr = registerifyGroupStatusArraySameSizes(blk, group, addr)
+		grp, addr = registerifyGroupStatusArraySameSizes(blk, insGrp, addr)
 	} else {
 		panic("not yet implemented")
 	}
@@ -54,11 +54,11 @@ func registerifyGroupStatusArray(blk *Block, group *ins.Group, addr int64) (Grou
 	return grp, addr
 }
 
-func registerifyGroupStatusArraySameSizes(blk *Block, group *ins.Group, addr int64) (Group, int64) {
+func registerifyGroupStatusArraySameSizes(blk *Block, insGrp *ins.Group, addr int64) (Group, int64) {
 	widths := []int64{}
 	singleIndexWidth := int64(0)
 
-	for _, e := range group.Elements {
+	for _, e := range insGrp.Elems {
 		w := int64(e.Props["width"].(val.Int))
 		widths = append(widths, w)
 		singleIndexWidth += w
@@ -66,7 +66,7 @@ func registerifyGroupStatusArraySameSizes(blk *Block, group *ins.Group, addr int
 
 	var grp Group
 	if busWidth/2 < singleIndexWidth && singleIndexWidth <= busWidth {
-		grp, addr = makeGroupStatusArraySameSizesSingle(group, addr)
+		grp, addr = makeGroupStatusArraySameSizesSingle(insGrp, addr)
 	}
 
 	return grp, addr
