@@ -10,6 +10,8 @@ type AccessMask struct {
 	Upper, Lower int64
 }
 
+func (am AccessMask) Width() int64 { return am.Upper - am.Lower + 1 }
+
 type Access interface {
 	RegCount() int64 // RegCount returns the number of occupied registers.
 	IsArray() bool

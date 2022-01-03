@@ -88,11 +88,13 @@ func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int
 		return addr
 	}
 
+	gp := gapPool{}
+
 	addr = registerifyGroups(blk, insBlk, addr)
 	addr = registerifyConfigs(blk, insBlk, addr)
 	addr = registerifyFuncs(blk, insBlk, addr)
 	addr = registerifyMasks(blk, insBlk, addr)
-	addr = registerifyStatuses(blk, insBlk, addr)
+	addr = registerifyStatuses(blk, insBlk, addr, &gp)
 
 	return addr
 }
@@ -139,7 +141,7 @@ func registerifyMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64 {
 	insStatuses := insBlk.Elems.GetAllByType("status")
 
 	var st *Status
@@ -152,7 +154,7 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64) int64 {
 		if blk.hasElement(insSt.Name) {
 			continue
 		}
-		st, addr = registerifyStatus(insSt, addr)
+		st, addr = registerifyStatus(insSt, addr, gp)
 		blk.addStatus(st)
 	}
 
