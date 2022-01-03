@@ -484,7 +484,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 			}
 
 			for i := 0; i < len(ss); i++ {
-				s, exists := symbols.Get(ss[i].Name())
+				s, exists := symbols.GetByName(ss[i].Name())
 				if exists {
 					return props,
 						symbols,

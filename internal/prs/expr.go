@@ -238,7 +238,7 @@ type DeclaredIdentifier struct {
 }
 
 func (di DeclaredIdentifier) Eval() (val.Value, error) {
-	id, err := di.s.GetSymbol(di.v)
+	id, err := di.s.GetSymbol(di.v, ConstDef)
 	if err != nil {
 		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.v, err)
 	}
@@ -309,7 +309,7 @@ func (s Subscript) Eval() (val.Value, error) {
 		return val.Int(0), fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
 	}
 
-	sym, err := s.s.GetSymbol(s.name)
+	sym, err := s.s.GetSymbol(s.name, ConstDef)
 	if err != nil {
 		return val.Int(0), fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
 	}

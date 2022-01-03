@@ -1,7 +1,16 @@
 package prs
 
+type SymbolKind uint8
+
+const (
+	ConstDef SymbolKind = iota
+	TypeDef
+	ElemInst
+)
+
 type Symbol interface {
 	Name() string
+	Kind() SymbolKind
 	LineNum() uint32
 	Doc() string
 	SetDoc(c comment)

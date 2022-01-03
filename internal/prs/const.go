@@ -11,14 +11,16 @@ type Const struct {
 	doc   string
 }
 
-func (c Const) GetSymbol(s string) (Symbol, error) {
-	if strings.Contains(s, ".") {
+func (c Const) Kind() SymbolKind { return ConstDef }
+
+func (c Const) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
+	if strings.Contains(name, ".") {
 		panic("To be implemented")
 	}
 
 	if c.parent != nil {
-		return c.parent.GetSymbol(s)
+		return c.parent.GetSymbol(name, kind)
 	}
 
-	return c.file.GetSymbol(s)
+	return c.file.GetSymbol(name, kind)
 }

@@ -24,12 +24,12 @@ type Type struct {
 	resolvedArgs map[string]Expr
 }
 
-func (t *Type) GetSymbol(name string) (Symbol, error) {
+func (t *Type) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 	if strings.Contains(name, ".") {
 		panic("To be implemented")
 	}
 
-	sym, ok := t.symbols.Get(name)
+	sym, ok := t.symbols.Get(name, kind)
 	if ok {
 		return sym, nil
 	}
@@ -39,12 +39,13 @@ func (t *Type) GetSymbol(name string) (Symbol, error) {
 	}
 
 	if t.parent != nil {
-		return t.parent.GetSymbol(name)
+		return t.parent.GetSymbol(name, kind)
 	}
 
-	return t.file.GetSymbol(name)
+	return t.file.GetSymbol(name, kind)
 }
 
+func (t Type) Kind() SymbolKind                    { return TypeDef }
 func (t Type) Type() string                        { return t.typ }
 func (t Type) Args() []Arg                         { return t.args }
 func (t Type) Params() []Param                     { return t.params }

@@ -17,7 +17,17 @@ func (sc *SymbolContainer) Add(sym Symbol) bool {
 	return true
 }
 
-func (sc *SymbolContainer) Get(name string) (Symbol, bool) {
+func (sc *SymbolContainer) Get(name string, kind SymbolKind) (Symbol, bool) {
+	for _, s := range *sc {
+		if s.Name() == name && s.Kind() == kind {
+			return s, true
+		}
+	}
+
+	return nil, false
+}
+
+func (sc *SymbolContainer) GetByName(name string) (Symbol, bool) {
 	for _, s := range *sc {
 		if s.Name() == name {
 			return s, true

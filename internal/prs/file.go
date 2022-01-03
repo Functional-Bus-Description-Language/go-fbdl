@@ -23,7 +23,7 @@ func (f *File) AddSymbol(s Symbol) error {
 
 	if !f.Symbols.Add(s) {
 		msg := `line %d: symbol '%s' defined at least twice in file, first occurence line %d`
-		first, _ := f.Symbols.Get(name)
+		first, _ := f.Symbols.GetByName(name)
 		return fmt.Errorf(msg, s.LineNum(), name, first.LineNum())
 	}
 	s.SetFile(f)
@@ -31,7 +31,7 @@ func (f *File) AddSymbol(s Symbol) error {
 	return nil
 }
 
-func (f *File) GetSymbol(name string) (Symbol, error) {
+func (f *File) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 	if strings.Contains(name, ".") {
 		parts := strings.Split(name, ".")
 		pkgName := parts[0]
@@ -42,13 +42,13 @@ func (f *File) GetSymbol(name string) (Symbol, error) {
 			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
 		}
 
-		return pkg.Package.GetSymbol(symName)
+		return pkg.Package.GetSymbol(symName, kind)
 	}
 
-	sym, ok := f.Symbols.Get(name)
+	sym, ok := f.Symbols.Get(name, kind)
 	if ok {
 		return sym, nil
 	}
 
-	return f.Pkg.GetSymbol(name)
+	return f.Pkg.GetSymbol(name, kind)
 }

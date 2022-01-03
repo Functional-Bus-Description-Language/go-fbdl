@@ -21,12 +21,11 @@ type Inst struct {
 	resolvedArgs map[string]Expr
 }
 
-func (i Inst) Type() string {
-	return i.typ
-}
+func (i Inst) Kind() SymbolKind { return ElemInst }
+func (i Inst) Type() string     { return i.typ }
 
-func (i *Inst) GetSymbol(name string) (Symbol, error) {
-	sym, ok := i.symbols.Get(name)
+func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
+	sym, ok := i.symbols.Get(name, kind)
 	if ok {
 		return sym, nil
 	}
@@ -36,10 +35,10 @@ func (i *Inst) GetSymbol(name string) (Symbol, error) {
 	}
 
 	if i.parent != nil {
-		return i.parent.GetSymbol(name)
+		return i.parent.GetSymbol(name, kind)
 	}
 
-	return i.file.GetSymbol(name)
+	return i.file.GetSymbol(name, kind)
 }
 
 func (i Inst) Args() []Arg                         { return i.args }

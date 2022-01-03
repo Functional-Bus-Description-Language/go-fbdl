@@ -51,7 +51,7 @@ func resolveArgs(symbol prs.Element) (map[string]prs.Expr, error) {
 	resolvedArgs := make(map[string]prs.Expr)
 	inPositionalArgs := true
 
-	typeSymbol, err := symbol.GetSymbol(symbol.Type())
+	typeSymbol, err := symbol.GetSymbol(symbol.Type(), prs.TypeDef)
 	if err != nil {
 		return nil, fmt.Errorf("cannot get symbol '%s' for element type: %v", symbol.Type(), err)
 	}

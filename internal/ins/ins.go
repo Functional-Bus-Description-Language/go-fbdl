@@ -44,7 +44,7 @@ func setBusWidth(main prs.Symbol) error {
 }
 
 func Instantiate(packages prs.Packages) *Element {
-	main, ok := packages["main"][0].Symbols.Get("main")
+	main, ok := packages["main"][0].Symbols.Get("main", prs.ElemInst)
 	if !ok {
 		log.Println("instantiation: there is no main bus; returning nil")
 		return nil
@@ -141,9 +141,9 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 		var s prs.Symbol
 		var err error
 		if e.Parent() != nil {
-			s, err = e.Parent().GetSymbol(e.Type())
+			s, err = e.Parent().GetSymbol(e.Type(), prs.TypeDef)
 		} else {
-			s, err = e.File().GetSymbol(e.Type())
+			s, err = e.File().GetSymbol(e.Type(), prs.TypeDef)
 		}
 		if err != nil {
 			log.Fatalf("cannot get symbol '%s': %v", e.Type(), err)
