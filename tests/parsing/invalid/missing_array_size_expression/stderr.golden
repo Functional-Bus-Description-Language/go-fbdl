@@ -1,1 +1,1 @@
-bus.fbd: line 1: 'main' instantiation: element body: line 2: 'st' instantiation: missing array size expression
+bus.fbd: line 1: 'Main' instantiation: element body: line 2: 'st' instantiation: missing array size expression

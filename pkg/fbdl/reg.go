@@ -12,14 +12,14 @@ var busWidth int64
 
 func Registerify(insBus *ins.Element) *Block {
 	if insBus == nil {
-		log.Println("registerification: there is no main bus; returning nil")
+		log.Println("registerification: there is no Main bus; returning nil")
 		return nil
 	}
 
 	busWidth = int64(insBus.Props["width"].(val.Int))
 
 	regBus := Block{
-		Name:    "main",
+		Name:    "Main",
 		Doc:     insBus.Doc,
 		IsArray: insBus.IsArray,
 		Count:   int64(insBus.Count),
@@ -30,7 +30,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.addConsts(insBus)
 
 	// addr is current block internal access address, not global address.
-	// 0 and 1 are reserved for x_uuid_x and x_timestamp_x.
+	// 0 and 1 are reserved for X_UUID_X and X_TIMESTAMP_X.
 	addr := int64(2)
 
 	addr = registerifyFunctionalities(&regBus, insBus, addr)
@@ -47,7 +47,7 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
-	uuid, _ := insBus.Elems.Get("x_uuid_x")
+	uuid, _ := insBus.Elems.Get("X_UUID_X")
 	regBus.addStatus(
 		&Status{
 			Name:    uuid.Name,
@@ -60,7 +60,7 @@ func Registerify(insBus *ins.Element) *Block {
 		},
 	)
 
-	ts, _ := insBus.Elems.Get("x_timestamp_x")
+	ts, _ := insBus.Elems.Get("X_TIMESTAMP_X")
 	regBus.addStatus(
 		&Status{
 			Name:    ts.Name,
@@ -147,7 +147,7 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPoo
 	var st *Status
 
 	for _, insSt := range insStatuses {
-		if insSt.Name == "x_uuid_x" || insSt.Name == "x_timestamp_x" {
+		if insSt.Name == "X_UUID_X" || insSt.Name == "X_TIMESTAMP_X" {
 			continue
 		}
 		// Omit elements that have been already registerified as group members.

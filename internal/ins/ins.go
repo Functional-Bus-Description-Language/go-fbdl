@@ -28,14 +28,14 @@ func setBusWidth(main prs.Symbol) error {
 
 	v, err := prop.Value.Eval()
 	if err != nil {
-		return fmt.Errorf("cannot evaluate main bus width")
+		return fmt.Errorf("cannot evaluate 'Main' bus 'width' property")
 	}
 
 	if v, ok := v.(val.Int); ok {
 		busWidth = int64(v)
 	} else {
 		log.Fatalf(
-			"%s: line %d: 'main' bus 'width' property must be of type 'integer'",
+			"%s: line %d: 'Main' bus 'width' property must be of type 'integer'",
 			main.File().Path, prop.LineNum,
 		)
 	}
@@ -44,9 +44,9 @@ func setBusWidth(main prs.Symbol) error {
 }
 
 func Instantiate(packages prs.Packages) *Element {
-	main, ok := packages["main"][0].Symbols.Get("main", prs.ElemInst)
+	main, ok := packages["main"][0].Symbols.Get("Main", prs.ElemInst)
 	if !ok {
-		log.Println("instantiation: there is no main bus; returning nil")
+		log.Println("instantiation: there is no 'Main' bus; returning nil")
 		return nil
 	}
 
@@ -71,26 +71,26 @@ func Instantiate(packages prs.Packages) *Element {
 					continue
 				}
 
-				if name != "main" && util.IsBaseType(e.Type()) {
+				if name != "Main" && util.IsBaseType(e.Type()) {
 					continue
 				}
 
 				elem := instantiateElement(e)
 
-				if pkgName == "main" && name == "main" {
+				if pkgName == "main" && name == "Main" {
 					mainBus = elem
 				}
 			}
 		}
 	}
 
-	if _, exists := mainBus.Elems.Get("x_uuid_x"); exists {
-		panic("x_uuid_x is reserved element name")
+	if _, exists := mainBus.Elems.Get("X_UUID_X"); exists {
+		panic("X_UUID_X is reserved element name")
 	}
 	mainBus.Elems.Add(x_uuid_x())
 
-	if _, exists := mainBus.Elems.Get("x_timestamp_x"); exists {
-		panic("x_timestamp_x is reserved element name")
+	if _, exists := mainBus.Elems.Get("X_TIMESTAMP_X"); exists {
+		panic("X_TIMESTAMP_X is reserved element name")
 	}
 	mainBus.Elems.Add(x_timestamp_x())
 

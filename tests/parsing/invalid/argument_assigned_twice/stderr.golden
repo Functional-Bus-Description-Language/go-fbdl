@@ -1,1 +1,1 @@
-bus.fbd: line 4: 'main' instantiation: argument 'm' assigned at least twice in argument list
+bus.fbd: line 4: 'Main' instantiation: argument 'm' assigned at least twice in argument list

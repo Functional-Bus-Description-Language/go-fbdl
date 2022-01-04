@@ -1,1 +1,1 @@
-bus.fbd: line 1: bus instantiation must be named 'main' and must be placed in 'main' package
+bus.fbd: line 1: bus instantiation must be named 'Main' and must be placed in 'main' package

@@ -18,11 +18,11 @@ func x_timestamp_x() *Element {
 
 	dflt, err := val.BitStrFromInt(timestamp, width)
 	if err != nil {
-		panic("x_timestamp_x")
+		panic("X_TIMESTAMP_X")
 	}
 
 	return &Element{
-		Name:  "x_timestamp_x",
+		Name:  "X_TIMESTAMP_X",
 		Doc:   "Bus generation timestamp.",
 		Type:  "status",
 		Count: int64(1),
@@ -38,11 +38,11 @@ func x_timestamp_x() *Element {
 func x_uuid_x() *Element {
 	dflt, err := val.BitStrFromInt(val.Int(0xDEADBEEF), busWidth)
 	if err != nil {
-		panic("x_uuid_x")
+		panic("X_UUID_X")
 	}
 
 	return &Element{
-		Name:  "x_uuid_x",
+		Name:  "X_UUID_X",
 		Doc:   "Bus universally unique identifier.",
 		Type:  "status",
 		Count: int64(1),
