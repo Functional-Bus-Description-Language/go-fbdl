@@ -27,7 +27,7 @@ func x_timestamp_x() *Element {
 		Type:  "status",
 		Count: int64(1),
 		Props: map[string]val.Value{
-			"atomic":  val.Bool(false),
+			"atomic":  val.Bool(true),
 			"default": dflt,
 			"width":   val.Int(width),
 		},
@@ -47,7 +47,7 @@ func x_uuid_x() *Element {
 		Type:  "status",
 		Count: int64(1),
 		Props: map[string]val.Value{
-			"atomic":  val.Bool(false),
+			"atomic":  val.Bool(true),
 			"default": dflt,
 			"width":   val.Int(busWidth),
 		},
