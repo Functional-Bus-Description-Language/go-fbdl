@@ -20,7 +20,7 @@ func setBusWidth(main prs.Symbol) error {
 		panic("FIX ME")
 	}
 
-	prop, ok := e.Props()["width"]
+	prop, ok := e.Props().Get("width")
 	if !ok {
 		busWidth = dfltBusWidth
 		return nil

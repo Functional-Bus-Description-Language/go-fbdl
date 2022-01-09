@@ -38,29 +38,29 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		typ.SetResolvedArgs(resolvedArgs)
 	}
 
-	for name, prop := range typ.Props() {
-		if err := util.IsValidProperty(name, elem.Type); err != nil {
+	for _, prop := range typ.Props() {
+		if err := util.IsValidProperty(prop.Name, elem.Type); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		err := checkProp(name, prop)
+		err := checkProp(prop.Name, prop)
 		if err != nil {
 			return fmt.Errorf("\n  %s: line %d: %v", typ.File().Path, prop.LineNum, err)
 		}
-		if _, exist := elem.Props[name]; exist {
+		if _, exist := elem.Props[prop.Name]; exist {
 			return fmt.Errorf(
 				"cannot set property '%s', property is already set in one of ancestor types",
-				name,
+				prop.Name,
 			)
 		}
 		v, err := prop.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
-		err = checkPropConflict(elem, name)
+		err = checkPropConflict(elem, prop.Name)
 		if err != nil {
 			return fmt.Errorf("line %d: %v", prop.LineNum, err)
 		}
-		elem.Props[name] = v
+		elem.Props[prop.Name] = v
 	}
 
 	for _, s := range typ.Symbols() {

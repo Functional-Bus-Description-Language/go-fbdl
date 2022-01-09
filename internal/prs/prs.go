@@ -338,7 +338,7 @@ func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error)
 		case "argument_list":
 			i.args, err = parseArgumentList(nc, parent)
 		case "element_body":
-			i.properties, i.symbols, err = parseElementBody(nc, &i)
+			i.props, i.symbols, err = parseElementBody(nc, &i)
 		default:
 			panic("should never happen")
 		}
@@ -389,7 +389,7 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 		case ";", "comment":
 			continue
 		case "multi_property_assignment":
-			i.properties, err = parseMultiPropertyAssignment(nc, &i)
+			i.props, err = parseMultiPropertyAssignment(nc, &i)
 		default:
 			panic("should never happen")
 		}
@@ -409,9 +409,9 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 	return []Symbol{&i}, nil
 }
 
-func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolContainer, error) {
+func parseElementBody(n ts.Node, element Searchable) (PropContainer, SymbolContainer, error) {
 	var err error
-	props := make(map[string]Prop)
+	props := PropContainer{}
 	symbols := SymbolContainer{}
 
 	var cmnt comment
@@ -431,7 +431,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 			}
 		case "single_property_assignment":
 			name := nc.Child(0).Content()
-			if _, ok := props[name]; ok {
+			if _, ok := props.Get(name); ok {
 				return props,
 					symbols,
 					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNum(), name)
@@ -442,7 +442,7 @@ func parseElementBody(n ts.Node, element Searchable) (map[string]Prop, SymbolCon
 					symbols,
 					fmt.Errorf("line %d: single property assignment: %v", nc.LineNum(), err)
 			}
-			props[name] = Prop{LineNum: nc.LineNum(), Value: expr}
+			props.Add(Prop{LineNum: nc.LineNum(), Name: name, Value: expr})
 		default:
 			var ss []Symbol
 			switch t {
@@ -553,12 +553,12 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 	}
 
 	if util.IsBaseType(t.typ) {
-		for prop, v := range t.props {
-			if err = util.IsValidProperty(prop, t.typ); err != nil {
+		for _, p := range t.props {
+			if err = util.IsValidProperty(p.Name, t.typ); err != nil {
 				return nil,
 					fmt.Errorf(
 						"line %d: type definition: line %d: %v",
-						n.LineNum(), v.LineNum, err,
+						n.LineNum(), p.LineNum, err,
 					)
 			}
 		}
@@ -624,12 +624,12 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 	}
 
 	if util.IsBaseType(t.typ) {
-		for prop, v := range t.props {
-			if err = util.IsValidProperty(prop, t.typ); err != nil {
+		for _, p := range t.props {
+			if err = util.IsValidProperty(p.Name, t.typ); err != nil {
 				return nil,
 					fmt.Errorf(
 						"line %d: '%s' type definition: line %d: %v",
-						n.LineNum(), t.name, v.LineNum, err,
+						n.LineNum(), t.name, p.LineNum, err,
 					)
 			}
 		}
@@ -689,15 +689,15 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	return symbols, nil
 }
 
-func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Prop, error) {
-	props := make(map[string]Prop)
+func parseMultiPropertyAssignment(n ts.Node, element Searchable) (PropContainer, error) {
+	props := PropContainer{}
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
 		switch nc.Type() {
 		case "identifier":
 			name := nc.Content()
-			if _, ok := props[name]; ok {
+			if _, ok := props.Get(name); ok {
 				return props,
 					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNum(), name)
 			}
@@ -706,7 +706,7 @@ func parseMultiPropertyAssignment(n ts.Node, element Searchable) (map[string]Pro
 				return props,
 					fmt.Errorf("line %d: '%s' property assignment: %v", nc.LineNum(), name, err)
 			}
-			props[name] = Prop{LineNum: nc.LineNum(), Value: expr}
+			props.Add(Prop{LineNum: nc.LineNum(), Name: name, Value: expr})
 		default:
 			continue
 		}

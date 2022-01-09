@@ -14,8 +14,8 @@ type Inst struct {
 	IsArray bool
 	Count   Expr
 
-	properties map[string]Prop
-	symbols    SymbolContainer
+	props   PropContainer
+	symbols SymbolContainer
 
 	args         []Arg
 	resolvedArgs map[string]Expr
@@ -44,7 +44,7 @@ func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 func (i Inst) Args() []Arg                         { return i.args }
 func (i *Inst) SetResolvedArgs(ra map[string]Expr) { i.resolvedArgs = ra }
 func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
-func (i Inst) Props() map[string]Prop              { return i.properties }
+func (i Inst) Props() PropContainer                { return i.props }
 func (i Inst) Symbols() SymbolContainer            { return i.symbols }
 
 func (i Inst) File() *File {
@@ -75,9 +75,13 @@ func (i Inst) validate() error {
 		return fmt.Errorf("base type '%s' does not accept arguments", i.typ)
 	}
 
-	for prop, v := range i.properties {
-		if err := util.IsValidProperty(prop, i.typ); err != nil {
-			return fmt.Errorf("line %d: %v", v.LineNum, err)
+	for j, p := range i.props {
+		if err := util.IsValidProperty(p.Name, i.typ); err != nil {
+			return fmt.Errorf("line %d: %v", p.LineNum, err)
+		}
+
+		if err := checkPropConflict(i.typ, p, i.props[0:j]); err != nil {
+			return fmt.Errorf("%v", err)
 		}
 	}
 
