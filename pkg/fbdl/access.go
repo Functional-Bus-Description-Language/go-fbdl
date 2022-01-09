@@ -18,6 +18,7 @@ type Access interface {
 	StartAddr() int64
 	EndAddr() int64
 	EndBit() int64
+	Width() int64 // Width returns total width of single element.
 }
 
 // AccessSingleSingle describes access to ...
@@ -51,6 +52,7 @@ func (ass AccessSingleSingle) IsArray() bool    { return false }
 func (ass AccessSingleSingle) StartAddr() int64 { return ass.Addr }
 func (ass AccessSingleSingle) EndAddr() int64   { return ass.Addr }
 func (ass AccessSingleSingle) EndBit() int64    { return ass.Mask.Upper }
+func (ass AccessSingleSingle) Width() int64     { return ass.Mask.Width() }
 
 func makeAccessSingleSingle(addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
@@ -100,6 +102,25 @@ func (asc AccessSingleContinuous) IsArray() bool    { return false }
 func (asc AccessSingleContinuous) StartAddr() int64 { return asc.startAddr }
 func (asc AccessSingleContinuous) EndAddr() int64   { return asc.startAddr + asc.regCount - 1 }
 func (asc AccessSingleContinuous) EndBit() int64    { return asc.EndMask.Upper }
+
+func (asc AccessSingleContinuous) Width() int64 {
+	w := asc.StartMask.Width() + asc.EndMask.Width()
+	if asc.regCount > 2 {
+		w += busWidth * (asc.regCount - 2)
+	}
+	return w
+}
+
+// DecreasingOrder returns true if element must be accessed from the register with
+// the highest address to the regsiter with the lowest address. If an element should be
+// accessed in the increasing order it returns false.
+// This is useful only in case of atomic elements wider than bus width.
+func (asc AccessSingleContinuous) DecreasingOrder() bool {
+	if asc.EndMask.Width() > asc.StartMask.Width() {
+		return true
+	}
+	return false
+}
 
 func makeAccessSingleContinuous(addr, startBit, width int64) Access {
 	startMask := AccessMask{Upper: busWidth - 1, Lower: startBit}
@@ -169,6 +190,7 @@ func (aas AccessArraySingle) IsArray() bool    { return true }
 func (aas AccessArraySingle) StartAddr() int64 { return aas.startAddr }
 func (aas AccessArraySingle) EndAddr() int64   { return aas.startAddr + aas.regCount - 1 }
 func (aas AccessArraySingle) EndBit() int64    { return aas.Mask.Upper }
+func (aas AccessArraySingle) Width() int64     { return aas.Mask.Width() }
 
 func makeAccessArraySingle(itemCount, addr, startBit, width int64) AccessArraySingle {
 	if startBit+width > busWidth {
@@ -220,6 +242,7 @@ func (aac AccessArrayContinuous) RegCount() int64  { return aac.regCount }
 func (aac AccessArrayContinuous) IsArray() bool    { return true }
 func (aac AccessArrayContinuous) StartAddr() int64 { return aac.startAddr }
 func (aac AccessArrayContinuous) EndAddr() int64   { return aac.startAddr + aac.regCount - 1 }
+func (aac AccessArrayContinuous) Width() int64     { return aac.ItemWidth }
 
 func (aac AccessArrayContinuous) EndBit() int64 {
 	return ((aac.StartBit + aac.regCount*aac.ItemWidth - 1) % busWidth)
@@ -281,6 +304,7 @@ func (aam AccessArrayMultiple) RegCount() int64  { return aam.regCount }
 func (aam AccessArrayMultiple) IsArray() bool    { return true }
 func (aam AccessArrayMultiple) StartAddr() int64 { return aam.startAddr }
 func (aam AccessArrayMultiple) EndAddr() int64   { return aam.startAddr + aam.regCount - 1 }
+func (aam AccessArrayMultiple) Width() int64     { return aam.ItemWidth }
 
 func (aam AccessArrayMultiple) EndBit() int64 {
 	if aam.regCount == 1 {
