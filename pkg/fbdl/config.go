@@ -17,7 +17,7 @@ type Config struct {
 	Atomic  bool
 	Default BitStr
 	Groups  []string
-	Range   [2]int64
+	Range   Range
 	Once    bool
 	Width   int64
 }

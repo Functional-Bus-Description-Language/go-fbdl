@@ -47,6 +47,18 @@ func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
 func (i Inst) Props() map[string]Prop              { return i.properties }
 func (i Inst) Symbols() SymbolContainer            { return i.symbols }
 
+func (i Inst) File() *File {
+	if i.file != nil {
+		return i.file
+	}
+
+	if s, ok := i.parent.(Symbol); ok {
+		return s.File()
+	}
+
+	panic("should never happen")
+}
+
 func (i Inst) Params() []Param {
 	panic("should never happen, element definition cannot have parameters")
 }
