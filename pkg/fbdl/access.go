@@ -111,11 +111,8 @@ func (asc AccessSingleContinuous) Width() int64 {
 	return w
 }
 
-// DecreasingOrder returns true if element must be accessed from the register with
-// the highest address to the regsiter with the lowest address. If an element should be
-// accessed in the increasing order it returns false.
-// This is useful only in case of atomic elements wider than bus width.
-func (asc AccessSingleContinuous) DecreasingOrder() bool {
+// IsEndRegWider returns true if end register is wider than the start one.
+func (asc AccessSingleContinuous) IsEndMaskWider() bool {
 	if asc.EndMask.Width() > asc.StartMask.Width() {
 		return true
 	}
