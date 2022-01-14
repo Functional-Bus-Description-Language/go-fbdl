@@ -3,7 +3,6 @@ package val
 import (
 	"fmt"
 	"math"
-	"strconv"
 )
 
 // BitStr represents FBDL bit string type.
@@ -146,14 +145,14 @@ func BitStrFromInt(v Int, width int64) (BitStr, error) {
 			)
 	}
 
-	if i > 0 {
+	if i >= 0 {
 		var s string
 		if width%4 == 0 {
-			s = "x\"" + strconv.FormatInt(i, 16) + "\""
+			s = fmt.Sprintf("x\"%0*x\"", width/4, i)
 		} else if width%3 == 0 {
-			s = "o\"" + strconv.FormatInt(i, 8) + "\""
+			s = fmt.Sprintf("o\"%0*o\"", width/3, i)
 		} else {
-			s = "b\"" + strconv.FormatInt(i, 2) + "\""
+			s = fmt.Sprintf("b\"%0*b\"", width, i)
 		}
 
 		return BitStr(s), nil
