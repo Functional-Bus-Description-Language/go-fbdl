@@ -5,18 +5,7 @@ import (
 )
 
 type Package struct {
-	constContainer
-}
-
-func (p Package) HasConsts() bool {
-	if len(p.IntConsts) != 0 || len(p.IntListConsts) != 0 {
-		return true
-	}
-	if len(p.StrConsts) != 0 {
-		return true
-	}
-
-	return false
+	ConstContainer
 }
 
 func ConstifyPackages(packages prs.Packages) map[string]Package {

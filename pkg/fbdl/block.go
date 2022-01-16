@@ -18,7 +18,7 @@ type Block struct {
 	Width   int64
 
 	// Constants
-	constContainer
+	ConstContainer
 
 	// Elements
 	Configs   []*Config
