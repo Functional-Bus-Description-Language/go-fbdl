@@ -16,7 +16,7 @@ do
 	../../../fbdl -z -r bus.fbd
 	diff golden.json reg.json
 	rm reg.json
-	cd ../..
+	cd ..
 done
 
 echo -e "\nAll \e[1;32mPASSED\e[0m!"

@@ -1,0 +1,148 @@
+{
+	"Name": "Main",
+	"Doc": "Test checking whether element right after the func has proper address when func occupies exactly one register.",
+	"IsArray": false,
+	"Count": 1,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	},
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": null,
+	"Funcs": [
+		{
+			"Name": "F",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 2,
+			"AckAddr": 0,
+			"Params": [
+				{
+					"Name": "a",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 27,
+							"Lower": 0
+						}
+					},
+					"Width": 28
+				},
+				{
+					"Name": "b",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 30,
+							"Lower": 28
+						}
+					},
+					"Width": 3
+				},
+				{
+					"Name": "c",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 31,
+							"Lower": 31
+						}
+					},
+					"Width": 1
+				}
+			],
+			"Returns": null
+		}
+	],
+	"Masks": null,
+	"Statuses": [
+		{
+			"Name": "St",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 3,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "X_UUID_X",
+			"Doc": "Bus universally unique identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 0,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"deadbeef\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "X_TIMESTAMP_X",
+			"Doc": "Bus generation timestamp.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 1,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		}
+	],
+	"Subblocks": null
+}
