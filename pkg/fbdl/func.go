@@ -131,6 +131,16 @@ func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 
 	if len(fun.Params) == 0 && len(fun.Returns) == 0 {
 		addr += 1
+	} else {
+		var lastAccess Access
+		if len(fun.Returns) > 0 {
+			lastAccess = fun.Returns[len(fun.Returns)-1].Access
+		} else {
+			lastAccess = fun.Params[len(fun.Params)-1].Access
+		}
+		if lastAccess.EndBit() < busWidth-1 {
+			addr += 1
+		}
 	}
 
 	return &fun, addr

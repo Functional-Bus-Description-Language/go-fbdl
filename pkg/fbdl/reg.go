@@ -90,9 +90,9 @@ func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int
 
 	gp := gapPool{}
 
+	addr = registerifyFuncs(blk, insBlk, addr)
 	addr = registerifyGroups(blk, insBlk, addr)
 	addr = registerifyConfigs(blk, insBlk, addr)
-	addr = registerifyFuncs(blk, insBlk, addr)
 	addr = registerifyMasks(blk, insBlk, addr)
 	addr = registerifyStatuses(blk, insBlk, addr, &gp)
 

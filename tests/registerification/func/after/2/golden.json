@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether element right after the func has proper address when func occupies exactly one register and has only params.",
+	"Doc": "Test checking whether status right after the func gets new adddress when there are only returns and there is enough space for the status.\nIn such case status cannot be put into the func register as this would lead to spurious function acknowledgements during status read.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -27,10 +27,11 @@
 			"IsArray": false,
 			"Count": 1,
 			"StbAddr": 2,
-			"AckAddr": 0,
-			"Params": [
+			"AckAddr": 2,
+			"Params": null,
+			"Returns": [
 				{
-					"Name": "a",
+					"Name": "r",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
@@ -38,50 +39,19 @@
 						"Strategy": "Single",
 						"Addr": 2,
 						"Mask": {
-							"Upper": 27,
+							"Upper": 7,
 							"Lower": 0
 						}
 					},
-					"Width": 28
-				},
-				{
-					"Name": "b",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 30,
-							"Lower": 28
-						}
-					},
-					"Width": 3
-				},
-				{
-					"Name": "c",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 31
-						}
-					},
-					"Width": 1
+					"Width": 8
 				}
-			],
-			"Returns": null
+			]
 		}
 	],
 	"Masks": null,
 	"Statuses": [
 		{
-			"Name": "St",
+			"Name": "S",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -89,7 +59,7 @@
 				"Strategy": "Single",
 				"Addr": 3,
 				"Mask": {
-					"Upper": 31,
+					"Upper": 3,
 					"Lower": 0
 				}
 			},
@@ -97,7 +67,7 @@
 			"Default": "",
 			"Groups": [],
 			"Once": false,
-			"Width": 32
+			"Width": 4
 		},
 		{
 			"Name": "X_UUID_X",

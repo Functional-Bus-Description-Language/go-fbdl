@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether element right after the func has proper address when func occupies exactly one register and has only params.",
+	"Doc": "Test checking whether config right after the func gets new adddress even if the func has no params and returns.\nIn such case config cannot be put into the func register as this would lead to spurious function strobes during config write.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -19,69 +19,9 @@
 	"IntConsts": null,
 	"IntListConsts": null,
 	"StrConsts": null,
-	"Configs": null,
-	"Funcs": [
+	"Configs": [
 		{
-			"Name": "F",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 0,
-			"Params": [
-				{
-					"Name": "a",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 27,
-							"Lower": 0
-						}
-					},
-					"Width": 28
-				},
-				{
-					"Name": "b",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 30,
-							"Lower": 28
-						}
-					},
-					"Width": 3
-				},
-				{
-					"Name": "c",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 31
-						}
-					},
-					"Width": 1
-				}
-			],
-			"Returns": null
-		}
-	],
-	"Masks": null,
-	"Statuses": [
-		{
-			"Name": "St",
+			"Name": "C",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -98,7 +38,22 @@
 			"Groups": [],
 			"Once": false,
 			"Width": 32
-		},
+		}
+	],
+	"Funcs": [
+		{
+			"Name": "F",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 2,
+			"AckAddr": 0,
+			"Params": null,
+			"Returns": null
+		}
+	],
+	"Masks": null,
+	"Statuses": [
 		{
 			"Name": "X_UUID_X",
 			"Doc": "Bus universally unique identifier.",

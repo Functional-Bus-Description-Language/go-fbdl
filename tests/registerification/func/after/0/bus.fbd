@@ -1,4 +1,4 @@
-# Test checking whether element right after the func has proper address when func occupies exactly one register.
+# Test checking whether element right after the func has proper address when func occupies exactly one register and has only params.
 Main bus
 	F func
 		a param; width = 28
