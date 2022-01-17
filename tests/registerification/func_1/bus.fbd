@@ -1,0 +1,7 @@
+# Test checking whether element right after the func has proper address when func occupies exactly one register.
+Main bus
+	F func
+		a param; width = 28
+		b param; width = 3
+		c param; width = 1
+	St status
