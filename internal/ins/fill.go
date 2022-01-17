@@ -22,6 +22,8 @@ func fillProps(e *Element) {
 		fillPropsMask(e)
 	case "param":
 		fillPropsParam(e)
+	case "return":
+		fillPropsReturn(e)
 	default:
 		msg := `no implementation for base type '%s'`
 		msg = fmt.Sprintf(msg, e.Type)
@@ -78,6 +80,12 @@ func fillPropsMask(m *Element) {
 }
 
 func fillPropsParam(p *Element) {
+	if _, ok := p.Props["width"]; !ok {
+		p.Props["width"] = val.Int(int64(busWidth))
+	}
+}
+
+func fillPropsReturn(p *Element) {
 	if _, ok := p.Props["width"]; !ok {
 		p.Props["width"] = val.Int(int64(busWidth))
 	}

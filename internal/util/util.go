@@ -8,7 +8,9 @@ import (
 )
 
 func IsBaseType(t string) bool {
-	baseTypes := [...]string{"block", "bus", "config", "func", "mask", "param", "status"}
+	baseTypes := [...]string{
+		"block", "bus", "config", "func", "mask", "param", "return", "status",
+	}
 
 	for i, _ := range baseTypes {
 		if t == baseTypes[i] {
@@ -30,6 +32,7 @@ func IsValidProperty(p string, t string) error {
 		// TODO: Decide if "default" should be possible for param.
 		// It creates some problems as not all programming languges support it.
 		"param":  []string{"range", "width"},
+		"return": []string{"width"},
 		"status": []string{"atomic", "groups", "once", "width"},
 	}
 
@@ -63,7 +66,7 @@ func IsValidType(ot string, it string) bool {
 		"block":  []string{"block", "config", "func", "mask", "status"},
 		"bus":    []string{"block", "config", "func", "mask", "status"},
 		"config": []string{},
-		"func":   []string{"param"},
+		"func":   []string{"param", "return"},
 		"mask":   []string{},
 		"param":  []string{},
 		"status": []string{},

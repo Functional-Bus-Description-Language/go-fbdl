@@ -25,25 +25,31 @@ help:
 	@echo "  help                Print help message."
 	@echo "  update-tree-sitter  Update tree-sitter source files."
 
+
 fmt:
 	go fmt ./...
+
 
 vet:
 	go vet ./...
 
+test:
+	go test ./...
+
 errcheck:
 	errcheck -verbose ./...
-
-test-instantiating:
-	@./scripts/test-instantiating.sh
 
 test-parsing:
 	@./scripts/test-parsing.sh
 
-test:
-	go test ./...
+test-instantiating:
+	@./scripts/test-instantiating.sh
 
-test-all: test test-parsing test-instantiating
+test-registerification:
+	@./scripts/test-registerification.sh
+
+test-all: test test-parsing test-instantiating test-registerification
+
 
 install:
 	cp $(PROJECT_NAME) /usr/bin

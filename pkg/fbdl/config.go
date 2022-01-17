@@ -17,9 +17,9 @@ type Config struct {
 	Atomic  bool
 	Default BitStr
 	Groups  []string
-	Range   Range
-	Once    bool
-	Width   int64
+	//Range   Range
+	Once  bool
+	Width int64
 }
 
 // HasDecreasingAccessOrder returns true if config must be accessed

@@ -1,7 +1,7 @@
 package fbdl
 
 // Param represents param element.
-type Param struct {
+type Return struct {
 	Name    string
 	Doc     string
 	IsArray bool
@@ -9,8 +9,5 @@ type Param struct {
 	Access  Access
 
 	// Properties
-	// TODO: Should Default be supported for param?
-	// Default BitStr
-	//Range Range
 	Width int64
 }

@@ -1,0 +1,113 @@
+{
+	"Name": "Main",
+	"Doc": "Test for the 'func' element with single param and single return.\nThe sum of the param and return widths is equal to the register width.\nStbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
+	"IsArray": false,
+	"Count": 1,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 3,
+		"Own": 3
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	},
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": null,
+	"Funcs": [
+		{
+			"Name": "F",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 2,
+			"AckAddr": 2,
+			"Params": [
+				{
+					"Name": "p",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 15,
+							"Lower": 0
+						}
+					},
+					"Width": 16
+				}
+			],
+			"Returns": [
+				{
+					"Name": "r",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 31,
+							"Lower": 16
+						}
+					},
+					"Width": 16
+				}
+			]
+		}
+	],
+	"Masks": null,
+	"Statuses": [
+		{
+			"Name": "X_UUID_X",
+			"Doc": "Bus universally unique identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 0,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"deadbeef\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "X_TIMESTAMP_X",
+			"Doc": "Bus generation timestamp.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 1,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		}
+	],
+	"Subblocks": null
+}

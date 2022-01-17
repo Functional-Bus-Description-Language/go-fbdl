@@ -145,7 +145,6 @@ func makeAccessSingleContinuous(addr, startBit, width int64) Access {
 
 // makeAccessSingle makes AccessSingleSingle or AccessSingleContinuous depending on the argument values.
 func makeAccessSingle(addr, startBit, width int64) Access {
-	//remainder := width % busWidth
 	firstRegRemainder := busWidth - startBit
 
 	if width <= firstRegRemainder {

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script for running parsing tests.
-# Must be run from projects root.
+# Must be run from the project's root.
 
 set -e
 
@@ -9,10 +9,10 @@ cd tests/parsing/
 
 echo -e "Running parsing tests\n"
 
-#echo -e "Testing valid constructs\n"
+#echo -e "  Testing valid constructs\n"
 #for dir in $(find valid/ -maxdepth 1 -mindepth 1 -type d);
 #do
-#	echo "Running test $dir"
+#	echo "    $dir"
 #	cd $dir
 #	python3 ../../../../main.py -p packages bus.fbd > /dev/null 2>&1
 #	sed '/\/home\//d' packages > packages.sed
@@ -23,10 +23,10 @@ echo -e "Running parsing tests\n"
 #	cd ../..
 #done
 
-echo -e "\nTesting invalid constructs\n"
+echo -e "\n  Testing invalid constructs\n"
 for dir in $(find invalid/ -maxdepth 1 -mindepth 1 -type d);
 do
-	echo "Running test $dir"
+	echo "    $dir"
 	cd $dir
 	../../../../fbdl bus.fbd > /dev/null 2>stderr || true
 	diff stderr.golden stderr
