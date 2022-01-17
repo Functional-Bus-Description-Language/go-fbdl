@@ -1,0 +1,14 @@
+# Test for func with params and returns.
+# All params and returns have access of type SingleSingle.
+# Params occupy more than one register, returns occupy less than one register.
+# The sum of all widths is exactly two registers.
+# It also checks whether the element right after the func has proper address.
+Main bus
+	F func
+		p1 param; width = 20
+		p2 param; width = 12
+		p3 param; width = 4
+		p4 param; width = 8
+		r1 return; width = 7
+		r2 return; width = 13
+	St status

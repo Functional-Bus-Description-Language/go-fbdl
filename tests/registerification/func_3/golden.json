@@ -1,0 +1,197 @@
+{
+	"Name": "Main",
+	"Doc": "Test for func with params and returns.\nAll params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nIt also checks whether the element right after the func has proper address.",
+	"IsArray": false,
+	"Count": 1,
+	"Sizes": {
+		"BlockAligned": 8,
+		"Compact": 5,
+		"Own": 5
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 7
+	},
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": null,
+	"Funcs": [
+		{
+			"Name": "F",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 3,
+			"AckAddr": 3,
+			"Params": [
+				{
+					"Name": "p1",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 19,
+							"Lower": 0
+						}
+					},
+					"Width": 20
+				},
+				{
+					"Name": "p2",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 31,
+							"Lower": 20
+						}
+					},
+					"Width": 12
+				},
+				{
+					"Name": "p3",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 3,
+						"Mask": {
+							"Upper": 3,
+							"Lower": 0
+						}
+					},
+					"Width": 4
+				},
+				{
+					"Name": "p4",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 3,
+						"Mask": {
+							"Upper": 11,
+							"Lower": 4
+						}
+					},
+					"Width": 8
+				}
+			],
+			"Returns": [
+				{
+					"Name": "r1",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 3,
+						"Mask": {
+							"Upper": 18,
+							"Lower": 12
+						}
+					},
+					"Width": 7
+				},
+				{
+					"Name": "r2",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Count": 1,
+						"Addr": 3,
+						"Mask": {
+							"Upper": 31,
+							"Lower": 19
+						}
+					},
+					"Width": 13
+				}
+			]
+		}
+	],
+	"Masks": null,
+	"Statuses": [
+		{
+			"Name": "St",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 4,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "X_UUID_X",
+			"Doc": "Bus universally unique identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 0,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"deadbeef\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "X_TIMESTAMP_X",
+			"Doc": "Bus generation timestamp.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Count": 1,
+				"Addr": 1,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		}
+	],
+	"Subblocks": null
+}
