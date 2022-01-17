@@ -10,7 +10,7 @@ func Compile(mainPath string) (*Block, map[string]Package) {
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
-	insBus := ins.Instantiate(packages)
+	insBus := ins.Instantiate(packages, false)
 
 	regBus := Registerify(insBus)
 

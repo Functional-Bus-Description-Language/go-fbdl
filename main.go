@@ -63,7 +63,11 @@ func main() {
 		}
 	}
 
-	insBus := ins.Instantiate(packages)
+	zeroTimestamp := false
+	if _, ok := cmdLineArgs["--zero-timestamp"]; ok {
+		zeroTimestamp = true
+	}
+	insBus := ins.Instantiate(packages, zeroTimestamp)
 
 	if path, ok := cmdLineArgs["-i"]; ok {
 		f, err := os.Create(path)

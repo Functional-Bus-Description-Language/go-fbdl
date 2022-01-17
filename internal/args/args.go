@@ -70,6 +70,8 @@ func Parse() map[string]string {
 			}
 		case "-d", "--debug":
 			args["--debug"] = ""
+		case "-z", "--zero-timestamp":
+			args["--zero-timestamp"] = ""
 		default:
 			log.Fatalf("invalid option %s", s)
 		}
@@ -88,12 +90,13 @@ var helpMsg string = `Functional Bus Description Language compiler front-end wri
 Version: %s
 
 Usage:
-  fbdl [-h] [-v] [-d] [-p [path]] [-i [path]] [-r [path]] /path/to/main/fbd/file
+  fbdl [flags] [options] /path/to/main/fbd/file
 
 Flags:
-  -h, --help     Display help.
-  -v, --version  Display version.
-  -d, --debug    Print debug messages.
+  -h, --help            Display help.
+  -v, --version         Display version.
+  -d, --debug           Print debug messages.
+  -z, --zero-timestamp  Zero bus timestamp. Useful for regression tests.
 
 Options:
   -p [path]  Dump parse results to a file (default path is prs.txt).

@@ -7,14 +7,21 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-func x_timestamp_x() *Element {
+// If zero is true, then the timestamp will eqaul zero.
+// If zero is false, then the timestamp  will be the bus generation timestamp.
+func x_timestamp_x(zero bool) *Element {
 	width := busWidth
 	// Limit timestamp width. 36 bits is enough, do not waste resources.
 	if width > 36 {
 		width = 36
 	}
 
-	timestamp := val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
+	var timestamp val.Int
+	if zero {
+		timestamp = val.Int(0)
+	} else {
+		timestamp = val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
+	}
 
 	dflt, err := val.BitStrFromInt(timestamp, width)
 	if err != nil {

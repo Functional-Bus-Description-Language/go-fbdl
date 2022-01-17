@@ -43,7 +43,7 @@ func setBusWidth(main prs.Symbol) error {
 	return nil
 }
 
-func Instantiate(packages prs.Packages) *Element {
+func Instantiate(packages prs.Packages, zeroTimestamp bool) *Element {
 	main, ok := packages["main"][0].Symbols.Get("Main", prs.ElemInst)
 	if !ok {
 		log.Println("instantiation: there is no 'Main' bus; returning nil")
@@ -92,7 +92,7 @@ func Instantiate(packages prs.Packages) *Element {
 	if _, exists := mainBus.Elems.Get("X_TIMESTAMP_X"); exists {
 		panic("X_TIMESTAMP_X is reserved element name")
 	}
-	mainBus.Elems.Add(x_timestamp_x())
+	mainBus.Elems.Add(x_timestamp_x(zeroTimestamp))
 
 	return mainBus
 }
