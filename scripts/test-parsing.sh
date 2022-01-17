@@ -29,7 +29,7 @@ do
 	echo "    $dir"
 	cd $dir
 	../../../../fbdl bus.fbd > /dev/null 2>stderr || true
-	diff stderr.golden stderr
+	diff --color stderr.golden stderr
 	rm stderr
 	cd ../..
 done

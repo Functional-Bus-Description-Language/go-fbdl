@@ -1,16 +1,16 @@
 {
 	"Name": "Main",
-	"Doc": "Test for func with params and returns.\nAll params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nIt also checks whether the element right after the func has proper address.",
+	"Doc": "Test checking scenario when there are no params, only returns.\nThe returns occupy exactly one register.\nIt also checkes whether element after the func has proper address.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
-		"BlockAligned": 8,
-		"Compact": 5,
-		"Own": 5
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
 	},
 	"AddrSpace": {
 		"Start": 0,
-		"End": 7
+		"End": 3
 	},
 	"Masters": 1,
 	"Width": 32,
@@ -26,106 +26,39 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"StbAddr": 3,
-			"AckAddr": 3,
-			"Params": [
-				{
-					"Name": "p1",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Count": 1,
-						"Addr": 2,
-						"Mask": {
-							"Upper": 19,
-							"Lower": 0
-						}
-					},
-					"Width": 20
-				},
-				{
-					"Name": "p2",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Count": 1,
-						"Addr": 2,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 20
-						}
-					},
-					"Width": 12
-				},
-				{
-					"Name": "p3",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Count": 1,
-						"Addr": 3,
-						"Mask": {
-							"Upper": 3,
-							"Lower": 0
-						}
-					},
-					"Width": 4
-				},
-				{
-					"Name": "p4",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Count": 1,
-						"Addr": 3,
-						"Mask": {
-							"Upper": 11,
-							"Lower": 4
-						}
-					},
-					"Width": 8
-				}
-			],
+			"StbAddr": 2,
+			"AckAddr": 2,
+			"Params": null,
 			"Returns": [
 				{
-					"Name": "r1",
+					"Name": "a",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
 					"Access": {
 						"Strategy": "Single",
-						"Count": 1,
-						"Addr": 3,
+						"Addr": 2,
 						"Mask": {
-							"Upper": 18,
-							"Lower": 12
+							"Upper": 16,
+							"Lower": 0
 						}
 					},
-					"Width": 7
+					"Width": 17
 				},
 				{
-					"Name": "r2",
+					"Name": "b",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
 					"Access": {
 						"Strategy": "Single",
-						"Count": 1,
-						"Addr": 3,
+						"Addr": 2,
 						"Mask": {
 							"Upper": 31,
-							"Lower": 19
+							"Lower": 17
 						}
 					},
-					"Width": 13
+					"Width": 15
 				}
 			]
 		}
@@ -139,8 +72,7 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
-				"Addr": 4,
+				"Addr": 3,
 				"Mask": {
 					"Upper": 31,
 					"Lower": 0
@@ -159,7 +91,6 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
 				"Addr": 0,
 				"Mask": {
 					"Upper": 31,
@@ -179,7 +110,6 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
 				"Addr": 1,
 				"Mask": {
 					"Upper": 31,

@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking scenario when there are no params, only returns.\nThe returns occupy exactly one register.\nIt also checkes whether element after the func has proper address.",
+	"Doc": "Test checking scenario when there are only params, no returns.\nThe params occupy exactly one register.\nIt also checkes whether element after the func has proper address.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -27,42 +27,40 @@
 			"IsArray": false,
 			"Count": 1,
 			"StbAddr": 2,
-			"AckAddr": 2,
-			"Params": null,
-			"Returns": [
+			"AckAddr": 0,
+			"Params": [
 				{
-					"Name": "a",
+					"Name": "p1",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
 					"Access": {
 						"Strategy": "Single",
-						"Count": 1,
 						"Addr": 2,
 						"Mask": {
-							"Upper": 16,
+							"Upper": 9,
 							"Lower": 0
 						}
 					},
-					"Width": 17
+					"Width": 10
 				},
 				{
-					"Name": "b",
+					"Name": "p2",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
 					"Access": {
 						"Strategy": "Single",
-						"Count": 1,
 						"Addr": 2,
 						"Mask": {
 							"Upper": 31,
-							"Lower": 17
+							"Lower": 10
 						}
 					},
-					"Width": 15
+					"Width": 22
 				}
-			]
+			],
+			"Returns": null
 		}
 	],
 	"Masks": null,
@@ -74,7 +72,6 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
 				"Addr": 3,
 				"Mask": {
 					"Upper": 31,
@@ -94,7 +91,6 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
 				"Addr": 0,
 				"Mask": {
 					"Upper": 31,
@@ -114,7 +110,6 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
 				"Addr": 1,
 				"Mask": {
 					"Upper": 31,

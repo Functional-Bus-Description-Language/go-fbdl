@@ -30,12 +30,10 @@ type AccessSingleSingle struct {
 func (ass AccessSingleSingle) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy string
-		Count    int64
 		Addr     int64
 		Mask     AccessMask
 	}{
 		Strategy: "Single",
-		Count:    1,
 		Addr:     ass.Addr,
 		Mask:     ass.Mask,
 	})

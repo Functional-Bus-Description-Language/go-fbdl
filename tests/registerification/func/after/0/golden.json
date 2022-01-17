@@ -1,12 +1,12 @@
 {
 	"Name": "Main",
-	"Doc": "Test for the 'func' element with single param and single return.\nThe sum of the param and return widths is equal to the register width.\nStbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
+	"Doc": "Test checking whether element right after the func has proper address when func occupies exactly one register.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
 		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
+		"Compact": 4,
+		"Own": 4
 	},
 	"AddrSpace": {
 		"Start": 0,
@@ -27,47 +27,78 @@
 			"IsArray": false,
 			"Count": 1,
 			"StbAddr": 2,
-			"AckAddr": 2,
+			"AckAddr": 0,
 			"Params": [
 				{
-					"Name": "p",
+					"Name": "a",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
 					"Access": {
 						"Strategy": "Single",
-						"Count": 1,
 						"Addr": 2,
 						"Mask": {
-							"Upper": 15,
+							"Upper": 27,
 							"Lower": 0
 						}
 					},
-					"Width": 16
-				}
-			],
-			"Returns": [
+					"Width": 28
+				},
 				{
-					"Name": "r",
+					"Name": "b",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
 					"Access": {
 						"Strategy": "Single",
-						"Count": 1,
+						"Addr": 2,
+						"Mask": {
+							"Upper": 30,
+							"Lower": 28
+						}
+					},
+					"Width": 3
+				},
+				{
+					"Name": "c",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
 						"Addr": 2,
 						"Mask": {
 							"Upper": 31,
-							"Lower": 16
+							"Lower": 31
 						}
 					},
-					"Width": 16
+					"Width": 1
 				}
-			]
+			],
+			"Returns": null
 		}
 	],
 	"Masks": null,
 	"Statuses": [
+		{
+			"Name": "St",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 32
+		},
 		{
 			"Name": "X_UUID_X",
 			"Doc": "Bus universally unique identifier.",
@@ -75,7 +106,6 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
 				"Addr": 0,
 				"Mask": {
 					"Upper": 31,
@@ -95,7 +125,6 @@
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Count": 1,
 				"Addr": 1,
 				"Mask": {
 					"Upper": 31,
