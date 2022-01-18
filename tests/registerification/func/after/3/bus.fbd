@@ -1,0 +1,9 @@
+# Test checking whether config right after the func gets new adddress even if last func register has only returns.
+# In such case config cannot be put into the last func register as config is readable.
+# A config read would lead to spurious acknowledgement generation.
+Main bus
+	F func
+		p1 param; width = 30
+		p2 param; width = 2
+		r return; width = 8
+	C config; width = 8
