@@ -1,6 +1,0 @@
-Directories in this directory are named after the context of tests they contain.
-
-after               Tests checking elements registerification after funcs registerification.
-only_params         Tests for funcs containing only param elements.
-only_returns        Tests for funcs containing only return elements.
-params_and_returns  Tests for funcs containing both param and return elements.
