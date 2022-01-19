@@ -36,7 +36,7 @@
 					"Lower": 0
 				}
 			},
-			"Atomic": false,
+			"Atomic": true,
 			"Default": "",
 			"Groups": [],
 			"Once": false,
@@ -55,7 +55,7 @@
 					"Lower": 4
 				}
 			},
-			"Atomic": false,
+			"Atomic": true,
 			"Default": "",
 			"Groups": [],
 			"Once": false,
@@ -74,7 +74,7 @@
 					"Lower": 20
 				}
 			},
-			"Atomic": false,
+			"Atomic": true,
 			"Default": "",
 			"Groups": [],
 			"Once": false,
@@ -93,7 +93,7 @@
 					"Lower": 23
 				}
 			},
-			"Atomic": false,
+			"Atomic": true,
 			"Default": "",
 			"Groups": [],
 			"Once": false,

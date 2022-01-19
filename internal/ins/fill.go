@@ -53,11 +53,7 @@ func fillPropsConfig(c *Element) {
 	}
 
 	if _, ok := c.Props["atomic"]; !ok {
-		v := false
-		if c.Props["width"].(val.Int) > val.Int(busWidth) {
-			v = true
-		}
-		c.Props["atomic"] = val.Bool(v)
+		c.Props["atomic"] = val.Bool(true)
 	}
 }
 
@@ -71,11 +67,7 @@ func fillPropsMask(m *Element) {
 	}
 
 	if _, ok := m.Props["atomic"]; !ok {
-		v := false
-		if m.Props["width"].(val.Int) > val.Int(busWidth) {
-			v = true
-		}
-		m.Props["atomic"] = val.Bool(v)
+		m.Props["atomic"] = val.Bool(true)
 	}
 }
 

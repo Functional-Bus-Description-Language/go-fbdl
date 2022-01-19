@@ -139,7 +139,7 @@
 					"Lower": 0
 				}
 			},
-			"Atomic": false,
+			"Atomic": true,
 			"Default": "",
 			"Groups": [],
 			"Once": false,
