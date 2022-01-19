@@ -1,0 +1,142 @@
+{
+	"Name": "Main",
+	"Doc": "Test checking whether multiple statuses narrower than bus width will be placed in the same register.",
+	"IsArray": false,
+	"Count": 1,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 3,
+		"Own": 3
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	},
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": null,
+	"Funcs": null,
+	"Masks": null,
+	"Statuses": [
+		{
+			"Name": "S1",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"Mask": {
+					"Upper": 3,
+					"Lower": 0
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 4
+		},
+		{
+			"Name": "S2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"Mask": {
+					"Upper": 19,
+					"Lower": 4
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 16
+		},
+		{
+			"Name": "S3",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"Mask": {
+					"Upper": 22,
+					"Lower": 20
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 3
+		},
+		{
+			"Name": "S4",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 23
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 9
+		},
+		{
+			"Name": "X_UUID_X",
+			"Doc": "Bus universally unique identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"deadbeef\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "X_TIMESTAMP_X",
+			"Doc": "Bus generation timestamp.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		}
+	],
+	"Subblocks": null
+}
