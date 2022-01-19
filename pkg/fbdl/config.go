@@ -41,7 +41,7 @@ func (c *Config) HasDecreasingAccessOrder() bool {
 	return false
 }
 
-func registerifyConfig(insCfg *ins.Element, addr int64) (*Config, int64) {
+func registerifyConfig(insCfg *ins.Element, addr int64, gp *gapPool) (*Config, int64) {
 	cfg := Config{
 		Name:    insCfg.Name,
 		Doc:     insCfg.Doc,
@@ -78,6 +78,15 @@ func registerifyConfig(insCfg *ins.Element, addr int64) (*Config, int64) {
 		*/
 	} else {
 		cfg.Access = makeAccessSingle(addr, 0, width)
+		if cfg.Access.EndBit() < busWidth-1 {
+			gp.Add(gap{
+				isArray:   false,
+				startAddr: cfg.Access.EndAddr(),
+				endAddr:   cfg.Access.EndAddr(),
+				mask:      AccessMask{Upper: busWidth - 1, Lower: cfg.Access.EndBit() + 1},
+				writeSafe: false,
+			})
+		}
 	}
 	addr += cfg.Access.RegCount()
 

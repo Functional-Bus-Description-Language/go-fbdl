@@ -46,6 +46,7 @@ func (gp *gapPool) Add(g gap) {
 				gp.singleGaps[i] = g
 				return
 			}
+			gp.singleGaps = append(gp.singleGaps, g)
 		}
 	}
 }
