@@ -1,0 +1,105 @@
+{
+	"Name": "Main",
+	"Doc": "Test checking if config is placed starting from a next register when it is non-atomic and the gap is narrower than the config.",
+	"IsArray": false,
+	"Count": 1,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	},
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": [
+		{
+			"Name": "C1",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"Mask": {
+					"Upper": 29,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 30
+		},
+		{
+			"Name": "C2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"Mask": {
+					"Upper": 7,
+					"Lower": 0
+				}
+			},
+			"Atomic": false,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 8
+		}
+	],
+	"Funcs": null,
+	"Masks": null,
+	"Statuses": [
+		{
+			"Name": "X_UUID_X",
+			"Doc": "Bus universally unique identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"deadbeef\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "X_TIMESTAMP_X",
+			"Doc": "Bus generation timestamp.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		}
+	],
+	"Subblocks": null
+}
