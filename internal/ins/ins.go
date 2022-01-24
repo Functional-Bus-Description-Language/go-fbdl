@@ -84,10 +84,10 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *Element {
 		}
 	}
 
-	if _, exists := mainBus.Elems.Get("X_UUID_X"); exists {
-		panic("X_UUID_X is reserved element name")
+	if _, exists := mainBus.Elems.Get("X_ID_X"); exists {
+		panic("X_ID_X is reserved element name")
 	}
-	mainBus.Elems.Add(x_uuid_x())
+	mainBus.Elems.Add(x_id_x())
 
 	if _, exists := mainBus.Elems.Get("X_TIMESTAMP_X"); exists {
 		panic("X_TIMESTAMP_X is reserved element name")

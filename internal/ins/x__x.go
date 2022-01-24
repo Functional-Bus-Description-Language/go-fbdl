@@ -42,14 +42,14 @@ func x_timestamp_x(zero bool) *Element {
 }
 
 // Value generation is not yet supported.
-func x_uuid_x() *Element {
+func x_id_x() *Element {
 	dflt, err := val.BitStrFromInt(val.Int(0xDEADBEEF), busWidth)
 	if err != nil {
-		panic("X_UUID_X")
+		panic("X_ID_X")
 	}
 
 	return &Element{
-		Name:  "X_UUID_X",
+		Name:  "X_ID_X",
 		Doc:   "Bus universally unique identifier.",
 		Type:  "status",
 		Count: int64(1),

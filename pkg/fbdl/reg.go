@@ -30,7 +30,7 @@ func Registerify(insBus *ins.Element) *Block {
 	regBus.addConsts(insBus)
 
 	// addr is current block internal access address, not global address.
-	// 0 and 1 are reserved for X_UUID_X and X_TIMESTAMP_X.
+	// 0 and 1 are reserved for X_ID_X and X_TIMESTAMP_X.
 	addr := int64(2)
 
 	addr = registerifyFunctionalities(&regBus, insBus, addr)
@@ -47,7 +47,7 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
-	uuid, _ := insBus.Elems.Get("X_UUID_X")
+	uuid, _ := insBus.Elems.Get("X_ID_X")
 	regBus.addStatus(
 		&Status{
 			Name:    uuid.Name,
@@ -147,7 +147,7 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPoo
 	var st *Status
 
 	for _, insSt := range insStatuses {
-		if insSt.Name == "X_UUID_X" || insSt.Name == "X_TIMESTAMP_X" {
+		if insSt.Name == "X_ID_X" || insSt.Name == "X_TIMESTAMP_X" {
 			continue
 		}
 		// Omit elements that have been already registerified as group members.

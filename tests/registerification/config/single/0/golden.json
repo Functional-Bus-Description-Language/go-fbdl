@@ -63,7 +63,7 @@
 	"Masks": null,
 	"Statuses": [
 		{
-			"Name": "X_UUID_X",
+			"Name": "X_ID_X",
 			"Doc": "Bus universally unique identifier.",
 			"IsArray": false,
 			"Count": 1,
