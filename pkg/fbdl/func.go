@@ -20,14 +20,13 @@ type Func struct {
 	Returns []*Return
 }
 
-/*
-func (f *Func) HasReturns() bool {
-	if len(f.Returns) == 0 {
-		return false
+func (f *Func) ParamsStartAddr() int64 {
+	if len(f.Params) == 0 {
+		return f.StbAddr
 	}
-	return true
+
+	return f.Params[0].Access.StartAddr()
 }
-*/
 
 // AreAllParamsSingleSingle returns true if accesses to all parameters are of type AccessSingleSingle.
 func (f *Func) AreAllParamsSingleSingle() bool {
