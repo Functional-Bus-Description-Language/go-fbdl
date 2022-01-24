@@ -21,6 +21,25 @@ type Status struct {
 	Width   int64
 }
 
+// HasDecreasingAccessOrder returns true if status must be accessed
+// from the end register to the start register order.
+// It is useful only in case of some atomic statuses.
+// If the end register is wider, then starting reading from the end register
+// saves some flip flops, becase the atomic shadow regsiter can be narrower.
+func (s *Status) HasDecreasingAccessOrder() bool {
+	if !s.Atomic {
+		return false
+	}
+
+	if asc, ok := s.Access.(AccessSingleContinuous); ok {
+		if asc.IsEndMaskWider() {
+			return true
+		}
+	}
+
+	return false
+}
+
 func makeStatus(insSt *ins.Element) *Status {
 	st := Status{
 		Name:    insSt.Name,
