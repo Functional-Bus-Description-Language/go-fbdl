@@ -2,11 +2,6 @@ PROJECT_NAME=fbdl
 
 default: build
 
-all: fmt vet build
-
-build:
-	go build -v -o $(PROJECT_NAME) .
-
 help:
 	@echo "Build targets:"
 	@echo "  all      Run fmt vet build."
@@ -26,13 +21,18 @@ help:
 	@echo "  help                Print help message."
 	@echo "  update-tree-sitter  Update tree-sitter source files."
 
+all: fmt vet build
+
+build:
+	go build -v -o $(PROJECT_NAME) ./cmd/fbdl
+
 
 fmt:
 	go fmt ./...
 
-
 vet:
 	go vet ./...
+
 
 test:
 	go test ./...
