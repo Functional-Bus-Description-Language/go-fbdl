@@ -105,7 +105,7 @@ func checkIndentAndTrailingSemicolon(code []string) error {
 	var currentIndent uint32 = 0
 
 	for i, line := range code {
-		if line == "\n" {
+		if line == "" {
 			continue
 		}
 
