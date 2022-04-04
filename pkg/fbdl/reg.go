@@ -47,16 +47,16 @@ func Registerify(insBus *ins.Element) *Block {
 		}
 	}
 
-	uuid, _ := insBus.Elems.Get("X_ID_X")
+	id, _ := insBus.Elems.Get("X_ID_X")
 	regBus.addStatus(
 		&Status{
-			Name:    uuid.Name,
-			Doc:     uuid.Doc,
-			Count:   uuid.Count,
+			Name:    id.Name,
+			Doc:     id.Doc,
+			Count:   id.Count,
 			Access:  makeAccessSingle(0, 0, busWidth),
-			Atomic:  bool(uuid.Props["atomic"].(val.Bool)),
-			Width:   int64(uuid.Props["width"].(val.Int)),
-			Default: MakeBitStr(uuid.Props["default"].(val.BitStr)),
+			Atomic:  bool(id.Props["atomic"].(val.Bool)),
+			Width:   int64(id.Props["width"].(val.Int)),
+			Default: MakeBitStr(id.Props["default"].(val.BitStr)),
 		},
 	)
 

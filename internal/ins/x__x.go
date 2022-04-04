@@ -50,7 +50,7 @@ func x_id_x() *Element {
 
 	return &Element{
 		Name:  "X_ID_X",
-		Doc:   "Bus universally unique identifier.",
+		Doc:   "Bus identifier.",
 		Type:  "status",
 		Count: int64(1),
 		Props: map[string]val.Value{
