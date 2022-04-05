@@ -97,6 +97,11 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *Element {
 	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
 	id.Props["default"] = dflt
 	mainBus.Elems.Add(id)
+	if _, ok := mainBus.Consts["X_ID_X"]; ok {
+		log.Fatalf("Main bus cannot have constant named 'X_ID_X'")
+	}
+	// ID will never be wider than 64 bits, so use val.Int.
+	mainBus.Consts["X_ID_X"] = val.Int(hash)
 
 	if _, exists := mainBus.Elems.Get("X_TIMESTAMP_X"); exists {
 		panic("X_TIMESTAMP_X is reserved element name")
