@@ -87,7 +87,16 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *Element {
 	if _, exists := mainBus.Elems.Get("X_ID_X"); exists {
 		panic("X_ID_X is reserved element name")
 	}
-	mainBus.Elems.Add(x_id_x())
+
+	id := x_id_x()
+	hash := int64(mainBus.hash())
+	if busWidth < 32 {
+		hash = hash & ((1 << busWidth) - 1)
+	}
+	// Ignore error, the value has been trimmed to the proper width.
+	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
+	id.Props["default"] = dflt
+	mainBus.Elems.Add(id)
 
 	if _, exists := mainBus.Elems.Get("X_TIMESTAMP_X"); exists {
 		panic("X_TIMESTAMP_X is reserved element name")

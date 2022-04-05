@@ -12,6 +12,10 @@ func (bs BitStr) Type() string {
 	return "bit string"
 }
 
+func (bs BitStr) Bytes() []byte {
+	return []byte(bs)
+}
+
 // BitWidth returns bit width of the bit string.
 func (bs BitStr) BitWidth() int64 {
 	var width int64

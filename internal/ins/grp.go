@@ -1,5 +1,11 @@
 package ins
 
+import (
+	"bytes"
+	"encoding/binary"
+	"hash/adler32"
+)
+
 type Group struct {
 	Name  string
 	Elems []*Element
@@ -33,4 +39,17 @@ func (g *Group) IsArray() bool {
 		}
 	}
 	return true
+}
+
+func (g *Group) hash() uint32 {
+	b := bytes.Buffer{}
+
+	b.Write([]byte(g.Name))
+	aux := make([]byte, 4)
+	for _, e := range g.Elems {
+		binary.LittleEndian.PutUint32(aux, e.hash())
+		b.Write(aux)
+	}
+
+	return adler32.Checksum(b.Bytes())
 }

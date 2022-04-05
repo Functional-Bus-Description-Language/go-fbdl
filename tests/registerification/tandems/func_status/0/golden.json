@@ -101,7 +101,7 @@
 		},
 		{
 			"Name": "X_ID_X",
-			"Doc": "Bus universally unique identifier.",
+			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
 			"Access": {
@@ -113,7 +113,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"deadbeef\"",
+			"Default": "x\"27483a65\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

@@ -1,14 +1,21 @@
 package ins
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
+	"hash/adler32"
 	"log"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+
+	"sort"
 )
 
+// If you add field to the Element struct, remember to include this field
+// in the hash() method.
 type Element struct {
 	Name    string
 	Doc     string
@@ -19,6 +26,9 @@ type Element struct {
 	Consts  map[string]val.Value
 	Elems   ElemContainer
 	Grps    []*Group
+
+	hashCacheValid bool
+	hashCache      uint32
 }
 
 func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr) error {
@@ -266,4 +276,64 @@ func (e *Element) processDflt() error {
 	}
 
 	return nil
+}
+
+func (e *Element) hash() uint32 {
+	if e.hashCacheValid {
+		return e.hashCache
+	}
+
+	b := bytes.Buffer{}
+
+	b.Write([]byte(e.Name))
+	b.Write([]byte(e.Doc))
+	b.Write([]byte(e.Type))
+	if e.IsArray {
+		b.WriteByte(1)
+	} else {
+		b.WriteByte(0)
+	}
+	aux := make([]byte, 8)
+	binary.LittleEndian.PutUint64(aux, uint64(e.Count))
+	b.Write(aux)
+
+	// Properties
+	props := make([]string, 0, len(e.Props))
+	for name := range e.Props {
+		props = append(props, name)
+	}
+	sort.Strings(props)
+	for _, name := range props {
+		b.Write([]byte(name))
+		b.Write(e.Props[name].Bytes())
+	}
+
+	// Constants
+	consts := make([]string, 0, len(e.Consts))
+	for name := range e.Consts {
+		consts = append(consts, name)
+	}
+	sort.Strings(consts)
+	for _, name := range consts {
+		b.Write([]byte(name))
+		b.Write(e.Consts[name].Bytes())
+	}
+
+	// Inner Elements
+	aux = make([]byte, 4)
+	for _, ee := range e.Elems {
+		binary.LittleEndian.PutUint32(aux, ee.hash())
+		b.Write(aux)
+	}
+
+	// Groups
+	for _, g := range e.Grps {
+		binary.LittleEndian.PutUint32(aux, g.hash())
+		b.Write(aux)
+	}
+
+	e.hashCache = adler32.Checksum(b.Bytes())
+	e.hashCacheValid = true
+
+	return e.hashCache
 }
