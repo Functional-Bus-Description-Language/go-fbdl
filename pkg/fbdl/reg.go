@@ -104,6 +104,8 @@ func registerifyGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	for _, g := range insBlk.Grps {
 		if g.IsStatus() && g.IsArray() {
 			grp, addr = registerifyGroupStatusArray(blk, g, addr)
+		} else {
+			panic("not yet implemented")
 		}
 
 		blk.addGroup(grp)
