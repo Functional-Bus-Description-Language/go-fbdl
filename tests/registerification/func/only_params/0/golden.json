@@ -85,7 +85,7 @@
 			"Width": 32
 		},
 		{
-			"Name": "X_ID_X",
+			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
@@ -104,7 +104,7 @@
 			"Width": 32
 		},
 		{
-			"Name": "X_TIMESTAMP_X",
+			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,

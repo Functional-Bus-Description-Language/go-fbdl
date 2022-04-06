@@ -9,7 +9,7 @@ import (
 
 // If zero is true, then the timestamp will eqaul zero.
 // If zero is false, then the timestamp  will be the bus generation timestamp.
-func x_timestamp_x(zero bool) *Element {
+func timestamp(zero bool) *Element {
 	width := busWidth
 	// Limit timestamp width. 36 bits is enough, do not waste resources.
 	if width > 36 {
@@ -25,11 +25,11 @@ func x_timestamp_x(zero bool) *Element {
 
 	dflt, err := val.BitStrFromInt(timestamp, width)
 	if err != nil {
-		panic("X_TIMESTAMP_X")
+		panic("TIMESTAMP")
 	}
 
 	return &Element{
-		Name:  "X_TIMESTAMP_X",
+		Name:  "TIMESTAMP",
 		Doc:   "Bus generation timestamp.",
 		Type:  "status",
 		Count: int64(1),
@@ -42,14 +42,14 @@ func x_timestamp_x(zero bool) *Element {
 }
 
 // Value generation is not yet supported.
-func x_id_x() *Element {
+func id() *Element {
 	dflt, err := val.BitStrFromInt(val.Int(0xDEADBEEF), busWidth)
 	if err != nil {
-		panic("X_ID_X")
+		panic("ID")
 	}
 
 	return &Element{
-		Name:  "X_ID_X",
+		Name:  "ID",
 		Doc:   "Bus identifier.",
 		Type:  "status",
 		Count: int64(1),
