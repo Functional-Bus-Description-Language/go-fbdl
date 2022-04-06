@@ -52,3 +52,14 @@ func (b *Block) addConsts(insBlk *ins.Element) {
 		b.addConst(name, v)
 	}
 }
+
+// Status returns pointer to the Status if status with given name exists
+// within the block. Otherwise it returns nil.
+func (b *Block) Status(name string) *Status {
+	for _, s := range b.Statuses {
+		if s.Name == name {
+			return s
+		}
+	}
+	return nil
+}

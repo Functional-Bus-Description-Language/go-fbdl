@@ -1,7 +1,9 @@
 package fbdl
 
 import (
+	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"strconv"
 )
 
 // BitStr (bit string) is used for representing default values.
@@ -175,4 +177,23 @@ func (bs BitStr) ToBin() BitStr {
 	s[len(s)-1] = '"'
 
 	return BitStr(string(s))
+}
+
+// Uint64 converts bit string to uin64.
+// If conversion is not possible, for example because of meta values within
+// the bit string, it panics.
+func (bs BitStr) Uint64() uint64 {
+	base := 2
+	if bs.IsOctal() {
+		base = 8
+	} else if bs.IsHex() {
+		base = 16
+	}
+
+	u, err := strconv.ParseUint(string(bs[2:len(bs)-1]), base, 64)
+	if err != nil {
+		panic(fmt.Sprintf("cannot parse bit string '%s' to uint64: %v", bs, err))
+	}
+
+	return u
 }
