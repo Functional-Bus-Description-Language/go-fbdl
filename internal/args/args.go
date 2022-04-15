@@ -28,14 +28,14 @@ func Parse() map[string]string {
 
 	// If there are help flags anywhere, just print help.
 	for _, s := range os.Args[1:] {
-		if s == "-h" || s == "--help" {
+		if s == "-help" {
 			printHelp()
 		}
 	}
 
 	// If there are version flags anywhere, just print version.
 	for _, s := range os.Args[1:] {
-		if s == "-v" || s == "--version" {
+		if s == "-version" {
 			printVersion()
 		}
 	}
@@ -68,10 +68,10 @@ func Parse() map[string]string {
 					args[s] = "const.json"
 				}
 			}
-		case "-d", "--debug":
-			args["--debug"] = ""
-		case "-z", "--zero-timestamp":
-			args["--zero-timestamp"] = ""
+		case "-debug":
+			args["-debug"] = ""
+		case "-zero-timestamp":
+			args["-zero-timestamp"] = ""
 		default:
 			log.Fatalf("invalid option %s", s)
 		}
@@ -90,15 +90,15 @@ var helpMsg string = `Functional Bus Description Language compiler front-end wri
 Version: %s
 
 Usage:
-  fbdl [flags] [options] /path/to/main/fbd/file
+  fbdl [flags] [parameters] /path/to/main/fbd/file
 
 Flags:
-  -h, --help            Display help.
-  -v, --version         Display version.
-  -d, --debug           Print debug messages.
-  -z, --zero-timestamp  Zero bus timestamp. Useful for regression tests.
+  -help            Display help.
+  -version         Display version.
+  -debug           Print debug messages.
+  -zero-timestamp  Zero bus timestamp. Useful for regression tests.
 
-Options:
+Parameters:
   -p [path]  Dump parse results to a file (default path is prs.txt).
   -i [path]  Dump instantiation results to a file (default path is ins.txt).
   -r [path]  Dump registerification results to a file (default path is reg.json).

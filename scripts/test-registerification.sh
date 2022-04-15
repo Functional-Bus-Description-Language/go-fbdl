@@ -13,7 +13,7 @@ for dir in $(find . -maxdepth 3 -mindepth 3 -type d);
 do
 	echo "  $dir"
 	cd $dir
-	../../../../../fbdl -z -r bus.fbd
+	../../../../../fbdl -zero-timestamp -r bus.fbd
 	diff --color golden.json reg.json
 	rm reg.json
 	cd ../../..

@@ -39,7 +39,7 @@ func main() {
 
 	cmdLineArgs := args.Parse()
 
-	if _, ok := cmdLineArgs["--debug"]; ok {
+	if _, ok := cmdLineArgs["-debug"]; ok {
 		printDebug = true
 	}
 
@@ -64,7 +64,7 @@ func main() {
 	}
 
 	zeroTimestamp := false
-	if _, ok := cmdLineArgs["--zero-timestamp"]; ok {
+	if _, ok := cmdLineArgs["-zero-timestamp"]; ok {
 		zeroTimestamp = true
 	}
 	insBus := ins.Instantiate(packages, zeroTimestamp)
