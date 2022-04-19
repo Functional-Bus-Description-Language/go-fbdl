@@ -179,7 +179,7 @@ func (bs BitStr) ToBin() BitStr {
 	return BitStr(string(s))
 }
 
-// Uint64 converts bit string to uin64.
+// Uint64 converts bit string to uint64.
 // If conversion is not possible, for example because of meta values within
 // the bit string, it panics.
 func (bs BitStr) Uint64() uint64 {
