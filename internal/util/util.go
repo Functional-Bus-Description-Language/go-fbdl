@@ -9,7 +9,7 @@ import (
 
 func IsBaseType(t string) bool {
 	baseTypes := [...]string{
-		"block", "bus", "config", "func", "mask", "param", "return", "status",
+		"block", "bus", "config", "func", "mask", "param", "return", "status", "stream",
 	}
 
 	for i, _ := range baseTypes {
@@ -34,6 +34,7 @@ func IsValidProperty(p string, t string) error {
 		"param":  []string{"range", "width"},
 		"return": []string{"width"},
 		"status": []string{"atomic", "groups", "once", "width"},
+		"stream": []string{},
 	}
 
 	if list, ok := validProps[t]; ok {
@@ -46,16 +47,20 @@ func IsValidProperty(p string, t string) error {
 		panic(fmt.Sprintf("invalid base type '%s'", t))
 	}
 
-	msg := "invalid property '%s' for element of type '%s', " +
-		"valid properties for element of type '%[2]s' are:"
+	msg := "invalid property '%[1]s' for element of type '%[2]s', "
 
-	list := validProps[t]
-	for i, _ := range list {
-		msg = msg + " '" + list[i] + "',"
+	if len(validProps[t]) == 0 {
+		msg += "type '%[2]s' has no properties"
+	} else {
+		msg += "valid properties for element of type '%[2]s' are:"
+		list := validProps[t]
+		for i, _ := range list {
+			msg = msg + " '" + list[i] + "',"
+		}
+		msg = msg[:len(msg)-1]
 	}
 
 	msg = fmt.Sprintf(msg, p, t)
-	msg = msg[:len(msg)-1]
 
 	return fmt.Errorf(msg)
 }
