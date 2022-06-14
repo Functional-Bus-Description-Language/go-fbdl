@@ -16,7 +16,7 @@ func fillProps(e *Element) {
 		fillPropsBus(e)
 	case "config", "status":
 		fillPropsConfig(e)
-	case "func":
+	case "func", "stream":
 		fillPropsFunc(e)
 	case "mask":
 		fillPropsMask(e)
@@ -25,9 +25,7 @@ func fillProps(e *Element) {
 	case "return":
 		fillPropsReturn(e)
 	default:
-		msg := `no implementation for base type '%s'`
-		msg = fmt.Sprintf(msg, e.Type)
-		panic(msg)
+		panic(fmt.Sprintf("no implementation for base type '%s'", e.Type))
 	}
 }
 

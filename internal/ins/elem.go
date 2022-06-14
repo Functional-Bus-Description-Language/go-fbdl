@@ -97,7 +97,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 
 		e := instantiateElement(pe)
 
-		if util.IsValidType(elem.Type, e.Type) == false {
+		if util.IsValidInnerType(e.Type, elem.Type) == false {
 			return fmt.Errorf(
 				"element '%s' of base type '%s' cannot be instantiated in element of base type '%s'",
 				e.Name, e.Type, elem.Type,
