@@ -109,11 +109,11 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *Element {
 func instantiateElement(e prs.Element) *Element {
 	typeChain := resolveToBaseType(e)
 	elem, err := instantiateTypeChain(typeChain)
+
+	errMsg := "%s: line %d: instantiating element '%s': %v"
+
 	if err != nil {
-		log.Fatalf(
-			"%s: line %d: instantiating element '%s': %v",
-			e.File().Path, e.LineNum(), e.Name(), err,
-		)
+		log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
 	}
 
 	if elem.Count < 0 {
@@ -126,18 +126,12 @@ func instantiateElement(e prs.Element) *Element {
 	fillProps(elem)
 
 	if err = elem.makeGrps(); err != nil {
-		log.Fatalf(
-			"%s: line %d: instantiating element '%s': %v",
-			e.File().Path, e.LineNum(), e.Name(), err,
-		)
+		log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
 	}
 
 	err = elem.processDflt()
 	if err != nil {
-		log.Fatalf(
-			"%s: line %d: instantiating element '%s': %v",
-			e.File().Path, e.LineNum(), e.Name(), err,
-		)
+		log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
 	}
 
 	return elem

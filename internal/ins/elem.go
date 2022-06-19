@@ -104,6 +104,11 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 			)
 		}
 
+		err := checkElemConflict(elem, e)
+		if err != nil {
+			return fmt.Errorf("line %d: cannot instantiate element '%s': %v", pe.LineNum(), e.Name, err)
+		}
+
 		if !elem.Elems.Add(e) {
 			return fmt.Errorf(
 				"cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types",

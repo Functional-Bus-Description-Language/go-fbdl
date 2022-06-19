@@ -114,3 +114,16 @@ func checkPropConflict(elem *Element, prop string) error {
 
 	return nil
 }
+
+func checkElemConflict(elem, innerElem *Element) error {
+	if elem.Type == "stream" {
+		if (innerElem.Type == "return" && elem.Elems.HasType("param")) ||
+			(innerElem.Type == "param" && elem.Elems.HasType("return")) {
+			return fmt.Errorf(
+				"all 'stream' inner elements must be of the same base type and must be 'param' or 'return', "+
+					"'%s' base type is '%s'", innerElem.Name, innerElem.Type,
+			)
+		}
+	}
+	return nil
+}

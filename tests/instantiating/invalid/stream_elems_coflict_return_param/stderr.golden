@@ -1,0 +1,1 @@
+bus.fbd: line 2: instantiating element 'My_Stream': line 4: cannot instantiate element 'P': all 'stream' inner elements must be of the same base type and must be 'param' or 'return', 'P' base type is 'param'

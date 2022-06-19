@@ -38,3 +38,13 @@ func (ec *ElemContainer) GetAllByType(typ string) []*Element {
 
 	return ret
 }
+
+// HasType returns true if element container has at least one element of given type.
+func (ec *ElemContainer) HasType(typ string) bool {
+	for _, e := range *ec {
+		if e.Type == typ {
+			return true
+		}
+	}
+	return false
+}
