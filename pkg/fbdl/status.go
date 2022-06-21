@@ -60,17 +60,18 @@ func makeStatus(insSt *ins.Element) *Status {
 	return &st
 }
 
-func registerifyStatus(insSt *ins.Element, addr int64, gp *gapPool) (*Status, int64) {
+// regStatus registerifies a Status element.
+func regStatus(insSt *ins.Element, addr int64, gp *gapPool) (*Status, int64) {
 	st := makeStatus(insSt)
 
 	if insSt.IsArray {
-		return registerifyStatusArray(st, addr, gp)
+		return regStatusArray(st, addr, gp)
 	} else {
-		return registerifyStatusSingle(st, addr, gp)
+		return regStatusSingle(st, addr, gp)
 	}
 }
 
-func registerifyStatusSingle(st *Status, addr int64, gp *gapPool) (*Status, int64) {
+func regStatusSingle(st *Status, addr int64, gp *gapPool) (*Status, int64) {
 	if g, ok := gp.getSingle(st.Width, false); ok {
 		st.Access = makeAccessSingleSingle(g.endAddr, g.StartBit(), st.Width)
 	} else {
@@ -90,7 +91,7 @@ func registerifyStatusSingle(st *Status, addr int64, gp *gapPool) (*Status, int6
 	return st, addr
 }
 
-func registerifyStatusArray(st *Status, addr int64, gp *gapPool) (*Status, int64) {
+func regStatusArray(st *Status, addr int64, gp *gapPool) (*Status, int64) {
 	if busWidth/2 < st.Width && st.Width <= busWidth {
 		st.Access = makeAccessArraySingle(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
@@ -105,7 +106,7 @@ func registerifyStatusArray(st *Status, addr int64, gp *gapPool) (*Status, int64
 	return st, addr
 }
 
-func registerifyStatusArraySingle(insSt *ins.Element, addr, startBit int64) (*Status, int64) {
+func regStatusArraySingle(insSt *ins.Element, addr, startBit int64) (*Status, int64) {
 	st := makeStatus(insSt)
 
 	st.Access = makeAccessArraySingle(insSt.Count, addr, startBit, st.Width)

@@ -41,7 +41,8 @@ func (c *Config) HasDecreasingAccessOrder() bool {
 	return false
 }
 
-func registerifyConfig(insCfg *ins.Element, addr int64, gp *gapPool) (*Config, int64) {
+// regConfig registerifies a Config element.
+func regConfig(insCfg *ins.Element, addr int64, gp *gapPool) (*Config, int64) {
 	cfg := Config{
 		Name:    insCfg.Name,
 		Doc:     insCfg.Doc,

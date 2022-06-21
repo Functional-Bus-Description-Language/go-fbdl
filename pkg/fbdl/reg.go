@@ -33,14 +33,14 @@ func Registerify(insBus *ins.Element) *Block {
 	// 0 and 1 are reserved for ID and TIMESTAMP.
 	addr := int64(2)
 
-	addr = registerifyFunctionalities(&regBus, insBus, addr)
+	addr = regFunctionalities(&regBus, insBus, addr)
 
 	regBus.Sizes.Compact = addr
 	regBus.Sizes.Own = addr
 
 	for _, e := range insBus.Elems {
 		if e.Type == "block" {
-			sb, sizes := registerifyBlock(e)
+			sb, sizes := regBlock(e)
 			regBus.Sizes.Compact += e.Count * sizes.Compact
 			regBus.Sizes.BlockAligned += e.Count * sizes.BlockAligned
 			regBus.addSubblock(sb)
@@ -83,27 +83,27 @@ func Registerify(insBus *ins.Element) *Block {
 	return &regBus
 }
 
-func registerifyFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	if len(insBlk.Elems) == 0 {
 		return addr
 	}
 
 	gp := gapPool{}
 
-	addr = registerifyFuncs(blk, insBlk, addr)
-	addr = registerifyGroups(blk, insBlk, addr)
-	addr = registerifyConfigs(blk, insBlk, addr, &gp)
-	addr = registerifyMasks(blk, insBlk, addr)
-	addr = registerifyStatuses(blk, insBlk, addr, &gp)
+	addr = regFuncs(blk, insBlk, addr)
+	addr = regGroups(blk, insBlk, addr)
+	addr = regConfigs(blk, insBlk, addr, &gp)
+	addr = regMasks(blk, insBlk, addr)
+	addr = regStatuses(blk, insBlk, addr, &gp)
 
 	return addr
 }
 
-func registerifyGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	var grp Group
 	for _, g := range insBlk.Grps {
 		if g.IsStatus() && g.IsArray() {
-			grp, addr = registerifyGroupStatusArray(blk, g, addr)
+			grp, addr = regGroupStatusArray(blk, g, addr)
 		} else {
 			panic("not yet implemented")
 		}
@@ -117,33 +117,33 @@ func registerifyGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func registerifyFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	insFuncs := insBlk.Elems.GetAllByType("func")
 
 	var fun *Func
 
 	for _, insFun := range insFuncs {
-		fun, addr = registerifyFunc(insFun, addr)
+		fun, addr = regFunc(insFun, addr)
 		blk.addFunc(fun)
 	}
 
 	return addr
 }
 
-func registerifyMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	insMasks := insBlk.Elems.GetAllByType("mask")
 
 	var mask *Mask
 
 	for _, insMask := range insMasks {
-		mask, addr = registerifyMask(insMask, addr)
+		mask, addr = regMask(insMask, addr)
 		blk.addMask(mask)
 	}
 
 	return addr
 }
 
-func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64 {
+func regStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64 {
 	insStatuses := insBlk.Elems.GetAllByType("status")
 
 	var st *Status
@@ -156,14 +156,14 @@ func registerifyStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPoo
 		if blk.hasElement(insSt.Name) {
 			continue
 		}
-		st, addr = registerifyStatus(insSt, addr, gp)
+		st, addr = regStatus(insSt, addr, gp)
 		blk.addStatus(st)
 	}
 
 	return addr
 }
 
-func registerifyConfigs(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64 {
+func regConfigs(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64 {
 	insConfigs := insBlk.Elems.GetAllByType("config")
 
 	var cfg *Config
@@ -173,14 +173,14 @@ func registerifyConfigs(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool
 		if blk.hasElement(insCfg.Name) {
 			continue
 		}
-		cfg, addr = registerifyConfig(insCfg, addr, gp)
+		cfg, addr = regConfig(insCfg, addr, gp)
 		blk.addConfig(cfg)
 	}
 
 	return addr
 }
 
-func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
+func regBlock(insBlk *ins.Element) (*Block, Sizes) {
 	addr := int64(0)
 
 	b := Block{
@@ -193,12 +193,12 @@ func registerifyBlock(insBlk *ins.Element) (*Block, Sizes) {
 
 	b.addConsts(insBlk)
 
-	addr = registerifyFunctionalities(&b, insBlk, addr)
+	addr = regFunctionalities(&b, insBlk, addr)
 	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
 	for _, e := range insBlk.Elems {
 		if e.Type == "block" {
-			sb, s := registerifyBlock(e)
+			sb, s := regBlock(e)
 			sizes.Compact += e.Count * s.Compact
 			sizes.BlockAligned += e.Count * s.BlockAligned
 			b.addSubblock(sb)

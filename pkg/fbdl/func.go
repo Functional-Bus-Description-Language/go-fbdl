@@ -41,7 +41,8 @@ func (f *Func) AreAllParamsSingleSingle() bool {
 	return true
 }
 
-func registerifyFunc(insFun *ins.Element, addr int64) (*Func, int64) {
+// regFunc registerifies a Func element.
+func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 	fun := Func{
 		Name:    insFun.Name,
 		Doc:     insFun.Doc,

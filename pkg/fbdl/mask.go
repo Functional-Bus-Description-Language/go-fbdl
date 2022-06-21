@@ -21,7 +21,8 @@ type Mask struct {
 	Width   int64
 }
 
-func registerifyMask(insMask *ins.Element, addr int64) (*Mask, int64) {
+// regMask registerifies a Mask element.
+func regMask(insMask *ins.Element, addr int64) (*Mask, int64) {
 	mask := Mask{
 		Name:    insMask.Name,
 		Doc:     insMask.Doc,
