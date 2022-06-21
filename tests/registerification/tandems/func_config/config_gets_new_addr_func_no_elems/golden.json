@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether config right after the func gets new adddress even if the func has no params and returns.\nIn such case config cannot be put into the func register as this would lead to spurious function strobes during config write.",
+	"Doc": "Test checking whether config right after the func gets new address even if the func has no params and returns.\nIn such case config cannot be put into the func register as this would lead to spurious function strobes during config write.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -68,7 +68,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"f6246200\"",
+			"Default": "x\"86b6619c\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

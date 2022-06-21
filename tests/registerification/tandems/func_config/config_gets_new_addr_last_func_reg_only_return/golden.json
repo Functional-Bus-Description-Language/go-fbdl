@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether config right after the func gets new adddress even if last func register has only returns.\nIn such case config cannot be put into the last func register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
+	"Doc": "Test checking whether config right after the func gets new address even if last func register has only returns.\nIn such case config cannot be put into the last func register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -115,7 +115,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"ca5b6a4a\"",
+			"Default": "x\"512969e6\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32
