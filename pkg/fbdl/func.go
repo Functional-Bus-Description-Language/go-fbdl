@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-// Struct represents func element.
+// Func represents func element.
 type Func struct {
 	Name    string
 	Doc     string

@@ -1,0 +1,4 @@
+# Test checking whether the config right after the stream gets next address even when the stream is empty.
+Main bus
+	S stream
+	C config

@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking scenario when there are only params, no returns.\nThe params occupy exactly one register.\nIt also checkes whether element after the func has proper address.",
+	"Doc": "Test checking whether the config right after the stream gets next address even when the stream is empty.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -19,54 +19,9 @@
 	"IntConsts": null,
 	"IntListConsts": null,
 	"StrConsts": null,
-	"Configs": null,
-	"Funcs": [
+	"Configs": [
 		{
-			"Name": "F",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 0,
-			"Params": [
-				{
-					"Name": "p1",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 9,
-							"Lower": 0
-						}
-					},
-					"Width": 10
-				},
-				{
-					"Name": "p2",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 10
-						}
-					},
-					"Width": 22
-				}
-			],
-			"Returns": null
-		}
-	],
-	"Masks": null,
-	"Statuses": [
-		{
-			"Name": "St",
+			"Name": "C",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -83,7 +38,11 @@
 			"Groups": [],
 			"Once": false,
 			"Width": 32
-		},
+		}
+	],
+	"Funcs": null,
+	"Masks": null,
+	"Statuses": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
@@ -98,7 +57,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"4d2b4821\"",
+			"Default": "x\"df6d31ae\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32
@@ -123,6 +82,17 @@
 			"Width": 32
 		}
 	],
-	"Streams": null,
+	"Streams": [
+		{
+			"Name": "S",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 2,
+			"AckAddr": 0,
+			"Params": null,
+			"Returns": null
+		}
+	],
 	"Subblocks": null
 }

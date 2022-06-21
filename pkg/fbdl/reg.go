@@ -91,6 +91,7 @@ func regFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	gp := gapPool{}
 
 	addr = regFuncs(blk, insBlk, addr)
+	addr = regStreams(blk, insBlk, addr)
 	addr = regGroups(blk, insBlk, addr)
 	addr = regConfigs(blk, insBlk, addr, &gp)
 	addr = regMasks(blk, insBlk, addr)
@@ -125,6 +126,19 @@ func regFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	for _, insFun := range insFuncs {
 		fun, addr = regFunc(insFun, addr)
 		blk.addFunc(fun)
+	}
+
+	return addr
+}
+
+func regStreams(blk *Block, insBlk *ins.Element, addr int64) int64 {
+	insStreams := insBlk.Elems.GetAllByType("stream")
+
+	var stream *Stream
+
+	for _, insStream := range insStreams {
+		stream, addr = regStream(insStream, addr)
+		blk.addStream(stream)
 	}
 
 	return addr
