@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking if config is placed starting from a next register when it is non-atomic and the gap is narrower than the config.",
+	"Doc": "Test checking whether the scond config is placed starting from the next register when it is non-atomic and the gap is narrower than the config.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -76,7 +76,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"db763970\"",
+			"Default": "x\"a7b24010\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

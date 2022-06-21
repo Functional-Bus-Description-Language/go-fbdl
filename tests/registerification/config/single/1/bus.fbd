@@ -1,4 +1,4 @@
-# Test checking if config is placed starting from a next register when it is non-atomic and the gap is narrower than the config.
+# Test checking whether the scond config is placed starting from the next register when it is non-atomic and the gap is narrower than the config.
 Main bus
 	C1 config; width = 30
 	C2 config; width = 8; atomic = false

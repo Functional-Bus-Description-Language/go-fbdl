@@ -1,4 +1,4 @@
-# Test checking if config is placed in a next register even if the gap is wide enough.
+# Test checking whether the second config is placed in the next register even if the gap is wide enough.
 # Configs are readable and writable, putting them in the same register can potentially greatly increase the round trip time.
 # The address space size decrease is simply not worth the round trip time increase.
 Main bus
