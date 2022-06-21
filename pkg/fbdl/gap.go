@@ -3,9 +3,9 @@ package fbdl
 // gap represents gap in occupied registers.
 // writeSafe indicates whether the gap is safe to be written.
 // In other words, it indicates whether the registers the gap address to contain only status information.
-// Adding writable functionality (for example config or mask) to a gap with writeSafe set to true implies RMW operation on write.
+// Adding writable functionality (for example config or mask) to a gap with writeSafe set to false implies RMW operation on write.
 // Both to the new added functionality, and to the one already placed in the registers.
-// This requires the gap to point to the Access structs. Does it?
+// This requires the gap to point to the Access structs, doesn't it?
 type gap struct {
 	isArray   bool
 	startAddr int64
@@ -55,7 +55,7 @@ func (gp *gapPool) Add(g gap) {
 // In such case second return is true.
 // Otherwise second return is false.
 // writeSafe parameter indicates wheter gap has to be write safe.
-// If writeSafe = true, then gap must also be writeSafe.
+// If writeSafe = true, then gap must be writeSafe.
 // if writeSafe = false, then gap can be writeSafe, but does not have to.
 func (gp *gapPool) getSingle(width int64, writeSafe bool) (gap, bool) {
 	for i, sg := range gp.singleGaps {
