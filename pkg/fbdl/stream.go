@@ -60,8 +60,6 @@ func regStream(insStream *ins.Element, addr int64) (*Stream, int64) {
 	} else {
 		panic("not yet supported")
 	}
-
-	return &stream, addr
 }
 
 // regEmptyStream registerifies empty stream.
