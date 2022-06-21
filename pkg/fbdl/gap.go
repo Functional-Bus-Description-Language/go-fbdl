@@ -7,7 +7,6 @@ package fbdl
 // Both to the new added functionality, and to the one already placed in the registers.
 // This requires the gap to point to the Access structs, doesn't it?
 type gap struct {
-	//isArray   bool
 	startAddr int64
 	endAddr   int64
 	mask      AccessMask
