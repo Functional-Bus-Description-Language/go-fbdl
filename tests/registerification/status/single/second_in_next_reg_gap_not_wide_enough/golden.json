@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking if stauts is placed next register if the gap is not wide enough.",
+	"Doc": "Test checking whether the second stauts is placed in the next register when the gap is not wide enough.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -75,7 +75,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"565a28a7\"",
+			"Default": "x\"91e63207\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32
