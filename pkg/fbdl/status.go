@@ -80,7 +80,6 @@ func regStatusSingle(st *Status, addr int64, gp *gapPool) (*Status, int64) {
 	}
 	if st.Access.EndBit() < busWidth-1 {
 		gp.Add(gap{
-			isArray:   false,
 			startAddr: st.Access.EndAddr(),
 			endAddr:   st.Access.EndAddr(),
 			mask:      AccessMask{Upper: busWidth - 1, Lower: st.Access.EndBit() + 1},

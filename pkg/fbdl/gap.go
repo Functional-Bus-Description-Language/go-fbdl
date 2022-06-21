@@ -7,7 +7,7 @@ package fbdl
 // Both to the new added functionality, and to the one already placed in the registers.
 // This requires the gap to point to the Access structs, doesn't it?
 type gap struct {
-	isArray   bool
+	//isArray   bool
 	startAddr int64
 	endAddr   int64
 	mask      AccessMask
@@ -17,13 +17,20 @@ type gap struct {
 func (g gap) Width() int64    { return g.mask.Width() }
 func (g gap) StartBit() int64 { return g.mask.Lower }
 
+func (g gap) isArray() bool {
+	if g.endAddr > g.startAddr {
+		return true
+	}
+	return false
+}
+
 type gapPool struct {
 	singleGaps []gap
 	arrayGaps  []gap
 }
 
 func (gp *gapPool) Add(g gap) {
-	if g.isArray {
+	if g.isArray() {
 		if len(gp.arrayGaps) == 0 {
 			gp.arrayGaps = append(gp.arrayGaps, g)
 			return
