@@ -54,6 +54,7 @@ func MakeArraySingle(itemCount, addr, startBit, width int64) ArraySingle {
 	}
 }
 
+// ArrayContinuous describes an access to an array of elements with single element placed within multiple continuous registers.
 type ArrayContinuous struct {
 	regCount int64
 
