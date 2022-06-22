@@ -3,6 +3,7 @@ package fbdl
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 // Mask represents mask element.
@@ -11,7 +12,7 @@ type Mask struct {
 	Doc     string
 	IsArray bool
 	Count   int64
-	Access  Access
+	Access  access.Access
 
 	// Properties
 	Atomic  bool
@@ -51,14 +52,14 @@ func regMask(insMask *ins.Element, addr int64) (*Mask, int64) {
 		if width == busWidth {
 
 		} else if busWidth%width == 0 || insMask.Count < busWidth/width {
-			mask.Access = makeAccessArrayMultiple(mask.Count, addr, width)
+			mask.Access = access.MakeArrayMultiple(mask.Count, addr, width)
 			// TODO: This is a place for adding a potential Gap.
 		} else {
 			panic("not yet implemented")
 		}
 		*/
 	} else {
-		mask.Access = makeAccessSingle(addr, 0, width)
+		mask.Access = access.MakeSingle(addr, 0, width)
 	}
 	addr += mask.Access.RegCount()
 

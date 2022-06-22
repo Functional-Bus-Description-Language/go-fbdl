@@ -1,5 +1,9 @@
 package fbdl
 
+import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+)
+
 // gap represents gap in occupied registers.
 // writeSafe indicates whether the gap is safe to be written.
 // In other words, it indicates whether the registers the gap address to contain only status information.
@@ -9,7 +13,7 @@ package fbdl
 type gap struct {
 	startAddr int64
 	endAddr   int64
-	mask      AccessMask
+	mask      access.Mask
 	writeSafe bool
 }
 

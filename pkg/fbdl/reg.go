@@ -6,6 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 var busWidth int64
@@ -17,6 +18,7 @@ func Registerify(insBus *ins.Element) *Block {
 	}
 
 	busWidth = int64(insBus.Props["width"].(val.Int))
+	access.Init(busWidth)
 
 	regBus := Block{
 		Name:    "Main",
@@ -53,7 +55,7 @@ func Registerify(insBus *ins.Element) *Block {
 			Name:    id.Name,
 			Doc:     id.Doc,
 			Count:   id.Count,
-			Access:  makeAccessSingle(0, 0, busWidth),
+			Access:  access.MakeSingle(0, 0, busWidth),
 			Atomic:  bool(id.Props["atomic"].(val.Bool)),
 			Width:   int64(id.Props["width"].(val.Int)),
 			Default: MakeBitStr(id.Props["default"].(val.BitStr)),
@@ -66,7 +68,7 @@ func Registerify(insBus *ins.Element) *Block {
 			Name:    ts.Name,
 			Doc:     ts.Doc,
 			Count:   ts.Count,
-			Access:  makeAccessSingle(1, 0, busWidth),
+			Access:  access.MakeSingle(1, 0, busWidth),
 			Atomic:  bool(ts.Props["atomic"].(val.Bool)),
 			Width:   int64(ts.Props["width"].(val.Int)),
 			Default: MakeBitStr(ts.Props["default"].(val.BitStr)),

@@ -3,6 +3,7 @@ package fbdl
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 // Config represents config element.
@@ -11,7 +12,7 @@ type Config struct {
 	Doc     string
 	IsArray bool
 	Count   int64
-	Access  Access
+	Access  access.Access
 
 	// Properties
 	Atomic  bool
@@ -32,7 +33,7 @@ func (c *Config) HasDecreasingAccessOrder() bool {
 		return false
 	}
 
-	if asc, ok := c.Access.(AccessSingleContinuous); ok {
+	if asc, ok := c.Access.(access.SingleContinuous); ok {
 		if !asc.IsEndMaskWider() {
 			return true
 		}
@@ -78,12 +79,12 @@ func regConfig(insCfg *ins.Element, addr int64, gp *gapPool) (*Config, int64) {
 		}
 		*/
 	} else {
-		cfg.Access = makeAccessSingle(addr, 0, width)
+		cfg.Access = access.MakeSingle(addr, 0, width)
 		if cfg.Access.EndBit() < busWidth-1 {
 			gp.Add(gap{
 				startAddr: cfg.Access.EndAddr(),
 				endAddr:   cfg.Access.EndAddr(),
-				mask:      AccessMask{Upper: busWidth - 1, Lower: cfg.Access.EndBit() + 1},
+				mask:      access.Mask{Upper: busWidth - 1, Lower: cfg.Access.EndBit() + 1},
 				writeSafe: false,
 			})
 		}

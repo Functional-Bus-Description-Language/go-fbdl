@@ -3,6 +3,7 @@ package fbdl
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 // Status represents status element.
@@ -11,7 +12,7 @@ type Status struct {
 	Doc     string
 	IsArray bool
 	Count   int64
-	Access  Access
+	Access  access.Access
 
 	// Properties
 	Atomic  bool
@@ -31,7 +32,7 @@ func (s *Status) HasDecreasingAccessOrder() bool {
 		return false
 	}
 
-	if asc, ok := s.Access.(AccessSingleContinuous); ok {
+	if asc, ok := s.Access.(access.SingleContinuous); ok {
 		if asc.IsEndMaskWider() {
 			return true
 		}
@@ -73,16 +74,16 @@ func regStatus(insSt *ins.Element, addr int64, gp *gapPool) (*Status, int64) {
 
 func regStatusSingle(st *Status, addr int64, gp *gapPool) (*Status, int64) {
 	if g, ok := gp.getSingle(st.Width, false); ok {
-		st.Access = makeAccessSingleSingle(g.endAddr, g.StartBit(), st.Width)
+		st.Access = access.MakeSingleSingle(g.endAddr, g.StartBit(), st.Width)
 	} else {
-		st.Access = makeAccessSingle(addr, 0, st.Width)
+		st.Access = access.MakeSingle(addr, 0, st.Width)
 		addr += st.Access.RegCount()
 	}
 	if st.Access.EndBit() < busWidth-1 {
 		gp.Add(gap{
 			startAddr: st.Access.EndAddr(),
 			endAddr:   st.Access.EndAddr(),
-			mask:      AccessMask{Upper: busWidth - 1, Lower: st.Access.EndBit() + 1},
+			mask:      access.Mask{Upper: busWidth - 1, Lower: st.Access.EndBit() + 1},
 			writeSafe: true,
 		})
 	}
@@ -92,10 +93,10 @@ func regStatusSingle(st *Status, addr int64, gp *gapPool) (*Status, int64) {
 
 func regStatusArray(st *Status, addr int64, gp *gapPool) (*Status, int64) {
 	if busWidth/2 < st.Width && st.Width <= busWidth {
-		st.Access = makeAccessArraySingle(st.Count, addr, 0, st.Width)
+		st.Access = access.MakeArraySingle(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth%st.Width == 0 || st.Count <= busWidth/st.Width || st.Width < busWidth/2 {
-		st.Access = makeAccessArrayMultiplePacked(st.Count, addr, st.Width)
+		st.Access = access.MakeArrayMultiplePacked(st.Count, addr, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else {
 		panic("not yet implemented")
@@ -108,7 +109,7 @@ func regStatusArray(st *Status, addr int64, gp *gapPool) (*Status, int64) {
 func regStatusArraySingle(insSt *ins.Element, addr, startBit int64) (*Status, int64) {
 	st := makeStatus(insSt)
 
-	st.Access = makeAccessArraySingle(insSt.Count, addr, startBit, st.Width)
+	st.Access = access.MakeArraySingle(insSt.Count, addr, startBit, st.Width)
 
 	addr += st.Access.RegCount()
 

@@ -3,6 +3,7 @@ package fbdl
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 // Func represents func element.
@@ -32,7 +33,7 @@ func (f *Func) ParamsStartAddr() int64 {
 func (f *Func) AreAllParamsSingleSingle() bool {
 	for _, p := range f.Params {
 		switch p.Access.(type) {
-		case AccessSingleSingle:
+		case access.SingleSingle:
 			continue
 		default:
 			return false
@@ -66,9 +67,9 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 		}
 
 		if p.IsArray {
-			p.Access = makeAccessArrayContinuous(p.Count, addr, baseBit, p.Width)
+			p.Access = access.MakeArrayContinuous(p.Count, addr, baseBit, p.Width)
 		} else {
-			p.Access = makeAccessSingle(addr, baseBit, p.Width)
+			p.Access = access.MakeSingle(addr, baseBit, p.Width)
 		}
 
 		if p.Access.EndBit() < busWidth-1 {
@@ -109,9 +110,9 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 		}
 
 		if r.IsArray {
-			r.Access = makeAccessArrayContinuous(r.Count, addr, baseBit, r.Width)
+			r.Access = access.MakeArrayContinuous(r.Count, addr, baseBit, r.Width)
 		} else {
-			r.Access = makeAccessSingle(addr, baseBit, r.Width)
+			r.Access = access.MakeSingle(addr, baseBit, r.Width)
 		}
 
 		if r.Access.EndBit() < busWidth-1 {
@@ -132,7 +133,7 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 	if len(fun.Params) == 0 && len(fun.Returns) == 0 {
 		addr += 1
 	} else {
-		var lastAccess Access
+		var lastAccess access.Access
 		if len(fun.Returns) > 0 {
 			lastAccess = fun.Returns[len(fun.Returns)-1].Access
 		} else {

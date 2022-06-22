@@ -1,4 +1,4 @@
-package fbdl
+package access
 
 import (
 	"reflect"
@@ -9,7 +9,7 @@ func init() {
 	busWidth = 32
 }
 
-func TestMakeAccessSingle(t *testing.T) {
+func TestMakeSingle(t *testing.T) {
 	var tests = []struct {
 		baseAddr int64
 		baseBit  int64
@@ -17,37 +17,37 @@ func TestMakeAccessSingle(t *testing.T) {
 		want     Access
 	}{
 		{0, 0, 1,
-			AccessSingleSingle{
+			SingleSingle{
 				Addr: 0,
-				Mask: AccessMask{Upper: 0, Lower: 0},
+				Mask: Mask{Upper: 0, Lower: 0},
 			},
 		},
 		{1, 31, 2,
-			AccessSingleContinuous{
+			SingleContinuous{
 				regCount:  2,
 				startAddr: 1,
-				StartMask: AccessMask{Upper: 31, Lower: 31},
-				EndMask:   AccessMask{Upper: 0, Lower: 0},
+				StartMask: Mask{Upper: 31, Lower: 31},
+				EndMask:   Mask{Upper: 0, Lower: 0},
 			},
 		},
 		{2, 30, 57,
-			AccessSingleContinuous{
+			SingleContinuous{
 				regCount:  3,
 				startAddr: 2,
-				StartMask: AccessMask{Upper: 31, Lower: 30},
-				EndMask:   AccessMask{Upper: 22, Lower: 0},
+				StartMask: Mask{Upper: 31, Lower: 30},
+				EndMask:   Mask{Upper: 22, Lower: 0},
 			},
 		},
 		{3, 0, 32,
-			AccessSingleSingle{
+			SingleSingle{
 				Addr: 3,
-				Mask: AccessMask{Upper: 31, Lower: 0},
+				Mask: Mask{Upper: 31, Lower: 0},
 			},
 		},
 	}
 
 	for i, test := range tests {
-		got := makeAccessSingle(test.baseAddr, test.baseBit, test.width)
+		got := MakeSingle(test.baseAddr, test.baseBit, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
@@ -59,7 +59,7 @@ func TestMakeAccessSingle(t *testing.T) {
 	}
 }
 
-func TestMakeAccessArrayContinuous(t *testing.T) {
+func TestMakeArrayContinuous(t *testing.T) {
 	var tests = []struct {
 		startAddr int64
 		count     int64
@@ -68,7 +68,7 @@ func TestMakeAccessArrayContinuous(t *testing.T) {
 		want      Access
 	}{
 		{0, 1, 0, 32,
-			AccessArrayContinuous{
+			ArrayContinuous{
 				regCount:  1,
 				ItemCount: 1,
 				ItemWidth: 32,
@@ -77,7 +77,7 @@ func TestMakeAccessArrayContinuous(t *testing.T) {
 			},
 		},
 		{1, 4, 0, 5,
-			AccessArrayContinuous{
+			ArrayContinuous{
 				regCount:  1,
 				ItemCount: 4,
 				ItemWidth: 5,
@@ -86,7 +86,7 @@ func TestMakeAccessArrayContinuous(t *testing.T) {
 			},
 		},
 		{2, 2, 20, 23,
-			AccessArrayContinuous{
+			ArrayContinuous{
 				regCount:  3,
 				ItemCount: 2,
 				ItemWidth: 23,
@@ -95,7 +95,7 @@ func TestMakeAccessArrayContinuous(t *testing.T) {
 			},
 		},
 		{3, 2, 20, 22,
-			AccessArrayContinuous{
+			ArrayContinuous{
 				regCount:  2,
 				ItemCount: 2,
 				ItemWidth: 22,
@@ -106,7 +106,7 @@ func TestMakeAccessArrayContinuous(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := makeAccessArrayContinuous(test.count, test.startAddr, test.startBit, test.width)
+		got := MakeArrayContinuous(test.count, test.startAddr, test.startBit, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
@@ -118,7 +118,7 @@ func TestMakeAccessArrayContinuous(t *testing.T) {
 	}
 }
 
-func TestMakeAccessArrayMultiplePacked(t *testing.T) {
+func TestMakeArrayMultiplePacked(t *testing.T) {
 	var tests = []struct {
 		startAddr int64
 		count     int64
@@ -126,7 +126,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 		want      Access
 	}{
 		{0, 1, 32,
-			AccessArrayMultiple{
+			ArrayMultiple{
 				regCount:       1,
 				ItemCount:      1,
 				ItemWidth:      32,
@@ -136,7 +136,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 			},
 		},
 		{1, 4, 8,
-			AccessArrayMultiple{
+			ArrayMultiple{
 				regCount:       1,
 				ItemCount:      4,
 				ItemWidth:      8,
@@ -146,7 +146,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 			},
 		},
 		{2, 3, 16,
-			AccessArrayMultiple{
+			ArrayMultiple{
 				regCount:       2,
 				ItemCount:      3,
 				ItemWidth:      16,
@@ -156,7 +156,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 			},
 		},
 		{3, 4, 4,
-			AccessArrayMultiple{
+			ArrayMultiple{
 				regCount:       1,
 				ItemCount:      4,
 				ItemWidth:      4,
@@ -166,7 +166,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 			},
 		},
 		{4, 5, 8,
-			AccessArrayMultiple{
+			ArrayMultiple{
 				regCount:       2,
 				ItemCount:      5,
 				ItemWidth:      8,
@@ -176,7 +176,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 			},
 		},
 		{5, 10, 7,
-			AccessArrayMultiple{
+			ArrayMultiple{
 				regCount:       3,
 				ItemCount:      10,
 				ItemWidth:      7,
@@ -186,7 +186,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 			},
 		},
 		{6, 50, 3,
-			AccessArrayMultiple{
+			ArrayMultiple{
 				regCount:       5,
 				ItemCount:      50,
 				ItemWidth:      3,
@@ -198,7 +198,7 @@ func TestMakeAccessArrayMultiplePacked(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := makeAccessArrayMultiplePacked(test.count, test.startAddr, test.width)
+		got := MakeArrayMultiplePacked(test.count, test.startAddr, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
