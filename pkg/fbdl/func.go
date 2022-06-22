@@ -51,10 +51,6 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 		Count:   insFun.Count,
 	}
 
-	if doc, ok := insFun.Props["doc"]; ok {
-		fun.Doc = string(doc.(val.Str))
-	}
-
 	params := insFun.Elems.GetAllByType("param")
 	baseBit := int64(0)
 	for _, param := range params {
