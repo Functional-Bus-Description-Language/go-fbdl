@@ -15,7 +15,6 @@ type Stream struct {
 	IsArray bool
 	Count   int64
 	StbAddr int64 // Strobe address
-	AckAddr int64 // Acknowledgment address
 
 	// Properties
 	// Currently stream has no properties.
@@ -101,7 +100,7 @@ func regUpstream(stream *Stream, addr int64, returns []*ins.Element) (*Stream, i
 		stream.Returns = append(stream.Returns, &r)
 	}
 
-	stream.AckAddr = stream.Returns[len(stream.Returns)-1].Access.EndAddr()
+	stream.StbAddr = stream.Returns[len(stream.Returns)-1].Access.EndAddr()
 
 	lastAccess := stream.Returns[len(stream.Returns)-1].Access
 	if lastAccess.EndBit() < busWidth-1 {

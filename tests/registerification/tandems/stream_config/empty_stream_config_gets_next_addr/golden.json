@@ -89,7 +89,6 @@
 			"IsArray": false,
 			"Count": 1,
 			"StbAddr": 2,
-			"AckAddr": 0,
 			"Params": null,
 			"Returns": null
 		}
