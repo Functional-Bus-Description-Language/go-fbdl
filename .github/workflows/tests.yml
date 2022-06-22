@@ -69,4 +69,4 @@ jobs:
           go-version: '^1.17.1'
       - run: go version
       - run: make build
-      - run: ./scripts/test-registerification.sh
+      - run: make test-registerification
