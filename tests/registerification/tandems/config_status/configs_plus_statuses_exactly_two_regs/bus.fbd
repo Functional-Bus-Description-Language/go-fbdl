@@ -1,5 +1,6 @@
-# Configs and statuses in this test must occupy exactly two registers.
-# C1 and S2 must be placed in the first register, and C2 and S1 must be place in the second one.
+# Configs and statuses must occupy exactly two registers.
+# C1 and S2 must get the first free address, and C2 and S1 must get the next address.
+# Access masks must not overlap.
 Main bus
 	C1 config; width = 20
 	C2 config; width = 14

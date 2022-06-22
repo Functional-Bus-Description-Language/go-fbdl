@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether the second stauts is placed in the next register when the gap is not wide enough.",
+	"Doc": "Status right after the func must get new address even if there are only returns and there is enough space for the status.\nIn such case status cannot be put into the func register as this would lead to spurious function acknowledgements during status read.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -20,30 +20,38 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": null,
-	"Masks": null,
-	"Statuses": [
+	"Funcs": [
 		{
-			"Name": "S1",
+			"Name": "F",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 2,
-				"Mask": {
-					"Upper": 19,
-					"Lower": 0
+			"StbAddr": 2,
+			"AckAddr": 2,
+			"Params": null,
+			"Returns": [
+				{
+					"Name": "r",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 2,
+						"Mask": {
+							"Upper": 7,
+							"Lower": 0
+						}
+					},
+					"Width": 8
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 20
-		},
+			]
+		}
+	],
+	"Masks": null,
+	"Statuses": [
 		{
-			"Name": "S2",
+			"Name": "S",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -51,7 +59,7 @@
 				"Strategy": "Single",
 				"Addr": 3,
 				"Mask": {
-					"Upper": 12,
+					"Upper": 3,
 					"Lower": 0
 				}
 			},
@@ -59,7 +67,7 @@
 			"Default": "",
 			"Groups": [],
 			"Once": false,
-			"Width": 13
+			"Width": 4
 		},
 		{
 			"Name": "ID",
@@ -75,7 +83,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"91e63207\"",
+			"Default": "x\"f1026998\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

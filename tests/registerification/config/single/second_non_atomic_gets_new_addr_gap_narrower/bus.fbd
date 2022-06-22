@@ -1,0 +1,4 @@
+# Second config must get the next address when the gap is narrower than the config even if it is non-atomic.
+Main bus
+	C1 config; width = 30
+	C2 config; width = 8; atomic = false

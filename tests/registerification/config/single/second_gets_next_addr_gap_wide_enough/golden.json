@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether config right after the func gets new address even if the func has no params and returns.\nIn such case config cannot be put into the func register as this would lead to spurious function strobes during config write.",
+	"Doc": "Second config must get the next address even if the gap is wide enough.\nConfigs are readable and writable.\nPutting configs in the same register can significantly increase the round trip time, as writing one of them would require RMW operation.\nThe address space size decrease is simply not worth the round trip time increase.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -21,15 +21,15 @@
 	"StrConsts": null,
 	"Configs": [
 		{
-			"Name": "C",
+			"Name": "C1",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 3,
+				"Addr": 2,
 				"Mask": {
-					"Upper": 31,
+					"Upper": 9,
 					"Lower": 0
 				}
 			},
@@ -37,21 +37,29 @@
 			"Default": "",
 			"Groups": [],
 			"Once": false,
-			"Width": 32
-		}
-	],
-	"Funcs": [
+			"Width": 10
+		},
 		{
-			"Name": "F",
+			"Name": "C2",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 0,
-			"Params": null,
-			"Returns": null
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"Mask": {
+					"Upper": 7,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 8
 		}
 	],
+	"Funcs": null,
 	"Masks": null,
 	"Statuses": [
 		{
@@ -68,7 +76,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"86b6619c\"",
+			"Default": "x\"4830816e\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

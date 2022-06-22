@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking scenario when there are no params, only returns.\nThe returns occupy exactly one register.\nIt also checkes whether element after the func has proper address.",
+	"Doc": "Returns fitting single register must get the same address.\nElement after the func must get the next address.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -98,7 +98,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"b97948d5\"",
+			"Default": "x\"cf833222\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

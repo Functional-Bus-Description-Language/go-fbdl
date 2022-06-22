@@ -47,7 +47,7 @@ test-instantiating:
 	@./scripts/test-instantiating.sh
 
 test-registerification:
-	@./scripts/test-registerification.sh
+	@./scripts/reg-tests.sh
 
 test-all: test test-parsing test-instantiating test-registerification
 

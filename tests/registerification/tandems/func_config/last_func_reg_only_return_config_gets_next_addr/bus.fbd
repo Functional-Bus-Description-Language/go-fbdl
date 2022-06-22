@@ -1,4 +1,4 @@
-# Test checking whether config right after the func gets new address even if last func register has only returns.
+# Config right after the func must get new address even if the last func register has only returns.
 # In such case config cannot be put into the last func register as config is readable.
 # A config read would lead to spurious acknowledgement generation.
 Main bus

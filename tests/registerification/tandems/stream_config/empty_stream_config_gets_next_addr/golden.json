@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether the scond config is placed starting from the next register when it is non-atomic and the gap is narrower than the config.",
+	"Doc": "Config right after the stream must get next address even if the stream is empty.\nPutting the config into the stream strobe addres would lead to spurious stream strobes.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -21,26 +21,7 @@
 	"StrConsts": null,
 	"Configs": [
 		{
-			"Name": "C1",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 2,
-				"Mask": {
-					"Upper": 29,
-					"Lower": 0
-				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 30
-		},
-		{
-			"Name": "C2",
+			"Name": "C",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -48,15 +29,15 @@
 				"Strategy": "Single",
 				"Addr": 3,
 				"Mask": {
-					"Upper": 7,
+					"Upper": 31,
 					"Lower": 0
 				}
 			},
-			"Atomic": false,
+			"Atomic": true,
 			"Default": "",
 			"Groups": [],
 			"Once": false,
-			"Width": 8
+			"Width": 32
 		}
 	],
 	"Funcs": null,
@@ -76,7 +57,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"a7b24010\"",
+			"Default": "x\"1a42494c\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32
@@ -101,6 +82,17 @@
 			"Width": 32
 		}
 	],
-	"Streams": null,
+	"Streams": [
+		{
+			"Name": "S",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 2,
+			"AckAddr": 0,
+			"Params": null,
+			"Returns": null
+		}
+	],
 	"Subblocks": null
 }

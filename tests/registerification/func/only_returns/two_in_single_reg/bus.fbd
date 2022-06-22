@@ -1,6 +1,5 @@
-# Test checking scenario when there are no params, only returns.
-# The returns occupy exactly one register.
-# It also checkes whether element after the func has proper address.
+# Returns fitting single register must get the same address.
+# Element after the func must get the next address.
 Main bus
 	F func
 		a return; width = 17

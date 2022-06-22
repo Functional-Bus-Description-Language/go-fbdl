@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "All params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nStbAddr and AckAddr must be equal.\nElement after the func must get next address.",
+	"Doc": "Config right after the func must get new address even if the last func register has only returns.\nIn such case config cannot be put into the last func register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -19,14 +19,34 @@
 	"IntConsts": null,
 	"IntListConsts": null,
 	"StrConsts": null,
-	"Configs": null,
+	"Configs": [
+		{
+			"Name": "C",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 4,
+				"Mask": {
+					"Upper": 7,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 8
+		}
+	],
 	"Funcs": [
 		{
 			"Name": "F",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"StbAddr": 3,
+			"StbAddr": 2,
 			"AckAddr": 3,
 			"Params": [
 				{
@@ -38,11 +58,11 @@
 						"Strategy": "Single",
 						"Addr": 2,
 						"Mask": {
-							"Upper": 19,
+							"Upper": 29,
 							"Lower": 0
 						}
 					},
-					"Width": 20
+					"Width": 30
 				},
 				{
 					"Name": "p2",
@@ -54,45 +74,15 @@
 						"Addr": 2,
 						"Mask": {
 							"Upper": 31,
-							"Lower": 20
+							"Lower": 30
 						}
 					},
-					"Width": 12
-				},
-				{
-					"Name": "p3",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 3,
-						"Mask": {
-							"Upper": 3,
-							"Lower": 0
-						}
-					},
-					"Width": 4
-				},
-				{
-					"Name": "p4",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 3,
-						"Mask": {
-							"Upper": 11,
-							"Lower": 4
-						}
-					},
-					"Width": 8
+					"Width": 2
 				}
 			],
 			"Returns": [
 				{
-					"Name": "r1",
+					"Name": "r",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
@@ -100,51 +90,17 @@
 						"Strategy": "Single",
 						"Addr": 3,
 						"Mask": {
-							"Upper": 18,
-							"Lower": 12
+							"Upper": 7,
+							"Lower": 0
 						}
 					},
-					"Width": 7
-				},
-				{
-					"Name": "r2",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 3,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 19
-						}
-					},
-					"Width": 13
+					"Width": 8
 				}
 			]
 		}
 	],
 	"Masks": null,
 	"Statuses": [
-		{
-			"Name": "St",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 4,
-				"Mask": {
-					"Upper": 31,
-					"Lower": 0
-				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 32
-		},
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
@@ -159,7 +115,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"64d06a4b\"",
+			"Default": "x\"c752646a\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether status right after the func gets new address when there are only returns and there is enough space for the status.\nIn such case status cannot be put into the func register as this would lead to spurious function acknowledgements during status read.",
+	"Doc": "Config right after the func must get new address even if the func has no params and returns.\nIn such case config cannot be put into the func register as this would lead to spurious function strobes during config write.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -19,39 +19,9 @@
 	"IntConsts": null,
 	"IntListConsts": null,
 	"StrConsts": null,
-	"Configs": null,
-	"Funcs": [
+	"Configs": [
 		{
-			"Name": "F",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 2,
-			"Params": null,
-			"Returns": [
-				{
-					"Name": "r",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 7,
-							"Lower": 0
-						}
-					},
-					"Width": 8
-				}
-			]
-		}
-	],
-	"Masks": null,
-	"Statuses": [
-		{
-			"Name": "S",
+			"Name": "C",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -59,7 +29,7 @@
 				"Strategy": "Single",
 				"Addr": 3,
 				"Mask": {
-					"Upper": 3,
+					"Upper": 31,
 					"Lower": 0
 				}
 			},
@@ -67,8 +37,23 @@
 			"Default": "",
 			"Groups": [],
 			"Once": false,
-			"Width": 4
-		},
+			"Width": 32
+		}
+	],
+	"Funcs": [
+		{
+			"Name": "F",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 2,
+			"AckAddr": 0,
+			"Params": null,
+			"Returns": null
+		}
+	],
+	"Masks": null,
+	"Statuses": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
@@ -83,7 +68,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"330c6f8a\"",
+			"Default": "x\"099c5abf\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

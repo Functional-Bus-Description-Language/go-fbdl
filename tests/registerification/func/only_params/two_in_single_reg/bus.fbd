@@ -1,6 +1,5 @@
-# Test checking scenario when there are only params, no returns.
-# The params occupy exactly one register.
-# It also checkes whether element after the func has proper address.
+# Params fitting single register must get the same address.
+# Element after the func must get the next address.
 Main bus
 	F func
 		p1 param; width = 10

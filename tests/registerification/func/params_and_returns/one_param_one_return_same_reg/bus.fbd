@@ -1,5 +1,3 @@
-# Test for the func element with single param and single return.
-# The sum of the param and return widths is equal to the register width.
 # StbAddr and AckAddr must be equal.
 # Access masks must not overlap.
 Main bus

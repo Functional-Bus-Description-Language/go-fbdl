@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Configs and statuses in this test must occupy exactly two registers.\nC1 and S2 must be placed in the first register, and C2 and S1 must be place in the second one.",
+	"Doc": "Configs and statuses must occupy exactly two registers.\nC1 and S2 must get the first free address, and C2 and S1 must get the next address.\nAccess masks must not overlap.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -114,7 +114,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"d5b4490e\"",
+			"Default": "x\"193a4c1b\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

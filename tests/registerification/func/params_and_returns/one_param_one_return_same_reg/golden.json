@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test for the func element with single param and single return.\nThe sum of the param and return widths is equal to the register width.\nStbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
+	"Doc": "StbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -80,7 +80,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"6f3d5081\"",
+			"Default": "x\"40b6202f\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

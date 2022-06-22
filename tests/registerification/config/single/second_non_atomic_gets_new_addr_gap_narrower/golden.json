@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether the second config is placed in the next register even if the gap is wide enough.\nConfigs are readable and writable, putting them in the same register can potentially greatly increase the round trip time.\nThe address space size decrease is simply not worth the round trip time increase.",
+	"Doc": "Second config must get the next address when the gap is narrower than the config even if it is non-atomic.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -29,7 +29,7 @@
 				"Strategy": "Single",
 				"Addr": 2,
 				"Mask": {
-					"Upper": 9,
+					"Upper": 29,
 					"Lower": 0
 				}
 			},
@@ -37,7 +37,7 @@
 			"Default": "",
 			"Groups": [],
 			"Once": false,
-			"Width": 10
+			"Width": 30
 		},
 		{
 			"Name": "C2",
@@ -52,7 +52,7 @@
 					"Lower": 0
 				}
 			},
-			"Atomic": true,
+			"Atomic": false,
 			"Default": "",
 			"Groups": [],
 			"Once": false,
@@ -76,7 +76,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"42117b4e\"",
+			"Default": "x\"0e0f3210\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

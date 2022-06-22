@@ -1,0 +1,7 @@
+# Second config must get the next address even if the gap is wide enough.
+# Configs are readable and writable.
+# Putting configs in the same register can significantly increase the round trip time, as writing one of them would require RMW operation.
+# The address space size decrease is simply not worth the round trip time increase.
+Main bus
+	C1 config; width = 10
+	C2 config; width = 8

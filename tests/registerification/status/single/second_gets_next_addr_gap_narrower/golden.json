@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether status right after the func has proper address when func occupies exactly one register and has only params.",
+	"Doc": "Second stauts must get the next address if the gap is not wide enough.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
@@ -20,76 +20,19 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": [
-		{
-			"Name": "F",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 0,
-			"Params": [
-				{
-					"Name": "a",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 27,
-							"Lower": 0
-						}
-					},
-					"Width": 28
-				},
-				{
-					"Name": "b",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 30,
-							"Lower": 28
-						}
-					},
-					"Width": 3
-				},
-				{
-					"Name": "c",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 31
-						}
-					},
-					"Width": 1
-				}
-			],
-			"Returns": null
-		}
-	],
+	"Funcs": null,
 	"Masks": null,
 	"Statuses": [
 		{
-			"Name": "St",
+			"Name": "S1",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 3,
+				"Addr": 2,
 				"Mask": {
-					"Upper": 31,
+					"Upper": 19,
 					"Lower": 0
 				}
 			},
@@ -97,7 +40,26 @@
 			"Default": "",
 			"Groups": [],
 			"Once": false,
-			"Width": 32
+			"Width": 20
+		},
+		{
+			"Name": "S2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"Mask": {
+					"Upper": 12,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 13
 		},
 		{
 			"Name": "ID",
@@ -113,7 +75,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"27483a65\"",
+			"Default": "x\"e8d725be\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32

@@ -1,16 +1,16 @@
 {
 	"Name": "Main",
-	"Doc": "Test checking whether config right after the func gets new address even if last func register has only returns.\nIn such case config cannot be put into the last func register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
+	"Doc": "Status right after the func must get next address when func occupies exactly one register and has only params.",
 	"IsArray": false,
 	"Count": 1,
 	"Sizes": {
-		"BlockAligned": 8,
-		"Compact": 5,
-		"Own": 5
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
 	},
 	"AddrSpace": {
 		"Start": 0,
-		"End": 7
+		"End": 3
 	},
 	"Masters": 1,
 	"Width": 32,
@@ -19,27 +19,7 @@
 	"IntConsts": null,
 	"IntListConsts": null,
 	"StrConsts": null,
-	"Configs": [
-		{
-			"Name": "C",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 4,
-				"Mask": {
-					"Upper": 7,
-					"Lower": 0
-				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 8
-		}
-	],
+	"Configs": null,
 	"Funcs": [
 		{
 			"Name": "F",
@@ -47,10 +27,10 @@
 			"IsArray": false,
 			"Count": 1,
 			"StbAddr": 2,
-			"AckAddr": 3,
+			"AckAddr": 0,
 			"Params": [
 				{
-					"Name": "p1",
+					"Name": "a",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
@@ -58,14 +38,29 @@
 						"Strategy": "Single",
 						"Addr": 2,
 						"Mask": {
-							"Upper": 29,
+							"Upper": 27,
 							"Lower": 0
 						}
 					},
-					"Width": 30
+					"Width": 28
 				},
 				{
-					"Name": "p2",
+					"Name": "b",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 2,
+						"Mask": {
+							"Upper": 30,
+							"Lower": 28
+						}
+					},
+					"Width": 3
+				},
+				{
+					"Name": "c",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
@@ -74,33 +69,36 @@
 						"Addr": 2,
 						"Mask": {
 							"Upper": 31,
-							"Lower": 30
+							"Lower": 31
 						}
 					},
-					"Width": 2
+					"Width": 1
 				}
 			],
-			"Returns": [
-				{
-					"Name": "r",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 3,
-						"Mask": {
-							"Upper": 7,
-							"Lower": 0
-						}
-					},
-					"Width": 8
-				}
-			]
+			"Returns": null
 		}
 	],
 	"Masks": null,
 	"Statuses": [
+		{
+			"Name": "St",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 32
+		},
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
@@ -115,7 +113,7 @@
 				}
 			},
 			"Atomic": true,
-			"Default": "x\"512969e6\"",
+			"Default": "x\"4bd93326\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32
