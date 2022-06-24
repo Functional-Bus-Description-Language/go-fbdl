@@ -1,0 +1,128 @@
+{
+	"Name": "Main",
+	"Doc": "Config right after the upstream must get next address even if the gap in the last stream address is wide enough.\nPutting the config into the upstream strobe address would lead to spurious stream strobes during config read.",
+	"IsArray": false,
+	"Count": 1,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	},
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": [
+		{
+			"Name": "C",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"Mask": {
+					"Upper": 1,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "",
+			"Groups": [],
+			"Once": false,
+			"Width": 2
+		}
+	],
+	"Funcs": null,
+	"Masks": null,
+	"Statuses": [
+		{
+			"Name": "ID",
+			"Doc": "Bus identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"4a295cda\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		},
+		{
+			"Name": "TIMESTAMP",
+			"Doc": "Bus generation timestamp.",
+			"IsArray": false,
+			"Count": 1,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"Mask": {
+					"Upper": 31,
+					"Lower": 0
+				}
+			},
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32
+		}
+	],
+	"Streams": [
+		{
+			"Name": "S",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"StbAddr": 2,
+			"Params": null,
+			"Returns": [
+				{
+					"Name": "r1",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 2,
+						"Mask": {
+							"Upper": 9,
+							"Lower": 0
+						}
+					},
+					"Width": 10
+				},
+				{
+					"Name": "r2",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 2,
+						"Mask": {
+							"Upper": 17,
+							"Lower": 10
+						}
+					},
+					"Width": 8
+				}
+			]
+		}
+	],
+	"Subblocks": null
+}
