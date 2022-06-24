@@ -4,5 +4,5 @@ go 1.17
 
 require (
 	github.com/davecgh/go-spew v1.1.1
-	github.com/smacker/go-tree-sitter v0.0.0-20220611151427-2c4b54ed41fe
+	github.com/smacker/go-tree-sitter v0.0.0-20220623130553-1191a8204295
 )
