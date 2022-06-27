@@ -23,8 +23,6 @@ type Stream struct {
 	Returns []*Return
 }
 
-func (s Stream) IsUpstream() bool { return !s.IsDownstream() }
-
 func (s Stream) IsDownstream() bool {
 	if len(s.Params) > 0 {
 		return true
@@ -33,6 +31,19 @@ func (s Stream) IsDownstream() bool {
 	}
 	// Empty stream is treated as downstream.
 	return true
+}
+
+func (s Stream) IsUpstream() bool { return !s.IsDownstream() }
+
+func (s Stream) StartAddr() int64 {
+	if len(s.Params) > 0 {
+		return s.Params[0].Access.StartAddr()
+	} else if len(s.Returns) > 0 {
+		return s.Returns[0].Access.StartAddr()
+	}
+
+	// For empty stream return strobe address.
+	return s.StbAddr
 }
 
 // IsEmpty returns true if stream has no params and no returns.
