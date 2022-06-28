@@ -43,6 +43,7 @@
 							"Lower": 0
 						}
 					},
+					"Groups": [],
 					"Width": 17
 				},
 				{
@@ -58,6 +59,7 @@
 							"Lower": 17
 						}
 					},
+					"Groups": [],
 					"Width": 15
 				}
 			]

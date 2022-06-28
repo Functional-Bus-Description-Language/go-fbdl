@@ -2,7 +2,6 @@ package fbdl
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
@@ -86,13 +85,7 @@ func regEmptyStream(stream *Stream, addr int64) (*Stream, int64) {
 func regUpstream(stream *Stream, addr int64, returns []*ins.Element) (*Stream, int64) {
 	baseBit := int64(0)
 	for _, ret := range returns {
-		r := Return{
-			Name:    ret.Name,
-			Doc:     ret.Doc,
-			IsArray: ret.IsArray,
-			Count:   ret.Count,
-			Width:   int64(ret.Props["width"].(val.Int)),
-		}
+		r := makeReturn(ret)
 
 		if r.IsArray {
 			r.Access = access.MakeArrayContinuous(r.Count, addr, baseBit, r.Width)
@@ -108,7 +101,7 @@ func regUpstream(stream *Stream, addr int64, returns []*ins.Element) (*Stream, i
 			baseBit = 0
 		}
 
-		stream.Returns = append(stream.Returns, &r)
+		stream.Returns = append(stream.Returns, r)
 	}
 
 	stream.StbAddr = stream.Returns[len(stream.Returns)-1].Access.EndAddr()

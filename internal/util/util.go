@@ -31,8 +31,8 @@ func IsValidProperty(p string, t string) error {
 		"mask":   []string{"atomic", "default", "groups", "once", "width"},
 		// TODO: Decide if "default" should be possible for param.
 		// It creates some problems as not all programming languges support it.
-		"param":  []string{"range", "width"},
-		"return": []string{"width"},
+		"param":  []string{"groups", "range", "width"},
+		"return": []string{"groups", "width"},
 		"status": []string{"atomic", "groups", "once", "width"},
 		"stream": []string{},
 	}

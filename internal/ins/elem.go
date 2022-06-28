@@ -54,7 +54,11 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		}
 		err := checkProp(prop.Name, prop)
 		if err != nil {
-			return fmt.Errorf("\n  %s: line %d: %v", typ.File().Path, prop.LineNum, err)
+			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.LineNum, err)
+		}
+		err = checkPropConstraints(elem, prop)
+		if err != nil {
+			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.LineNum, err)
 		}
 		if _, exist := elem.Props[prop.Name]; exist {
 			return fmt.Errorf(

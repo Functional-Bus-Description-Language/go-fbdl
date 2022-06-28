@@ -2,7 +2,6 @@ package fbdl
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
@@ -54,13 +53,7 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 	params := insFun.Elems.GetAllByType("param")
 	baseBit := int64(0)
 	for _, param := range params {
-		p := Param{
-			Name:    param.Name,
-			Doc:     param.Doc,
-			IsArray: param.IsArray,
-			Count:   param.Count,
-			Width:   int64(param.Props["width"].(val.Int)),
-		}
+		p := makeParam(param)
 
 		if p.IsArray {
 			p.Access = access.MakeArrayContinuous(p.Count, addr, baseBit, p.Width)
@@ -76,7 +69,7 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 			baseBit = 0
 		}
 
-		fun.Params = append(fun.Params, &p)
+		fun.Params = append(fun.Params, p)
 	}
 
 	if len(fun.Params) == 0 {
@@ -97,13 +90,7 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 
 	returns := insFun.Elems.GetAllByType("return")
 	for _, ret := range returns {
-		r := Return{
-			Name:    ret.Name,
-			Doc:     ret.Doc,
-			IsArray: ret.IsArray,
-			Count:   ret.Count,
-			Width:   int64(ret.Props["width"].(val.Int)),
-		}
+		r := makeReturn(ret)
 
 		if r.IsArray {
 			r.Access = access.MakeArrayContinuous(r.Count, addr, baseBit, r.Width)
@@ -119,7 +106,7 @@ func regFunc(insFun *ins.Element, addr int64) (*Func, int64) {
 			baseBit = 0
 		}
 
-		fun.Returns = append(fun.Returns, &r)
+		fun.Returns = append(fun.Returns, r)
 	}
 
 	if len(fun.Returns) > 0 {

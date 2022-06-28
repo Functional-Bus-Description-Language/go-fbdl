@@ -127,3 +127,24 @@ func checkElemConflict(elem, innerElem *Element) error {
 	}
 	return nil
 }
+
+// checkPropConstraints checks constraints imposed on the property for element of given type.
+// Before checking the property constraints the property itself must be checked with checkProp function.
+func checkPropConstraints(elem *Element, prop prs.Prop) error {
+	switch elem.Type {
+	case "param", "return":
+		if prop.Name == "groups" {
+			pv, err := prop.Value.Eval()
+			if err != nil {
+				panic("should never happen")
+			}
+			groups := pv.(val.List)
+			if len(groups) > 1 {
+				return fmt.Errorf(
+					"'%s' element cannot belong to more than one group", elem.Type,
+				)
+			}
+		}
+	}
+	return nil
+}
