@@ -33,13 +33,13 @@ type Block struct {
 
 // Status returns pointer to the Status if status with given name exists
 // within the block. Otherwise it returns nil.
-func (b *Block) Status(name string) *Status {
+func (b *Block) Status(name string) (*Status, bool) {
 	for _, s := range b.Statuses {
 		if s.Name == name {
-			return s
+			return s, true
 		}
 	}
-	return nil
+	return nil, false
 }
 
 // TODO: Check if it is used anywhere.
@@ -51,4 +51,8 @@ func (b *Block) HasElement(name string) bool {
 	}
 
 	return false
+}
+
+func (b *Block) Hash() int64 {
+	return 0
 }

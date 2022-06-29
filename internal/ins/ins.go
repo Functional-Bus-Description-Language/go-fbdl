@@ -8,6 +8,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 const dfltBusWidth int64 = 32
@@ -43,7 +44,7 @@ func setBusWidth(main prs.Symbol) error {
 	return nil
 }
 
-func Instantiate(packages prs.Packages, zeroTimestamp bool) *Element {
+func Instantiate(packages prs.Packages, zeroTimestamp bool) *elem.Block {
 	main, ok := packages["main"][0].Symbols.Get("Main", prs.ElemInst)
 	if !ok {
 		log.Println("instantiation: there is no 'Main' bus; returning nil")
@@ -60,81 +61,109 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *Element {
 		log.Fatalf("instantiation: %v", err)
 	}
 
-	var mainBus *Element
+	var mainBus *elem.Block
 
 	for pkgName, pkgs := range packages {
 		for _, pkg := range pkgs {
 			for _, symbol := range pkg.Symbols {
 				name := symbol.Name()
-				e, ok := symbol.(prs.Element)
+				prsElem, ok := symbol.(prs.Element)
 				if !ok {
 					continue
 				}
 
-				if name != "Main" && util.IsBaseType(e.Type()) {
+				if name != "Main" && util.IsBaseType(prsElem.Type()) {
 					continue
 				}
 
-				elem := instantiateElement(e)
+				e := instantiateElement(prsElem)
 
 				if pkgName == "main" && name == "Main" {
-					mainBus = elem
+					mainBus = e.(*elem.Block)
 				}
 			}
 		}
 	}
 
-	if _, exists := mainBus.Elems.Get("ID"); exists {
-		panic("ID is reserved element name in Main bus")
-	}
+	/*
+		if _, ok := mainBus.Status("ID"); ok {
+			log.Fatalf("ID is reserved element name in Main bus")
+		}
 
-	id := id()
-	hash := int64(mainBus.hash())
-	if busWidth < 32 {
-		hash = hash & ((1 << busWidth) - 1)
-	}
-	// Ignore error, the value has been trimmed to the proper width.
-	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
-	id.Props["default"] = dflt
-	mainBus.Elems.Add(id)
+		id := id()
+		hash := int64(mainBus.hash())
+		if busWidth < 32 {
+			hash = hash & ((1 << busWidth) - 1)
+		}
+		// Ignore error, the value has been trimmed to the proper width.
+		dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
+		id.Props["default"] = dflt
+		mainBus.Elems.Add(id)
 
-	if _, exists := mainBus.Elems.Get("TIMESTAMP"); exists {
-		panic("TIMESTAMP is reserved element name in Main bus")
-	}
-	mainBus.Elems.Add(timestamp(zeroTimestamp))
+		if _, exists := mainBus.Elems.Get("TIMESTAMP"); exists {
+			log.Fatalf("TIMESTAMP is reserved element name in Main bus")
+		}
+		mainBus.Elems.Add(timestamp(zeroTimestamp))
+	*/
 
 	return mainBus
 }
 
-func instantiateElement(e prs.Element) *Element {
-	typeChain := resolveToBaseType(e)
-	elem, err := instantiateTypeChain(typeChain)
+func instantiateElement(pe prs.Element) elem.Element {
+	typeChain := resolveToBaseType(pe)
+	//elem, err := instantiateTypeChain(typeChain)
 
-	errMsg := "%s: line %d: instantiating element '%s': %v"
+	var e elem.Element
+	var err error
 
-	if err != nil {
-		log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
-	}
-
-	if elem.Count < 0 {
+	typ := typeChain[0].Type()
+	switch typ {
+	case "block", "bus":
+		e, err = insBlock(typeChain)
+	default:
 		log.Fatalf(
-			"%s: line %d: negative size (%d) of '%s' array",
-			e.File().Path, e.LineNum(), elem.Count, e.Name(),
+			"%s: line %d: instantiating element '%s', "+
+				"cannot start element instantiation from non base type '%s'",
+			pe.File().Path, pe.LineNum(), pe.Name(), typ,
 		)
 	}
 
-	fillProps(elem)
-
-	if err = elem.makeGrps(); err != nil {
-		log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
-	}
-
-	err = elem.processDflt()
 	if err != nil {
-		log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
+		log.Fatalf(
+			"%s: line %d: instantiating element '%s': %v",
+			pe.File().Path, pe.LineNum(), pe.Name(), err,
+		)
 	}
 
-	return elem
+	return e
+
+	/*
+		errMsg := "%s: line %d: instantiating element '%s': %v"
+
+		if err != nil {
+			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
+		}
+
+		if elem.Count < 0 {
+			log.Fatalf(
+				"%s: line %d: negative size (%d) of '%s' array",
+				e.File().Path, e.LineNum(), elem.Count, e.Name(),
+			)
+		}
+
+		fillProps(elem)
+
+		if err = elem.makeGrps(); err != nil {
+			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
+		}
+
+		err = elem.processDflt()
+		if err != nil {
+			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
+		}
+
+		return elem
+	*/
 }
 
 func resolveToBaseType(e prs.Element) []prs.Element {
@@ -162,6 +191,7 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 	return typeChain
 }
 
+/*
 func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 	inst := &Element{
 		Props:  map[string]val.Value{},
@@ -186,3 +216,4 @@ func instantiateTypeChain(tc []prs.Element) (*Element, error) {
 
 	return inst, nil
 }
+*/

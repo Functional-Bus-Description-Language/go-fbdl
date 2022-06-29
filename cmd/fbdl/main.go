@@ -68,21 +68,21 @@ func main() {
 	if _, ok := cmdLineArgs["-zero-timestamp"]; ok {
 		zeroTimestamp = true
 	}
-	insBus := ins.Instantiate(packages, zeroTimestamp)
+	bus := ins.Instantiate(packages, zeroTimestamp)
 
 	if path, ok := cmdLineArgs["-i"]; ok {
 		f, err := os.Create(path)
 		if err != nil {
 			panic(err)
 		}
-		spew.Fdump(f, insBus)
+		spew.Fdump(f, bus)
 		err = f.Close()
 		if err != nil {
 			log.Fatalf("dump instantiation results: %v", err)
 		}
 	}
 
-	regBus := reg.Registerify(insBus)
+	reg.Registerify(bus)
 
 	if path, ok := cmdLineArgs["-r"]; ok {
 		f, err := os.Create(path)
@@ -90,7 +90,7 @@ func main() {
 			panic(err)
 		}
 
-		byteArray, err := json.MarshalIndent(regBus, "", "\t")
+		byteArray, err := json.MarshalIndent(bus, "", "\t")
 		if err != nil {
 			log.Fatalf("marshal registerification results: %v", err)
 		}

@@ -8,13 +8,15 @@ import (
 )
 
 // Check property value type and value.
-func checkProp(name string, prop prs.Prop) error {
+func checkProp(prop prs.Prop) error {
 	pv, err := prop.Value.Eval()
 	if err != nil {
 		return fmt.Errorf("cannot evaluate expression: %v", err)
 	}
 
 	invalidTypeMsg := `'%s' property must be of type '%s', current type '%s'`
+
+	name := prop.Name
 
 	switch name {
 	case "atomic", "once":
@@ -89,14 +91,13 @@ func checkProp(name string, prop prs.Prop) error {
 			return fmt.Errorf("'width' property must be natural, current value (%d)", v)
 		}
 	default:
-		msg := `checkProp() for property '%s' not yet implemented`
-		msg = fmt.Sprintf(msg, name)
-		panic(msg)
+		panic(fmt.Sprintf("checkProp() for property '%s' not yet implemented", name))
 	}
 
 	return nil
 }
 
+/*
 func checkPropConflict(elem *Element, prop string) error {
 	msg := `cannot set '%s' property, because '%s' property is already set in one of ancestor types`
 
@@ -148,3 +149,4 @@ func checkPropConstraints(elem *Element, prop prs.Prop) error {
 	}
 	return nil
 }
+*/

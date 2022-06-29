@@ -1,5 +1,6 @@
 package ins
 
+/*
 import (
 	"math"
 	"time"
@@ -60,3 +61,4 @@ func id() *Element {
 		},
 	}
 }
+*/

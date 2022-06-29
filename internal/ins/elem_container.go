@@ -1,5 +1,6 @@
 package ins
 
+/*
 type ElemContainer []*Element
 
 // Add adds element to ElemContainer.
@@ -48,3 +49,4 @@ func (ec *ElemContainer) HasType(typ string) bool {
 	}
 	return false
 }
+*/

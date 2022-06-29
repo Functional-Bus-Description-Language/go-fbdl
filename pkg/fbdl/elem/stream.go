@@ -17,7 +17,7 @@ type Stream struct {
 	Returns []*Return
 }
 
-func (s Stream) IsDownstream() bool {
+func (s *Stream) IsDownstream() bool {
 	if len(s.Params) > 0 {
 		return true
 	} else if len(s.Returns) > 0 {
@@ -27,9 +27,9 @@ func (s Stream) IsDownstream() bool {
 	return true
 }
 
-func (s Stream) IsUpstream() bool { return !s.IsDownstream() }
+func (s *Stream) IsUpstream() bool { return !s.IsDownstream() }
 
-func (s Stream) StartAddr() int64 {
+func (s *Stream) StartAddr() int64 {
 	if len(s.Params) > 0 {
 		return s.Params[0].Access.StartAddr()
 	} else if len(s.Returns) > 0 {
@@ -42,9 +42,13 @@ func (s Stream) StartAddr() int64 {
 
 // IsEmpty returns true if stream has no params and no returns.
 // Empty stream is treated as downstream.
-func (s Stream) IsEmpty() bool {
+func (s *Stream) IsEmpty() bool {
 	if len(s.Params) == 0 && len(s.Returns) == 0 {
 		return true
 	}
 	return false
+}
+
+func (s *Stream) Hash() int64 {
+	return 0
 }

@@ -1,5 +1,6 @@
 package ins
 
+/*
 import (
 	"bytes"
 	"encoding/binary"
@@ -44,7 +45,7 @@ func (elem *Element) applyType(typ prs.Element, resolvedArgs map[string]prs.Expr
 		elem.Name = i.Name()
 	}
 
-	if resolvedArgs != nil {
+	if resolvedArgs != nil
 		typ.SetResolvedArgs(resolvedArgs)
 	}
 
@@ -383,3 +384,4 @@ func (e *Element) hash() uint32 {
 
 	return e.hashCache
 }
+*/

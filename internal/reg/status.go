@@ -2,12 +2,12 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	_ "github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
+/*
 func makeStatus(insSt *ins.Element) *elem.Status {
 	st := elem.Status{
 		Name:    insSt.Name,
@@ -27,19 +27,18 @@ func makeStatus(insSt *ins.Element) *elem.Status {
 
 	return &st
 }
+*/
 
 // regStatus registerifies a Status element.
-func regStatus(insSt *ins.Element, addr int64, gp *gap.Pool) (*elem.Status, int64) {
-	st := makeStatus(insSt)
-
-	if insSt.IsArray {
+func regStatus(st *elem.Status, addr int64, gp *gap.Pool) int64 {
+	if st.IsArray {
 		return regStatusArray(st, addr, gp)
 	} else {
 		return regStatusSingle(st, addr, gp)
 	}
 }
 
-func regStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) (*elem.Status, int64) {
+func regStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	if g, ok := gp.GetSingle(st.Width, false); ok {
 		st.Access = access.MakeSingleSingle(g.EndAddr, g.StartBit(), st.Width)
 	} else {
@@ -55,10 +54,10 @@ func regStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) (*elem.Status, i
 		})
 	}
 
-	return st, addr
+	return addr
 }
 
-func regStatusArray(st *elem.Status, addr int64, gp *gap.Pool) (*elem.Status, int64) {
+func regStatusArray(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	if busWidth/2 < st.Width && st.Width <= busWidth {
 		st.Access = access.MakeArraySingle(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
@@ -70,15 +69,15 @@ func regStatusArray(st *elem.Status, addr int64, gp *gap.Pool) (*elem.Status, in
 	}
 	addr += st.Access.RegCount()
 
-	return st, addr
+	return addr
 }
 
-func regStatusArraySingle(insSt *ins.Element, addr, startBit int64) (*elem.Status, int64) {
-	st := makeStatus(insSt)
+func regStatusArraySingle(st *elem.Status, addr, startBit int64) int64 {
+	//st := makeStatus(insSt)
 
-	st.Access = access.MakeArraySingle(insSt.Count, addr, startBit, st.Width)
+	st.Access = access.MakeArraySingle(st.Count, addr, startBit, st.Width)
 
 	addr += st.Access.RegCount()
 
-	return st, addr
+	return addr
 }

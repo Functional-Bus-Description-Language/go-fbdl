@@ -1,5 +1,6 @@
 package ins
 
+/*
 import (
 	"bytes"
 	"encoding/binary"
@@ -53,3 +54,4 @@ func (g *Group) hash() uint32 {
 
 	return adler32.Checksum(b.Bytes())
 }
+*/

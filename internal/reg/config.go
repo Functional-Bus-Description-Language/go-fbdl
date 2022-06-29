@@ -2,38 +2,41 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	_ "github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+	//fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 // regConfig registerifies a Config element.
-func regConfig(insCfg *ins.Element, addr int64, gp *gap.Pool) (*elem.Config, int64) {
-	cfg := elem.Config{
-		Name:    insCfg.Name,
-		Doc:     insCfg.Doc,
-		IsArray: insCfg.IsArray,
-		Count:   insCfg.Count,
-		Atomic:  bool(insCfg.Props["atomic"].(val.Bool)),
-		Groups:  []string{},
-		Width:   int64(insCfg.Props["width"].(val.Int)),
-	}
-
-	if dflt, ok := insCfg.Props["default"].(val.BitStr); ok {
-		cfg.Default = fbdlVal.MakeBitStr(dflt)
-	}
-
-	if groups, ok := insCfg.Props["groups"].(val.List); ok {
-		for _, g := range groups {
-			cfg.Groups = append(cfg.Groups, string(g.(val.Str)))
+func regConfig(cfg *elem.Config, addr int64, gp *gap.Pool) int64 {
+	/*
+		cfg := elem.Config{
+			Name:    insCfg.Name,
+			Doc:     insCfg.Doc,
+			IsArray: insCfg.IsArray,
+			Count:   insCfg.Count,
+			Atomic:  bool(insCfg.Props["atomic"].(val.Bool)),
+			Groups:  []string{},
+			Width:   int64(insCfg.Props["width"].(val.Int)),
 		}
-	}
+	*/
 
-	width := int64(insCfg.Props["width"].(val.Int))
+	/*
+		if dflt, ok := insCfg.Props["default"].(val.BitStr); ok {
+			cfg.Default = fbdlVal.MakeBitStr(dflt)
+		}
 
-	if insCfg.IsArray {
+		if groups, ok := insCfg.Props["groups"].(val.List); ok {
+			for _, g := range groups {
+				cfg.Groups = append(cfg.Groups, string(g.(val.Str)))
+			}
+		}
+	*/
+
+	//width := int64(insCfg.Props["width"].(val.Int))
+
+	if cfg.IsArray {
 		panic("not yet implemented")
 		/* Should it be implemented the same way as for Status?
 		if width == busWidth {
@@ -46,7 +49,7 @@ func regConfig(insCfg *ins.Element, addr int64, gp *gap.Pool) (*elem.Config, int
 		}
 		*/
 	} else {
-		cfg.Access = access.MakeSingle(addr, 0, width)
+		cfg.Access = access.MakeSingle(addr, 0, cfg.Width)
 		if cfg.Access.EndBit() < busWidth-1 {
 			gp.Add(gap.Gap{
 				StartAddr: cfg.Access.EndAddr(),
@@ -58,5 +61,5 @@ func regConfig(insCfg *ins.Element, addr int64, gp *gap.Pool) (*elem.Config, int
 	}
 	addr += cfg.Access.RegCount()
 
-	return &cfg, addr
+	return addr
 }

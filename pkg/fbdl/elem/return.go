@@ -16,3 +16,7 @@ type Return struct {
 	Groups []string
 	Width  int64
 }
+
+func (r *Return) Hash() int64 {
+	return 0
+}

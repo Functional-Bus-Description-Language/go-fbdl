@@ -1,24 +1,25 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 // regFunc registerifies a Func element.
-func regFunc(insFun *ins.Element, addr int64) (*elem.Func, int64) {
-	fun := elem.Func{
-		Name:    insFun.Name,
-		Doc:     insFun.Doc,
-		IsArray: insFun.IsArray,
-		Count:   insFun.Count,
-	}
+func regFunc(fun *elem.Func, addr int64) int64 {
+	/*
+		fun := elem.Func{
+			Name:    insFun.Name,
+			Doc:     insFun.Doc,
+			IsArray: insFun.IsArray,
+			Count:   insFun.Count,
+		}
+	*/
 
-	params := insFun.Elems.GetAllByType("param")
+	//params := insFun.Elems.GetAllByType("param")
 	baseBit := int64(0)
-	for _, param := range params {
-		p := makeParam(param)
+	for _, p := range fun.Params {
+		//p := makeParam(param)
 
 		if p.IsArray {
 			p.Access = access.MakeArrayContinuous(p.Count, addr, baseBit, p.Width)
@@ -53,9 +54,9 @@ func regFunc(insFun *ins.Element, addr int64) (*elem.Func, int64) {
 		*/
 	}
 
-	returns := insFun.Elems.GetAllByType("return")
-	for _, ret := range returns {
-		r := makeReturn(ret)
+	//returns := insFun.Elems.GetAllByType("return")
+	for _, r := range fun.Returns {
+		//r := makeReturn(ret)
 
 		if r.IsArray {
 			r.Access = access.MakeArrayContinuous(r.Count, addr, baseBit, r.Width)
@@ -92,5 +93,5 @@ func regFunc(insFun *ins.Element, addr int64) (*elem.Func, int64) {
 		}
 	}
 
-	return &fun, addr
+	return addr
 }

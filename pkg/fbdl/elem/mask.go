@@ -20,3 +20,7 @@ type Mask struct {
 	Once    bool
 	Width   int64
 }
+
+func (m *Mask) Hash() int64 {
+	return 0
+}

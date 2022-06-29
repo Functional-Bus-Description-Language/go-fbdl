@@ -40,3 +40,7 @@ func (c *Config) HasDecreasingAccessOrder() bool {
 
 	return false
 }
+
+func (c *Config) Hash() int64 {
+	return 0
+}

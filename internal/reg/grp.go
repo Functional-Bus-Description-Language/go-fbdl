@@ -1,5 +1,6 @@
 package reg
 
+/*
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
@@ -67,3 +68,4 @@ func regGroupStatusArraySameSizes(blk *elem.Block, insGrp *ins.Group, addr int64
 
 	return grp, addr
 }
+*/

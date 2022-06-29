@@ -1,11 +1,12 @@
 package ins
 
 import (
-	"fmt"
+	_ "fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	_ "github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
+/*
 // fillProps fills required properties that have not been set by the user.
 // Some properties have default values and user is not obliged to set them explicitly.
 func fillProps(e *Element) {
@@ -80,3 +81,4 @@ func fillPropsReturn(p *Element) {
 		p.Props["width"] = val.Int(int64(busWidth))
 	}
 }
+*/

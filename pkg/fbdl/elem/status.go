@@ -39,3 +39,7 @@ func (s *Status) HasDecreasingAccessOrder() bool {
 
 	return false
 }
+
+func (s *Status) Hash() int64 {
+	return 0
+}

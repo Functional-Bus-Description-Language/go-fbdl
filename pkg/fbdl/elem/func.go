@@ -39,3 +39,7 @@ func (f *Func) AreAllParamsSingleSingle() bool {
 	}
 	return true
 }
+
+func (f *Func) Hash() int64 {
+	return 0
+}

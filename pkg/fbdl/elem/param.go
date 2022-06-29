@@ -19,3 +19,7 @@ type Param struct {
 	Groups []string
 	Width  int64
 }
+
+func (p *Param) Hash() int64 {
+	return 0
+}
