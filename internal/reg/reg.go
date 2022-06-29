@@ -50,12 +50,12 @@ func Registerify(insBus *ins.Element) *elem.Block {
 			sb, sizes := regBlock(e)
 			regBus.Sizes.Compact += e.Count * sizes.Compact
 			regBus.Sizes.BlockAligned += e.Count * sizes.BlockAligned
-			regBus.Subblocks = append(regBus.Subblocks, sb)
+			blkAddSubblock(&regBus, sb)
 		}
 	}
 
 	id, _ := insBus.Elems.Get("ID")
-	blockAddStatus(&regBus,
+	blkAddStatus(&regBus,
 		&elem.Status{
 			Name:    id.Name,
 			Doc:     id.Doc,
@@ -68,7 +68,7 @@ func Registerify(insBus *ins.Element) *elem.Block {
 	)
 
 	ts, _ := insBus.Elems.Get("TIMESTAMP")
-	blockAddStatus(&regBus,
+	blkAddStatus(&regBus,
 		&elem.Status{
 			Name:    ts.Name,
 			Doc:     ts.Doc,
@@ -116,9 +116,9 @@ func regGroups(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 			panic("not yet implemented")
 		}
 
-		blockAddGroup(blk, grp)
+		blkAddGroup(blk, grp)
 		for _, st := range grp.Statuses() {
-			blockAddStatus(blk, st)
+			blkAddStatus(blk, st)
 		}
 	}
 
@@ -132,7 +132,7 @@ func regFuncs(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 
 	for _, insFun := range insFuncs {
 		fun, addr = regFunc(insFun, addr)
-		blk.Funcs = append(blk.Funcs, fun)
+		blkAddFunc(blk, fun)
 	}
 
 	return addr
@@ -145,7 +145,7 @@ func regStreams(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 
 	for _, insStream := range insStreams {
 		stream, addr = regStream(insStream, addr)
-		blk.Streams = append(blk.Streams, stream)
+		blkAddStream(blk, stream)
 	}
 
 	return addr
@@ -158,7 +158,7 @@ func regMasks(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 
 	for _, insMask := range insMasks {
 		mask, addr = regMask(insMask, addr)
-		blk.Masks = append(blk.Masks, mask)
+		blkAddMask(blk, mask)
 	}
 
 	return addr
@@ -178,7 +178,7 @@ func regStatuses(blk *elem.Block, insBlk *ins.Element, addr int64, gp *gap.Pool)
 			continue
 		}
 		st, addr = regStatus(insSt, addr, gp)
-		blockAddStatus(blk, st)
+		blkAddStatus(blk, st)
 	}
 
 	return addr
@@ -195,7 +195,7 @@ func regConfigs(blk *elem.Block, insBlk *ins.Element, addr int64, gp *gap.Pool) 
 			continue
 		}
 		cfg, addr = regConfig(insCfg, addr, gp)
-		blk.Configs = append(blk.Configs, cfg)
+		blkAddConfig(blk, cfg)
 	}
 
 	return addr
@@ -224,7 +224,7 @@ func regBlock(insBlk *ins.Element) (*elem.Block, access.Sizes) {
 			sb, s := regBlock(e)
 			sizes.Compact += e.Count * s.Compact
 			sizes.BlockAligned += e.Count * s.BlockAligned
-			b.Subblocks = append(b.Subblocks, sb)
+			blkAddSubblock(&b, sb)
 		}
 	}
 
