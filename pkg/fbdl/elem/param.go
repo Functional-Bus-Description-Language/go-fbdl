@@ -1,4 +1,4 @@
-package fbdl
+package elem
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
@@ -7,7 +7,7 @@ import (
 )
 
 // Param represents param element.
-type Return struct {
+type Param struct {
 	Name    string
 	Doc     string
 	IsArray bool
@@ -15,25 +15,28 @@ type Return struct {
 	Access  access.Access
 
 	// Properties
+	// TODO: Should Default be supported for param?
+	// Default BitStr
+	//Range Range
 	Groups []string
 	Width  int64
 }
 
-func makeReturn(insRet *ins.Element) *Return {
-	r := Return{
-		Name:    insRet.Name,
-		Doc:     insRet.Doc,
-		IsArray: insRet.IsArray,
-		Count:   insRet.Count,
+func makeParam(insParam *ins.Element) *Param {
+	p := Param{
+		Name:    insParam.Name,
+		Doc:     insParam.Doc,
+		IsArray: insParam.IsArray,
+		Count:   insParam.Count,
 		Groups:  []string{},
-		Width:   int64(insRet.Props["width"].(val.Int)),
+		Width:   int64(insParam.Props["width"].(val.Int)),
 	}
 
-	if groups, ok := insRet.Props["groups"].(val.List); ok {
+	if groups, ok := insParam.Props["groups"].(val.List); ok {
 		for _, g := range groups {
-			r.Groups = append(r.Groups, string(g.(val.Str)))
+			p.Groups = append(p.Groups, string(g.(val.Str)))
 		}
 	}
 
-	return &r
+	return &p
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/args"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -81,7 +81,7 @@ func main() {
 		}
 	}
 
-	regBus := fbdl.Registerify(insBus)
+	regBus := elem.Registerify(insBus)
 
 	if path, ok := cmdLineArgs["-r"]; ok {
 		f, err := os.Create(path)
@@ -105,7 +105,7 @@ func main() {
 		}
 	}
 
-	pkgsConsts := fbdl.ConstifyPackages(packages)
+	pkgsConsts := elem.ConstifyPackages(packages)
 
 	if path, ok := cmdLineArgs["-c"]; ok {
 		f, err := os.Create(path)

@@ -1,6 +1,7 @@
-package fbdl
+package elem
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
@@ -62,7 +63,7 @@ func makeStatus(insSt *ins.Element) *Status {
 }
 
 // regStatus registerifies a Status element.
-func regStatus(insSt *ins.Element, addr int64, gp *gapPool) (*Status, int64) {
+func regStatus(insSt *ins.Element, addr int64, gp *gap.Pool) (*Status, int64) {
 	st := makeStatus(insSt)
 
 	if insSt.IsArray {
@@ -72,26 +73,26 @@ func regStatus(insSt *ins.Element, addr int64, gp *gapPool) (*Status, int64) {
 	}
 }
 
-func regStatusSingle(st *Status, addr int64, gp *gapPool) (*Status, int64) {
-	if g, ok := gp.getSingle(st.Width, false); ok {
-		st.Access = access.MakeSingleSingle(g.endAddr, g.StartBit(), st.Width)
+func regStatusSingle(st *Status, addr int64, gp *gap.Pool) (*Status, int64) {
+	if g, ok := gp.GetSingle(st.Width, false); ok {
+		st.Access = access.MakeSingleSingle(g.EndAddr, g.StartBit(), st.Width)
 	} else {
 		st.Access = access.MakeSingle(addr, 0, st.Width)
 		addr += st.Access.RegCount()
 	}
 	if st.Access.EndBit() < busWidth-1 {
-		gp.Add(gap{
-			startAddr: st.Access.EndAddr(),
-			endAddr:   st.Access.EndAddr(),
-			mask:      access.Mask{Upper: busWidth - 1, Lower: st.Access.EndBit() + 1},
-			writeSafe: true,
+		gp.Add(gap.Gap{
+			StartAddr: st.Access.EndAddr(),
+			EndAddr:   st.Access.EndAddr(),
+			Mask:      access.Mask{Upper: busWidth - 1, Lower: st.Access.EndBit() + 1},
+			WriteSafe: true,
 		})
 	}
 
 	return st, addr
 }
 
-func regStatusArray(st *Status, addr int64, gp *gapPool) (*Status, int64) {
+func regStatusArray(st *Status, addr int64, gp *gap.Pool) (*Status, int64) {
 	if busWidth/2 < st.Width && st.Width <= busWidth {
 		st.Access = access.MakeArraySingle(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.

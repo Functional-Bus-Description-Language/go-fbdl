@@ -1,4 +1,4 @@
-package fbdl
+package elem
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"

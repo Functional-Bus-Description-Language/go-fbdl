@@ -1,6 +1,7 @@
-package fbdl
+package elem
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
@@ -43,7 +44,7 @@ func (c *Config) HasDecreasingAccessOrder() bool {
 }
 
 // regConfig registerifies a Config element.
-func regConfig(insCfg *ins.Element, addr int64, gp *gapPool) (*Config, int64) {
+func regConfig(insCfg *ins.Element, addr int64, gp *gap.Pool) (*Config, int64) {
 	cfg := Config{
 		Name:    insCfg.Name,
 		Doc:     insCfg.Doc,
@@ -81,11 +82,11 @@ func regConfig(insCfg *ins.Element, addr int64, gp *gapPool) (*Config, int64) {
 	} else {
 		cfg.Access = access.MakeSingle(addr, 0, width)
 		if cfg.Access.EndBit() < busWidth-1 {
-			gp.Add(gap{
-				startAddr: cfg.Access.EndAddr(),
-				endAddr:   cfg.Access.EndAddr(),
-				mask:      access.Mask{Upper: busWidth - 1, Lower: cfg.Access.EndBit() + 1},
-				writeSafe: false,
+			gp.Add(gap.Gap{
+				StartAddr: cfg.Access.EndAddr(),
+				EndAddr:   cfg.Access.EndAddr(),
+				Mask:      access.Mask{Upper: busWidth - 1, Lower: cfg.Access.EndBit() + 1},
+				WriteSafe: false,
 			})
 		}
 	}

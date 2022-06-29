@@ -1,8 +1,9 @@
-package fbdl
+package elem
 
 import (
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
@@ -90,7 +91,7 @@ func regFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
 		return addr
 	}
 
-	gp := gapPool{}
+	gp := gap.Pool{}
 
 	addr = regFuncs(blk, insBlk, addr)
 	addr = regStreams(blk, insBlk, addr)
@@ -159,7 +160,7 @@ func regMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func regStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64 {
+func regStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gap.Pool) int64 {
 	insStatuses := insBlk.Elems.GetAllByType("status")
 
 	var st *Status
@@ -179,7 +180,7 @@ func regStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64
 	return addr
 }
 
-func regConfigs(blk *Block, insBlk *ins.Element, addr int64, gp *gapPool) int64 {
+func regConfigs(blk *Block, insBlk *ins.Element, addr int64, gp *gap.Pool) int64 {
 	insConfigs := insBlk.Elems.GetAllByType("config")
 
 	var cfg *Config
