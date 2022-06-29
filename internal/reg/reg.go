@@ -1,4 +1,4 @@
-package elem
+package reg
 
 import (
 	"log"
@@ -8,11 +8,13 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 var busWidth int64
 
-func Registerify(insBus *ins.Element) *Block {
+func Registerify(insBus *ins.Element) *elem.Block {
 	if insBus == nil {
 		log.Println("registerification: there is no Main bus; returning nil")
 		return nil
@@ -21,7 +23,7 @@ func Registerify(insBus *ins.Element) *Block {
 	busWidth = int64(insBus.Props["width"].(val.Int))
 	access.Init(busWidth)
 
-	regBus := Block{
+	regBus := elem.Block{
 		Name:    "Main",
 		Doc:     insBus.Doc,
 		IsArray: insBus.IsArray,
@@ -30,7 +32,9 @@ func Registerify(insBus *ins.Element) *Block {
 		Width:   int64(insBus.Props["width"].(val.Int)),
 	}
 
-	regBus.addConsts(insBus)
+	for name, v := range insBus.Consts {
+		regBus.AddConst(name, v)
+	}
 
 	// addr is current block internal access address, not global address.
 	// 0 and 1 are reserved for ID and TIMESTAMP.
@@ -46,33 +50,33 @@ func Registerify(insBus *ins.Element) *Block {
 			sb, sizes := regBlock(e)
 			regBus.Sizes.Compact += e.Count * sizes.Compact
 			regBus.Sizes.BlockAligned += e.Count * sizes.BlockAligned
-			regBus.addSubblock(sb)
+			regBus.Subblocks = append(regBus.Subblocks, sb)
 		}
 	}
 
 	id, _ := insBus.Elems.Get("ID")
-	regBus.addStatus(
-		&Status{
+	blockAddStatus(&regBus,
+		&elem.Status{
 			Name:    id.Name,
 			Doc:     id.Doc,
 			Count:   id.Count,
 			Access:  access.MakeSingle(0, 0, busWidth),
 			Atomic:  bool(id.Props["atomic"].(val.Bool)),
 			Width:   int64(id.Props["width"].(val.Int)),
-			Default: MakeBitStr(id.Props["default"].(val.BitStr)),
+			Default: fbdlVal.MakeBitStr(id.Props["default"].(val.BitStr)),
 		},
 	)
 
 	ts, _ := insBus.Elems.Get("TIMESTAMP")
-	regBus.addStatus(
-		&Status{
+	blockAddStatus(&regBus,
+		&elem.Status{
 			Name:    ts.Name,
 			Doc:     ts.Doc,
 			Count:   ts.Count,
 			Access:  access.MakeSingle(1, 0, busWidth),
 			Atomic:  bool(ts.Props["atomic"].(val.Bool)),
 			Width:   int64(ts.Props["width"].(val.Int)),
-			Default: MakeBitStr(ts.Props["default"].(val.BitStr)),
+			Default: fbdlVal.MakeBitStr(ts.Props["default"].(val.BitStr)),
 		},
 	)
 
@@ -86,7 +90,7 @@ func Registerify(insBus *ins.Element) *Block {
 	return &regBus
 }
 
-func regFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regFunctionalities(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 	if len(insBlk.Elems) == 0 {
 		return addr
 	}
@@ -103,8 +107,8 @@ func regFunctionalities(blk *Block, insBlk *ins.Element, addr int64) int64 {
 	return addr
 }
 
-func regGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
-	var grp Group
+func regGroups(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
+	var grp elem.Group
 	for _, g := range insBlk.Grps {
 		if g.IsStatus() && g.IsArray() {
 			grp, addr = regGroupStatusArray(blk, g, addr)
@@ -112,95 +116,95 @@ func regGroups(blk *Block, insBlk *ins.Element, addr int64) int64 {
 			panic("not yet implemented")
 		}
 
-		blk.addGroup(grp)
+		blockAddGroup(blk, grp)
 		for _, st := range grp.Statuses() {
-			blk.addStatus(st)
+			blockAddStatus(blk, st)
 		}
 	}
 
 	return addr
 }
 
-func regFuncs(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regFuncs(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 	insFuncs := insBlk.Elems.GetAllByType("func")
 
-	var fun *Func
+	var fun *elem.Func
 
 	for _, insFun := range insFuncs {
 		fun, addr = regFunc(insFun, addr)
-		blk.addFunc(fun)
+		blk.Funcs = append(blk.Funcs, fun)
 	}
 
 	return addr
 }
 
-func regStreams(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regStreams(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 	insStreams := insBlk.Elems.GetAllByType("stream")
 
-	var stream *Stream
+	var stream *elem.Stream
 
 	for _, insStream := range insStreams {
 		stream, addr = regStream(insStream, addr)
-		blk.addStream(stream)
+		blk.Streams = append(blk.Streams, stream)
 	}
 
 	return addr
 }
 
-func regMasks(blk *Block, insBlk *ins.Element, addr int64) int64 {
+func regMasks(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 	insMasks := insBlk.Elems.GetAllByType("mask")
 
-	var mask *Mask
+	var mask *elem.Mask
 
 	for _, insMask := range insMasks {
 		mask, addr = regMask(insMask, addr)
-		blk.addMask(mask)
+		blk.Masks = append(blk.Masks, mask)
 	}
 
 	return addr
 }
 
-func regStatuses(blk *Block, insBlk *ins.Element, addr int64, gp *gap.Pool) int64 {
+func regStatuses(blk *elem.Block, insBlk *ins.Element, addr int64, gp *gap.Pool) int64 {
 	insStatuses := insBlk.Elems.GetAllByType("status")
 
-	var st *Status
+	var st *elem.Status
 
 	for _, insSt := range insStatuses {
 		if insSt.Name == "ID" || insSt.Name == "TIMESTAMP" {
 			continue
 		}
 		// Omit elements that have been already registerified as group members.
-		if blk.hasElement(insSt.Name) {
+		if blk.HasElement(insSt.Name) {
 			continue
 		}
 		st, addr = regStatus(insSt, addr, gp)
-		blk.addStatus(st)
+		blockAddStatus(blk, st)
 	}
 
 	return addr
 }
 
-func regConfigs(blk *Block, insBlk *ins.Element, addr int64, gp *gap.Pool) int64 {
+func regConfigs(blk *elem.Block, insBlk *ins.Element, addr int64, gp *gap.Pool) int64 {
 	insConfigs := insBlk.Elems.GetAllByType("config")
 
-	var cfg *Config
+	var cfg *elem.Config
 
 	for _, insCfg := range insConfigs {
 		// Omit elements that have been already registerified as group members.
-		if blk.hasElement(insCfg.Name) {
+		if blk.HasElement(insCfg.Name) {
 			continue
 		}
 		cfg, addr = regConfig(insCfg, addr, gp)
-		blk.addConfig(cfg)
+		blk.Configs = append(blk.Configs, cfg)
 	}
 
 	return addr
 }
 
-func regBlock(insBlk *ins.Element) (*Block, Sizes) {
+func regBlock(insBlk *ins.Element) (*elem.Block, access.Sizes) {
 	addr := int64(0)
 
-	b := Block{
+	b := elem.Block{
 		Name:    insBlk.Name,
 		Doc:     insBlk.Doc,
 		IsArray: insBlk.IsArray,
@@ -208,17 +212,19 @@ func regBlock(insBlk *ins.Element) (*Block, Sizes) {
 		Masters: int64(insBlk.Props["masters"].(val.Int)),
 	}
 
-	b.addConsts(insBlk)
+	for name, v := range insBlk.Consts {
+		b.AddConst(name, v)
+	}
 
 	addr = regFunctionalities(&b, insBlk, addr)
-	sizes := Sizes{BlockAligned: 0, Own: addr, Compact: addr}
+	sizes := access.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
 	for _, e := range insBlk.Elems {
 		if e.Type == "block" {
 			sb, s := regBlock(e)
 			sizes.Compact += e.Count * s.Compact
 			sizes.BlockAligned += e.Count * s.BlockAligned
-			b.addSubblock(sb)
+			b.Subblocks = append(b.Subblocks, sb)
 		}
 	}
 

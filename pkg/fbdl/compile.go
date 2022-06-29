@@ -3,6 +3,7 @@ package fbdl
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
@@ -13,7 +14,7 @@ func Compile(mainPath string) (*elem.Block, map[string]elem.Package) {
 
 	insBus := ins.Instantiate(packages, false)
 
-	regBus := elem.Registerify(insBus)
+	regBus := reg.Registerify(insBus)
 
 	pkgsConsts := elem.ConstifyPackages(packages)
 

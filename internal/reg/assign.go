@@ -1,29 +1,28 @@
-package elem
+package reg
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	"sort"
 	"strings"
 )
 
-func assignGlobalAccessAddresses(bus *Block, baseAddr int64) {
+func assignGlobalAccessAddresses(bus *elem.Block, baseAddr int64) {
 	// Currently there is only Block Align strategy.
 	// In the future there may also be Compact and Full Align.
 
 	assignGlobalAccessAddressesBlockAlign(bus, baseAddr)
 }
 
-func assignGlobalAccessAddressesBlockAlign(block *Block, baseAddr int64) {
+func assignGlobalAccessAddressesBlockAlign(block *elem.Block, baseAddr int64) {
 	if block.IsArray {
-		block.AddrSpace = AddrSpaceArray{
-			start:     baseAddr,
-			count:     int64(block.Count),
-			BlockSize: block.Sizes.BlockAligned,
-		}
+		block.AddrSpace = access.MakeAddrSpaceArray(
+			baseAddr, int64(block.Count), block.Sizes.BlockAligned,
+		)
 	} else {
-		block.AddrSpace = AddrSpaceSingle{
-			start: baseAddr,
-			end:   baseAddr + block.Sizes.BlockAligned - 1,
-		}
+		block.AddrSpace = access.MakeAddrSpaceSingle(
+			baseAddr, baseAddr+block.Sizes.BlockAligned-1,
+		)
 	}
 
 	if len(block.Subblocks) == 0 {

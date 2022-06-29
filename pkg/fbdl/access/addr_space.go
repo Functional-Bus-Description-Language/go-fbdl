@@ -1,4 +1,4 @@
-package elem
+package access
 
 import (
 	"encoding/json"
@@ -14,6 +14,10 @@ type AddrSpace interface {
 type AddrSpaceSingle struct {
 	start int64
 	end   int64
+}
+
+func MakeAddrSpaceSingle(start, end int64) AddrSpaceSingle {
+	return AddrSpaceSingle{start: start, end: end}
 }
 
 func (s AddrSpaceSingle) MarshalJSON() ([]byte, error) {
@@ -40,6 +44,10 @@ type AddrSpaceArray struct {
 	start     int64
 	count     int64
 	BlockSize int64
+}
+
+func MakeAddrSpaceArray(start, count, blockSize int64) AddrSpaceArray {
+	return AddrSpaceArray{start: start, count: count, BlockSize: blockSize}
 }
 
 func (a AddrSpaceArray) IsArray() bool { return true }

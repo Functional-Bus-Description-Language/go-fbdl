@@ -26,7 +26,7 @@ func (cc ConstContainer) HasConsts() bool {
 	return false
 }
 
-func (cc *ConstContainer) addConst(name string, v val.Value) {
+func (cc *ConstContainer) AddConst(name string, v val.Value) {
 	switch v.(type) {
 	case val.BitStr:
 		panic("not yet implemented")

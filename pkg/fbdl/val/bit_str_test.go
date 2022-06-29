@@ -1,4 +1,4 @@
-package elem
+package val
 
 import (
 	"testing"

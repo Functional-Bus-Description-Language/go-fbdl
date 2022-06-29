@@ -33,7 +33,7 @@ func constifyPkg(pkg *prs.Package) Package {
 			if err != nil {
 				panic("not yet implemented")
 			}
-			p.addConst(c.Name(), v)
+			p.AddConst(c.Name(), v)
 		}
 	}
 
