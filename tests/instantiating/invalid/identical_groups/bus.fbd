@@ -1,0 +1,3 @@
+Main bus
+	S1[3] status; groups = ["a", "b"]
+	S2[3] status; groups = ["a", "b"]

@@ -218,6 +218,43 @@ func (elem *Element) makeGrps() error {
 		}
 	}
 
+	// Check for identical groups.
+	for grpName1, g1 := range groups {
+		elemNames1 := make([]string, 0, len(g1))
+		for _, e := range g1 {
+			elemNames1 = append(elemNames1, e.Name)
+		}
+		for grpName2, g2 := range groups {
+			if grpName1 == grpName2 {
+				continue
+			}
+			elemNames2 := make([]string, 0, len(g2))
+			for _, e := range g2 {
+				elemNames2 = append(elemNames2, e.Name)
+			}
+			if len(elemNames1) != len(elemNames2) {
+				continue
+			}
+			identical := true
+			for _, name1 := range elemNames1 {
+				found := false
+				for _, name2 := range elemNames2 {
+					if name1 == name2 {
+						found = true
+						break
+					}
+				}
+				if !found {
+					identical = false
+					break
+				}
+			}
+			if identical {
+				return fmt.Errorf("groups %q and %q are identical", grpName1, grpName2)
+			}
+		}
+	}
+
 	var grpsOrder []string
 
 	if _, ok := elem.Props["groupsOrder"]; ok {
