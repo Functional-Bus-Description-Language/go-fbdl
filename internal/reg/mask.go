@@ -2,8 +2,8 @@ package reg
 
 import (
 	//"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	//fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -48,9 +48,9 @@ func regMask(mask *elem.Mask, addr int64) int64 {
 		}
 		*/
 	} else {
-		mask.Access = access.MakeSingle(addr, 0, mask.Width)
+		mask.SetAccess(access.MakeSingle(addr, 0, mask.Width()))
 	}
-	addr += mask.Access.RegCount()
+	addr += mask.Access().RegCount()
 
 	return addr
 }

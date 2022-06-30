@@ -2,9 +2,9 @@ package ins
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func makeElem(typeChain []prs.Element) (elem.Elem, error) {
@@ -30,5 +30,11 @@ func makeElem(typeChain []prs.Element) (elem.Elem, error) {
 		count = int64(v.(val.Int))
 	}
 
-	return elem.MakeElem(name, doc, isArray, count), nil
+	e := elem.Elem{}
+	e.SetName(name)
+	e.SetDoc(doc)
+	e.SetIsArray(isArray)
+	e.SetCount(count)
+
+	return e, nil
 }

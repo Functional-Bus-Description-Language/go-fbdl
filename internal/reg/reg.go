@@ -146,11 +146,9 @@ func regStreams(blk *elem.Block, addr int64) int64 {
 }
 
 func regMasks(blk *elem.Block, addr int64) int64 {
-	/*
-		for _, mask := range blk.Masks {
-			addr = regMask(mask, addr)
-		}
-	*/
+	for _, mask := range blk.Masks() {
+		addr = regMask(mask.(*elem.Mask), addr)
+	}
 
 	return addr
 }

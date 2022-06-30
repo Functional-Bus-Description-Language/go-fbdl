@@ -23,3 +23,10 @@ func (e *Elem) IsArray() bool      { return e.elem.IsArray }
 
 func (e *Elem) SetCount(c int64) { e.elem.Count = c }
 func (e *Elem) Count() int64     { return e.elem.Count }
+
+func (e *Elem) SetElem(el Elem) {
+	e.SetName(el.Name())
+	e.SetDoc(el.Doc())
+	e.SetIsArray(el.IsArray())
+	e.SetCount(el.Count())
+}

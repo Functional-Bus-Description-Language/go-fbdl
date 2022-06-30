@@ -32,8 +32,8 @@ type Block interface {
 
 	Configs() []Config
 	//Funcs() []Func
-	//Masks() []Mask
-	//Statuses() []Status
+	Masks() []Mask
+	Statuses() []Status
 	//Streams() []Stream
 	Subblocks() []Block
 

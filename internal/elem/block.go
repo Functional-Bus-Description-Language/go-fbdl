@@ -18,7 +18,7 @@ type blk struct {
 	// Elements
 	Configs []iface.Config
 	//funcs     []iface.Func
-	//masks     []iface.Mask
+	Masks    []iface.Mask
 	Statuses []iface.Status
 	//streams   []iface.Stream
 	Subblocks []iface.Block
@@ -48,10 +48,10 @@ func (b *Block) Configs() []iface.Config { return b.blk.Configs }
 /*
 func (b *Block) AddFunc(f *Func)     { b.blk.Funcs = append(b.blk.Funcs, f) }
 func (b *Block) Funcs() []iface.Func { return b.blk.Funcs }
+*/
 
 func (b *Block) AddMask(m *Mask)     { b.blk.Masks = append(b.blk.Masks, m) }
 func (b *Block) Masks() []iface.Mask { return b.blk.Masks }
-*/
 
 func (b *Block) AddStatus(s *Status)      { b.blk.Statuses = append(b.blk.Statuses, s) }
 func (b *Block) Statuses() []iface.Status { return b.blk.Statuses }

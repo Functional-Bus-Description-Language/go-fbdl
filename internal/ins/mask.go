@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type maskAlreadySet struct {
@@ -22,10 +22,8 @@ func insMask(typeChain []prs.Element) (*elem.Mask, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-
-	mask := elem.Mask{
-		Elem: e,
-	}
+	mask := elem.Mask{}
+	mask.SetElem(e)
 
 	alreadySet := maskAlreadySet{}
 
@@ -65,27 +63,28 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, alreadySet *maskAlreadySet)
 			if alreadySet.atomic {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
-			mask.Atomic = bool(v.(val.Bool))
+			mask.SetAtomic(bool(v.(val.Bool)))
 			alreadySet.atomic = true
 		case "default":
 			panic("not yet implemented")
 		case "groups":
-			grps := v.(val.List)
-			mask.Groups = make([]string, 0, len(grps))
-			for _, g := range v.(val.List) {
-				mask.Groups = append(mask.Groups, string(g.(val.Str)))
+			vGrps := v.(val.List)
+			grps := make([]string, 0, len(vGrps))
+			for _, g := range vGrps {
+				grps = append(grps, string(g.(val.Str)))
 			}
+			mask.SetGroups(grps)
 		case "once":
 			if alreadySet.once {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
-			mask.Atomic = bool(v.(val.Bool))
+			mask.SetOnce(bool(v.(val.Bool)))
 			alreadySet.once = true
 		case "width":
 			if alreadySet.width {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			mask.Width = int64(v.(val.Int))
+			mask.SetWidth(int64(v.(val.Int)))
 			alreadySet.width = true
 		default:
 			panic("should never happen")
@@ -97,9 +96,9 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, alreadySet *maskAlreadySet)
 
 func fillMaskProps(mask *elem.Mask, alreadySet maskAlreadySet) {
 	if !alreadySet.atomic {
-		mask.Atomic = true
+		mask.SetAtomic(true)
 	}
 	if !alreadySet.width {
-		mask.Width = busWidth
+		mask.SetWidth(busWidth)
 	}
 }

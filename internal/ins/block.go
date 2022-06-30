@@ -10,27 +10,12 @@ import (
 )
 
 func insBlock(typeChain []prs.Element) (*elem.Block, error) {
-	inst := typeChain[len(typeChain)-1].(*prs.Inst)
-
-	blk := elem.Block{}
-	blk.SetName(inst.Name())
-	blk.SetDoc(inst.Doc())
-	blk.SetIsArray(false)
-	blk.SetCount(1)
-
-	if inst.IsArray {
-		blk.SetIsArray(true)
-		v, err := inst.Count.Eval()
-
-		if v.Type() != "integer" {
-			return nil, fmt.Errorf("size of array must be of 'integer' type, current type '%s'", v.Type())
-		}
-
-		if err != nil {
-			return nil, fmt.Errorf("%v", err)
-		}
-		blk.SetCount(int64(v.(val.Int)))
+	e, err := makeElem(typeChain)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
 	}
+	blk := elem.Block{}
+	blk.SetElem(e)
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -144,10 +129,8 @@ func addBlockInnerElement(blk *elem.Block, e iface.Element) {
 	switch e.(type) {
 	case (*elem.Config):
 		blk.AddConfig(e.(*elem.Config))
-	/*
-		case (*elem.Mask):
-			blk.Masks = append(blk.Masks, e.(*elem.Mask))
-	*/
+	case (*elem.Mask):
+		blk.AddMask(e.(*elem.Mask))
 	case (*elem.Status):
 		blk.AddStatus(e.(*elem.Status))
 	default:
