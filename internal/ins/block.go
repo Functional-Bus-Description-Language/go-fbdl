@@ -31,12 +31,10 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 
 	fillBlockProps(&blk)
 
-	/*
-		err = checkBlockGroups(blk)
-		if err != nil {
-			return nil, fmt.Errorf("%v", err)
-		}
-	*/
+	err = checkBlockGroups(blk)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
+	}
 
 	return &blk, nil
 }
@@ -138,7 +136,6 @@ func addBlockInnerElement(blk *elem.Block, e iface.Element) {
 	}
 }
 
-/*
 func checkBlockGroups(blk elem.Block) error {
 	elemsWithGrps := blk.ElemsWithGroups()
 
@@ -146,13 +143,13 @@ func checkBlockGroups(blk elem.Block) error {
 		return nil
 	}
 
-	groups := make(map[string][]elem.Element)
+	groups := make(map[string][]iface.Element)
 
 	for _, e := range elemsWithGrps {
-		grps := e.GroupNames()
+		grps := e.Groups()
 		for _, g := range grps {
 			if _, ok := groups[g]; !ok {
-				groups[g] = []elem.Element{}
+				groups[g] = []iface.Element{}
 			}
 			groups[g] = append(groups[g], e)
 		}
@@ -160,7 +157,7 @@ func checkBlockGroups(blk elem.Block) error {
 
 	// Check for element and group names conflict.
 	for grpName, _ := range groups {
-		if _, ok := elem.Elems.Get(grpName); ok {
+		if blk.HasElement(grpName) {
 			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
 		}
 	}
@@ -174,13 +171,13 @@ func checkBlockGroups(blk elem.Block) error {
 
 	// Check groups order.
 	for i, e1 := range elemsWithGrps[:len(elemsWithGrps)-1] {
-		grps1 := e1.Props["groups"].(val.List)
+		grps1 := e1.Groups()
 		for _, e2 := range elemsWithGrps[i+1:] {
-			grps2 := e2.Props["groups"].(val.List)
+			grps2 := e2.Groups()
 			indexes := []int{}
 			for _, g1 := range grps1 {
 				for j2, g2 := range grps2 {
-					if string(g1.(val.Str)) == string(g2.(val.Str)) {
+					if g1 == g2 {
 						indexes = append(indexes, j2)
 					}
 				}
@@ -193,11 +190,7 @@ func checkBlockGroups(blk elem.Block) error {
 						"conflicting order of groups, "+
 							"group %q is after group %q in element '%s', "+
 							"but before group %q in element '%s'",
-						string(grps2[id].(val.Str)),
-						string(grps2[id+1].(val.Str)),
-						e1.Name,
-						string(grps2[id+1].(val.Str)),
-						e2.Name,
+						grps2[id], grps2[id+1], e1.Name, grps2[id+1], e2.Name,
 					)
 				}
 				prevId = id
@@ -209,7 +202,7 @@ func checkBlockGroups(blk elem.Block) error {
 	for grpName1, g1 := range groups {
 		elemNames1 := make([]string, 0, len(g1))
 		for _, e := range g1 {
-			elemNames1 = append(elemNames1, e.Name)
+			elemNames1 = append(elemNames1, e.Name())
 		}
 		for grpName2, g2 := range groups {
 			if grpName1 == grpName2 {
@@ -217,7 +210,7 @@ func checkBlockGroups(blk elem.Block) error {
 			}
 			elemNames2 := make([]string, 0, len(g2))
 			for _, e := range g2 {
-				elemNames2 = append(elemNames2, e.Name)
+				elemNames2 = append(elemNames2, e.Name())
 			}
 			if len(elemNames1) != len(elemNames2) {
 				continue
@@ -244,4 +237,3 @@ func checkBlockGroups(blk elem.Block) error {
 
 	return nil
 }
-*/

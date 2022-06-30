@@ -46,7 +46,3 @@ func (m *Mask) Access() access.Access     { return m.mask.Access }
 func (m *Mask) Hash() int64 {
 	return 0
 }
-
-func (m *Mask) GroupNames() []string {
-	return m.mask.Groups
-}

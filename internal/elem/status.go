@@ -65,7 +65,3 @@ func (s *Status) HasDecreasingAccessOrder() bool {
 func (s *Status) Hash() int64 {
 	return 0
 }
-
-func (s *Status) GroupNames() []string {
-	return s.st.Groups
-}

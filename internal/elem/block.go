@@ -95,16 +95,18 @@ func (b *Block) HasElement(name string) bool {
 				return true
 			}
 		}
-		for i, _ := range b.Masks {
-			if b.Masks[i].Name() == name {
-				return true
-			}
+	*/
+	for i, _ := range b.blk.Masks {
+		if b.blk.Masks[i].Name() == name {
+			return true
 		}
-		for i, _ := range b.Statuses {
-			if b.Statuses[i].Name() == name {
-				return true
-			}
+	}
+	for i, _ := range b.blk.Statuses {
+		if b.blk.Statuses[i].Name() == name {
+			return true
 		}
+	}
+	/*
 		for i, _ := range b.Streams {
 			if b.Streams[i].Name == name {
 				return true
@@ -125,26 +127,23 @@ func (b *Block) Hash() int64 {
 }
 
 // ElemsWithGroups return list of inner elements belonging to any group.
-/*
-func (b *Block) ElemsWithGroups() []Groupable {
-	elemsWithGrps := []Groupable{}
-
-	for _, c := range b.Configs {
-		if len(c.Groups) > 0 {
+func (b *Block) ElemsWithGroups() []iface.Groupable {
+	elemsWithGrps := []iface.Groupable{}
+	for _, c := range b.blk.Configs {
+		if len(c.Groups()) > 0 {
 			elemsWithGrps = append(elemsWithGrps, c)
 		}
 	}
-	for _, m := range b.Masks {
-		if len(m.Groups) > 0 {
+	for _, m := range b.blk.Masks {
+		if len(m.Groups()) > 0 {
 			elemsWithGrps = append(elemsWithGrps, m)
 		}
 	}
-	for _, s := range b.Statuses {
-		if len(s.Groups) > 0 {
+	for _, s := range b.blk.Statuses {
+		if len(s.Groups()) > 0 {
 			elemsWithGrps = append(elemsWithGrps, s)
 		}
 	}
 
 	return elemsWithGrps
 }
-*/

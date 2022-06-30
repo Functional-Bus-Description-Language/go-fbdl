@@ -66,7 +66,3 @@ func (c *Config) HasDecreasingAccessOrder() bool {
 func (c *Config) Hash() int64 {
 	return 0
 }
-
-func (c *Config) GroupNames() []string {
-	return c.cfg.Groups
-}
