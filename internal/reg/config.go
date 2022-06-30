@@ -1,10 +1,10 @@
 package reg
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	_ "github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	//fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -49,17 +49,17 @@ func regConfig(cfg *elem.Config, addr int64, gp *gap.Pool) int64 {
 		}
 		*/
 	} else {
-		cfg.Access = access.MakeSingle(addr, 0, cfg.Width)
-		if cfg.Access.EndBit() < busWidth-1 {
+		cfg.SetAccess(access.MakeSingle(addr, 0, cfg.Width()))
+		if cfg.Access().EndBit() < busWidth-1 {
 			gp.Add(gap.Gap{
-				StartAddr: cfg.Access.EndAddr(),
-				EndAddr:   cfg.Access.EndAddr(),
-				Mask:      access.Mask{Upper: busWidth - 1, Lower: cfg.Access.EndBit() + 1},
+				StartAddr: cfg.Access().EndAddr(),
+				EndAddr:   cfg.Access().EndAddr(),
+				Mask:      access.Mask{Upper: busWidth - 1, Lower: cfg.Access().EndBit() + 1},
 				WriteSafe: false,
 			})
 		}
 	}
-	addr += cfg.Access.RegCount()
+	addr += cfg.Access().RegCount()
 
 	return addr
 }

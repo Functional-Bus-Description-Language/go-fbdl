@@ -1,5 +1,6 @@
 package reg
 
+/*
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
@@ -11,3 +12,4 @@ func blkAddGroup(b *elem.Block, g elem.Group)    { b.Groups = append(b.Groups, g
 func blkAddStatus(b *elem.Block, s *elem.Status) { b.Statuses = append(b.Statuses, s) }
 func blkAddStream(b *elem.Block, s *elem.Stream) { b.Streams = append(b.Streams, s) }
 func blkAddSubblock(b, sb *elem.Block)           { b.Subblocks = append(b.Subblocks, sb) }
+*/

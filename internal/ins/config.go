@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type configAlreadySet struct {
@@ -18,13 +18,26 @@ type configAlreadySet struct {
 }
 
 func insConfig(typeChain []prs.Element) (*elem.Config, error) {
-	e, err := makeElem(typeChain)
-	if err != nil {
-		return nil, fmt.Errorf("%v", err)
-	}
+	inst := typeChain[len(typeChain)-1].(*prs.Inst)
 
-	cfg := elem.Config{
-		Elem: e,
+	cfg := elem.Config{}
+	cfg.SetName(inst.Name())
+	cfg.SetDoc(inst.Doc())
+	cfg.SetIsArray(false)
+	cfg.SetCount(1)
+
+	if inst.IsArray {
+		cfg.SetIsArray(true)
+		v, err := inst.Count.Eval()
+
+		if v.Type() != "integer" {
+			return nil, fmt.Errorf("size of array must be of 'integer' type, current type '%s'", v.Type())
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf("%v", err)
+		}
+		cfg.SetCount(int64(v.(val.Int)))
 	}
 
 	alreadySet := configAlreadySet{}
@@ -65,27 +78,28 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, alreadySet *configAlread
 			if alreadySet.atomic {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
-			cfg.Atomic = bool(v.(val.Bool))
+			cfg.SetAtomic(bool(v.(val.Bool)))
 			alreadySet.atomic = true
 		case "default", "range":
 			panic("not yet implemented")
 		case "groups":
-			grps := v.(val.List)
-			cfg.Groups = make([]string, 0, len(grps))
-			for _, g := range v.(val.List) {
-				cfg.Groups = append(cfg.Groups, string(g.(val.Str)))
+			vGrps := v.(val.List)
+			grps := make([]string, 0, len(vGrps))
+			for _, g := range vGrps {
+				grps = append(grps, string(g.(val.Str)))
 			}
+			cfg.SetGroups(grps)
 		case "once":
 			if alreadySet.once {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
-			cfg.Atomic = bool(v.(val.Bool))
+			cfg.SetOnce(bool(v.(val.Bool)))
 			alreadySet.once = true
 		case "width":
 			if alreadySet.width {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			cfg.Width = int64(v.(val.Int))
+			cfg.SetWidth(int64(v.(val.Int)))
 			alreadySet.width = true
 		default:
 			panic("should never happen")
@@ -97,9 +111,9 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, alreadySet *configAlread
 
 func fillConfigProps(cfg *elem.Config, alreadySet configAlreadySet) {
 	if !alreadySet.atomic {
-		cfg.Atomic = true
+		cfg.SetAtomic(true)
 	}
 	if !alreadySet.width {
-		cfg.Width = busWidth
+		cfg.SetWidth(busWidth)
 	}
 }

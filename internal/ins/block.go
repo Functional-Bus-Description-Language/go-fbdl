@@ -2,20 +2,34 @@ package ins
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func insBlock(typeChain []prs.Element) (*elem.Block, error) {
-	e, err := makeElem(typeChain)
-	if err != nil {
-		return nil, fmt.Errorf("%v", err)
-	}
+	inst := typeChain[len(typeChain)-1].(*prs.Inst)
 
-	blk := elem.Block{
-		Elem: e,
+	blk := elem.Block{}
+	blk.SetName(inst.Name())
+	blk.SetDoc(inst.Doc())
+	blk.SetIsArray(false)
+	blk.SetCount(1)
+
+	if inst.IsArray {
+		blk.SetIsArray(true)
+		v, err := inst.Count.Eval()
+
+		if v.Type() != "integer" {
+			return nil, fmt.Errorf("size of array must be of 'integer' type, current type '%s'", v.Type())
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf("%v", err)
+		}
+		blk.SetCount(int64(v.(val.Int)))
 	}
 
 	tci := typeChainIter(typeChain)
@@ -58,36 +72,38 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 
 		switch prop.Name {
 		case "masters":
-			if blk.Masters != 0 {
+			if blk.Masters() != 0 {
 				return fmt.Errorf(propAlreadySetMsg, "masters")
 			}
-			blk.Masters = int64(v.(val.Int))
+			blk.SetMasters(int64(v.(val.Int)))
 		case "width":
-			if blk.Width != 0 {
+			if blk.Width() != 0 {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			blk.Width = int64(v.(val.Int))
+			blk.SetWidth(int64(v.(val.Int)))
 		default:
 			panic("should never happen")
 		}
 	}
 
 	for _, s := range typ.Symbols() {
-		if c, ok := s.(*prs.Const); ok {
-			if blk.HasConst(c.Name()) {
-				return fmt.Errorf(
-					"const '%s' is already defined in one of ancestor types", c.Name(),
-				)
-			}
+		/*
+			if c, ok := s.(*prs.Const); ok {
+				if blk.HasConst(c.Name()) {
+					return fmt.Errorf(
+						"const '%s' is already defined in one of ancestor types", c.Name(),
+					)
+				}
 
-			val, err := c.Value.Eval()
-			if err != nil {
-				return fmt.Errorf(
-					"cannot evaluate expression for const '%s': %v", c.Name(), err,
-				)
+				val, err := c.Value.Eval()
+				if err != nil {
+					return fmt.Errorf(
+						"cannot evaluate expression for const '%s': %v", c.Name(), err,
+					)
+				}
+				blk.AddConst(c.Name(), val)
 			}
-			blk.AddConst(c.Name(), val)
-		}
+		*/
 
 		pe, ok := s.(*prs.Inst)
 		if !ok {
@@ -116,24 +132,27 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 }
 
 func fillBlockProps(blk *elem.Block) {
-	if blk.Masters == 0 {
-		blk.Masters = 1
+	if blk.Masters() == 0 {
+		blk.SetMasters(1)
 	}
-	if blk.Width == 0 {
-		blk.Width = 32
+	if blk.Width() == 0 {
+		blk.SetWidth(32)
 	}
 }
 
-func addBlockInnerElement(blk *elem.Block, e elem.Element) {
+func addBlockInnerElement(blk *elem.Block, e iface.Element) {
 	switch e.(type) {
 	case (*elem.Config):
-		blk.Configs = append(blk.Configs, e.(*elem.Config))
-	case (*elem.Mask):
-		blk.Masks = append(blk.Masks, e.(*elem.Mask))
-	case (*elem.Status):
-		blk.Statuses = append(blk.Statuses, e.(*elem.Status))
+		blk.AddConfig(e.(*elem.Config))
+	/*
+		case (*elem.Mask):
+			blk.Masks = append(blk.Masks, e.(*elem.Mask))
+		case (*elem.Status):
+			blk.Statuses = append(blk.Statuses, e.(*elem.Status))
+	*/
 	default:
-		panic("should never happen")
+		panic(fmt.Sprintf("type: %T", e))
+		//panic("should never happen")
 	}
 }
 
