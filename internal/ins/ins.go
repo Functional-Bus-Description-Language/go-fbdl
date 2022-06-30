@@ -76,7 +76,7 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *elem.Block {
 					continue
 				}
 
-				e := instantiateElement(prsElem)
+				e := insElement(prsElem)
 
 				if pkgName == "main" && name == "Main" {
 					mainBus = e.(*elem.Block)
@@ -109,7 +109,7 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *elem.Block {
 	return mainBus
 }
 
-func instantiateElement(pe prs.Element) elem.Element {
+func insElement(pe prs.Element) elem.Element {
 	typeChain := resolveToBaseType(pe)
 	//elem, err := instantiateTypeChain(typeChain)
 
@@ -120,6 +120,8 @@ func instantiateElement(pe prs.Element) elem.Element {
 	switch typ {
 	case "block", "bus":
 		e, err = insBlock(typeChain)
+	case "config":
+		e, err = insConfig(typeChain)
 	default:
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s', "+

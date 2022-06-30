@@ -9,28 +9,13 @@ import (
 )
 
 func insBlock(typeChain []prs.Element) (*elem.Block, error) {
-	// Instantiation is always the last one in the type chain.
-	inst := typeChain[len(typeChain)-1].(*prs.Inst)
-
-	blk := elem.Block{
-		Name:    inst.Name(),
-		Doc:     inst.Doc(),
-		IsArray: false,
-		Count:   1,
+	e, err := makeElem(typeChain)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
 	}
 
-	if inst.IsArray {
-		blk.IsArray = true
-		count, err := inst.Count.Eval()
-
-		if count.Type() != "integer" {
-			return nil, fmt.Errorf("size of array must be of 'integer' type, current type '%s'", count.Type())
-		}
-
-		if err != nil {
-			return nil, fmt.Errorf("%v", err)
-		}
-		blk.Count = int64(count.(val.Int))
+	blk := elem.Block{
+		Elem: e,
 	}
 
 	for i, typ := range typeChain {
@@ -38,7 +23,10 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 		if (i+1) < len(typeChain) && typeChain[i+1].ResolvedArgs() != nil {
 			resolvedArgs = typeChain[i+1].ResolvedArgs()
 		}
-		err := applyBlockType(&blk, typ, resolvedArgs)
+		if resolvedArgs != nil {
+			typ.SetResolvedArgs(resolvedArgs)
+		}
+		err := applyBlockType(&blk, typ)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
@@ -49,12 +37,7 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 	return &blk, nil
 }
 
-// TODO: Can resolvedArgs be set in insBlock?
-func applyBlockType(blk *elem.Block, typ prs.Element, resolvedArgs map[string]prs.Expr) error {
-	if resolvedArgs != nil {
-		typ.SetResolvedArgs(resolvedArgs)
-	}
-
+func applyBlockType(blk *elem.Block, typ prs.Element) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "bus"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -84,6 +67,53 @@ func applyBlockType(blk *elem.Block, typ prs.Element, resolvedArgs map[string]pr
 		}
 	}
 
+	for _, s := range typ.Symbols() {
+		if c, ok := s.(*prs.Const); ok {
+			if blk.HasConst(c.Name()) {
+				return fmt.Errorf(
+					"const '%s' is already defined in one of ancestor types", c.Name(),
+				)
+			}
+
+			val, err := c.Value.Eval()
+			if err != nil {
+				return fmt.Errorf(
+					"cannot evaluate expression for const '%s': %v", c.Name(), err,
+				)
+			}
+			blk.AddConst(c.Name(), val)
+		}
+
+		pe, ok := s.(*prs.Inst)
+		if !ok {
+			continue
+		}
+
+		e := insElement(pe)
+
+		if util.IsValidInnerType(pe.Type(), "block") == false {
+			return fmt.Errorf(
+				"element '%s' of base type '%s' cannot be instantiated in element of base type '%s'",
+				e.Name(), e.Type(), blk.Type(),
+			)
+		}
+
+		/*
+			err := checkElemConflict(elem, e)
+			if err != nil {
+				return fmt.Errorf("line %d: cannot instantiate element '%s': %v", pe.LineNum(), e.Name, err)
+			}
+		*/
+
+		if blk.HasElement(e.Name()) {
+			return fmt.Errorf(
+				"cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types",
+				e.Name(),
+			)
+		}
+		addBlockInnerElement(blk, e)
+	}
+
 	return nil
 }
 
@@ -93,5 +123,14 @@ func fillBlockProps(blk *elem.Block) {
 	}
 	if blk.Width == 0 {
 		blk.Width = 32
+	}
+}
+
+func addBlockInnerElement(blk *elem.Block, e elem.Element) {
+	switch e.(type) {
+	case (*elem.Config):
+		blk.Configs = append(blk.Configs, e.(*elem.Config))
+	default:
+		panic("should never happen")
 	}
 }

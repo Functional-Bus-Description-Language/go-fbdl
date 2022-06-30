@@ -36,7 +36,7 @@ func regConfig(cfg *elem.Config, addr int64, gp *gap.Pool) int64 {
 
 	//width := int64(insCfg.Props["width"].(val.Int))
 
-	if cfg.IsArray {
+	if cfg.IsArray() {
 		panic("not yet implemented")
 		/* Should it be implemented the same way as for Status?
 		if width == busWidth {

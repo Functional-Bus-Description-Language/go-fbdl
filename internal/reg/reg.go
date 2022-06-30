@@ -50,8 +50,8 @@ func Registerify(regBus *elem.Block) {
 
 	for _, sb := range regBus.Subblocks {
 		sizes := regBlock(sb)
-		regBus.Sizes.Compact += sb.Count * sizes.Compact
-		regBus.Sizes.BlockAligned += sb.Count * sizes.BlockAligned
+		regBus.Sizes.Compact += sb.Count() * sizes.Compact
+		regBus.Sizes.BlockAligned += sb.Count() * sizes.BlockAligned
 	}
 
 	/*
@@ -202,8 +202,8 @@ func regBlock(blk *elem.Block) access.Sizes {
 
 	for _, sb := range blk.Subblocks {
 		s := regBlock(sb)
-		sizes.Compact += sb.Count * s.Compact
-		sizes.BlockAligned += sb.Count * s.BlockAligned
+		sizes.Compact += sb.Count() * s.Compact
+		sizes.BlockAligned += sb.Count() * s.BlockAligned
 	}
 
 	sizes.BlockAligned = util.AlignToPowerOf2(addr + sizes.BlockAligned)

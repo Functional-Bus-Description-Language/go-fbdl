@@ -7,11 +7,9 @@ import (
 
 // Config represents config element.
 type Config struct {
-	Name    string
-	Doc     string
-	IsArray bool
-	Count   int64
-	Access  access.Access
+	Elem
+
+	Access access.Access
 
 	// Properties
 	Atomic  bool
@@ -21,6 +19,8 @@ type Config struct {
 	Once  bool
 	Width int64
 }
+
+func (c *Config) Type() string { return "config" }
 
 // HasDecreasingAccessOrder returns true if config must be accessed
 // from the end register to the start register order.

@@ -12,6 +12,27 @@ type ConstContainer struct {
 	StrConsts      map[string]string
 }
 
+// HasConst returns true if container already has constant with given name.
+func (cc ConstContainer) HasConst(name string) bool {
+	if _, ok := cc.BoolConsts[name]; ok {
+		return true
+	}
+	if _, ok := cc.BoolListConsts[name]; ok {
+		return true
+	}
+	if _, ok := cc.IntConsts[name]; ok {
+		return true
+	}
+	if _, ok := cc.IntListConsts[name]; ok {
+		return true
+	}
+	if _, ok := cc.StrConsts[name]; ok {
+		return true
+	}
+
+	return false
+}
+
 func (cc ConstContainer) HasConsts() bool {
 	if len(cc.BoolConsts) != 0 || len(cc.BoolListConsts) != 0 {
 		return true

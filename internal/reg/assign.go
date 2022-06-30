@@ -15,9 +15,9 @@ func assignGlobalAccessAddresses(bus *elem.Block, baseAddr int64) {
 }
 
 func assignGlobalAccessAddressesBlockAlign(block *elem.Block, baseAddr int64) {
-	if block.IsArray {
+	if block.IsArray() {
 		block.AddrSpace = access.MakeAddrSpaceArray(
-			baseAddr, int64(block.Count), block.Sizes.BlockAligned,
+			baseAddr, int64(block.Count()), block.Sizes.BlockAligned,
 		)
 	} else {
 		block.AddrSpace = access.MakeAddrSpaceSingle(
@@ -33,8 +33,8 @@ func assignGlobalAccessAddressesBlockAlign(block *elem.Block, baseAddr int64) {
 		sizei := block.Subblocks[i].Sizes.BlockAligned
 		sizej := block.Subblocks[j].Sizes.BlockAligned
 
-		namei := block.Subblocks[i].Name
-		namej := block.Subblocks[j].Name
+		namei := block.Subblocks[i].Name()
+		namej := block.Subblocks[j].Name()
 
 		if sizei < sizej {
 			return true
@@ -54,7 +54,7 @@ func assignGlobalAccessAddressesBlockAlign(block *elem.Block, baseAddr int64) {
 	// Iterate subblocks in decreasing size order.
 	for i := len(block.Subblocks) - 1; i >= 0; i-- {
 		sb := block.Subblocks[i]
-		subblockBaseAddr -= sb.Count * sb.Sizes.BlockAligned
+		subblockBaseAddr -= sb.Count() * sb.Sizes.BlockAligned
 		assignGlobalAccessAddressesBlockAlign(sb, subblockBaseAddr)
 	}
 }

@@ -6,10 +6,8 @@ import (
 
 // Block represents block element as well as bus element.
 type Block struct {
-	Name      string
-	Doc       string
-	IsArray   bool
-	Count     int64
+	Elem
+
 	Sizes     access.Sizes
 	AddrSpace access.AddrSpace
 
@@ -31,6 +29,8 @@ type Block struct {
 	Groups []Group `json:"-"`
 }
 
+func (b *Block) Type() string { return "block" }
+
 // Status returns pointer to the Status if status with given name exists
 // within the block. Otherwise it returns nil.
 func (b *Block) Status(name string) (*Status, bool) {
@@ -42,10 +42,34 @@ func (b *Block) Status(name string) (*Status, bool) {
 	return nil, false
 }
 
-// TODO: Check if it is used anywhere.
 func (b *Block) HasElement(name string) bool {
+	for i, _ := range b.Configs {
+		if b.Configs[i].Name() == name {
+			return true
+		}
+	}
+	for i, _ := range b.Funcs {
+		if b.Funcs[i].Name == name {
+			return true
+		}
+	}
+	for i, _ := range b.Masks {
+		if b.Masks[i].Name == name {
+			return true
+		}
+	}
 	for i, _ := range b.Statuses {
 		if b.Statuses[i].Name == name {
+			return true
+		}
+	}
+	for i, _ := range b.Streams {
+		if b.Streams[i].Name == name {
+			return true
+		}
+	}
+	for i, _ := range b.Subblocks {
+		if b.Subblocks[i].Name() == name {
 			return true
 		}
 	}
