@@ -32,6 +32,13 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 
 	fillBlockProps(&blk)
 
+	/*
+		err = checkBlockGroups(blk)
+		if err != nil {
+			return nil, fmt.Errorf("%v", err)
+		}
+	*/
+
 	return &blk, nil
 }
 
@@ -129,3 +136,111 @@ func addBlockInnerElement(blk *elem.Block, e elem.Element) {
 		panic("should never happen")
 	}
 }
+
+/*
+func checkBlockGroups(blk elem.Block) error {
+	elemsWithGrps := blk.ElemsWithGroups()
+
+	if len(elemsWithGrps) == 0 {
+		return nil
+	}
+
+	groups := make(map[string][]elem.Element)
+
+	for _, e := range elemsWithGrps {
+		grps := e.GroupNames()
+		for _, g := range grps {
+			if _, ok := groups[g]; !ok {
+				groups[g] = []elem.Element{}
+			}
+			groups[g] = append(groups[g], e)
+		}
+	}
+
+	// Check for element and group names conflict.
+	for grpName, _ := range groups {
+		if _, ok := elem.Elems.Get(grpName); ok {
+			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
+		}
+	}
+
+	// Check for groups with single element.
+	for name, g := range groups {
+		if len(g) == 1 {
+			return fmt.Errorf("group %q has only one element '%s'", name, g[0].Name)
+		}
+	}
+
+	// Check groups order.
+	for i, e1 := range elemsWithGrps[:len(elemsWithGrps)-1] {
+		grps1 := e1.Props["groups"].(val.List)
+		for _, e2 := range elemsWithGrps[i+1:] {
+			grps2 := e2.Props["groups"].(val.List)
+			indexes := []int{}
+			for _, g1 := range grps1 {
+				for j2, g2 := range grps2 {
+					if string(g1.(val.Str)) == string(g2.(val.Str)) {
+						indexes = append(indexes, j2)
+					}
+				}
+			}
+
+			prevId := -1
+			for _, id := range indexes {
+				if id <= prevId {
+					return fmt.Errorf(
+						"conflicting order of groups, "+
+							"group %q is after group %q in element '%s', "+
+							"but before group %q in element '%s'",
+						string(grps2[id].(val.Str)),
+						string(grps2[id+1].(val.Str)),
+						e1.Name,
+						string(grps2[id+1].(val.Str)),
+						e2.Name,
+					)
+				}
+				prevId = id
+			}
+		}
+	}
+
+	// Check for identical groups.
+	for grpName1, g1 := range groups {
+		elemNames1 := make([]string, 0, len(g1))
+		for _, e := range g1 {
+			elemNames1 = append(elemNames1, e.Name)
+		}
+		for grpName2, g2 := range groups {
+			if grpName1 == grpName2 {
+				continue
+			}
+			elemNames2 := make([]string, 0, len(g2))
+			for _, e := range g2 {
+				elemNames2 = append(elemNames2, e.Name)
+			}
+			if len(elemNames1) != len(elemNames2) {
+				continue
+			}
+			identical := true
+			for _, name1 := range elemNames1 {
+				found := false
+				for _, name2 := range elemNames2 {
+					if name1 == name2 {
+						found = true
+						break
+					}
+				}
+				if !found {
+					identical = false
+					break
+				}
+			}
+			if identical {
+				return fmt.Errorf("groups %q and %q are identical", grpName1, grpName2)
+			}
+		}
+	}
+
+	return nil
+}
+*/

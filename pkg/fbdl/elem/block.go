@@ -80,3 +80,26 @@ func (b *Block) HasElement(name string) bool {
 func (b *Block) Hash() int64 {
 	return 0
 }
+
+// ElemsWithGroups return list of inner elements belonging to any group.
+func (b *Block) ElemsWithGroups() []Groupable {
+	elemsWithGrps := []Groupable{}
+
+	for _, c := range b.Configs {
+		if len(c.Groups) > 0 {
+			elemsWithGrps = append(elemsWithGrps, c)
+		}
+	}
+	for _, m := range b.Masks {
+		if len(m.Groups) > 0 {
+			elemsWithGrps = append(elemsWithGrps, m)
+		}
+	}
+	for _, s := range b.Statuses {
+		if len(s.Groups) > 0 {
+			elemsWithGrps = append(elemsWithGrps, s)
+		}
+	}
+
+	return elemsWithGrps
+}

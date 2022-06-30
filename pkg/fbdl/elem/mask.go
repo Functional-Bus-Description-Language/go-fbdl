@@ -24,3 +24,7 @@ func (m *Mask) Type() string { return "mask" }
 func (m *Mask) Hash() int64 {
 	return 0
 }
+
+func (m *Mask) GroupNames() []string {
+	return m.Groups
+}
