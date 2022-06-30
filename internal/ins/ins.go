@@ -122,6 +122,8 @@ func insElement(pe prs.Element) elem.Element {
 		e, err = insBlock(typeChain)
 	case "config":
 		e, err = insConfig(typeChain)
+	case "status":
+		e, err = insStatus(typeChain)
 	default:
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s', "+

@@ -35,7 +35,7 @@ func (b *Block) Type() string { return "block" }
 // within the block. Otherwise it returns nil.
 func (b *Block) Status(name string) (*Status, bool) {
 	for _, s := range b.Statuses {
-		if s.Name == name {
+		if s.Name() == name {
 			return s, true
 		}
 	}
@@ -59,7 +59,7 @@ func (b *Block) HasElement(name string) bool {
 		}
 	}
 	for i, _ := range b.Statuses {
-		if b.Statuses[i].Name == name {
+		if b.Statuses[i].Name() == name {
 			return true
 		}
 	}

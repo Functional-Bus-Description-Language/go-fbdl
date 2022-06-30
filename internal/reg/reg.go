@@ -149,7 +149,7 @@ func regMasks(blk *elem.Block, addr int64) int64 {
 
 func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	for _, st := range blk.Statuses {
-		if st.Name == "ID" || st.Name == "TIMESTAMP" {
+		if st.Name() == "ID" || st.Name() == "TIMESTAMP" {
 			continue
 		}
 		/*

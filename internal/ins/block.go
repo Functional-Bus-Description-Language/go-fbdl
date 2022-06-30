@@ -128,6 +128,8 @@ func addBlockInnerElement(blk *elem.Block, e elem.Element) {
 	switch e.(type) {
 	case (*elem.Config):
 		blk.Configs = append(blk.Configs, e.(*elem.Config))
+	case (*elem.Status):
+		blk.Statuses = append(blk.Statuses, e.(*elem.Status))
 	default:
 		panic("should never happen")
 	}

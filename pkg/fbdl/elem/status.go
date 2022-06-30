@@ -7,11 +7,9 @@ import (
 
 // Status represents status element.
 type Status struct {
-	Name    string
-	Doc     string
-	IsArray bool
-	Count   int64
-	Access  access.Access
+	Elem
+
+	Access access.Access
 
 	// Properties
 	Atomic  bool
@@ -20,6 +18,8 @@ type Status struct {
 	Once    bool
 	Width   int64
 }
+
+func (s *Status) Type() string { return "status" }
 
 // HasDecreasingAccessOrder returns true if status must be accessed
 // from the end register to the start register order.
