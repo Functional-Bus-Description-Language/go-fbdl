@@ -29,13 +29,11 @@ func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 
 	alreadySet := configAlreadySet{}
 
-	for i, typ := range typeChain {
-		resolvedArgs := make(map[string]prs.Expr)
-		if (i+1) < len(typeChain) && typeChain[i+1].ResolvedArgs() != nil {
-			resolvedArgs = typeChain[i+1].ResolvedArgs()
-		}
-		if resolvedArgs != nil {
-			typ.SetResolvedArgs(resolvedArgs)
+	tci := typeChainIter(typeChain)
+	for {
+		typ, ok := tci()
+		if !ok {
+			break
 		}
 		err := applyConfigType(&cfg, typ, &alreadySet)
 		if err != nil {

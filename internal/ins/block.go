@@ -18,13 +18,11 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 		Elem: e,
 	}
 
-	for i, typ := range typeChain {
-		resolvedArgs := make(map[string]prs.Expr)
-		if (i+1) < len(typeChain) && typeChain[i+1].ResolvedArgs() != nil {
-			resolvedArgs = typeChain[i+1].ResolvedArgs()
-		}
-		if resolvedArgs != nil {
-			typ.SetResolvedArgs(resolvedArgs)
+	tci := typeChainIter(typeChain)
+	for {
+		typ, ok := tci()
+		if !ok {
+			break
 		}
 		err := applyBlockType(&blk, typ)
 		if err != nil {
