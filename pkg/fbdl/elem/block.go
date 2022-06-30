@@ -54,7 +54,7 @@ func (b *Block) HasElement(name string) bool {
 		}
 	}
 	for i, _ := range b.Masks {
-		if b.Masks[i].Name == name {
+		if b.Masks[i].Name() == name {
 			return true
 		}
 	}

@@ -7,11 +7,9 @@ import (
 
 // Mask represents mask element.
 type Mask struct {
-	Name    string
-	Doc     string
-	IsArray bool
-	Count   int64
-	Access  access.Access
+	Elem
+
+	Access access.Access
 
 	// Properties
 	Atomic  bool
@@ -20,6 +18,8 @@ type Mask struct {
 	Once    bool
 	Width   int64
 }
+
+func (m *Mask) Type() string { return "mask" }
 
 func (m *Mask) Hash() int64 {
 	return 0

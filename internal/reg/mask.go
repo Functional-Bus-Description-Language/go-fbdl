@@ -35,7 +35,7 @@ func regMask(mask *elem.Mask, addr int64) int64 {
 
 	//width := int64(insMask.Props["width"].(val.Int))
 
-	if mask.IsArray {
+	if mask.IsArray() {
 		panic("not yet implemented")
 		/* Should it be implemented the same way as for Status?
 		if width == busWidth {

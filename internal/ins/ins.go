@@ -121,6 +121,8 @@ func insElement(pe prs.Element) elem.Element {
 		e, err = insBlock(typeChain)
 	case "config":
 		e, err = insConfig(typeChain)
+	case "mask":
+		e, err = insMask(typeChain)
 	case "status":
 		e, err = insStatus(typeChain)
 	default:
