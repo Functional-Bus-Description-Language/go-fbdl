@@ -67,8 +67,14 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, alreadySet *configAlread
 			}
 			cfg.Atomic = bool(v.(val.Bool))
 			alreadySet.atomic = true
-		case "default", "groups", "range":
+		case "default", "range":
 			panic("not yet implemented")
+		case "groups":
+			grps := v.(val.List)
+			cfg.Groups = make([]string, 0, len(grps))
+			for _, g := range v.(val.List) {
+				cfg.Groups = append(cfg.Groups, string(g.(val.Str)))
+			}
 		case "once":
 			if alreadySet.once {
 				return fmt.Errorf(propAlreadySetMsg, "once")

@@ -111,7 +111,6 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *elem.Block {
 
 func insElement(pe prs.Element) elem.Element {
 	typeChain := resolveToBaseType(pe)
-	//elem, err := instantiateTypeChain(typeChain)
 
 	var e elem.Element
 	var err error
@@ -194,30 +193,3 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 	typeChain = append(typeChain, e)
 	return typeChain
 }
-
-/*
-func instantiateTypeChain(tc []prs.Element) (*Element, error) {
-	inst := &Element{
-		Props:  map[string]val.Value{},
-		Consts: map[string]val.Value{},
-		Elems:  ElemContainer{},
-	}
-
-	for i, t := range tc {
-		resolvedArgs := make(map[string]prs.Expr)
-		if (i+1) < len(tc) && tc[i+1].ResolvedArgs() != nil {
-			resolvedArgs = tc[i+1].ResolvedArgs()
-		}
-		err := inst.applyType(t, resolvedArgs)
-		if err != nil {
-			return nil, fmt.Errorf("%v", err)
-		}
-	}
-
-	if tc[len(tc)-1].Doc() != "" {
-		inst.Doc = tc[len(tc)-1].Doc()
-	}
-
-	return inst, nil
-}
-*/

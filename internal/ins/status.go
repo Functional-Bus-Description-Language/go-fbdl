@@ -66,7 +66,11 @@ func applyStatusType(st *elem.Status, typ prs.Element, alreadySet *statusAlready
 			st.Atomic = bool(v.(val.Bool))
 			alreadySet.atomic = true
 		case "groups":
-			panic("not yet implemented")
+			grps := v.(val.List)
+			st.Groups = make([]string, 0, len(grps))
+			for _, g := range v.(val.List) {
+				st.Groups = append(st.Groups, string(g.(val.Str)))
+			}
 		case "once":
 			if alreadySet.once {
 				return fmt.Errorf(propAlreadySetMsg, "once")

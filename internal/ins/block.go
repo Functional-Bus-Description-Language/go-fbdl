@@ -89,19 +89,12 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 
 		e := insElement(pe)
 
-		if util.IsValidInnerType(pe.Type(), "block") == false {
+		if util.IsValidInnerType(e.Type(), "block") == false {
 			return fmt.Errorf(
 				"element '%s' of base type '%s' cannot be instantiated in element of base type '%s'",
 				e.Name(), e.Type(), blk.Type(),
 			)
 		}
-
-		/*
-			err := checkElemConflict(elem, e)
-			if err != nil {
-				return fmt.Errorf("line %d: cannot instantiate element '%s': %v", pe.LineNum(), e.Name, err)
-			}
-		*/
 
 		if blk.HasElement(e.Name()) {
 			return fmt.Errorf(
