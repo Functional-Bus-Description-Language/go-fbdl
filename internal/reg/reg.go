@@ -156,18 +156,16 @@ func regMasks(blk *elem.Block, addr int64) int64 {
 }
 
 func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
-	/*
-		for _, st := range blk.Statuses {
-			if st.Name() == "ID" || st.Name() == "TIMESTAMP" {
-				continue
-			}
-				// Omit elements that have been already registerified as group members.
-				if blk.HasElement(st.Name) {
-					continue
-				}
-			addr = regStatus(st, addr, gp)
+	for _, st := range blk.Statuses() {
+		if st.Name() == "ID" || st.Name() == "TIMESTAMP" {
+			continue
 		}
-	*/
+		// Omit elements that have been already registerified as group members.
+		if blk.HasElement(st.Name()) {
+			continue
+		}
+		addr = regStatus(st.(*elem.Status), addr, gp)
+	}
 
 	return addr
 }

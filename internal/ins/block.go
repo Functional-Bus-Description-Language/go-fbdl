@@ -147,12 +147,11 @@ func addBlockInnerElement(blk *elem.Block, e iface.Element) {
 	/*
 		case (*elem.Mask):
 			blk.Masks = append(blk.Masks, e.(*elem.Mask))
-		case (*elem.Status):
-			blk.Statuses = append(blk.Statuses, e.(*elem.Status))
 	*/
+	case (*elem.Status):
+		blk.AddStatus(e.(*elem.Status))
 	default:
-		panic(fmt.Sprintf("type: %T", e))
-		//panic("should never happen")
+		panic("should never happen")
 	}
 }
 

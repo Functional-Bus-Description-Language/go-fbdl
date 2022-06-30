@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type statusAlreadySet struct {
@@ -16,13 +16,26 @@ type statusAlreadySet struct {
 }
 
 func insStatus(typeChain []prs.Element) (*elem.Status, error) {
-	e, err := makeElem(typeChain)
-	if err != nil {
-		return nil, fmt.Errorf("%v", err)
-	}
+	inst := typeChain[len(typeChain)-1].(*prs.Inst)
 
-	st := elem.Status{
-		Elem: e,
+	st := elem.Status{}
+	st.SetName(inst.Name())
+	st.SetDoc(inst.Doc())
+	st.SetIsArray(false)
+	st.SetCount(1)
+
+	if inst.IsArray {
+		st.SetIsArray(true)
+		v, err := inst.Count.Eval()
+
+		if v.Type() != "integer" {
+			return nil, fmt.Errorf("size of array must be of 'integer' type, current type '%s'", v.Type())
+		}
+
+		if err != nil {
+			return nil, fmt.Errorf("%v", err)
+		}
+		st.SetCount(int64(v.(val.Int)))
 	}
 
 	alreadySet := statusAlreadySet{}
@@ -63,25 +76,26 @@ func applyStatusType(st *elem.Status, typ prs.Element, alreadySet *statusAlready
 			if alreadySet.atomic {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
-			st.Atomic = bool(v.(val.Bool))
+			st.SetAtomic(bool(v.(val.Bool)))
 			alreadySet.atomic = true
 		case "groups":
-			grps := v.(val.List)
-			st.Groups = make([]string, 0, len(grps))
-			for _, g := range v.(val.List) {
-				st.Groups = append(st.Groups, string(g.(val.Str)))
+			vGrps := v.(val.List)
+			grps := make([]string, 0, len(vGrps))
+			for _, g := range vGrps {
+				grps = append(grps, string(g.(val.Str)))
 			}
+			st.SetGroups(grps)
 		case "once":
 			if alreadySet.once {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
-			st.Atomic = bool(v.(val.Bool))
+			st.SetOnce(bool(v.(val.Bool)))
 			alreadySet.once = true
 		case "width":
 			if alreadySet.width {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			st.Width = int64(v.(val.Int))
+			st.SetWidth(int64(v.(val.Int)))
 			alreadySet.width = true
 		default:
 			panic("should never happen")
@@ -93,9 +107,9 @@ func applyStatusType(st *elem.Status, typ prs.Element, alreadySet *statusAlready
 
 func fillStatusProps(st *elem.Status, alreadySet statusAlreadySet) {
 	if !alreadySet.atomic {
-		st.Atomic = true
+		st.SetAtomic(true)
 	}
 	if !alreadySet.width {
-		st.Width = busWidth
+		st.SetWidth(busWidth)
 	}
 }

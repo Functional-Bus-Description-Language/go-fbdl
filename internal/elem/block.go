@@ -19,7 +19,7 @@ type blk struct {
 	Configs []iface.Config
 	//funcs     []iface.Func
 	//masks     []iface.Mask
-	//statuses  []iface.Status
+	Statuses []iface.Status
 	//streams   []iface.Stream
 	Subblocks []iface.Block
 
@@ -46,17 +46,19 @@ func (b *Block) AddConfig(c *Config)     { b.blk.Configs = append(b.blk.Configs,
 func (b *Block) Configs() []iface.Config { return b.blk.Configs }
 
 /*
-func (b *Block) addFunc(f *Func)     { b.Funcs = append(b.Funcs, f) }
-func (b *Block) Funcs() []iface.Func { return b.Funcs }
+func (b *Block) AddFunc(f *Func)     { b.blk.Funcs = append(b.blk.Funcs, f) }
+func (b *Block) Funcs() []iface.Func { return b.blk.Funcs }
 
-func (b *Block) addMask(m *Mask)     { b.Masks = append(b.Masks, m) }
-func (b *Block) Masks() []iface.Mask { return b.Masks }
+func (b *Block) AddMask(m *Mask)     { b.blk.Masks = append(b.blk.Masks, m) }
+func (b *Block) Masks() []iface.Mask { return b.blk.Masks }
+*/
 
-func (b *Block) addStatus(s *Status)      { b.Statuses = append(b.Statuses, s) }
-func (b *Block) Statuses() []iface.Status { return b.Statuses }
+func (b *Block) AddStatus(s *Status)      { b.blk.Statuses = append(b.blk.Statuses, s) }
+func (b *Block) Statuses() []iface.Status { return b.blk.Statuses }
 
-func (b *Block) addStream(s *Stream)     { b.Streams = append(b.Streams, s) }
-func (b *Block) Streams() []iface.Stream { return b.Streams }
+/*
+func (b *Block) AddStream(s *Stream)     { b.blk.Streams = append(b.blk.Streams, s) }
+func (b *Block) Streams() []iface.Stream { return b.blk.Streams }
 */
 
 func (b *Block) addSubblock(sb *Block)    { b.blk.Subblocks = append(b.blk.Subblocks, sb) }
