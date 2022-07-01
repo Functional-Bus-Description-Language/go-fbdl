@@ -8,9 +8,9 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-type returnAlreadySet struct {
-	groups bool
-	width  bool
+type returnDiary struct {
+	groupsSet bool
+	widthSet  bool
 }
 
 func insReturn(typeChain []prs.Element) (*elem.Return, error) {
@@ -21,7 +21,7 @@ func insReturn(typeChain []prs.Element) (*elem.Return, error) {
 	ret := elem.Return{}
 	ret.SetElem(e)
 
-	alreadySet := returnAlreadySet{}
+	diary := returnDiary{}
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -29,7 +29,7 @@ func insReturn(typeChain []prs.Element) (*elem.Return, error) {
 		if !ok {
 			break
 		}
-		err := applyReturnType(&ret, typ, &alreadySet)
+		err := applyReturnType(&ret, typ, &diary)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
@@ -38,7 +38,7 @@ func insReturn(typeChain []prs.Element) (*elem.Return, error) {
 	return &ret, nil
 }
 
-func applyReturnType(ret *elem.Return, typ prs.Element, alreadySet *returnAlreadySet) error {
+func applyReturnType(ret *elem.Return, typ prs.Element, diary *returnDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "return"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -54,14 +54,17 @@ func applyReturnType(ret *elem.Return, typ prs.Element, alreadySet *returnAlread
 
 		switch prop.Name {
 		case "groups":
+			if diary.groupsSet {
+				return fmt.Errorf(propAlreadySetMsg, "groups")
+			}
 			ret.SetGroups(makeGroupList(v))
-			alreadySet.groups = true
+			diary.groupsSet = true
 		case "width":
-			if alreadySet.width {
+			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
 			ret.SetWidth(int64(v.(val.Int)))
-			alreadySet.width = true
+			diary.widthSet = true
 		default:
 			panic("should never happen")
 		}
@@ -70,8 +73,8 @@ func applyReturnType(ret *elem.Return, typ prs.Element, alreadySet *returnAlread
 	return nil
 }
 
-func fillReturnProps(ret *elem.Return, alreadySet returnAlreadySet) {
-	if !alreadySet.width {
+func fillReturnProps(ret *elem.Return, diary returnDiary) {
+	if !diary.widthSet {
 		ret.SetWidth(busWidth)
 	}
 }

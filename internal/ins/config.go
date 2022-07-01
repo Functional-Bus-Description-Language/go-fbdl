@@ -6,26 +6,28 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
-type configAlreadySet struct {
-	atomic bool
-	dflt   bool
-	groups bool
-	rang   bool
-	once   bool
-	width  bool
+type configDiary struct {
+	atomicSet bool
+	dfltSet   bool
+	dflt      val.Value
+	groupsSet bool
+	rangeSet  bool
+	onceSet   bool
+	widthSet  bool
 }
 
 func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	cfg := elem.Config{}
 	cfg.SetElem(e)
 
-	alreadySet := configAlreadySet{}
+	diary := configDiary{}
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -33,18 +35,26 @@ func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 		if !ok {
 			break
 		}
-		err := applyConfigType(&cfg, typ, &alreadySet)
+		err := applyConfigType(&cfg, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
-	fillConfigProps(&cfg, alreadySet)
+	fillConfigProps(&cfg, diary)
+
+	if diary.dfltSet {
+		dflt, err := processDefault(cfg.Width(), diary.dflt)
+		if err != nil {
+			return &cfg, err
+		}
+		cfg.SetDefault(fbdlVal.MakeBitStr(dflt))
+	}
 
 	return &cfg, nil
 }
 
-func applyConfigType(cfg *elem.Config, typ prs.Element, alreadySet *configAlreadySet) error {
+func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "config"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -60,28 +70,37 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, alreadySet *configAlread
 
 		switch prop.Name {
 		case "atomic":
-			if alreadySet.atomic {
+			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
 			cfg.SetAtomic(bool(v.(val.Bool)))
-			alreadySet.atomic = true
-		case "default", "range":
+			diary.atomicSet = true
+		case "default":
+			if diary.dfltSet {
+				return fmt.Errorf(propAlreadySetMsg, "default")
+			}
+			diary.dflt = v
+			diary.dfltSet = true
+		case "range":
 			panic("not yet implemented")
 		case "groups":
+			if diary.groupsSet {
+				return fmt.Errorf(propAlreadySetMsg, "groups")
+			}
 			cfg.SetGroups(makeGroupList(v))
-			alreadySet.groups = true
+			diary.groupsSet = true
 		case "once":
-			if alreadySet.once {
+			if diary.onceSet {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
 			cfg.SetOnce(bool(v.(val.Bool)))
-			alreadySet.once = true
+			diary.onceSet = true
 		case "width":
-			if alreadySet.width {
+			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
 			cfg.SetWidth(int64(v.(val.Int)))
-			alreadySet.width = true
+			diary.widthSet = true
 		default:
 			panic("should never happen")
 		}
@@ -90,11 +109,11 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, alreadySet *configAlread
 	return nil
 }
 
-func fillConfigProps(cfg *elem.Config, alreadySet configAlreadySet) {
-	if !alreadySet.atomic {
+func fillConfigProps(cfg *elem.Config, diary configDiary) {
+	if !diary.atomicSet {
 		cfg.SetAtomic(true)
 	}
-	if !alreadySet.width {
+	if !diary.widthSet {
 		cfg.SetWidth(busWidth)
 	}
 }

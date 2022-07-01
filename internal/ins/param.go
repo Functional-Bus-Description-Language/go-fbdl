@@ -8,10 +8,10 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-type paramAlreadySet struct {
-	groups bool
-	rang   bool
-	width  bool
+type paramDiary struct {
+	groupsSet bool
+	rangSet   bool
+	widthSet  bool
 }
 
 func insParam(typeChain []prs.Element) (*elem.Param, error) {
@@ -22,7 +22,7 @@ func insParam(typeChain []prs.Element) (*elem.Param, error) {
 	param := elem.Param{}
 	param.SetElem(e)
 
-	alreadySet := paramAlreadySet{}
+	diary := paramDiary{}
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -30,7 +30,7 @@ func insParam(typeChain []prs.Element) (*elem.Param, error) {
 		if !ok {
 			break
 		}
-		err := applyParamType(&param, typ, &alreadySet)
+		err := applyParamType(&param, typ, &diary)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
@@ -39,7 +39,7 @@ func insParam(typeChain []prs.Element) (*elem.Param, error) {
 	return &param, nil
 }
 
-func applyParamType(param *elem.Param, typ prs.Element, alreadySet *paramAlreadySet) error {
+func applyParamType(param *elem.Param, typ prs.Element, diary *paramDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "param"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -55,16 +55,19 @@ func applyParamType(param *elem.Param, typ prs.Element, alreadySet *paramAlready
 
 		switch prop.Name {
 		case "groups":
+			if diary.groupsSet {
+				return fmt.Errorf(propAlreadySetMsg, "groups")
+			}
 			param.SetGroups(makeGroupList(v))
-			alreadySet.groups = true
+			diary.groupsSet = true
 		case "range":
 			panic("not yet implemented")
 		case "width":
-			if alreadySet.width {
+			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
 			param.SetWidth(int64(v.(val.Int)))
-			alreadySet.width = true
+			diary.widthSet = true
 		default:
 			panic("should never happen")
 		}
@@ -73,8 +76,8 @@ func applyParamType(param *elem.Param, typ prs.Element, alreadySet *paramAlready
 	return nil
 }
 
-func fillParamProps(param *elem.Param, alreadySet paramAlreadySet) {
-	if !alreadySet.width {
+func fillParamProps(param *elem.Param, diary paramDiary) {
+	if !diary.widthSet {
 		param.SetWidth(busWidth)
 	}
 }

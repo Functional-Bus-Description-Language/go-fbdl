@@ -8,11 +8,11 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-type statusAlreadySet struct {
-	atomic bool
-	groups bool
-	once   bool
-	width  bool
+type statusDiary struct {
+	atomicSet bool
+	groupsSet bool
+	onceSet   bool
+	widthSet  bool
 }
 
 func insStatus(typeChain []prs.Element) (*elem.Status, error) {
@@ -23,7 +23,7 @@ func insStatus(typeChain []prs.Element) (*elem.Status, error) {
 	st := elem.Status{}
 	st.SetElem(e)
 
-	alreadySet := statusAlreadySet{}
+	diary := statusDiary{}
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -31,18 +31,18 @@ func insStatus(typeChain []prs.Element) (*elem.Status, error) {
 		if !ok {
 			break
 		}
-		err := applyStatusType(&st, typ, &alreadySet)
+		err := applyStatusType(&st, typ, &diary)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
 	}
 
-	fillStatusProps(&st, alreadySet)
+	fillStatusProps(&st, diary)
 
 	return &st, nil
 }
 
-func applyStatusType(st *elem.Status, typ prs.Element, alreadySet *statusAlreadySet) error {
+func applyStatusType(st *elem.Status, typ prs.Element, diary *statusDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "status"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -58,26 +58,29 @@ func applyStatusType(st *elem.Status, typ prs.Element, alreadySet *statusAlready
 
 		switch prop.Name {
 		case "atomic":
-			if alreadySet.atomic {
+			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
 			st.SetAtomic(bool(v.(val.Bool)))
-			alreadySet.atomic = true
+			diary.atomicSet = true
 		case "groups":
+			if diary.groupsSet {
+				return fmt.Errorf(propAlreadySetMsg, "groups")
+			}
 			st.SetGroups(makeGroupList(v))
-			alreadySet.groups = true
+			diary.groupsSet = true
 		case "once":
-			if alreadySet.once {
+			if diary.onceSet {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
 			st.SetOnce(bool(v.(val.Bool)))
-			alreadySet.once = true
+			diary.onceSet = true
 		case "width":
-			if alreadySet.width {
+			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
 			st.SetWidth(int64(v.(val.Int)))
-			alreadySet.width = true
+			diary.widthSet = true
 		default:
 			panic("should never happen")
 		}
@@ -86,11 +89,11 @@ func applyStatusType(st *elem.Status, typ prs.Element, alreadySet *statusAlready
 	return nil
 }
 
-func fillStatusProps(st *elem.Status, alreadySet statusAlreadySet) {
-	if !alreadySet.atomic {
+func fillStatusProps(st *elem.Status, diary statusDiary) {
+	if !diary.atomicSet {
 		st.SetAtomic(true)
 	}
-	if !alreadySet.width {
+	if !diary.widthSet {
 		st.SetWidth(busWidth)
 	}
 }

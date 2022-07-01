@@ -6,15 +6,17 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
-type maskAlreadySet struct {
-	atomic bool
-	dflt   bool
-	groups bool
-	rang   bool
-	once   bool
-	width  bool
+type maskDiary struct {
+	atomicSet bool
+	dfltSet   bool
+	dflt      val.Value
+	groupsSet bool
+	rangSet   bool
+	onceSet   bool
+	widthSet  bool
 }
 
 func insMask(typeChain []prs.Element) (*elem.Mask, error) {
@@ -25,7 +27,7 @@ func insMask(typeChain []prs.Element) (*elem.Mask, error) {
 	mask := elem.Mask{}
 	mask.SetElem(e)
 
-	alreadySet := maskAlreadySet{}
+	diary := maskDiary{}
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -33,18 +35,26 @@ func insMask(typeChain []prs.Element) (*elem.Mask, error) {
 		if !ok {
 			break
 		}
-		err := applyMaskType(&mask, typ, &alreadySet)
+		err := applyMaskType(&mask, typ, &diary)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
 	}
 
-	fillMaskProps(&mask, alreadySet)
+	fillMaskProps(&mask, diary)
+
+	if diary.dfltSet {
+		dflt, err := processDefault(mask.Width(), diary.dflt)
+		if err != nil {
+			return &mask, err
+		}
+		mask.SetDefault(fbdlVal.MakeBitStr(dflt))
+	}
 
 	return &mask, nil
 }
 
-func applyMaskType(mask *elem.Mask, typ prs.Element, alreadySet *maskAlreadySet) error {
+func applyMaskType(mask *elem.Mask, typ prs.Element, diary *maskDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "mask"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -60,28 +70,31 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, alreadySet *maskAlreadySet)
 
 		switch prop.Name {
 		case "atomic":
-			if alreadySet.atomic {
+			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
 			mask.SetAtomic(bool(v.(val.Bool)))
-			alreadySet.atomic = true
+			diary.atomicSet = true
 		case "default":
 			panic("not yet implemented")
 		case "groups":
+			if diary.groupsSet {
+				return fmt.Errorf(propAlreadySetMsg, "groups")
+			}
 			mask.SetGroups(makeGroupList(v))
-			alreadySet.groups = true
+			diary.groupsSet = true
 		case "once":
-			if alreadySet.once {
+			if diary.onceSet {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
 			mask.SetOnce(bool(v.(val.Bool)))
-			alreadySet.once = true
+			diary.onceSet = true
 		case "width":
-			if alreadySet.width {
+			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
 			mask.SetWidth(int64(v.(val.Int)))
-			alreadySet.width = true
+			diary.widthSet = true
 		default:
 			panic("should never happen")
 		}
@@ -90,11 +103,11 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, alreadySet *maskAlreadySet)
 	return nil
 }
 
-func fillMaskProps(mask *elem.Mask, alreadySet maskAlreadySet) {
-	if !alreadySet.atomic {
+func fillMaskProps(mask *elem.Mask, diary maskDiary) {
+	if !diary.atomicSet {
 		mask.SetAtomic(true)
 	}
-	if !alreadySet.width {
+	if !diary.widthSet {
 		mask.SetWidth(busWidth)
 	}
 }

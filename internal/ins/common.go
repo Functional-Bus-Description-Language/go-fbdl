@@ -54,3 +54,29 @@ func makeGroupList(v val.Value) []string {
 	}
 	return grps
 }
+
+// processDefault processes the 'default' property.
+// If the value is BitStr, it checks whether its width is not greater than the width.
+// If the value is Int, it tries to convert it to the BitStr with width of width argument.
+func processDefault(width int64, v val.Value) (val.BitStr, error) {
+	dflt := val.BitStr("")
+
+	if bs, ok := v.(val.BitStr); ok {
+		if bs.BitWidth() > width {
+			return dflt, fmt.Errorf(
+				"width of 'default' bit string (%d) is greater than value of 'width' property (%d)",
+				bs.BitWidth(), width,
+			)
+		}
+		dflt = bs
+	}
+	if i, ok := v.(val.Int); ok {
+		bs, err := val.BitStrFromInt(i, width)
+		if err != nil {
+			return dflt, fmt.Errorf("processing 'default' property: %v", err)
+		}
+		dflt = bs
+	}
+
+	return dflt, nil
+}
