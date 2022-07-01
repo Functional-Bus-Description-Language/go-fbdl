@@ -118,8 +118,3 @@ type Stream interface {
 
 	StbAddr() int64
 }
-
-type Groupable interface {
-	Element
-	Groups() []string
-}

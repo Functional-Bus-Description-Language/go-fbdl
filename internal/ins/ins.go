@@ -151,21 +151,6 @@ func insElement(pe prs.Element) fbdlElem.Element {
 	}
 
 	return e
-
-	/*
-		errMsg := "%s: line %d: instantiating element '%s': %v"
-
-		if err != nil {
-			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
-		}
-
-		err = elem.processDflt()
-		if err != nil {
-			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
-		}
-
-		return elem
-	*/
 }
 
 func resolveToBaseType(e prs.Element) []prs.Element {

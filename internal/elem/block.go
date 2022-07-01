@@ -119,8 +119,8 @@ func (b *Block) Hash() int64 {
 }
 
 // ElemsWithGroups return list of inner elements belonging to any group.
-func (b *Block) ElemsWithGroups() []fbdl.Groupable {
-	elemsWithGrps := []fbdl.Groupable{}
+func (b *Block) ElemsWithGroups() []Groupable {
+	elemsWithGrps := []Groupable{}
 	for _, c := range b.blk.Configs {
 		if len(c.Groups()) > 0 {
 			elemsWithGrps = append(elemsWithGrps, c)
