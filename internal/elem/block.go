@@ -1,8 +1,8 @@
 package elem
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type blk struct {
@@ -16,12 +16,12 @@ type blk struct {
 	ConstContainer
 
 	// Elements
-	Configs   []iface.Config
-	Funcs     []iface.Func
-	Masks     []iface.Mask
-	Statuses  []iface.Status
-	Streams   []iface.Stream
-	Subblocks []iface.Block
+	Configs   []fbdl.Config
+	Funcs     []fbdl.Func
+	Masks     []fbdl.Mask
+	Statuses  []fbdl.Status
+	Streams   []fbdl.Stream
+	Subblocks []fbdl.Block
 
 	Sizes     access.Sizes
 	AddrSpace access.AddrSpace
@@ -42,23 +42,23 @@ func (b *Block) Masters() int64     { return b.blk.Masters }
 func (b *Block) SetWidth(m int64) { b.blk.Width = m }
 func (b *Block) Width() int64     { return b.blk.Width }
 
-func (b *Block) AddConfig(c *Config)     { b.blk.Configs = append(b.blk.Configs, c) }
-func (b *Block) Configs() []iface.Config { return b.blk.Configs }
+func (b *Block) AddConfig(c *Config)    { b.blk.Configs = append(b.blk.Configs, c) }
+func (b *Block) Configs() []fbdl.Config { return b.blk.Configs }
 
-func (b *Block) AddFunc(f *Func)     { b.blk.Funcs = append(b.blk.Funcs, f) }
-func (b *Block) Funcs() []iface.Func { return b.blk.Funcs }
+func (b *Block) AddFunc(f *Func)    { b.blk.Funcs = append(b.blk.Funcs, f) }
+func (b *Block) Funcs() []fbdl.Func { return b.blk.Funcs }
 
-func (b *Block) AddMask(m *Mask)     { b.blk.Masks = append(b.blk.Masks, m) }
-func (b *Block) Masks() []iface.Mask { return b.blk.Masks }
+func (b *Block) AddMask(m *Mask)    { b.blk.Masks = append(b.blk.Masks, m) }
+func (b *Block) Masks() []fbdl.Mask { return b.blk.Masks }
 
-func (b *Block) AddStatus(s *Status)      { b.blk.Statuses = append(b.blk.Statuses, s) }
-func (b *Block) Statuses() []iface.Status { return b.blk.Statuses }
+func (b *Block) AddStatus(s *Status)     { b.blk.Statuses = append(b.blk.Statuses, s) }
+func (b *Block) Statuses() []fbdl.Status { return b.blk.Statuses }
 
-func (b *Block) AddStream(s *Stream)     { b.blk.Streams = append(b.blk.Streams, s) }
-func (b *Block) Streams() []iface.Stream { return b.blk.Streams }
+func (b *Block) AddStream(s *Stream)    { b.blk.Streams = append(b.blk.Streams, s) }
+func (b *Block) Streams() []fbdl.Stream { return b.blk.Streams }
 
-func (b *Block) addSubblock(sb *Block)    { b.blk.Subblocks = append(b.blk.Subblocks, sb) }
-func (b *Block) Subblocks() []iface.Block { return b.blk.Subblocks }
+func (b *Block) addSubblock(sb *Block)   { b.blk.Subblocks = append(b.blk.Subblocks, sb) }
+func (b *Block) Subblocks() []fbdl.Block { return b.blk.Subblocks }
 
 func (b *Block) SetSizes(s access.Sizes) { b.blk.Sizes = s }
 func (b *Block) Sizes() access.Sizes     { return b.blk.Sizes }
@@ -119,8 +119,8 @@ func (b *Block) Hash() int64 {
 }
 
 // ElemsWithGroups return list of inner elements belonging to any group.
-func (b *Block) ElemsWithGroups() []iface.Groupable {
-	elemsWithGrps := []iface.Groupable{}
+func (b *Block) ElemsWithGroups() []fbdl.Groupable {
+	elemsWithGrps := []fbdl.Groupable{}
 	for _, c := range b.blk.Configs {
 		if len(c.Groups()) > 0 {
 			elemsWithGrps = append(elemsWithGrps, c)

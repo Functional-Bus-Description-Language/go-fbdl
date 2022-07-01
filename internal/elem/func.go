@@ -1,8 +1,8 @@
 package elem
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type fun struct {
@@ -11,8 +11,8 @@ type fun struct {
 	// Properties
 	// Currently Func has no properties.
 
-	Params  []iface.Param
-	Returns []iface.Return
+	Params  []fbdl.Param
+	Returns []fbdl.Return
 
 	StbAddr int64 // Strobe address
 	AckAddr int64 // Acknowledgment address
@@ -31,11 +31,11 @@ func (f *Func) StbAddr() int64     { return f.fun.StbAddr }
 func (f *Func) SetAckAddr(a int64) { f.fun.AckAddr = a }
 func (f *Func) AckAddr() int64     { return f.fun.AckAddr }
 
-func (f *Func) AddParam(p *Param)     { f.fun.Params = append(f.fun.Params, p) }
-func (f *Func) Params() []iface.Param { return f.fun.Params }
+func (f *Func) AddParam(p *Param)    { f.fun.Params = append(f.fun.Params, p) }
+func (f *Func) Params() []fbdl.Param { return f.fun.Params }
 
-func (f *Func) AddReturn(r *Return)     { f.fun.Returns = append(f.fun.Returns, r) }
-func (f *Func) Returns() []iface.Return { return f.fun.Returns }
+func (f *Func) AddReturn(r *Return)    { f.fun.Returns = append(f.fun.Returns, r) }
+func (f *Func) Returns() []fbdl.Return { return f.fun.Returns }
 
 func (f *Func) HasElement(name string) bool {
 	for i, _ := range f.fun.Params {

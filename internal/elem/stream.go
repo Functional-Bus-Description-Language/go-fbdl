@@ -1,7 +1,7 @@
 package elem
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
+	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type stream struct {
@@ -10,8 +10,8 @@ type stream struct {
 	// Properties
 	// Currently stream has no properties.
 
-	Params  []iface.Param
-	Returns []iface.Return
+	Params  []fbdl.Param
+	Returns []fbdl.Return
 
 	StbAddr int64 // Strobe address
 }
@@ -28,11 +28,11 @@ func (s *Stream) Type() string { return "stream" }
 func (s *Stream) SetStbAddr(a int64) { s.stream.StbAddr = a }
 func (s *Stream) StbAddr() int64     { return s.stream.StbAddr }
 
-func (s *Stream) AddParam(p *Param)     { s.stream.Params = append(s.stream.Params, p) }
-func (s *Stream) Params() []iface.Param { return s.stream.Params }
+func (s *Stream) AddParam(p *Param)    { s.stream.Params = append(s.stream.Params, p) }
+func (s *Stream) Params() []fbdl.Param { return s.stream.Params }
 
-func (s *Stream) AddReturn(r *Return)     { s.stream.Returns = append(s.stream.Returns, r) }
-func (s *Stream) Returns() []iface.Return { return s.stream.Returns }
+func (s *Stream) AddReturn(r *Return)    { s.stream.Returns = append(s.stream.Returns, r) }
+func (s *Stream) Returns() []fbdl.Return { return s.stream.Returns }
 
 func (s *Stream) HasElement(name string) bool {
 	for i, _ := range s.stream.Params {

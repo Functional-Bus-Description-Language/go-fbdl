@@ -3,9 +3,9 @@ package ins
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
+	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func insStream(typeChain []prs.Element) (*elem.Stream, error) {
@@ -60,7 +60,7 @@ func applyStreamType(stream *elem.Stream, typ prs.Element) error {
 	return nil
 }
 
-func addStreamInnerElement(stream *elem.Stream, e iface.Element) error {
+func addStreamInnerElement(stream *elem.Stream, e fbdl.Element) error {
 	if (e.Type() == "return" && len(stream.Params()) > 0) ||
 		(e.Type() == "param" && len(stream.Returns()) > 0) {
 		return fmt.Errorf(

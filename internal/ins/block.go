@@ -3,10 +3,10 @@ package ins
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	"golang.org/x/exp/maps"
 	"sort"
 )
@@ -117,7 +117,7 @@ func fillBlockProps(blk *elem.Block) {
 	}
 }
 
-func addBlockInnerElement(blk *elem.Block, e iface.Element) {
+func addBlockInnerElement(blk *elem.Block, e fbdl.Element) {
 	switch e.(type) {
 	case (*elem.Config):
 		blk.AddConfig(e.(*elem.Config))
@@ -141,13 +141,13 @@ func checkBlockGroups(blk elem.Block) error {
 		return nil
 	}
 
-	groups := make(map[string][]iface.Element)
+	groups := make(map[string][]fbdl.Element)
 
 	for _, e := range elemsWithGrps {
 		grps := e.Groups()
 		for _, g := range grps {
 			if _, ok := groups[g]; !ok {
-				groups[g] = []iface.Element{}
+				groups[g] = []fbdl.Element{}
 			}
 			groups[g] = append(groups[g], e)
 		}

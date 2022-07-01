@@ -3,9 +3,9 @@ package ins
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
+	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func insFunc(typeChain []prs.Element) (*elem.Func, error) {
@@ -53,7 +53,7 @@ func applyFuncType(fun *elem.Func, typ prs.Element) error {
 	return nil
 }
 
-func addFuncInnerElement(fun *elem.Func, e iface.Element) {
+func addFuncInnerElement(fun *elem.Func, e fbdl.Element) {
 	switch e.(type) {
 	case (*elem.Param):
 		fun.AddParam(e.(*elem.Param))

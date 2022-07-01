@@ -6,10 +6,10 @@ import (
 	"log"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/iface"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	fbdlElem "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -111,10 +111,10 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) (*elem.Block, map[st
 	return mainBus, pkgs
 }
 
-func insElement(pe prs.Element) iface.Element {
+func insElement(pe prs.Element) fbdlElem.Element {
 	typeChain := resolveToBaseType(pe)
 
-	var e iface.Element
+	var e fbdlElem.Element
 	var err error
 
 	typ := typeChain[0].Type()
