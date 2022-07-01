@@ -45,11 +45,11 @@ func setBusWidth(main prs.Symbol) error {
 	return nil
 }
 
-func Instantiate(packages prs.Packages, zeroTimestamp bool) *elem.Block {
+func Instantiate(packages prs.Packages, zeroTimestamp bool) (*elem.Block, map[string]*elem.Package) {
 	main, ok := packages["main"][0].Symbols.Get("Main", prs.ElemInst)
 	if !ok {
 		log.Println("instantiation: there is no 'Main' bus; returning nil")
-		return nil
+		return nil, nil
 	}
 
 	err := setBusWidth(main)
@@ -107,7 +107,9 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) *elem.Block {
 		mainBus.Elems.Add(timestamp(zeroTimestamp))
 	*/
 
-	return mainBus
+	pkgs := constifyPackages(packages)
+
+	return mainBus, pkgs
 }
 
 func insElement(pe prs.Element) iface.Element {

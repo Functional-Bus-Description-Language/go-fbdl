@@ -22,6 +22,10 @@ type ConstContainer interface {
 	StrConsts() map[string]string
 }
 
+type Package interface {
+	ConstContainer
+}
+
 type Block interface {
 	Element
 

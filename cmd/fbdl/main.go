@@ -10,7 +10,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 
 	"github.com/davecgh/go-spew/spew"
 )
@@ -68,7 +67,7 @@ func main() {
 	if _, ok := cmdLineArgs["-zero-timestamp"]; ok {
 		zeroTimestamp = true
 	}
-	bus := ins.Instantiate(packages, zeroTimestamp)
+	bus, pkgsConsts := ins.Instantiate(packages, zeroTimestamp)
 
 	if path, ok := cmdLineArgs["-i"]; ok {
 		f, err := os.Create(path)
@@ -105,8 +104,6 @@ func main() {
 			log.Fatalf("dump registerification results: %v", err)
 		}
 	}
-
-	pkgsConsts := elem.ConstifyPackages(packages)
 
 	if path, ok := cmdLineArgs["-c"]; ok {
 		f, err := os.Create(path)

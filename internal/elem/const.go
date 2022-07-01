@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-type ConstContainer struct {
+type cc struct {
 	BoolConsts     map[string]bool
 	BoolListConsts map[string][]bool
 	IntConsts      map[string]int64
@@ -12,35 +12,45 @@ type ConstContainer struct {
 	StrConsts      map[string]string
 }
 
+type ConstContainer struct {
+	cc
+}
+
+func (c ConstContainer) BoolConsts() map[string]bool       { return c.cc.BoolConsts }
+func (c ConstContainer) BoolListConsts() map[string][]bool { return c.cc.BoolListConsts }
+func (c ConstContainer) IntConsts() map[string]int64       { return c.cc.IntConsts }
+func (c ConstContainer) IntListConsts() map[string][]int64 { return c.cc.IntListConsts }
+func (c ConstContainer) StrConsts() map[string]string      { return c.cc.StrConsts }
+
 // HasConst returns true if container already has constant with given name.
-func (cc ConstContainer) HasConst(name string) bool {
-	if _, ok := cc.BoolConsts[name]; ok {
+func (c ConstContainer) HasConst(name string) bool {
+	if _, ok := c.cc.BoolConsts[name]; ok {
 		return true
 	}
-	if _, ok := cc.BoolListConsts[name]; ok {
+	if _, ok := c.cc.BoolListConsts[name]; ok {
 		return true
 	}
-	if _, ok := cc.IntConsts[name]; ok {
+	if _, ok := c.cc.IntConsts[name]; ok {
 		return true
 	}
-	if _, ok := cc.IntListConsts[name]; ok {
+	if _, ok := c.cc.IntListConsts[name]; ok {
 		return true
 	}
-	if _, ok := cc.StrConsts[name]; ok {
+	if _, ok := c.cc.StrConsts[name]; ok {
 		return true
 	}
 
 	return false
 }
 
-func (cc ConstContainer) HasConsts() bool {
-	if len(cc.BoolConsts) != 0 || len(cc.BoolListConsts) != 0 {
+func (c ConstContainer) HasConsts() bool {
+	if len(c.cc.BoolConsts) != 0 || len(c.cc.BoolListConsts) != 0 {
 		return true
 	}
-	if len(cc.IntConsts) != 0 || len(cc.IntListConsts) != 0 {
+	if len(c.cc.IntConsts) != 0 || len(c.cc.IntListConsts) != 0 {
 		return true
 	}
-	if len(cc.StrConsts) != 0 {
+	if len(c.cc.StrConsts) != 0 {
 		return true
 	}
 
@@ -75,52 +85,52 @@ func (cc *ConstContainer) AddConst(name string, v val.Value) {
 	}
 }
 
-func (cc *ConstContainer) addBoolConst(name string, v val.Value) {
+func (c *ConstContainer) addBoolConst(name string, v val.Value) {
 	b := bool(v.(val.Bool))
-	if cc.BoolConsts == nil {
-		cc.BoolConsts = map[string]bool{name: b}
+	if c.cc.BoolConsts == nil {
+		c.cc.BoolConsts = map[string]bool{name: b}
 	}
-	cc.BoolConsts[name] = b
+	c.cc.BoolConsts[name] = b
 }
 
-func (cc *ConstContainer) addBoolListConst(name string, v val.Value) {
+func (c *ConstContainer) addBoolListConst(name string, v val.Value) {
 	l := constifyBoolList(v.(val.List))
 	if l == nil {
 		return
 	}
 
-	if cc.BoolListConsts == nil {
-		cc.BoolListConsts = map[string][]bool{name: l}
+	if c.cc.BoolListConsts == nil {
+		c.cc.BoolListConsts = map[string][]bool{name: l}
 	}
-	cc.BoolListConsts[name] = l
+	c.cc.BoolListConsts[name] = l
 }
 
-func (cc *ConstContainer) addIntConst(name string, v val.Value) {
+func (c *ConstContainer) addIntConst(name string, v val.Value) {
 	i := int64(v.(val.Int))
-	if cc.IntConsts == nil {
-		cc.IntConsts = map[string]int64{name: i}
+	if c.cc.IntConsts == nil {
+		c.cc.IntConsts = map[string]int64{name: i}
 	}
-	cc.IntConsts[name] = i
+	c.cc.IntConsts[name] = i
 }
 
-func (cc *ConstContainer) addIntListConst(name string, v val.Value) {
+func (c *ConstContainer) addIntListConst(name string, v val.Value) {
 	l := constifyIntList(v.(val.List))
 	if l == nil {
 		return
 	}
 
-	if cc.IntListConsts == nil {
-		cc.IntListConsts = map[string][]int64{name: l}
+	if c.cc.IntListConsts == nil {
+		c.cc.IntListConsts = map[string][]int64{name: l}
 	}
-	cc.IntListConsts[name] = l
+	c.cc.IntListConsts[name] = l
 }
 
-func (cc *ConstContainer) addStrConst(name string, v val.Value) {
+func (c *ConstContainer) addStrConst(name string, v val.Value) {
 	s := string(v.(val.Str))
-	if cc.StrConsts == nil {
-		cc.StrConsts = map[string]string{name: s}
+	if c.cc.StrConsts == nil {
+		c.cc.StrConsts = map[string]string{name: s}
 	}
-	cc.StrConsts[name] = s
+	c.cc.StrConsts[name] = s
 }
 
 // constifyBoolList tries to constify list as an bool list.

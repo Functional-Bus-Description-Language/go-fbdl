@@ -12,11 +12,9 @@ func Compile(mainPath string) (elem.Block, map[string]elem.Package) {
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
-	bus := ins.Instantiate(packages, false)
+	bus, pkgs := ins.Instantiate(packages, false)
 
 	reg.Registerify(bus)
 
-	pkgsConsts := elem.ConstifyPackages(packages)
-
-	return bus, pkgsConsts
+	return bus, pkgs
 }

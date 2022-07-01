@@ -13,7 +13,7 @@ type blk struct {
 	Width   int64
 
 	// Constants
-	//ConstContainer
+	ConstContainer
 
 	// Elements
 	Configs   []iface.Config
