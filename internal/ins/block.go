@@ -72,23 +72,21 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 	}
 
 	for _, s := range typ.Symbols() {
-		/*
-			if c, ok := s.(*prs.Const); ok {
-				if blk.HasConst(c.Name()) {
-					return fmt.Errorf(
-						"const '%s' is already defined in one of ancestor types", c.Name(),
-					)
-				}
-
-				val, err := c.Value.Eval()
-				if err != nil {
-					return fmt.Errorf(
-						"cannot evaluate expression for const '%s': %v", c.Name(), err,
-					)
-				}
-				blk.AddConst(c.Name(), val)
+		if c, ok := s.(*prs.Const); ok {
+			if blk.HasConst(c.Name()) {
+				return fmt.Errorf(
+					"const '%s' is already defined in one of ancestor types", c.Name(),
+				)
 			}
-		*/
+
+			val, err := c.Value.Eval()
+			if err != nil {
+				return fmt.Errorf(
+					"cannot evaluate expression for const '%s': %v", c.Name(), err,
+				)
+			}
+			blk.AddConst(c.Name(), val)
+		}
 
 		pe, ok := s.(*prs.Inst)
 		if !ok {
