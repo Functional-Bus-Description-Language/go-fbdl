@@ -158,19 +158,6 @@ func insElement(pe prs.Element) iface.Element {
 			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
 		}
 
-		if elem.Count < 0 {
-			log.Fatalf(
-				"%s: line %d: negative size (%d) of '%s' array",
-				e.File().Path, e.LineNum(), elem.Count, e.Name(),
-			)
-		}
-
-		fillProps(elem)
-
-		if err = elem.makeGrps(); err != nil {
-			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)
-		}
-
 		err = elem.processDflt()
 		if err != nil {
 			log.Fatalf(errMsg, e.File().Path, e.LineNum(), e.Name(), err)

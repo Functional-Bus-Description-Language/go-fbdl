@@ -18,27 +18,12 @@ type configAlreadySet struct {
 }
 
 func insConfig(typeChain []prs.Element) (*elem.Config, error) {
-	inst := typeChain[len(typeChain)-1].(*prs.Inst)
-
-	cfg := elem.Config{}
-	cfg.SetName(inst.Name())
-	cfg.SetDoc(inst.Doc())
-	cfg.SetIsArray(false)
-	cfg.SetCount(1)
-
-	if inst.IsArray {
-		cfg.SetIsArray(true)
-		v, err := inst.Count.Eval()
-
-		if v.Type() != "integer" {
-			return nil, fmt.Errorf("size of array must be of 'integer' type, current type '%s'", v.Type())
-		}
-
-		if err != nil {
-			return nil, fmt.Errorf("%v", err)
-		}
-		cfg.SetCount(int64(v.(val.Int)))
+	e, err := makeElem(typeChain)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
 	}
+	cfg := elem.Config{}
+	cfg.SetElem(e)
 
 	alreadySet := configAlreadySet{}
 

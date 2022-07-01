@@ -16,27 +16,12 @@ type statusAlreadySet struct {
 }
 
 func insStatus(typeChain []prs.Element) (*elem.Status, error) {
-	inst := typeChain[len(typeChain)-1].(*prs.Inst)
-
-	st := elem.Status{}
-	st.SetName(inst.Name())
-	st.SetDoc(inst.Doc())
-	st.SetIsArray(false)
-	st.SetCount(1)
-
-	if inst.IsArray {
-		st.SetIsArray(true)
-		v, err := inst.Count.Eval()
-
-		if v.Type() != "integer" {
-			return nil, fmt.Errorf("size of array must be of 'integer' type, current type '%s'", v.Type())
-		}
-
-		if err != nil {
-			return nil, fmt.Errorf("%v", err)
-		}
-		st.SetCount(int64(v.(val.Int)))
+	e, err := makeElem(typeChain)
+	if err != nil {
+		return nil, fmt.Errorf("%v", err)
 	}
+	st := elem.Status{}
+	st.SetElem(e)
 
 	alreadySet := statusAlreadySet{}
 

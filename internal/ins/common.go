@@ -32,6 +32,9 @@ func makeElem(typeChain []prs.Element) (elem.Elem, error) {
 			return elem.Elem{}, fmt.Errorf("%v", err)
 		}
 		count = int64(v.(val.Int))
+		if count < 0 {
+			return elem.Elem{}, fmt.Errorf("negative array size (%d)", count)
+		}
 	}
 
 	e := elem.Elem{}
