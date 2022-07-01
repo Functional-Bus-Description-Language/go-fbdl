@@ -7,15 +7,6 @@ import (
 
 // regFunc registerifies a Func element.
 func regFunc(fun *elem.Func, addr int64) int64 {
-	/*
-		fun := elem.Func{
-			Name:    insFun.Name,
-			Doc:     insFun.Doc,
-			IsArray: insFun.IsArray,
-			Count:   insFun.Count,
-		}
-	*/
-
 	//params := insFun.Elems.GetAllByType("param")
 	baseBit := int64(0)
 	for _, p := range fun.Params() {
