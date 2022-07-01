@@ -8,21 +8,20 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
-type paramAlreadySet struct {
+type returnAlreadySet struct {
 	groups bool
-	rang bool
 	width  bool
 }
 
-func insParam(typeChain []prs.Element) (*elem.Param, error) {
+func insReturn(typeChain []prs.Element) (*elem.Return, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	param := elem.Param{}
-	param.SetElem(e)
+	ret := elem.Return{}
+	ret.SetElem(e)
 
-	alreadySet := paramAlreadySet{}
+	alreadySet := returnAlreadySet{}
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -30,18 +29,18 @@ func insParam(typeChain []prs.Element) (*elem.Param, error) {
 		if !ok {
 			break
 		}
-		err := applyParamType(&param, typ, &alreadySet)
+		err := applyReturnType(&ret, typ, &alreadySet)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
 	}
 
-	return &param, nil
+	return &ret, nil
 }
 
-func applyParamType(param *elem.Param, typ prs.Element, alreadySet *paramAlreadySet) error {
+func applyReturnType(ret *elem.Return, typ prs.Element, alreadySet *returnAlreadySet) error {
 	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "param"); err != nil {
+		if err := util.IsValidProperty(prop.Name, "return"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(prop); err != nil {
@@ -60,14 +59,12 @@ func applyParamType(param *elem.Param, typ prs.Element, alreadySet *paramAlready
 			for _, g := range vGrps {
 				grps = append(grps, string(g.(val.Str)))
 			}
-			param.SetGroups(grps)
-		case "range":
-			panic("not yet implemented")
+			ret.SetGroups(grps)
 		case "width":
 			if alreadySet.width {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			param.SetWidth(int64(v.(val.Int)))
+			ret.SetWidth(int64(v.(val.Int)))
 			alreadySet.width = true
 		default:
 			panic("should never happen")
@@ -77,8 +74,8 @@ func applyParamType(param *elem.Param, typ prs.Element, alreadySet *paramAlready
 	return nil
 }
 
-func fillParamProps(param *elem.Param, alreadySet paramAlreadySet) {
+func fillReturnProps(ret *elem.Return, alreadySet returnAlreadySet) {
 	if !alreadySet.width {
-		param.SetWidth(busWidth)
+		ret.SetWidth(busWidth)
 	}
 }
