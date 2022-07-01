@@ -95,11 +95,9 @@ func regFuncs(blk *elem.Block, addr int64) int64 {
 }
 
 func regStreams(blk *elem.Block, addr int64) int64 {
-	/*
-		for _, stream := range blk.Streams() {
-			addr = regStream(stream.(*elem.Stream), addr)
-		}
-	*/
+	for _, stream := range blk.Streams() {
+		addr = regStream(stream.(*elem.Stream), addr)
+	}
 
 	return addr
 }
