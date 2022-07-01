@@ -68,16 +68,14 @@ func (b *Block) AddrSpace() access.AddrSpace      { return b.blk.AddrSpace }
 
 // Status returns pointer to the Status if status with given name exists
 // within the block. Otherwise it returns nil.
-/*
-func (b *Block) Status(name string) (*Status, bool) {
-	for _, s := range b.Statuses {
+func (b *Block) Status(name string) *Status {
+	for _, s := range b.blk.Statuses {
 		if s.Name() == name {
-			return s, true
+			return s.(*Status)
 		}
 	}
-	return nil, false
+	return nil
 }
-*/
 
 func (b *Block) HasElement(name string) bool {
 	for i, _ := range b.blk.Configs {

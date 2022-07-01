@@ -22,24 +22,7 @@ func Registerify(regBus *elem.Block) {
 	busWidth = regBus.Width()
 	access.Init(busWidth)
 
-	/*
-		regBus := elem.Block{
-			Name:    "Main",
-			Doc:     insBus.Doc,
-			IsArray: insBus.IsArray,
-			Count:   int64(insBus.Count),
-			Masters: int64(insBus.Props["masters"].(val.Int)),
-			Width:   int64(insBus.Props["width"].(val.Int)),
-		}
-	*/
-
-	/*
-		for name, v := range insBus.Consts {
-			regBus.AddConst(name, v)
-		}
-	*/
-
-	// addr is current block internal access address, not global address.
+	// addr is currently block internal access address, not global address.
 	// 0 and 1 are reserved for ID and TIMESTAMP.
 	addr := int64(2)
 
@@ -60,33 +43,11 @@ func Registerify(regBus *elem.Block) {
 
 	regBus.SetSizes(sizes)
 
-	/*
-		id, _ := insBus.Elems.Get("ID")
-		blkAddStatus(&regBus,
-			&elem.Status{
-				Name:    id.Name,
-				Doc:     id.Doc,
-				Count:   id.Count,
-				Access:  access.MakeSingle(0, 0, busWidth),
-				Atomic:  bool(id.Props["atomic"].(val.Bool)),
-				Width:   int64(id.Props["width"].(val.Int)),
-				Default: fbdlVal.MakeBitStr(id.Props["default"].(val.BitStr)),
-			},
-		)
+	id := regBus.Status("ID")
+	id.SetAccess(access.MakeSingle(0, 0, id.Width()))
 
-		ts, _ := insBus.Elems.Get("TIMESTAMP")
-		blkAddStatus(&regBus,
-			&elem.Status{
-				Name:    ts.Name,
-				Doc:     ts.Doc,
-				Count:   ts.Count,
-				Access:  access.MakeSingle(1, 0, busWidth),
-				Atomic:  bool(ts.Props["atomic"].(val.Bool)),
-				Width:   int64(ts.Props["width"].(val.Int)),
-				Default: fbdlVal.MakeBitStr(ts.Props["default"].(val.BitStr)),
-			},
-		)
-	*/
+	ts := regBus.Status("TIMESTAMP")
+	ts.SetAccess(access.MakeSingle(1, 0, busWidth))
 
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(regBus, 0)

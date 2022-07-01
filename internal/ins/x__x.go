@@ -1,21 +1,33 @@
 package ins
 
-/*
 import (
 	"math"
 	"time"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 // If zero is true, then the timestamp will eqaul zero.
 // If zero is false, then the timestamp  will be the bus generation timestamp.
-func timestamp(zero bool) *Element {
+func timestamp(zero bool) *elem.Status {
+	ts := elem.Status{}
+
+	ts.SetName("TIMESTAMP")
+	ts.SetDoc("Bus generation timestamp.")
+	ts.SetIsArray(false)
+	ts.SetCount(1)
+	ts.SetAtomic(true)
+
 	width := busWidth
 	// Limit timestamp width. 36 bits is enough, do not waste resources.
 	if width > 36 {
 		width = 36
 	}
+
+	ts.SetWidth(width)
 
 	var timestamp val.Int
 	if zero {
@@ -29,36 +41,28 @@ func timestamp(zero bool) *Element {
 		panic("TIMESTAMP")
 	}
 
-	return &Element{
-		Name:  "TIMESTAMP",
-		Doc:   "Bus generation timestamp.",
-		Type:  "status",
-		Count: int64(1),
-		Props: map[string]val.Value{
-			"atomic":  val.Bool(true),
-			"default": dflt,
-			"width":   val.Int(width),
-		},
-	}
+	ts.SetDefault(fbdlVal.MakeBitStr(dflt))
+
+	return &ts
 }
 
 // Value generation is not yet supported.
-func id() *Element {
-	dflt, err := val.BitStrFromInt(val.Int(0xDEADBEEF), busWidth)
-	if err != nil {
-		panic("ID")
+func id() *elem.Status {
+	id := elem.Status{}
+
+	id.SetName("ID")
+	id.SetDoc("Bus identifier.")
+	id.SetIsArray(false)
+	id.SetCount(1)
+	id.SetAtomic(true)
+
+	width := busWidth
+	// Current implementaiton uses adler32 for hash, no sense to make ID wider.
+	if width > 32 {
+		width = 32
 	}
 
-	return &Element{
-		Name:  "ID",
-		Doc:   "Bus identifier.",
-		Type:  "status",
-		Count: int64(1),
-		Props: map[string]val.Value{
-			"atomic":  val.Bool(true),
-			"default": dflt,
-			"width":   val.Int(busWidth),
-		},
-	}
+	id.SetWidth(busWidth)
+
+	return &id
 }
-*/

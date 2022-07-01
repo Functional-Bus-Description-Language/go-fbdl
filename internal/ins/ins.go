@@ -10,6 +10,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 const dfltBusWidth int64 = 32
@@ -86,26 +87,24 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) (*elem.Block, map[st
 		}
 	}
 
-	/*
-		if _, ok := mainBus.Status("ID"); ok {
-			log.Fatalf("ID is reserved element name in Main bus")
-		}
+	if mainBus.HasElement("ID") {
+		log.Fatalf("'ID' is reserved element name in Main bus")
+	}
 
-		id := id()
-		hash := int64(mainBus.hash())
-		if busWidth < 32 {
-			hash = hash & ((1 << busWidth) - 1)
-		}
-		// Ignore error, the value has been trimmed to the proper width.
-		dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
-		id.Props["default"] = dflt
-		mainBus.Elems.Add(id)
+	id := id()
+	hash := int64(mainBus.Hash())
+	if busWidth < 32 {
+		hash = hash & ((1 << busWidth) - 1)
+	}
+	// Ignore error, the value has been trimmed to the proper width.
+	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
+	id.SetDefault(fbdlVal.MakeBitStr(dflt))
+	mainBus.AddStatus(id)
 
-		if _, exists := mainBus.Elems.Get("TIMESTAMP"); exists {
-			log.Fatalf("TIMESTAMP is reserved element name in Main bus")
-		}
-		mainBus.Elems.Add(timestamp(zeroTimestamp))
-	*/
+	if mainBus.HasElement("TIMESTAMP") {
+		log.Fatalf("'TIMESTAMP' is reserved element name in Main bus")
+	}
+	mainBus.AddStatus(timestamp(zeroTimestamp))
 
 	pkgs := constifyPackages(packages)
 
