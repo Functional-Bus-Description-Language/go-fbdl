@@ -7,6 +7,8 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"golang.org/x/exp/maps"
+	"sort"
 )
 
 func insBlock(typeChain []prs.Element) (*elem.Block, error) {
@@ -197,12 +199,16 @@ func checkBlockGroups(blk elem.Block) error {
 	}
 
 	// Check for identical groups.
-	for grpName1, g1 := range groups {
+	grpNames := maps.Keys(groups)
+	sort.Strings(grpNames)
+	for _, grpName1 := range grpNames {
+		g1 := groups[grpName1]
 		elemNames1 := make([]string, 0, len(g1))
 		for _, e := range g1 {
 			elemNames1 = append(elemNames1, e.Name())
 		}
-		for grpName2, g2 := range groups {
+		for _, grpName2 := range grpNames {
+			g2 := groups[grpName2]
 			if grpName1 == grpName2 {
 				continue
 			}
