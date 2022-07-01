@@ -10,7 +10,7 @@ import (
 
 type paramAlreadySet struct {
 	groups bool
-	rang bool
+	rang   bool
 	width  bool
 }
 
@@ -55,12 +55,8 @@ func applyParamType(param *elem.Param, typ prs.Element, alreadySet *paramAlready
 
 		switch prop.Name {
 		case "groups":
-			vGrps := v.(val.List)
-			grps := make([]string, 0, len(vGrps))
-			for _, g := range vGrps {
-				grps = append(grps, string(g.(val.Str)))
-			}
-			param.SetGroups(grps)
+			param.SetGroups(makeGroupList(v))
+			alreadySet.groups = true
 		case "range":
 			panic("not yet implemented")
 		case "width":

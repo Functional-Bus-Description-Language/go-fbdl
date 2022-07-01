@@ -83,12 +83,8 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, alreadySet *configAlread
 		case "default", "range":
 			panic("not yet implemented")
 		case "groups":
-			vGrps := v.(val.List)
-			grps := make([]string, 0, len(vGrps))
-			for _, g := range vGrps {
-				grps = append(grps, string(g.(val.Str)))
-			}
-			cfg.SetGroups(grps)
+			cfg.SetGroups(makeGroupList(v))
+			alreadySet.groups = true
 		case "once":
 			if alreadySet.once {
 				return fmt.Errorf(propAlreadySetMsg, "once")

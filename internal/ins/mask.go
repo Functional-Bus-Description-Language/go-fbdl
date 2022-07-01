@@ -68,12 +68,8 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, alreadySet *maskAlreadySet)
 		case "default":
 			panic("not yet implemented")
 		case "groups":
-			vGrps := v.(val.List)
-			grps := make([]string, 0, len(vGrps))
-			for _, g := range vGrps {
-				grps = append(grps, string(g.(val.Str)))
-			}
-			mask.SetGroups(grps)
+			mask.SetGroups(makeGroupList(v))
+			alreadySet.groups = true
 		case "once":
 			if alreadySet.once {
 				return fmt.Errorf(propAlreadySetMsg, "once")

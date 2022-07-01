@@ -54,12 +54,8 @@ func applyReturnType(ret *elem.Return, typ prs.Element, alreadySet *returnAlread
 
 		switch prop.Name {
 		case "groups":
-			vGrps := v.(val.List)
-			grps := make([]string, 0, len(vGrps))
-			for _, g := range vGrps {
-				grps = append(grps, string(g.(val.Str)))
-			}
-			ret.SetGroups(grps)
+			ret.SetGroups(makeGroupList(v))
+			alreadySet.groups = true
 		case "width":
 			if alreadySet.width {
 				return fmt.Errorf(propAlreadySetMsg, "width")
