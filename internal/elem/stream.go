@@ -34,6 +34,20 @@ func (s *Stream) Params() []iface.Param { return s.stream.Params }
 func (s *Stream) AddReturn(r *Return)     { s.stream.Returns = append(s.stream.Returns, r) }
 func (s *Stream) Returns() []iface.Return { return s.stream.Returns }
 
+func (s *Stream) HasElement(name string) bool {
+	for i, _ := range s.stream.Params {
+		if s.stream.Params[i].Name() == name {
+			return true
+		}
+	}
+	for i, _ := range s.stream.Returns {
+		if s.stream.Returns[i].Name() == name {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *Stream) IsDownstream() bool {
 	if len(s.stream.Params) > 0 {
 		return true
