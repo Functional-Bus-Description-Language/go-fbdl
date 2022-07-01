@@ -3,12 +3,10 @@ package reg
 import (
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	//"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	//fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 var busWidth int64
@@ -141,22 +139,6 @@ func regConfigs(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 
 func regBlock(blk *elem.Block) access.Sizes {
 	addr := int64(0)
-
-	/*
-		b := elem.Block{
-			Name:    insBlk.Name,
-			Doc:     insBlk.Doc,
-			IsArray: insBlk.IsArray,
-			Count:   int64(insBlk.Count),
-			Masters: int64(insBlk.Props["masters"].(val.Int)),
-		}
-	*/
-
-	/*
-		for name, v := range insBlk.Consts {
-			b.AddConst(name, v)
-		}
-	*/
 
 	addr = regFunctionalities(blk, addr)
 	sizes := access.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
