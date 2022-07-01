@@ -38,7 +38,7 @@ type Block interface {
 	//Funcs() []Func
 	Masks() []Mask
 	Statuses() []Status
-	//Streams() []Stream
+	Streams() []Stream
 	Subblocks() []Block
 
 	Sizes() access.Sizes
