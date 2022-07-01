@@ -16,11 +16,11 @@ type blk struct {
 	//ConstContainer
 
 	// Elements
-	Configs []iface.Config
-	//funcs     []iface.Func
-	Masks    []iface.Mask
-	Statuses []iface.Status
-	//streams   []iface.Stream
+	Configs   []iface.Config
+	Funcs     []iface.Func
+	Masks     []iface.Mask
+	Statuses  []iface.Status
+	Streams   []iface.Stream
 	Subblocks []iface.Block
 
 	Sizes     access.Sizes
@@ -45,10 +45,8 @@ func (b *Block) Width() int64     { return b.blk.Width }
 func (b *Block) AddConfig(c *Config)     { b.blk.Configs = append(b.blk.Configs, c) }
 func (b *Block) Configs() []iface.Config { return b.blk.Configs }
 
-/*
 func (b *Block) AddFunc(f *Func)     { b.blk.Funcs = append(b.blk.Funcs, f) }
 func (b *Block) Funcs() []iface.Func { return b.blk.Funcs }
-*/
 
 func (b *Block) AddMask(m *Mask)     { b.blk.Masks = append(b.blk.Masks, m) }
 func (b *Block) Masks() []iface.Mask { return b.blk.Masks }
@@ -56,10 +54,8 @@ func (b *Block) Masks() []iface.Mask { return b.blk.Masks }
 func (b *Block) AddStatus(s *Status)      { b.blk.Statuses = append(b.blk.Statuses, s) }
 func (b *Block) Statuses() []iface.Status { return b.blk.Statuses }
 
-/*
 func (b *Block) AddStream(s *Stream)     { b.blk.Streams = append(b.blk.Streams, s) }
 func (b *Block) Streams() []iface.Stream { return b.blk.Streams }
-*/
 
 func (b *Block) addSubblock(sb *Block)    { b.blk.Subblocks = append(b.blk.Subblocks, sb) }
 func (b *Block) Subblocks() []iface.Block { return b.blk.Subblocks }
@@ -89,13 +85,11 @@ func (b *Block) HasElement(name string) bool {
 			return true
 		}
 	}
-	/*
-		for i, _ := range b.Funcs {
-			if b.Funcs[i].Name == name {
-				return true
-			}
+	for i, _ := range b.blk.Funcs {
+		if b.blk.Funcs[i].Name() == name {
+			return true
 		}
-	*/
+	}
 	for i, _ := range b.blk.Masks {
 		if b.blk.Masks[i].Name() == name {
 			return true
@@ -106,12 +100,12 @@ func (b *Block) HasElement(name string) bool {
 			return true
 		}
 	}
-	/*
-		for i, _ := range b.Streams {
-			if b.Streams[i].Name == name {
-				return true
-			}
+	for i, _ := range b.blk.Streams {
+		if b.blk.Streams[i].Name() == name {
+			return true
 		}
+	}
+	/*
 		for i, _ := range b.Subblocks {
 			if b.Subblocks[i].Name() == name {
 				return true

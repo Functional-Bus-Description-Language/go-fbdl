@@ -122,10 +122,18 @@ func insElement(pe prs.Element) iface.Element {
 		e, err = insBlock(typeChain)
 	case "config":
 		e, err = insConfig(typeChain)
+	case "func":
+		e, err = insFunc(typeChain)
 	case "mask":
 		e, err = insMask(typeChain)
+	case "param":
+		e, err = insParam(typeChain)
+	case "return":
+		e, err = insReturn(typeChain)
 	case "status":
 		e, err = insStatus(typeChain)
+	case "stream":
+		e, err = insStream(typeChain)
 	default:
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s', "+

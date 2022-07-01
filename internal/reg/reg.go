@@ -126,19 +126,17 @@ func regGroups(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 */
 
 func regFuncs(blk *elem.Block, addr int64) int64 {
-	/*
-		for _, fun := range blk.Funcs {
-			addr = regFunc(fun, addr)
-		}
-	*/
+	for _, fun := range blk.Funcs() {
+		addr = regFunc(fun.(*elem.Func), addr)
+	}
 
 	return addr
 }
 
 func regStreams(blk *elem.Block, addr int64) int64 {
 	/*
-		for _, stream := range blk.Streams {
-			addr = regStream(stream, addr)
+		for _, stream := range blk.Streams() {
+			addr = regStream(stream.(*elem.Stream), addr)
 		}
 	*/
 

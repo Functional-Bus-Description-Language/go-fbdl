@@ -96,17 +96,11 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 		e := insElement(pe)
 
 		if util.IsValidInnerType(e.Type(), "block") == false {
-			return fmt.Errorf(
-				"element '%s' of base type '%s' cannot be instantiated in element of base type '%s'",
-				e.Name(), e.Type(), blk.Type(),
-			)
+			return fmt.Errorf(invalidInnerTypeMsg, e.Name(), e.Type(), "block")
 		}
 
 		if blk.HasElement(e.Name()) {
-			return fmt.Errorf(
-				"cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types",
-				e.Name(),
-			)
+			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.Name())
 		}
 		addBlockInnerElement(blk, e)
 	}
@@ -127,10 +121,14 @@ func addBlockInnerElement(blk *elem.Block, e iface.Element) {
 	switch e.(type) {
 	case (*elem.Config):
 		blk.AddConfig(e.(*elem.Config))
+	case (*elem.Func):
+		blk.AddFunc(e.(*elem.Func))
 	case (*elem.Mask):
 		blk.AddMask(e.(*elem.Mask))
 	case (*elem.Status):
 		blk.AddStatus(e.(*elem.Status))
+	case (*elem.Stream):
+		blk.AddStream(e.(*elem.Stream))
 	default:
 		panic("should never happen")
 	}
