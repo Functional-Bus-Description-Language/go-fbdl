@@ -163,7 +163,7 @@ func checkBlockGroups(blk elem.Block) error {
 	// Check for groups with single element.
 	for name, g := range groups {
 		if len(g) == 1 {
-			return fmt.Errorf("group %q has only one element '%s'", name, g[0].Name)
+			return fmt.Errorf("group %q has only one element '%s'", name, g[0].Name())
 		}
 	}
 
@@ -188,7 +188,7 @@ func checkBlockGroups(blk elem.Block) error {
 						"conflicting order of groups, "+
 							"group %q is after group %q in element '%s', "+
 							"but before group %q in element '%s'",
-						grps2[id], grps2[id+1], e1.Name, grps2[id+1], e2.Name,
+						grps2[id], grps2[id+1], e1.Name(), grps2[id+1], e2.Name(),
 					)
 				}
 				prevId = id

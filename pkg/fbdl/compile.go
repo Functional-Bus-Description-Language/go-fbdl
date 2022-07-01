@@ -8,7 +8,7 @@ import (
 )
 
 // Compile compiles functional bus description for a Main bus located in the file which path is provided as mainPath.
-func Compile(mainPath string) (*elem.Block, map[string]elem.Package) {
+func Compile(mainPath string) (elem.Block, map[string]elem.Package) {
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
