@@ -1,4 +1,4 @@
-package fbdl
+package val
 
 // Range represents possible value range.
 // IsRepresentable indicates whether range can be represented.
