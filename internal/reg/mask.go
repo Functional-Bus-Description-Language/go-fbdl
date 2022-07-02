@@ -7,6 +7,8 @@ import (
 
 // regMask registerifies a Mask element.
 func regMask(mask *elem.Mask, addr int64) int64 {
+	var a access.Access
+
 	if mask.IsArray() {
 		panic("not yet implemented")
 		/* Should it be implemented the same way as for Status?
@@ -20,9 +22,11 @@ func regMask(mask *elem.Mask, addr int64) int64 {
 		}
 		*/
 	} else {
-		mask.SetAccess(access.MakeSingle(addr, 0, mask.Width()))
+		a = access.MakeSingle(addr, 0, mask.Width())
 	}
-	addr += mask.Access().RegCount()
+	addr += a.RegCount()
+
+	mask.SetAccess(a)
 
 	return addr
 }
