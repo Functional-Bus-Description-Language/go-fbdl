@@ -24,28 +24,33 @@ func regEmptyStream(s *elem.Stream, addr int64) int64 {
 }
 
 func regUpstream(s *elem.Stream, addr int64) int64 {
+	var a access.Access
+
+	returns := s.Returns()
 	baseBit := int64(0)
-	for _, ret := range s.Returns() {
+	for _, ret := range returns {
 		r := ret.(*elem.Return)
 
 		if r.IsArray() {
-			r.SetAccess(access.MakeArrayContinuous(r.Count(), addr, baseBit, r.Width()))
+			a = access.MakeArrayContinuous(r.Count(), addr, baseBit, r.Width())
 		} else {
-			r.SetAccess(access.MakeSingle(addr, baseBit, r.Width()))
+			a = access.MakeSingle(addr, baseBit, r.Width())
 		}
 
-		if r.Access().EndBit() < busWidth-1 {
-			addr += r.Access().RegCount() - 1
-			baseBit = r.Access().EndBit() + 1
+		if a.EndBit() < busWidth-1 {
+			addr += a.RegCount() - 1
+			baseBit = a.EndBit() + 1
 		} else {
-			addr += r.Access().RegCount()
+			addr += a.RegCount()
 			baseBit = 0
 		}
+
+		r.SetAccess(a)
 	}
 
-	s.SetStbAddr(s.Returns()[len(s.Returns())-1].Access().EndAddr())
+	s.SetStbAddr(returns[len(returns)-1].Access().EndAddr())
 
-	lastAccess := s.Returns()[len(s.Returns())-1].Access()
+	lastAccess := returns[len(returns)-1].Access()
 	if lastAccess.EndBit() < busWidth-1 {
 		addr += 1
 	}
