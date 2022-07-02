@@ -12,7 +12,14 @@ func Compile(mainPath string) (elem.Block, map[string]elem.Package) {
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
-	bus, pkgs := ins.Instantiate(packages, false)
+	bus, insPkgs := ins.Instantiate(packages, false)
+
+	// Below loop is needed, as map of concrete type cannot be by default treated
+	// as map of interfaces, even if the concrete type meets the interface requirements.
+	pkgs := map[string]elem.Package{}
+	for k, v := range insPkgs {
+		pkgs[k] = v
+	}
 
 	reg.Registerify(bus)
 
