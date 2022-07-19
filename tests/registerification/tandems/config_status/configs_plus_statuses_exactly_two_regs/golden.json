@@ -3,15 +3,6 @@
 	"Doc": "Configs and statuses must occupy exactly two registers.\nC1 and S2 must get the first free address, and C2 and S1 must get the next address.\nAccess masks must not overlap.",
 	"IsArray": false,
 	"Count": 1,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 4,
-		"Own": 4
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
 	"Masters": 1,
 	"Width": 32,
 	"BoolConsts": null,
@@ -25,6 +16,11 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 20,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
@@ -32,18 +28,18 @@
 					"Upper": 19,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 20
+			}
 		},
 		{
 			"Name": "C2",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 14,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 3,
@@ -51,12 +47,7 @@
 					"Upper": 13,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 14
+			}
 		}
 	],
 	"Funcs": null,
@@ -67,6 +58,11 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 18,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 3,
@@ -74,18 +70,18 @@
 					"Upper": 31,
 					"Lower": 14
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 18
+			}
 		},
 		{
 			"Name": "S2",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 12,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
@@ -93,18 +89,18 @@
 					"Upper": 31,
 					"Lower": 20
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 12
+			}
 		},
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
@@ -112,18 +108,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"193a4c1b\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
@@ -131,14 +127,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		}
 	],
 	"Streams": null,
-	"Subblocks": null
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	}
 }

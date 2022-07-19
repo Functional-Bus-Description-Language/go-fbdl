@@ -3,15 +3,6 @@
 	"Doc": "Config right after the func must get new address even if the last func register has only returns.\nIn such case config cannot be put into the last func register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
 	"IsArray": false,
 	"Count": 1,
-	"Sizes": {
-		"BlockAligned": 8,
-		"Compact": 5,
-		"Own": 5
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 7
-	},
 	"Masters": 1,
 	"Width": 32,
 	"BoolConsts": null,
@@ -25,6 +16,11 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 8,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 4,
@@ -32,12 +28,7 @@
 					"Upper": 7,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 8
+			}
 		}
 	],
 	"Funcs": [
@@ -46,14 +37,14 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 3,
 			"Params": [
 				{
 					"Name": "p1",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 30,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -61,15 +52,15 @@
 							"Upper": 29,
 							"Lower": 0
 						}
-					},
-					"Groups": [],
-					"Width": 30
+					}
 				},
 				{
 					"Name": "p2",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 2,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -77,9 +68,7 @@
 							"Upper": 31,
 							"Lower": 30
 						}
-					},
-					"Groups": [],
-					"Width": 2
+					}
 				}
 			],
 			"Returns": [
@@ -88,6 +77,8 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 8,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 3,
@@ -95,11 +86,27 @@
 							"Upper": 7,
 							"Lower": 0
 						}
-					},
-					"Groups": [],
-					"Width": 8
+					}
+				},
+				{
+					"Name": "r",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Width": 8,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 3,
+						"Mask": {
+							"Upper": 7,
+							"Lower": 0
+						}
+					}
 				}
-			]
+			],
+			"StbAddr": 2,
+			"AckAddr": 3
 		}
 	],
 	"Masks": null,
@@ -109,6 +116,11 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
@@ -116,18 +128,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"c752646a\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
@@ -135,14 +147,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		}
 	],
 	"Streams": null,
-	"Subblocks": null
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 8,
+		"Compact": 5,
+		"Own": 5
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 7
+	}
 }

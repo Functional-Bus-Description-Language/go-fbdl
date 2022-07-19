@@ -3,15 +3,6 @@
 	"Doc": "StbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
 	"IsArray": false,
 	"Count": 1,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
 	"Masters": 1,
 	"Width": 32,
 	"BoolConsts": null,
@@ -26,14 +17,14 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 2,
 			"Params": [
 				{
 					"Name": "p",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 16,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -41,9 +32,7 @@
 							"Upper": 15,
 							"Lower": 0
 						}
-					},
-					"Groups": [],
-					"Width": 16
+					}
 				}
 			],
 			"Returns": [
@@ -52,6 +41,8 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 16,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -59,11 +50,27 @@
 							"Upper": 31,
 							"Lower": 16
 						}
-					},
-					"Groups": [],
-					"Width": 16
+					}
+				},
+				{
+					"Name": "r",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Width": 16,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 2,
+						"Mask": {
+							"Upper": 31,
+							"Lower": 16
+						}
+					}
 				}
-			]
+			],
+			"StbAddr": 2,
+			"AckAddr": 2
 		}
 	],
 	"Masks": null,
@@ -73,6 +80,11 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
@@ -80,18 +92,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"40b6202f\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
@@ -99,14 +111,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		}
 	],
 	"Streams": null,
-	"Subblocks": null
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 3,
+		"Own": 3
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	}
 }

@@ -44,11 +44,6 @@ func (c *Config) Width() int64     { return c.cfg.Width }
 func (c *Config) SetAccess(a access.Access) { c.cfg.Access = a }
 func (c *Config) Access() access.Access     { return c.cfg.Access }
 
-// HasDecreasingAccessOrder returns true if config must be accessed
-// from the end register to the start register order.
-// It is useful only in case of some atomic configs.
-// If the end register is narrower, then starting writing from the end register
-// saves some flip flops, becase the atomic shadow regsiter can be narrower.
 func (c *Config) HasDecreasingAccessOrder() bool {
 	if !c.cfg.Atomic {
 		return false

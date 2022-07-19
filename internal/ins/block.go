@@ -129,6 +129,8 @@ func addBlockInnerElement(blk *elem.Block, e fbdl.Element) {
 		blk.AddStatus(e.(*elem.Status))
 	case (*elem.Stream):
 		blk.AddStream(e.(*elem.Stream))
+	case (*elem.Block):
+		blk.AddSubblock(e.(*elem.Block))
 	default:
 		panic("should never happen")
 	}

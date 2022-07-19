@@ -32,19 +32,19 @@ func Registerify(regBus *elem.Block) {
 	sizes.Own = addr
 
 	for _, sb := range regBus.Subblocks() {
-		sizes := regBlock(sb.(*elem.Block))
-		sizes.Compact += sb.Count() * sizes.Compact
-		sizes.BlockAligned += sb.Count() * sizes.BlockAligned
+		sbSizes := regBlock(sb.(*elem.Block))
+		sizes.Compact += sb.Count() * sbSizes.Compact
+		sizes.BlockAligned += sb.Count() * sbSizes.BlockAligned
 	}
 
 	sizes.BlockAligned = util.AlignToPowerOf2(sizes.BlockAligned + sizes.Own)
 
 	regBus.SetSizes(sizes)
 
-	id := regBus.Status("ID")
+	id := regBus.Status("ID").(*elem.Status)
 	id.SetAccess(access.MakeSingle(0, 0, id.Width()))
 
-	ts := regBus.Status("TIMESTAMP")
+	ts := regBus.Status("TIMESTAMP").(*elem.Status)
 	ts.SetAccess(access.MakeSingle(1, 0, busWidth))
 
 	// Base address property is not yet supported, so it starts from 0.
@@ -114,7 +114,7 @@ func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 			continue
 		}
 		// Omit elements that have been already registerified as group members.
-		if blk.HasElement(st.Name()) {
+		if st.Access() != nil {
 			continue
 		}
 		addr = regStatus(st.(*elem.Status), addr, gp)
@@ -144,9 +144,9 @@ func regBlock(blk *elem.Block) access.Sizes {
 	sizes := access.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
 	for _, sb := range blk.Subblocks() {
-		s := regBlock(sb.(*elem.Block))
-		sizes.Compact += sb.Count() * s.Compact
-		sizes.BlockAligned += sb.Count() * s.BlockAligned
+		b := regBlock(sb.(*elem.Block))
+		sizes.Compact += sb.Count() * b.Compact
+		sizes.BlockAligned += sb.Count() * b.BlockAligned
 	}
 
 	sizes.BlockAligned = util.AlignToPowerOf2(addr + sizes.BlockAligned)

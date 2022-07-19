@@ -15,6 +15,8 @@ type Element interface {
 }
 
 type ConstContainer interface {
+	HasConsts() bool
+
 	BoolConsts() map[string]bool
 	BoolListConsts() map[string][]bool
 	IntConsts() map[string]int64
@@ -41,6 +43,8 @@ type Block interface {
 	Streams() []Stream
 	Subblocks() []Block
 
+	Status(name string) Status
+
 	Sizes() access.Sizes
 	AddrSpace() access.AddrSpace
 }
@@ -56,6 +60,13 @@ type Config interface {
 	Width() int64
 
 	Access() access.Access
+
+	// HasDecreasingAccessOrder returns true if config must be accessed
+	// from the end register to the start register order.
+	// It is useful only in case of some atomic configs.
+	// If the end register is narrower, then starting writing from the end register
+	// saves some flip flops, becase the atomic shadow regsiter can be narrower.
+	HasDecreasingAccessOrder() bool
 }
 
 type Func interface {
@@ -66,6 +77,8 @@ type Func interface {
 
 	StbAddr() int64
 	AckAddr() int64
+
+	ParamsStartAddr() int64
 }
 
 type Mask interface {
@@ -101,13 +114,20 @@ type Return interface {
 type Status interface {
 	Element
 
-	Access() access.Access
-
 	Atomic() bool
 	Default() val.BitStr
 	Groups() []string
 	Once() bool
 	Width() int64
+
+	Access() access.Access
+
+	// HasDecreasingAccessOrder returns true if status must be accessed
+	// from the end register to the start register order.
+	// It is useful only in case of some atomic statuses.
+	// If the end register is wider, then starting reading from the end register
+	// saves some flip flops, becase the atomic shadow regsiter can be narrower.
+	HasDecreasingAccessOrder() bool
 }
 
 type Stream interface {
@@ -117,4 +137,9 @@ type Stream interface {
 	Returns() []Return
 
 	StbAddr() int64
+
+	IsDownstream() bool
+	IsUpstream() bool
+
+	StartAddr() int64
 }

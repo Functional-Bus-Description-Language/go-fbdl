@@ -14,27 +14,27 @@ func assignGlobalAccessAddresses(bus *elem.Block, baseAddr int64) {
 	assignGlobalAccessAddressesBlockAlign(bus, baseAddr)
 }
 
-func assignGlobalAccessAddressesBlockAlign(block *elem.Block, baseAddr int64) {
-	if block.IsArray() {
-		block.SetAddrSpace(access.MakeAddrSpaceArray(
-			baseAddr, int64(block.Count()), block.Sizes().BlockAligned,
+func assignGlobalAccessAddressesBlockAlign(blk *elem.Block, baseAddr int64) {
+	if blk.IsArray() {
+		blk.SetAddrSpace(access.MakeAddrSpaceArray(
+			baseAddr, int64(blk.Count()), blk.Sizes().BlockAligned,
 		))
 	} else {
-		block.SetAddrSpace(access.MakeAddrSpaceSingle(
-			baseAddr, baseAddr+block.Sizes().BlockAligned-1,
+		blk.SetAddrSpace(access.MakeAddrSpaceSingle(
+			baseAddr, baseAddr+blk.Sizes().BlockAligned-1,
 		))
 	}
 
-	if len(block.Subblocks()) == 0 {
+	if len(blk.Subblocks()) == 0 {
 		return
 	}
 
 	sortFunc := func(i, j int) bool {
-		sizei := block.Subblocks()[i].Sizes().BlockAligned
-		sizej := block.Subblocks()[j].Sizes().BlockAligned
+		sizei := blk.Subblocks()[i].Sizes().BlockAligned
+		sizej := blk.Subblocks()[j].Sizes().BlockAligned
 
-		namei := block.Subblocks()[i].Name()
-		namej := block.Subblocks()[j].Name()
+		namei := blk.Subblocks()[i].Name()
+		namej := blk.Subblocks()[j].Name()
 
 		if sizei < sizej {
 			return true
@@ -48,12 +48,12 @@ func assignGlobalAccessAddressesBlockAlign(block *elem.Block, baseAddr int64) {
 			}
 		}
 	}
-	sort.Slice(block.Subblocks, sortFunc)
+	sort.Slice(blk.Subblocks(), sortFunc)
 
-	subblockBaseAddr := block.AddrSpace().End() + 1
+	subblockBaseAddr := blk.AddrSpace().End() + 1
 	// Iterate subblocks in decreasing size order.
-	for i := len(block.Subblocks()) - 1; i >= 0; i-- {
-		sb := block.Subblocks()[i]
+	for i := len(blk.Subblocks()) - 1; i >= 0; i-- {
+		sb := blk.Subblocks()[i]
 		subblockBaseAddr -= sb.Count() * sb.Sizes().BlockAligned
 		assignGlobalAccessAddressesBlockAlign(sb.(*elem.Block), subblockBaseAddr)
 	}

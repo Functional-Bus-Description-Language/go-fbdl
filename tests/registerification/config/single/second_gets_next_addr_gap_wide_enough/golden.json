@@ -3,15 +3,6 @@
 	"Doc": "Second config must get the next address even if the gap is wide enough.\nConfigs are readable and writable.\nPutting configs in the same register can significantly increase the round trip time, as writing one of them would require RMW operation.\nThe address space size decrease is simply not worth the round trip time increase.",
 	"IsArray": false,
 	"Count": 1,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 4,
-		"Own": 4
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
 	"Masters": 1,
 	"Width": 32,
 	"BoolConsts": null,
@@ -25,6 +16,11 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 10,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
@@ -32,18 +28,18 @@
 					"Upper": 9,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 10
+			}
 		},
 		{
 			"Name": "C2",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 8,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 3,
@@ -51,12 +47,7 @@
 					"Upper": 7,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 8
+			}
 		}
 	],
 	"Funcs": null,
@@ -67,6 +58,11 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
@@ -74,18 +70,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"4830816e\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
@@ -93,14 +89,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		}
 	],
 	"Streams": null,
-	"Subblocks": null
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	}
 }

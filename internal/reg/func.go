@@ -29,7 +29,6 @@ func regFunc(fun *elem.Func, addr int64) int64 {
 		}
 
 		p.SetAccess(a)
-		fun.AddParam(p)
 	}
 
 	if len(params) == 0 {

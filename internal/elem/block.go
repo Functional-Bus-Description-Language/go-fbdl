@@ -57,7 +57,7 @@ func (b *Block) Statuses() []fbdl.Status { return b.blk.Statuses }
 func (b *Block) AddStream(s *Stream)    { b.blk.Streams = append(b.blk.Streams, s) }
 func (b *Block) Streams() []fbdl.Stream { return b.blk.Streams }
 
-func (b *Block) addSubblock(sb *Block)   { b.blk.Subblocks = append(b.blk.Subblocks, sb) }
+func (b *Block) AddSubblock(sb *Block)   { b.blk.Subblocks = append(b.blk.Subblocks, sb) }
 func (b *Block) Subblocks() []fbdl.Block { return b.blk.Subblocks }
 
 func (b *Block) SetSizes(s access.Sizes) { b.blk.Sizes = s }
@@ -68,7 +68,7 @@ func (b *Block) AddrSpace() access.AddrSpace      { return b.blk.AddrSpace }
 
 // Status returns pointer to the Status if status with given name exists
 // within the block. Otherwise it returns nil.
-func (b *Block) Status(name string) *Status {
+func (b *Block) Status(name string) fbdl.Status {
 	for _, s := range b.blk.Statuses {
 		if s.Name() == name {
 			return s.(*Status)

@@ -3,15 +3,6 @@
 	"Doc": "Multiple statuses narrower than the bus width must be placed in the same register.",
 	"IsArray": false,
 	"Count": 1,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
 	"Masters": 1,
 	"Width": 32,
 	"BoolConsts": null,
@@ -28,6 +19,11 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 4,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
@@ -35,18 +31,18 @@
 					"Upper": 3,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 4
+			}
 		},
 		{
 			"Name": "S2",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 16,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
@@ -54,18 +50,18 @@
 					"Upper": 19,
 					"Lower": 4
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 16
+			}
 		},
 		{
 			"Name": "S3",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 3,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
@@ -73,18 +69,18 @@
 					"Upper": 22,
 					"Lower": 20
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 3
+			}
 		},
 		{
 			"Name": "S4",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 9,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
@@ -92,18 +88,18 @@
 					"Upper": 31,
 					"Lower": 23
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 9
+			}
 		},
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
@@ -111,18 +107,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"c9b52e83\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
@@ -130,14 +126,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		}
 	],
 	"Streams": null,
-	"Subblocks": null
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 3,
+		"Own": 3
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	}
 }

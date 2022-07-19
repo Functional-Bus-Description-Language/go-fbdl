@@ -3,15 +3,6 @@
 	"Doc": "Returns fitting single register must get the same address.\nElement after the func must get the next address.",
 	"IsArray": false,
 	"Count": 1,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 4,
-		"Own": 4
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
 	"Masters": 1,
 	"Width": 32,
 	"BoolConsts": null,
@@ -26,8 +17,6 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"StbAddr": 2,
-			"AckAddr": 2,
 			"Params": null,
 			"Returns": [
 				{
@@ -35,6 +24,8 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 17,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -42,15 +33,15 @@
 							"Upper": 16,
 							"Lower": 0
 						}
-					},
-					"Groups": [],
-					"Width": 17
+					}
 				},
 				{
 					"Name": "b",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 15,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -58,11 +49,43 @@
 							"Upper": 31,
 							"Lower": 17
 						}
-					},
-					"Groups": [],
-					"Width": 15
+					}
+				},
+				{
+					"Name": "a",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Width": 17,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 2,
+						"Mask": {
+							"Upper": 16,
+							"Lower": 0
+						}
+					}
+				},
+				{
+					"Name": "b",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Width": 15,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 2,
+						"Mask": {
+							"Upper": 31,
+							"Lower": 17
+						}
+					}
 				}
-			]
+			],
+			"StbAddr": 2,
+			"AckAddr": 2
 		}
 	],
 	"Masks": null,
@@ -72,6 +95,11 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 3,
@@ -79,18 +107,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
@@ -98,18 +126,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"cf833222\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
@@ -117,14 +145,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		}
 	],
 	"Streams": null,
-	"Subblocks": null
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	}
 }

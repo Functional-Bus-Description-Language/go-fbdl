@@ -3,15 +3,6 @@
 	"Doc": "All params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nStbAddr and AckAddr must be equal.\nElement after the func must get next address.",
 	"IsArray": false,
 	"Count": 1,
-	"Sizes": {
-		"BlockAligned": 8,
-		"Compact": 5,
-		"Own": 5
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 7
-	},
 	"Masters": 1,
 	"Width": 32,
 	"BoolConsts": null,
@@ -26,14 +17,14 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"StbAddr": 3,
-			"AckAddr": 3,
 			"Params": [
 				{
 					"Name": "p1",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 20,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -41,15 +32,15 @@
 							"Upper": 19,
 							"Lower": 0
 						}
-					},
-					"Groups": [],
-					"Width": 20
+					}
 				},
 				{
 					"Name": "p2",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 12,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
@@ -57,15 +48,15 @@
 							"Upper": 31,
 							"Lower": 20
 						}
-					},
-					"Groups": [],
-					"Width": 12
+					}
 				},
 				{
 					"Name": "p3",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 4,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 3,
@@ -73,15 +64,15 @@
 							"Upper": 3,
 							"Lower": 0
 						}
-					},
-					"Groups": [],
-					"Width": 4
+					}
 				},
 				{
 					"Name": "p4",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 8,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 3,
@@ -89,9 +80,7 @@
 							"Upper": 11,
 							"Lower": 4
 						}
-					},
-					"Groups": [],
-					"Width": 8
+					}
 				}
 			],
 			"Returns": [
@@ -100,6 +89,8 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 7,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 3,
@@ -107,15 +98,15 @@
 							"Upper": 18,
 							"Lower": 12
 						}
-					},
-					"Groups": [],
-					"Width": 7
+					}
 				},
 				{
 					"Name": "r2",
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
+					"Groups": null,
+					"Width": 13,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 3,
@@ -123,11 +114,43 @@
 							"Upper": 31,
 							"Lower": 19
 						}
-					},
-					"Groups": [],
-					"Width": 13
+					}
+				},
+				{
+					"Name": "r1",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Width": 7,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 3,
+						"Mask": {
+							"Upper": 18,
+							"Lower": 12
+						}
+					}
+				},
+				{
+					"Name": "r2",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Width": 13,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 3,
+						"Mask": {
+							"Upper": 31,
+							"Lower": 19
+						}
+					}
 				}
-			]
+			],
+			"StbAddr": 3,
+			"AckAddr": 3
 		}
 	],
 	"Masks": null,
@@ -137,6 +160,11 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 4,
@@ -144,18 +172,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "",
-			"Groups": [],
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
@@ -163,18 +191,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"64d06a4b\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		},
 		{
 			"Name": "TIMESTAMP",
 			"Doc": "Bus generation timestamp.",
 			"IsArray": false,
 			"Count": 1,
+			"Atomic": true,
+			"Default": "x\"00000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
@@ -182,14 +210,18 @@
 					"Upper": 31,
 					"Lower": 0
 				}
-			},
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32
+			}
 		}
 	],
 	"Streams": null,
-	"Subblocks": null
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 8,
+		"Compact": 5,
+		"Own": 5
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 7
+	}
 }
