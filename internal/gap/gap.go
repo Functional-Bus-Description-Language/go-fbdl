@@ -1,9 +1,5 @@
 package gap
 
-import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-)
-
 // Gap represents gap in occupied registers.
 // writeSafe indicates whether the gap is safe to be written.
 // In other words, it indicates whether the registers the gap address to contain only status information.
@@ -13,12 +9,12 @@ import (
 type Gap struct {
 	StartAddr int64
 	EndAddr   int64
-	Mask      access.Mask
+	StartBit  int64
+	EndBit    int64
 	WriteSafe bool
 }
 
-func (g Gap) Width() int64    { return g.Mask.Width() }
-func (g Gap) StartBit() int64 { return g.Mask.Lower }
+func (g Gap) Width() int64 { return g.EndBit - g.StartBit + 1 }
 
 func (g Gap) IsArray() bool {
 	if g.EndAddr > g.StartAddr {

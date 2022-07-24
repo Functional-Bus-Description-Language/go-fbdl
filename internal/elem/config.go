@@ -50,7 +50,7 @@ func (c *Config) HasDecreasingAccessOrder() bool {
 	}
 
 	if asc, ok := c.cfg.Access.(access.SingleContinuous); ok {
-		if !asc.IsEndMaskWider() {
+		if !asc.IsEndRegWider() {
 			return true
 		}
 	}

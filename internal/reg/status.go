@@ -19,7 +19,7 @@ func regStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	var a access.Access
 
 	if g, ok := gp.GetSingle(st.Width(), false); ok {
-		a = access.MakeSingleSingle(g.EndAddr, g.StartBit(), st.Width())
+		a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width())
 	} else {
 		a = access.MakeSingle(addr, 0, st.Width())
 		addr += a.RegCount()
@@ -28,7 +28,8 @@ func regStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 		gp.Add(gap.Gap{
 			StartAddr: a.EndAddr(),
 			EndAddr:   a.EndAddr(),
-			Mask:      access.Mask{Upper: busWidth - 1, Lower: a.EndBit() + 1},
+			StartBit:  a.EndBit() + 1,
+			EndBit:    busWidth - 1,
 			WriteSafe: true,
 		})
 	}

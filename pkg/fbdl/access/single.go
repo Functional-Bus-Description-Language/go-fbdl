@@ -7,19 +7,22 @@ import (
 
 // SingleSingle describes an access to a single element placed within single register.
 type SingleSingle struct {
-	Addr int64
-	Mask Mask
+	Addr     int64
+	startBit int64
+	endBit   int64
 }
 
 func (ss SingleSingle) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
 		Strategy string
 		Addr     int64
-		Mask     Mask
+		StartBit int64
+		EndBit   int64
 	}{
 		Strategy: "Single",
 		Addr:     ss.Addr,
-		Mask:     ss.Mask,
+		StartBit: ss.startBit,
+		EndBit:   ss.endBit,
 	})
 
 	if err != nil {
@@ -32,8 +35,9 @@ func (ss SingleSingle) MarshalJSON() ([]byte, error) {
 func (ss SingleSingle) RegCount() int64  { return 1 }
 func (ss SingleSingle) StartAddr() int64 { return ss.Addr }
 func (ss SingleSingle) EndAddr() int64   { return ss.Addr }
-func (ss SingleSingle) EndBit() int64    { return ss.Mask.Upper }
-func (ss SingleSingle) Width() int64     { return ss.Mask.Width() }
+func (ss SingleSingle) StartBit() int64  { return ss.startBit }
+func (ss SingleSingle) EndBit() int64    { return ss.endBit }
+func (ss SingleSingle) Width() int64     { return ss.endBit - ss.startBit + 1 }
 
 func MakeSingleSingle(addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
@@ -42,8 +46,9 @@ func MakeSingleSingle(addr, startBit, width int64) Access {
 	}
 
 	return SingleSingle{
-		Addr: addr,
-		Mask: Mask{Upper: startBit + width - 1, Lower: startBit},
+		Addr:     addr,
+		startBit: startBit,
+		endBit:   startBit + width - 1,
 	}
 }
 
@@ -52,8 +57,8 @@ type SingleContinuous struct {
 	regCount int64
 
 	startAddr int64 // Address of the first register.
-	StartMask Mask  // Mask for the first register.
-	EndMask   Mask  // Mask for the last register.
+	startBit  int64
+	endBit    int64
 }
 
 func (sc SingleContinuous) MarshalJSON() ([]byte, error) {
@@ -61,14 +66,14 @@ func (sc SingleContinuous) MarshalJSON() ([]byte, error) {
 		Strategy  string
 		RegCount  int64
 		StartAddr int64
-		StartMask Mask
-		EndMask   Mask
+		StartBit  int64
+		EndBit    int64
 	}{
 		Strategy:  "Continuous",
 		RegCount:  sc.regCount,
 		StartAddr: sc.startAddr,
-		StartMask: sc.StartMask,
-		EndMask:   sc.EndMask,
+		StartBit:  sc.startBit,
+		EndBit:    sc.endBit,
 	})
 
 	if err != nil {
@@ -81,10 +86,11 @@ func (sc SingleContinuous) MarshalJSON() ([]byte, error) {
 func (sc SingleContinuous) RegCount() int64  { return sc.regCount }
 func (sc SingleContinuous) StartAddr() int64 { return sc.startAddr }
 func (sc SingleContinuous) EndAddr() int64   { return sc.startAddr + sc.regCount - 1 }
-func (sc SingleContinuous) EndBit() int64    { return sc.EndMask.Upper }
+func (sc SingleContinuous) StartBit() int64  { return sc.startBit }
+func (sc SingleContinuous) EndBit() int64    { return sc.endBit }
 
 func (sc SingleContinuous) Width() int64 {
-	w := sc.StartMask.Width() + sc.EndMask.Width()
+	w := busWidth - sc.startBit + sc.endBit + 1
 	if sc.regCount > 2 {
 		w += busWidth * (sc.regCount - 2)
 	}
@@ -92,25 +98,24 @@ func (sc SingleContinuous) Width() int64 {
 }
 
 // IsEndRegWider returns true if end register is wider than the start one.
-func (sc SingleContinuous) IsEndMaskWider() bool {
-	if sc.EndMask.Width() > sc.StartMask.Width() {
+func (sc SingleContinuous) IsEndRegWider() bool {
+	if sc.endBit > busWidth-sc.startBit {
 		return true
 	}
 	return false
 }
 
 func MakeSingleContinuous(addr, startBit, width int64) Access {
-	startMask := Mask{Upper: busWidth - 1, Lower: startBit}
 	regCount := int64(1)
 
-	var endMask Mask
+	endBit := int64(0)
 	w := busWidth - startBit
 	for {
 		regCount += 1
 		if w+busWidth < width {
 			w += busWidth
 		} else {
-			endMask = Mask{Upper: (width - w) - 1, Lower: 0}
+			endBit = width - w - 1
 			break
 		}
 	}
@@ -118,8 +123,8 @@ func MakeSingleContinuous(addr, startBit, width int64) Access {
 	return SingleContinuous{
 		regCount:  regCount,
 		startAddr: addr,
-		StartMask: startMask,
-		EndMask:   endMask,
+		startBit:  startBit,
+		endBit:    endBit,
 	}
 }
 

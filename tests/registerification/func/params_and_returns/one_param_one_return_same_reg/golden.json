@@ -28,10 +28,8 @@
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
-						"Mask": {
-							"Upper": 15,
-							"Lower": 0
-						}
+						"StartBit": 0,
+						"EndBit": 15
 					}
 				}
 			],
@@ -46,10 +44,8 @@
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 16
-						}
+						"StartBit": 16,
+						"EndBit": 31
 					}
 				},
 				{
@@ -62,10 +58,8 @@
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 2,
-						"Mask": {
-							"Upper": 31,
-							"Lower": 16
-						}
+						"StartBit": 16,
+						"EndBit": 31
 					}
 				}
 			],
@@ -88,10 +82,8 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
-				"Mask": {
-					"Upper": 31,
-					"Lower": 0
-				}
+				"StartBit": 0,
+				"EndBit": 31
 			}
 		},
 		{
@@ -107,10 +99,8 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
-				"Mask": {
-					"Upper": 31,
-					"Lower": 0
-				}
+				"StartBit": 0,
+				"EndBit": 31
 			}
 		}
 	],

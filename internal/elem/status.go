@@ -54,7 +54,7 @@ func (s *Status) HasDecreasingAccessOrder() bool {
 	}
 
 	if asc, ok := s.st.Access.(access.SingleContinuous); ok {
-		if asc.IsEndMaskWider() {
+		if asc.IsEndRegWider() {
 			return true
 		}
 	}

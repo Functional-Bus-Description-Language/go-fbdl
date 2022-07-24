@@ -26,7 +26,8 @@ func regConfig(cfg *elem.Config, addr int64, gp *gap.Pool) int64 {
 			gp.Add(gap.Gap{
 				StartAddr: cfg.Access().EndAddr(),
 				EndAddr:   cfg.Access().EndAddr(),
-				Mask:      access.Mask{Upper: busWidth - 1, Lower: cfg.Access().EndBit() + 1},
+				StartBit:  cfg.Access().EndBit() + 1,
+				EndBit:    busWidth - 1,
 				WriteSafe: false,
 			})
 		}
