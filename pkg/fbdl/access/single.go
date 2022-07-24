@@ -30,7 +30,6 @@ func (ss SingleSingle) MarshalJSON() ([]byte, error) {
 }
 
 func (ss SingleSingle) RegCount() int64  { return 1 }
-func (ss SingleSingle) IsArray() bool    { return false }
 func (ss SingleSingle) StartAddr() int64 { return ss.Addr }
 func (ss SingleSingle) EndAddr() int64   { return ss.Addr }
 func (ss SingleSingle) EndBit() int64    { return ss.Mask.Upper }
@@ -80,7 +79,6 @@ func (sc SingleContinuous) MarshalJSON() ([]byte, error) {
 }
 
 func (sc SingleContinuous) RegCount() int64  { return sc.regCount }
-func (sc SingleContinuous) IsArray() bool    { return false }
 func (sc SingleContinuous) StartAddr() int64 { return sc.startAddr }
 func (sc SingleContinuous) EndAddr() int64   { return sc.startAddr + sc.regCount - 1 }
 func (sc SingleContinuous) EndBit() int64    { return sc.EndMask.Upper }
