@@ -7,4 +7,6 @@ type Access interface {
 	StartBit() int64
 	EndBit() int64
 	Width() int64 // Width returns total width of single element.
+	FirstRegWidth() int64
+	LastRegWidth() int64
 }
