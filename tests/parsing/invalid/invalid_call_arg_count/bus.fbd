@@ -1,0 +1,2 @@
+Main bus
+	s status; width = log2()

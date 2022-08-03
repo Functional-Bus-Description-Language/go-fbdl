@@ -1,0 +1,1 @@
+bus.fbd: line 1: 'Main' instantiation: element body: line 2: 's' instantiation: line 2: 'width' property assignment: make primary expression: make call: function 'log2' takes 1 arguments, but 0 were given

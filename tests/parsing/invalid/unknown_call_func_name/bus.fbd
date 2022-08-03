@@ -1,0 +1,2 @@
+Main bus
+	c config; width = foo()

@@ -22,6 +22,8 @@ func MakeExpr(n ts.Node, s Searchable) (Expr, error) {
 		expr, err = MakeBinaryOperation(n, s)
 	case "bit_literal":
 		expr, err = MakeBitLiteral(n)
+	case "call":
+		expr, err = MakeCall(n, s)
 	case "decimal_literal":
 		expr, err = MakeDecimalLiteral(n)
 	case "expression_list":
@@ -160,6 +162,49 @@ func MakeBitLiteral(n ts.Node) (BitLiteral, error) {
 	}
 
 	return BitLiteral{v: v}, nil
+}
+
+type Call struct {
+	funcName string
+	args     []Expr
+}
+
+func (c Call) Eval() (val.Value, error) {
+	switch c.funcName {
+	case "log2":
+		return evalLog2(c)
+	}
+
+	panic("should never happen")
+}
+
+func MakeCall(n ts.Node, s Searchable) (Call, error) {
+	c := Call{funcName: n.Child(0).Content(), args: []Expr{}}
+
+	argIdx := 0
+	for i := 2; uint32(i) < n.ChildCount(); i++ {
+		nc := n.Child(i)
+		t := nc.Type()
+
+		if t == "," || t == ")" {
+			continue
+		}
+
+		e, err := MakeExpr(nc, s)
+		if err != nil {
+			return c, fmt.Errorf("make call: argument %d: %v", argIdx, err)
+		}
+		c.args = append(c.args, e)
+
+		argIdx += 1
+	}
+
+	err := assertCall(c)
+	if err != nil {
+		return c, fmt.Errorf("make call: %v", err)
+	}
+
+	return c, nil
 }
 
 type DecimalLiteral struct {
