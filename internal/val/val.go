@@ -33,7 +33,7 @@ func (f Float) Bytes() []byte {
 	b := bytes.Buffer{}
 	err := binary.Write(&b, binary.LittleEndian, f)
 	if err != nil {
-		panic(fmt.Sprintf("float to bytes conversion: binary.Write failed:", err))
+		panic(fmt.Sprintf("float to bytes conversion: binary.Write failed: %v", err))
 	}
 	return b.Bytes()
 }
