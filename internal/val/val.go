@@ -2,7 +2,9 @@
 package val
 
 import (
+	"bytes"
 	"encoding/binary"
+	"fmt"
 )
 
 type Value interface {
@@ -13,9 +15,7 @@ type Value interface {
 // Bool represents FBDL bool type.
 type Bool bool
 
-func (b Bool) Type() string {
-	return "bool"
-}
+func (b Bool) Type() string { return "bool" }
 
 func (b Bool) Bytes() []byte {
 	if b {
@@ -24,12 +24,24 @@ func (b Bool) Bytes() []byte {
 	return []byte{0}
 }
 
+// Float represents FBDL float type.
+type Float float64
+
+func (f Float) Type() string { return "float" }
+
+func (f Float) Bytes() []byte {
+	b := bytes.Buffer{}
+	err := binary.Write(&b, binary.LittleEndian, f)
+	if err != nil {
+		panic(fmt.Sprintf("float to bytes conversion: binary.Write failed:", err))
+	}
+	return b.Bytes()
+}
+
 // Int represents FBDL integer type.
 type Int int64
 
-func (i Int) Type() string {
-	return "integer"
-}
+func (i Int) Type() string { return "integer" }
 
 func (i Int) Bytes() []byte {
 	b := make([]byte, 8)
@@ -40,9 +52,7 @@ func (i Int) Bytes() []byte {
 // List represents FBDL list type.
 type List []Value
 
-func (l List) Type() string {
-	return "list"
-}
+func (l List) Type() string { return "list" }
 
 func (l List) Bytes() []byte {
 	b := []byte{}
@@ -55,9 +65,7 @@ func (l List) Bytes() []byte {
 // Str represents FBDL string type.
 type Str string
 
-func (s Str) Type() string {
-	return "string"
-}
+func (s Str) Type() string { return "string" }
 
 func (s Str) Bytes() []byte {
 	return []byte(s)
