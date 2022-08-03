@@ -42,9 +42,13 @@ func evalLog2(c Call) (val.Value, error) {
 	argType := "unknown"
 	f := float64(0.0)
 
-	if i, ok := arg.(val.Int); ok {
+	switch arg.(type) {
+	case val.Int:
 		argType = "int"
-		f = float64(i)
+		f = float64(arg.(val.Int))
+	case val.Float:
+		argType = "float"
+		f = float64(arg.(val.Float))
 	}
 
 	if argType != "int" && argType != "float" {

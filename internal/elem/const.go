@@ -7,6 +7,7 @@ import (
 type cc struct {
 	BoolConsts     map[string]bool
 	BoolListConsts map[string][]bool
+	FloatConsts    map[string]float64
 	IntConsts      map[string]int64
 	IntListConsts  map[string][]int64
 	StrConsts      map[string]string
@@ -63,6 +64,8 @@ func (cc *ConstContainer) AddConst(name string, v val.Value) {
 		panic("not yet implemented")
 	case val.Bool:
 		cc.addBoolConst(name, v)
+	case val.Float:
+		cc.addFloatConst(name, v)
 	case val.Int:
 		cc.addIntConst(name, v)
 	case val.List:
@@ -91,6 +94,14 @@ func (c *ConstContainer) addBoolConst(name string, v val.Value) {
 		c.cc.BoolConsts = map[string]bool{name: b}
 	}
 	c.cc.BoolConsts[name] = b
+}
+
+func (c *ConstContainer) addFloatConst(name string, v val.Value) {
+	f := float64(v.(val.Float))
+	if c.cc.FloatConsts == nil {
+		c.cc.FloatConsts = map[string]float64{name: f}
+	}
+	c.cc.FloatConsts[name] = f
 }
 
 func (c *ConstContainer) addBoolListConst(name string, v val.Value) {

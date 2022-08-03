@@ -24,14 +24,16 @@ func MakeExpr(n ts.Node, s Searchable) (Expr, error) {
 		expr, err = MakeBitLiteral(n)
 	case "call":
 		expr, err = MakeCall(n, s)
+	case "declared_identifier":
+		expr = MakeDeclaredIdentifier(n, s)
 	case "decimal_literal":
 		expr, err = MakeDecimalLiteral(n)
 	case "expression_list":
 		expr, err = MakeExprList(n, s)
 	case "false":
 		expr = MakeFalse()
-	case "declared_identifier":
-		expr = MakeDeclaredIdentifier(n, s)
+	case "float_literal":
+		expr, err = MakeFloatLiteral(n)
 	case "primary_expression":
 		expr, err = MakePrimaryExpression(n, s)
 	case "string_literal":
@@ -216,7 +218,7 @@ func (dl DecimalLiteral) Eval() (val.Value, error) {
 }
 
 func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
-	v, err := strconv.ParseInt(n.Content(), 10, 32)
+	v, err := strconv.ParseInt(n.Content(), 10, 64)
 	if err != nil {
 		return DecimalLiteral{}, fmt.Errorf("make decimal literal: %v", err)
 	}
@@ -275,6 +277,23 @@ func (f False) Eval() (val.Value, error) {
 
 func MakeFalse() False {
 	return False{}
+}
+
+type FloatLiteral struct {
+	v float64
+}
+
+func (fl FloatLiteral) Eval() (val.Value, error) {
+	return val.Float(fl.v), nil
+}
+
+func MakeFloatLiteral(n ts.Node) (FloatLiteral, error) {
+	v, err := strconv.ParseFloat(n.Content(), 64)
+	if err != nil {
+		return FloatLiteral{}, fmt.Errorf("make float literal: %v", err)
+	}
+
+	return FloatLiteral{v: v}, nil
 }
 
 type DeclaredIdentifier struct {
