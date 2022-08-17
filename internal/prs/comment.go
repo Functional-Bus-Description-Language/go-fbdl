@@ -30,6 +30,12 @@ func makeComment(s string, lineNum uint32) comment {
 }
 
 func (c *comment) append(s string) {
+	if len(s) == 1 {
+		c.msg += "\n"
+		c.endLineNum += 1
+		return
+	}
+
 	firstByte := 1
 	if s[1] == ' ' {
 		firstByte = 2
