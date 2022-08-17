@@ -34,6 +34,8 @@ func MakeExpr(n ts.Node, s Searchable) (Expr, error) {
 		expr = MakeFalse()
 	case "float_literal":
 		expr, err = MakeFloatLiteral(n)
+	case "hex_literal":
+		expr, err = MakeHexLiteral(n)
 	case "primary_expression":
 		expr, err = MakePrimaryExpression(n, s)
 	case "string_literal":
@@ -322,6 +324,23 @@ func (di DeclaredIdentifier) Eval() (val.Value, error) {
 
 func MakeDeclaredIdentifier(n ts.Node, s Searchable) DeclaredIdentifier {
 	return DeclaredIdentifier{v: n.Content(), s: s}
+}
+
+type HexLiteral struct {
+	v int64
+}
+
+func (hl HexLiteral) Eval() (val.Value, error) {
+	return val.Int(hl.v), nil
+}
+
+func MakeHexLiteral(n ts.Node) (HexLiteral, error) {
+	v, err := strconv.ParseInt(n.Content(), 0, 64)
+	if err != nil {
+		return HexLiteral{}, fmt.Errorf("make hex literal: %v", err)
+	}
+
+	return HexLiteral{v: v}, nil
 }
 
 type PrimaryExpression struct {
