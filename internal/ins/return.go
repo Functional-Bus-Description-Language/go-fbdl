@@ -35,6 +35,8 @@ func insReturn(typeChain []prs.Element) (*elem.Return, error) {
 		}
 	}
 
+	fillReturnProps(&ret, diary)
+
 	return &ret, nil
 }
 
