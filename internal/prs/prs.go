@@ -128,7 +128,7 @@ func checkIndentAndTrailingSemicolon(code []string) error {
 func readFile(path string) []string {
 	f, err := os.Open(path)
 	if err != nil {
-		panic(err)
+		log.Fatalf("reading file '%s': %v", path, err)
 	}
 
 	ioScanner := bufio.NewScanner(f)
