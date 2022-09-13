@@ -762,7 +762,7 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Param, error) {
 	// Check if parameters without default value precede parameters with default value.
 	withDflt := false
 	for i, p := range params {
-		if withDflt && p.HasDfltValue == false {
+		if withDflt && !p.HasDfltValue {
 			return nil, fmt.Errorf("parameters without default value must precede the ones with default value")
 		}
 

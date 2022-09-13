@@ -40,7 +40,7 @@ func applyStreamType(stream *elem.Stream, typ prs.Element) error {
 
 		e := insElement(pe)
 
-		if util.IsValidInnerType(e.Type(), "func") == false {
+		if !util.IsValidInnerType(e.Type(), "func") {
 			return fmt.Errorf(invalidInnerTypeMsg, e.Name(), e.Type(), "func")
 		}
 

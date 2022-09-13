@@ -103,10 +103,7 @@ func (sc SingleContinuous) Width() int64 {
 
 // IsEndRegWider returns true if end register is wider than the start one.
 func (sc SingleContinuous) IsEndRegWider() bool {
-	if sc.endBit > busWidth-sc.startBit {
-		return true
-	}
-	return false
+	return sc.endBit > busWidth-sc.startBit
 }
 
 func MakeSingleContinuous(addr, startBit, width int64) Access {

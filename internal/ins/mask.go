@@ -14,9 +14,9 @@ type maskDiary struct {
 	dfltSet   bool
 	dflt      val.Value
 	groupsSet bool
-	rangSet   bool
-	onceSet   bool
-	widthSet  bool
+	//rangeSet   bool
+	onceSet  bool
+	widthSet bool
 }
 
 func insMask(typeChain []prs.Element) (*elem.Mask, error) {

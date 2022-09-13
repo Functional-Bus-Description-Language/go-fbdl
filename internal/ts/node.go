@@ -70,11 +70,7 @@ func (n Node) Column() uint32 {
 func (n Node) HasNextSibling() bool {
 	tsn := n.n.NextSibling()
 
-	if tsn == nil {
-		return false
-	}
-
-	return true
+	return tsn != nil
 }
 
 func (n Node) NextSibling() Node {

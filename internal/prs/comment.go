@@ -14,12 +14,9 @@ func emptyComment() comment {
 }
 
 func (c comment) isEmpty() bool {
-	if c.endLineNum == 0 {
-		return true
-	}
-
-	return false
+	return c.endLineNum == 0
 }
+
 func makeComment(s string, lineNum uint32) comment {
 	firstByte := 1
 	if s[1] == ' ' {

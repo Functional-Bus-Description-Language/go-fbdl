@@ -17,10 +17,7 @@ type Gap struct {
 func (g Gap) Width() int64 { return g.EndBit - g.StartBit + 1 }
 
 func (g Gap) IsArray() bool {
-	if g.EndAddr > g.StartAddr {
-		return true
-	}
-	return false
+	return g.EndAddr > g.StartAddr
 }
 
 type Pool struct {

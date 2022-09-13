@@ -17,7 +17,7 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 	for i := 1; i < len(typeChain); i++ {
 		typeChainStr = fmt.Sprintf("%s -> %s", typeChainStr, typeChain[i].Name())
 	}
-	log.Printf(typeChainStr)
+	log.Print(typeChainStr)
 
 	e, err := makeElem(typeChain)
 	if err != nil {

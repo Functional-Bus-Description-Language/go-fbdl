@@ -28,24 +28,15 @@ func (bs BitStr) CharWidth() int64 {
 }
 
 func (bs BitStr) IsBin() bool {
-	if bs[0] == 'b' {
-		return true
-	}
-	return false
+	return bs[0] == 'b'
 }
 
 func (bs BitStr) IsOctal() bool {
-	if bs[0] == 'o' {
-		return true
-	}
-	return false
+	return bs[0] == 'o'
 }
 
 func (bs BitStr) IsHex() bool {
-	if bs[0] == 'x' {
-		return true
-	}
-	return false
+	return bs[0] == 'x'
 }
 
 // Extend extends BitStr to given width and returns new BitStr.

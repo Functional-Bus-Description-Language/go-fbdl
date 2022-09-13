@@ -45,7 +45,7 @@ func (g *grpGraph) topSort(node string, sorted []string, visited map[string]bool
 	visited[node] = true
 
 	for child := range g.nodes[node] {
-		if visited[child] == true {
+		if visited[child] {
 			continue
 		}
 

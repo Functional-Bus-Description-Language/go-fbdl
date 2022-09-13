@@ -10,8 +10,8 @@ import (
 
 type paramDiary struct {
 	groupsSet bool
-	rangSet   bool
-	widthSet  bool
+	//rangeSet   bool
+	widthSet bool
 }
 
 func insParam(typeChain []prs.Element) (*elem.Param, error) {
