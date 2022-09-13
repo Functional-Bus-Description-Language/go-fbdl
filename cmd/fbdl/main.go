@@ -37,22 +37,20 @@ func main() {
 	log.SetOutput(logger)
 	log.SetFlags(0)
 
-	cmdLineArgs := args.Parse()
+	args := args.Parse()
 
-	if _, ok := cmdLineArgs["-debug"]; ok {
-		printDebug = true
-	}
+	printDebug = args.Debug
 
 	spew.Config.Indent = "\t"
 	spew.Config.DisablePointerAddresses = true
 	spew.Config.DisableCapacities = true
 	spew.Config.SortKeys = true
 
-	packages := prs.DiscoverPackages(cmdLineArgs["mainFile"])
+	packages := prs.DiscoverPackages(args.MainFile)
 	prs.ParsePackages(packages)
 
-	if path, ok := cmdLineArgs["-p"]; ok {
-		f, err := os.Create(path)
+	if args.DumpPrs != "" {
+		f, err := os.Create(args.DumpPrs)
 		if err != nil {
 			panic(err)
 		}
@@ -63,14 +61,10 @@ func main() {
 		}
 	}
 
-	zeroTimestamp := false
-	if _, ok := cmdLineArgs["-zero-timestamp"]; ok {
-		zeroTimestamp = true
-	}
-	bus, pkgsConsts := ins.Instantiate(packages, zeroTimestamp)
+	bus, pkgsConsts := ins.Instantiate(packages, args.ZeroTimestamp)
 
-	if path, ok := cmdLineArgs["-i"]; ok {
-		f, err := os.Create(path)
+	if args.DumpIns != "" {
+		f, err := os.Create(args.DumpIns)
 		if err != nil {
 			panic(err)
 		}
@@ -85,8 +79,8 @@ func main() {
 		reg.Registerify(bus)
 	}
 
-	if path, ok := cmdLineArgs["-r"]; ok {
-		f, err := os.Create(path)
+	if args.DumpReg != "" {
+		f, err := os.Create(args.DumpReg)
 		if err != nil {
 			panic(err)
 		}
@@ -107,8 +101,8 @@ func main() {
 		}
 	}
 
-	if path, ok := cmdLineArgs["-c"]; ok {
-		f, err := os.Create(path)
+	if args.DumpConsts != "" {
+		f, err := os.Create(args.DumpConsts)
 		if err != nil {
 			panic(err)
 		}
