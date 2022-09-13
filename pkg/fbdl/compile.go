@@ -21,6 +21,10 @@ func Compile(mainPath string) (elem.Block, map[string]elem.Package) {
 		pkgs[k] = v
 	}
 
+	if bus == nil {
+		return bus, pkgs
+	}
+
 	reg.Registerify(bus)
 
 	return bus, pkgs

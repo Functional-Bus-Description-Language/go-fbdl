@@ -1,8 +1,6 @@
 package reg
 
 import (
-	"log"
-
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
@@ -12,11 +10,6 @@ import (
 var busWidth int64
 
 func Registerify(regBus *elem.Block) {
-	if regBus == nil {
-		log.Println("registerification: there is no Main bus; returning nil")
-		return
-	}
-
 	busWidth = regBus.Width()
 	access.Init(busWidth)
 

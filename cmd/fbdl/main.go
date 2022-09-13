@@ -81,7 +81,9 @@ func main() {
 		}
 	}
 
-	reg.Registerify(bus)
+	if bus != nil {
+		reg.Registerify(bus)
+	}
 
 	if path, ok := cmdLineArgs["-r"]; ok {
 		f, err := os.Create(path)
