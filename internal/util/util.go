@@ -12,7 +12,7 @@ func IsBaseType(t string) bool {
 		"block", "bus", "config", "func", "mask", "param", "return", "status", "stream",
 	}
 
-	for i, _ := range baseTypes {
+	for i := range baseTypes {
 		if t == baseTypes[i] {
 			return true
 		}
@@ -38,7 +38,7 @@ func IsValidProperty(p string, t string) error {
 	}
 
 	if list, ok := validProps[t]; ok {
-		for i, _ := range list {
+		for i := range list {
 			if p == list[i] {
 				return nil
 			}
@@ -54,7 +54,7 @@ func IsValidProperty(p string, t string) error {
 	} else {
 		msg += "valid properties for element of type '%[2]s' are:"
 		list := validProps[t]
-		for i, _ := range list {
+		for i := range list {
 			msg = msg + " '" + list[i] + "',"
 		}
 		msg = msg[:len(msg)-1]
@@ -79,7 +79,7 @@ func IsValidInnerType(it string, ot string) bool {
 	}
 
 	if list, ok := validTypes[ot]; ok {
-		for i, _ := range list {
+		for i := range list {
 			if it == list[i] {
 				return true
 			}
@@ -101,7 +101,7 @@ func IsValidQualifiedIdentifier(qi string) error {
 	aux := strings.Split(qi, ".")
 	pkg := aux[0]
 	sym := aux[1]
-	if unicode.IsUpper([]rune(sym)[0]) == false {
+	if !unicode.IsUpper([]rune(sym)[0]) {
 		return fmt.Errorf(
 			"symbol '%s' imported from package '%s' starts with lower case letter",
 			sym, pkg,

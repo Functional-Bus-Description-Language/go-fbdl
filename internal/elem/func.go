@@ -38,12 +38,12 @@ func (f *Func) AddReturn(r *Return)    { f.fun.Returns = append(f.fun.Returns, r
 func (f *Func) Returns() []fbdl.Return { return f.fun.Returns }
 
 func (f *Func) HasElement(name string) bool {
-	for i, _ := range f.fun.Params {
+	for i := range f.fun.Params {
 		if f.fun.Params[i].Name() == name {
 			return true
 		}
 	}
-	for i, _ := range f.fun.Returns {
+	for i := range f.fun.Returns {
 		if f.fun.Returns[i].Name() == name {
 			return true
 		}

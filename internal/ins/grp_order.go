@@ -44,7 +44,7 @@ func (g *grpGraph) addEdge(from, to string) {
 func (g *grpGraph) topSort(node string, sorted []string, visited map[string]bool) []string {
 	visited[node] = true
 
-	for child, _ := range g.nodes[node] {
+	for child := range g.nodes[node] {
 		if visited[child] == true {
 			continue
 		}

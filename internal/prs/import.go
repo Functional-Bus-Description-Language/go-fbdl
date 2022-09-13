@@ -28,7 +28,7 @@ func bindPkgImports(pkg *Package, packages Packages) error {
 }
 
 func bindFileImports(file *File, packages Packages) error {
-	for importName, _ := range file.Imports {
+	for importName := range file.Imports {
 		import_ := file.Imports[importName]
 		matches := packages.GetMatching(import_.Path)
 		if len(matches) == 0 {

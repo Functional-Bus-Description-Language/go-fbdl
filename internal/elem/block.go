@@ -78,27 +78,27 @@ func (b *Block) Status(name string) fbdl.Status {
 }
 
 func (b *Block) HasElement(name string) bool {
-	for i, _ := range b.blk.Configs {
+	for i := range b.blk.Configs {
 		if b.blk.Configs[i].Name() == name {
 			return true
 		}
 	}
-	for i, _ := range b.blk.Funcs {
+	for i := range b.blk.Funcs {
 		if b.blk.Funcs[i].Name() == name {
 			return true
 		}
 	}
-	for i, _ := range b.blk.Masks {
+	for i := range b.blk.Masks {
 		if b.blk.Masks[i].Name() == name {
 			return true
 		}
 	}
-	for i, _ := range b.blk.Statuses {
+	for i := range b.blk.Statuses {
 		if b.blk.Statuses[i].Name() == name {
 			return true
 		}
 	}
-	for i, _ := range b.blk.Streams {
+	for i := range b.blk.Streams {
 		if b.blk.Streams[i].Name() == name {
 			return true
 		}

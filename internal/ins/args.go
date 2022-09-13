@@ -70,7 +70,7 @@ func resolveArgs(symbol prs.Element) (map[string]prs.Expr, error) {
 				argHasName = false
 			}
 
-			if argHasName == true {
+			if argHasName {
 				inPositionalArgs = false
 				if argName == p.Name {
 					resolvedArgs[p.Name] = args[i].Value

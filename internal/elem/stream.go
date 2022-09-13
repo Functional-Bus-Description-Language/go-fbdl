@@ -35,12 +35,12 @@ func (s *Stream) AddReturn(r *Return)    { s.stream.Returns = append(s.stream.Re
 func (s *Stream) Returns() []fbdl.Return { return s.stream.Returns }
 
 func (s *Stream) HasElement(name string) bool {
-	for i, _ := range s.stream.Params {
+	for i := range s.stream.Params {
 		if s.stream.Params[i].Name() == name {
 			return true
 		}
 	}
-	for i, _ := range s.stream.Returns {
+	for i := range s.stream.Returns {
 		if s.stream.Returns[i].Name() == name {
 			return true
 		}

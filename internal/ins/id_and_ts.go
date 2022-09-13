@@ -62,7 +62,7 @@ func id() *elem.Status {
 		width = 32
 	}
 
-	id.SetWidth(busWidth)
+	id.SetWidth(width)
 
 	return &id
 }

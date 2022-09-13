@@ -18,8 +18,8 @@ import (
 func ParsePackages(packages Packages) {
 	var wg sync.WaitGroup
 
-	for name, _ := range packages {
-		for i, _ := range packages[name] {
+	for name := range packages {
+		for i := range packages[name] {
 			wg.Add(1)
 			go parsePackage(packages[name][i], &wg)
 		}
@@ -269,7 +269,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Arg, error) {
 		nextNodeType := n.Child(i + 1).Type()
 		if nextNodeType == "," || nextNodeType == ")" {
 			if name != "" {
-				for i, _ := range names {
+				for i := range names {
 					if name == names[i] {
 						return args, fmt.Errorf("argument '%s' assigned at least twice in argument list", name)
 					}
@@ -356,7 +356,7 @@ func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error)
 	}
 
 	if len(i.symbols) > 0 {
-		for name, _ := range i.symbols {
+		for name := range i.symbols {
 			i.symbols[name].SetParent(&i)
 		}
 	}
@@ -565,7 +565,7 @@ func parseMultiLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, error
 	}
 
 	if len(t.symbols) > 0 {
-		for name, _ := range t.symbols {
+		for name := range t.symbols {
 			t.symbols[name].SetParent(&t)
 		}
 	}
@@ -747,7 +747,7 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Param, error) {
 
 		nextNodeType := n.Child(i + 1).Type()
 		if nextNodeType == "," || nextNodeType == ")" {
-			for i, _ := range params {
+			for i := range params {
 				if name == params[i].Name {
 					return nil, fmt.Errorf("parameter '%s' defined at least twice", name)
 				}

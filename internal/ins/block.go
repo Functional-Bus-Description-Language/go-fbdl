@@ -163,7 +163,7 @@ func checkBlockGroups(blk elem.Block) error {
 	}
 
 	// Check for element and group names conflict.
-	for grpName, _ := range groups {
+	for grpName := range groups {
 		if blk.HasElement(grpName) {
 			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
 		}

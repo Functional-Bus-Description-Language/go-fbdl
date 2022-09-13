@@ -49,7 +49,7 @@ func DiscoverPackages(main string) Packages {
 		for _, c := range content {
 			pkgPath := path.Join(checkPath, c.Name())
 
-			if c.IsDir() == false {
+			if !c.IsDir() {
 				fileInfo, err := os.Lstat(pkgPath)
 				if err != nil {
 					panic(err)
