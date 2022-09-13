@@ -12,6 +12,8 @@ type Arg struct {
 type Element interface {
 	Searchable
 	Symbol
+	IsArray() bool
+	Count() Expr
 	Type() string
 	Args() []Arg
 	Params() []Param

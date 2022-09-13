@@ -328,8 +328,8 @@ func parseMultiLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error)
 		case "identifier":
 			i.name = nc.Content()
 		case "array_marker":
-			i.IsArray = true
-			i.Count, err = parseArrayMarker(nc, parent)
+			i.isArray = true
+			i.count, err = parseArrayMarker(nc, parent)
 		case "declared_identifier":
 			i.typ = nc.Content()
 		case "qualified_identifier":
@@ -377,8 +377,8 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 		case "identifier":
 			i.name = nc.Content()
 		case "array_marker":
-			i.IsArray = true
-			i.Count, err = parseArrayMarker(nc, parent)
+			i.isArray = true
+			i.count, err = parseArrayMarker(nc, parent)
 		case "declared_identifier":
 			i.typ = nc.Content()
 		case "qualified_identifier":

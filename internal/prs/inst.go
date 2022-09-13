@@ -11,8 +11,8 @@ type Inst struct {
 	base
 
 	typ     string
-	IsArray bool
-	Count   Expr
+	isArray bool
+	count   Expr
 
 	props   PropContainer
 	symbols SymbolContainer
@@ -23,6 +23,8 @@ type Inst struct {
 
 func (i Inst) Kind() SymbolKind { return ElemInst }
 func (i Inst) Type() string     { return i.typ }
+func (i Inst) IsArray() bool    { return i.isArray }
+func (i Inst) Count() Expr      { return i.count }
 
 func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 	sym, ok := i.symbols.Get(name, kind)

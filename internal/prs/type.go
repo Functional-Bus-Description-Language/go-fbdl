@@ -15,7 +15,9 @@ type Param struct {
 type Type struct {
 	base
 
-	typ     string
+	typ   string
+	count Expr
+
 	props   PropContainer
 	symbols SymbolContainer
 
@@ -53,3 +55,5 @@ func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
 func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
 func (t Type) Props() PropContainer                { return t.props }
 func (t Type) Symbols() SymbolContainer            { return t.symbols }
+func (t Type) IsArray() bool                       { return false }
+func (t Type) Count() Expr                         { return t.count }

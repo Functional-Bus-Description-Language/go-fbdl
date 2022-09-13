@@ -15,6 +15,7 @@ func DiscoverPackages(main string) Packages {
 	if err != nil {
 		panic(err)
 	}
+	pathsToLook = append(pathsToLook, cwd)
 
 	cwdfbd := path.Join(cwd, "fbd")
 	_, err = os.Stat(cwdfbd)
@@ -68,7 +69,7 @@ func DiscoverPackages(main string) Packages {
 			if strings.HasPrefix(pkgName, "fbd-") {
 				pkgName = pkgName[4:]
 			}
-			innerContent, err := os.ReadDir(path.Join(checkPath, pkgName))
+			innerContent, err := os.ReadDir(path.Join(checkPath, c.Name()))
 			if err != nil {
 				panic(err)
 			}

@@ -8,10 +8,17 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	"golang.org/x/exp/maps"
+	"log"
 	"sort"
 )
 
 func insBlock(typeChain []prs.Element) (*elem.Block, error) {
+	typeChainStr := fmt.Sprintf("debug: instantiating block, type chain: %s", typeChain[0].Name())
+	for i := 1; i < len(typeChain); i++ {
+		typeChainStr = fmt.Sprintf("%s -> %s", typeChainStr, typeChain[i].Name())
+	}
+	log.Printf(typeChainStr)
+
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -88,12 +95,12 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 			blk.AddConst(c.Name(), val)
 		}
 
-		pe, ok := s.(*prs.Inst)
+		_, ok := s.(*prs.Inst)
 		if !ok {
 			continue
 		}
 
-		e := insElement(pe)
+		e := insElement(s.(prs.Element))
 
 		if util.IsValidInnerType(e.Type(), "block") == false {
 			return fmt.Errorf(invalidInnerTypeMsg, e.Name(), e.Type(), "block")
