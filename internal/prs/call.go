@@ -41,11 +41,11 @@ func evalCeil(c Call) (val.Value, error) {
 
 	f := float64(0.0)
 
-	switch arg.(type) {
+	switch arg := arg.(type) {
 	case val.Int:
 		return arg, nil
 	case val.Float:
-		f = float64(arg.(val.Float))
+		f = float64(arg)
 	}
 
 	return val.Int(int64(math.Ceil(f))), nil
@@ -60,13 +60,13 @@ func evalLog2(c Call) (val.Value, error) {
 	argType := "unknown"
 	f := float64(0.0)
 
-	switch arg.(type) {
+	switch arg := arg.(type) {
 	case val.Int:
 		argType = "int"
-		f = float64(arg.(val.Int))
+		f = float64(arg)
 	case val.Float:
 		argType = "float"
-		f = float64(arg.(val.Float))
+		f = float64(arg)
 	}
 
 	if argType != "int" && argType != "float" {

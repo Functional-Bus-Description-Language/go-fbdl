@@ -169,9 +169,7 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 		}
 		type_elem := s.(prs.Element)
 
-		for _, bt := range resolveToBaseType(type_elem) {
-			typeChain = append(typeChain, bt)
-		}
+		typeChain = append(typeChain, resolveToBaseType(type_elem)...)
 	}
 
 	typeChain = append(typeChain, e)

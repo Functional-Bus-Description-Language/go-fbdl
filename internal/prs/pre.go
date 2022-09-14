@@ -25,9 +25,7 @@ func DiscoverPackages(main string) Packages {
 
 	fbdpath := os.Getenv("FBDPATH")
 	if len(fbdpath) != 0 {
-		for _, path := range strings.Split(fbdpath, ":") {
-			pathsToLook = append(pathsToLook, path)
-		}
+		pathsToLook = append(pathsToLook, strings.Split(fbdpath, ":")...)
 	}
 
 	// TODO: Add support for $HOME/local/.lib/fbd
@@ -65,10 +63,7 @@ func DiscoverPackages(main string) Packages {
 				}
 			}
 
-			pkgName := c.Name()
-			if strings.HasPrefix(pkgName, "fbd-") {
-				pkgName = pkgName[4:]
-			}
+			pkgName := strings.TrimPrefix(c.Name(), "fbd-")
 			innerContent, err := os.ReadDir(path.Join(checkPath, c.Name()))
 			if err != nil {
 				panic(err)

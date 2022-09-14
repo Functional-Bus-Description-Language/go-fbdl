@@ -231,7 +231,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		}
 
 	nextNode:
-		if node.HasNextSibling() == false {
+		if !node.HasNextSibling() {
 			break
 		}
 		node = node.NextSibling()
@@ -286,7 +286,7 @@ func parseArgumentList(n ts.Node, parent Searchable) ([]Arg, error) {
 	// Check if arguments without name precede arguments with name.
 	withName := false
 	for _, a := range args {
-		if withName && a.HasName == false {
+		if withName && !a.HasName {
 			return args, fmt.Errorf("arguments without name must precede the ones with name")
 		}
 

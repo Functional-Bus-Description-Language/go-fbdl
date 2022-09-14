@@ -69,11 +69,11 @@ func addStreamInnerElement(stream *elem.Stream, e fbdl.Element) error {
 		)
 	}
 
-	switch e.(type) {
+	switch e := e.(type) {
 	case (*elem.Param):
-		stream.AddParam(e.(*elem.Param))
+		stream.AddParam(e)
 	case (*elem.Return):
-		stream.AddReturn(e.(*elem.Return))
+		stream.AddReturn(e)
 	default:
 		panic("should never happen")
 	}

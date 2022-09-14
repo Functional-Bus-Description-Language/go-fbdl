@@ -36,6 +36,8 @@ func insParam(typeChain []prs.Element) (*elem.Param, error) {
 		}
 	}
 
+	fillParamProps(&param, diary)
+
 	return &param, nil
 }
 

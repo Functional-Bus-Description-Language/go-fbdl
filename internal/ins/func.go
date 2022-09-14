@@ -54,11 +54,11 @@ func applyFuncType(fun *elem.Func, typ prs.Element) error {
 }
 
 func addFuncInnerElement(fun *elem.Func, e fbdl.Element) {
-	switch e.(type) {
+	switch e := e.(type) {
 	case (*elem.Param):
-		fun.AddParam(e.(*elem.Param))
+		fun.AddParam(e)
 	case (*elem.Return):
-		fun.AddReturn(e.(*elem.Return))
+		fun.AddReturn(e)
 	default:
 		panic("should never happen")
 	}

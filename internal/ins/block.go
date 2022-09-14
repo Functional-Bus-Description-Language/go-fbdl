@@ -102,7 +102,7 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 
 		e := insElement(s.(prs.Element))
 
-		if util.IsValidInnerType(e.Type(), "block") == false {
+		if !util.IsValidInnerType(e.Type(), "block") {
 			return fmt.Errorf(invalidInnerTypeMsg, e.Name(), e.Type(), "block")
 		}
 
@@ -125,19 +125,19 @@ func fillBlockProps(blk *elem.Block) {
 }
 
 func addBlockInnerElement(blk *elem.Block, e fbdl.Element) {
-	switch e.(type) {
+	switch e := e.(type) {
 	case (*elem.Config):
-		blk.AddConfig(e.(*elem.Config))
+		blk.AddConfig(e)
 	case (*elem.Func):
-		blk.AddFunc(e.(*elem.Func))
+		blk.AddFunc(e)
 	case (*elem.Mask):
-		blk.AddMask(e.(*elem.Mask))
+		blk.AddMask(e)
 	case (*elem.Status):
-		blk.AddStatus(e.(*elem.Status))
+		blk.AddStatus(e)
 	case (*elem.Stream):
-		blk.AddStream(e.(*elem.Stream))
+		blk.AddStream(e)
 	case (*elem.Block):
-		blk.AddSubblock(e.(*elem.Block))
+		blk.AddSubblock(e)
 	default:
 		panic("should never happen")
 	}
