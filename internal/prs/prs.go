@@ -4,7 +4,6 @@ package prs
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -43,7 +42,7 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 		return
 	}
 
-	pkgDirContent, err := ioutil.ReadDir(pkg.Path)
+	pkgDirContent, err := os.ReadDir(pkg.Path)
 	if err != nil {
 		panic(err)
 	}
