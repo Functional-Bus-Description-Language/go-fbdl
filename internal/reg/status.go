@@ -57,13 +57,3 @@ func regStatusArray(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 
 	return addr
 }
-
-func regStatusArraySingle(st *elem.Status, addr, startBit int64) int64 {
-	a := access.MakeArraySingle(st.Count(), addr, startBit, st.Width())
-
-	addr += a.RegCount()
-
-	st.SetAccess(a)
-
-	return addr
-}

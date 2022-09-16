@@ -14,9 +14,9 @@ type configDiary struct {
 	dfltSet   bool
 	dflt      val.Value
 	groupsSet bool
-	rangeSet  bool
-	onceSet   bool
-	widthSet  bool
+	//rangeSet  bool
+	onceSet  bool
+	widthSet bool
 }
 
 func insConfig(typeChain []prs.Element) (*elem.Config, error) {

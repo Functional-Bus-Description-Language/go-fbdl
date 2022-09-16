@@ -75,11 +75,7 @@ func DiscoverPackages(main string) Packages {
 				fileName := ic.Name()
 				if strings.HasSuffix(fileName, ".fbd") {
 					pkg := Package{Name: pkgName, Path: pkgPath, Symbols: SymbolContainer{}}
-					if list, ok := packages[pkgName]; ok {
-						list = append(list, &pkg)
-					} else {
-						packages[pkgName] = []*Package{&pkg}
-					}
+					packages[pkgName] = append(packages[pkgName], &pkg)
 					break
 				}
 			}

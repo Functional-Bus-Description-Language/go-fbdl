@@ -9,8 +9,7 @@ help:
 	@echo "  default  Run build."
 	@echo "Quality targets:"
 	@echo "  fmt       Format files with go fmt."
-	@echo "  vet       Examine go sources with go vet."
-	@echo "  errcheck  Examine go sources with errcheck."
+	@echo "  lint      Lint files with golangci-lint."
 	@echo "Test targets:"
 	@echo "  test-all                Run all tests."
 	@echo "  test                    Run go test."
@@ -21,7 +20,7 @@ help:
 	@echo "  help                Print help message."
 	@echo "  update-tree-sitter  Update tree-sitter source files."
 
-all: fmt vet build
+all: lint fmt build
 
 build:
 	go build -v -o $(PROJECT_NAME) ./cmd/fbdl
@@ -30,15 +29,12 @@ build:
 fmt:
 	go fmt ./...
 
-vet:
-	go vet ./...
+lint:
+	golangci-lint run
 
 
 test:
 	go test ./...
-
-errcheck:
-	errcheck -verbose ./...
 
 test-parsing:
 	@./scripts/test-parsing.sh

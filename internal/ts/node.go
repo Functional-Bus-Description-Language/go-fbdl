@@ -1,7 +1,9 @@
 package ts
 
 import (
+	"context"
 	gots "github.com/smacker/go-tree-sitter"
+	"log"
 )
 
 // Node is a wrapper for go-tree-sitter Node.
@@ -14,7 +16,10 @@ func MakeRootNode(code_bytes []byte) Node {
 	parser := gots.NewParser()
 	parser.SetLanguage(GetLanguage())
 
-	tree := parser.Parse(nil, code_bytes)
+	tree, err := parser.ParseCtx(context.Background(), nil, code_bytes)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
 	root := tree.RootNode()
 	tsnode := root.Child(0)
 	if tsnode == nil {
