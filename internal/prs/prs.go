@@ -72,9 +72,9 @@ func checkInstantiations(pkg *Package) {
 						f.Path, e.LineNum(), e.Type(),
 					)
 				} else if e.typ == "bus" {
-					if e.Name() != "Main" || pkg.Name != "main" {
+					if pkg.Name != "main" {
 						log.Fatalf(
-							"%s: line %d: bus instantiation must be named 'Main' and must be placed in 'main' package",
+							"%s: line %d: bus instantiation must be placed within 'main' package",
 							f.Path, e.LineNum(),
 						)
 					}

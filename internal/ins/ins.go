@@ -31,14 +31,14 @@ func setBusWidth(main prs.Symbol) error {
 
 	v, err := prop.Value.Eval()
 	if err != nil {
-		return fmt.Errorf("cannot evaluate 'Main' bus 'width' property")
+		return fmt.Errorf("cannot evaluate main bus 'width' property")
 	}
 
 	if v, ok := v.(val.Int); ok {
 		busWidth = int64(v)
 	} else {
 		log.Fatalf(
-			"%s: line %d: 'Main' bus 'width' property must be of type 'integer'",
+			"%s: line %d: main bus 'width' property must be of type 'integer'",
 			main.File().Path, prop.LineNum,
 		)
 	}
@@ -46,12 +46,15 @@ func setBusWidth(main prs.Symbol) error {
 	return nil
 }
 
-func Instantiate(packages prs.Packages, zeroTimestamp bool) (*elem.Block, map[string]*elem.Package) {
-	main, ok := packages["main"][0].Symbols.Get("Main", prs.ElemInst)
+// Instantiate main bus within given packages scope.
+// MainName is the name of the main bus.
+func Instantiate(packages prs.Packages, mainName string, zeroTimestamp bool) (*elem.Block, map[string]*elem.Package) {
+	main, ok := packages["main"][0].Symbols.Get(mainName, prs.ElemInst)
 	if !ok {
-		log.Println("instantiation: there is no 'Main' bus, returning nil")
+		log.Printf("instantiation: there is no '%s' bus, returning nil", mainName)
 		return nil, nil
 	}
+	log.Printf("debug: instantiating '%s' as the main bus", mainName)
 
 	err := setBusWidth(main)
 	if err != nil {
@@ -74,13 +77,13 @@ func Instantiate(packages prs.Packages, zeroTimestamp bool) (*elem.Block, map[st
 					continue
 				}
 
-				if name != "Main" && util.IsBaseType(prsElem.Type()) {
+				if name != mainName && util.IsBaseType(prsElem.Type()) {
 					continue
 				}
 
 				e := insElement(prsElem)
 
-				if pkgName == "main" && name == "Main" {
+				if pkgName == "main" && name == mainName {
 					mainBus = e.(*elem.Block)
 				}
 			}

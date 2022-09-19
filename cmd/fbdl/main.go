@@ -61,7 +61,11 @@ func main() {
 		}
 	}
 
-	bus, pkgsConsts := ins.Instantiate(packages, args.ZeroTimestamp)
+	mainName := "Main"
+	if args.Main != "" {
+		mainName = args.Main
+	}
+	bus, pkgsConsts := ins.Instantiate(packages, mainName, args.ZeroTimestamp)
 
 	if args.DumpIns != "" {
 		f, err := os.Create(args.DumpIns)

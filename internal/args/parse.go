@@ -28,17 +28,43 @@ func Parse() Args {
 		}
 	}
 
+	handleParam := func(p string) {
+		if isValidParam(p) {
+			param = p
+
+			maybeVal = true
+			// Parameters default values.
+			switch param {
+			case "-p":
+				args.DumpPrs = "prs.txt"
+			case "-i":
+				args.DumpIns = "ins.txt"
+			case "-r":
+				args.DumpReg = "reg.json"
+			case "-c":
+				args.DumpConsts = "const.json"
+			default:
+				maybeVal = false
+				val = true
+			}
+		} else {
+			log.Fatalf("invalid parameter '%s'", p)
+		}
+	}
+
 	for i, arg := range os.Args[1:] {
 		if i == len(os.Args)-2 {
-			if arg == "-help" {
+			switch arg {
+			case "-help":
 				printHelp()
-			}
-			if arg == "-version" {
+			case "-version":
 				printVersion()
 			}
+
 			if val {
 				log.Fatalf("missing path to main file")
 			}
+
 			args.MainFile = arg
 			continue
 		}
@@ -48,7 +74,7 @@ func Parse() Args {
 
 			switch param {
 			case "-main":
-				args.MainFile = arg
+				args.Main = arg
 			default:
 				panic(fmt.Sprintf("unhandled param '%s', implement me", param))
 			}
@@ -57,10 +83,9 @@ func Parse() Args {
 
 			if isValidFlag(arg) {
 				handleFlag(arg)
-			}
-
-			if isValidParam(arg) {
-				param = arg
+				continue
+			} else if isValidParam(arg) {
+				handleParam(arg)
 				continue
 			}
 
@@ -77,26 +102,8 @@ func Parse() Args {
 		} else {
 			if isValidFlag(arg) {
 				handleFlag(arg)
-			} else if isValidParam(arg) {
-				param = arg
-
-				maybeVal = true
-				// Parameters default values.
-				switch param {
-				case "-p":
-					args.DumpPrs = "prs.txt"
-				case "-i":
-					args.DumpIns = "ins.txt"
-				case "-r":
-					args.DumpReg = "reg.json"
-				case "-c":
-					args.DumpConsts = "const.json"
-				default:
-					maybeVal = false
-					val = true
-				}
 			} else {
-				log.Fatalf("invalid parameter '%s'", arg)
+				handleParam(arg)
 			}
 		}
 	}
