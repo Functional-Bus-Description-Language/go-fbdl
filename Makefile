@@ -4,7 +4,7 @@ default: build
 
 help:
 	@echo "Build targets:"
-	@echo "  all      Run fmt vet build."
+	@echo "  all      Run lint fmt build."
 	@echo "  build    Build binary."
 	@echo "  default  Run build."
 	@echo "Quality targets:"
@@ -20,12 +20,14 @@ help:
 	@echo "  help                Print help message."
 	@echo "  update-tree-sitter  Update tree-sitter source files."
 
+
+# Build targets
 all: lint fmt build
 
 build:
 	go build -v -o $(PROJECT_NAME) ./cmd/fbdl
 
-
+# Quality targets
 fmt:
 	go fmt ./...
 
@@ -33,6 +35,7 @@ lint:
 	golangci-lint run
 
 
+# Test targets
 test:
 	go test ./...
 
@@ -48,6 +51,7 @@ test-registerification:
 test-all: test test-parsing test-instantiating test-registerification
 
 
+# Installation targets
 install:
 	cp $(PROJECT_NAME) /usr/bin
 
