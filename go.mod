@@ -7,4 +7,4 @@ require (
 	github.com/smacker/go-tree-sitter v0.0.0-20220623130553-1191a8204295
 )
 
-require golang.org/x/exp v0.0.0-20220713135740-79cabaa25d75 // indirect
+require golang.org/x/exp v0.0.0-20220713135740-79cabaa25d75
