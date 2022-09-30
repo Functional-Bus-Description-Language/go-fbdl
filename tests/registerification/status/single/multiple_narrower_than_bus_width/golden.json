@@ -28,8 +28,8 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
-				"StartBit": 0,
-				"EndBit": 3
+				"StartBit": 25,
+				"EndBit": 28
 			}
 		},
 		{
@@ -45,8 +45,8 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
-				"StartBit": 4,
-				"EndBit": 19
+				"StartBit": 0,
+				"EndBit": 15
 			}
 		},
 		{
@@ -62,8 +62,8 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
-				"StartBit": 20,
-				"EndBit": 22
+				"StartBit": 29,
+				"EndBit": 31
 			}
 		},
 		{
@@ -79,8 +79,8 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
-				"StartBit": 23,
-				"EndBit": 31
+				"StartBit": 16,
+				"EndBit": 24
 			}
 		},
 		{

@@ -5,6 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"sort"
 )
 
 var busWidth int64
@@ -102,7 +103,11 @@ func regMasks(blk *elem.Block, addr int64) int64 {
 }
 
 func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
+	atomicSts := []*elem.Status{}
+	nonAtomicSts := []*elem.Status{}
+
 	for _, st := range blk.Statuses() {
+		// FIXME: This will fail if user defines ID or TIMESTAMP status elements.
 		if st.Name() == "ID" || st.Name() == "TIMESTAMP" {
 			continue
 		}
@@ -110,7 +115,37 @@ func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 		if st.Access() != nil {
 			continue
 		}
-		addr = regStatus(st.(*elem.Status), addr, gp)
+
+		if st.Atomic() {
+			atomicSts = append(atomicSts, st.(*elem.Status))
+		} else {
+			nonAtomicSts = append(nonAtomicSts, st.(*elem.Status))
+		}
+	}
+
+	sortFunc := func(sts []*elem.Status) func(int, int) bool {
+		return func(i, j int) bool {
+			if sts[i].IsArray() && !sts[j].IsArray() {
+				return true
+			} else if !sts[i].IsArray() && sts[j].IsArray() {
+				return false
+			}
+
+			if sts[i].Width() > sts[j].Width() {
+				return true
+			}
+			return false
+		}
+	}
+
+	sort.SliceStable(atomicSts, sortFunc(atomicSts))
+	sort.SliceStable(nonAtomicSts, sortFunc(nonAtomicSts))
+
+	for _, st := range atomicSts {
+		addr = regAtomicStatus(st, addr, gp)
+	}
+	for _, st := range nonAtomicSts {
+		addr = regNonAtomicStatus(st, addr, gp)
 	}
 
 	return addr
@@ -118,12 +153,11 @@ func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 
 func regConfigs(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	for _, cfg := range blk.Configs() {
-		/*
-			// Omit elements that have been already registerified as group members.
-			if blk.HasElement(insCfg.Name) {
-				continue
-			}
-		*/
+		// Omit elements that have been already registerified as group members.
+		if cfg.Access() != nil {
+			continue
+		}
+
 		addr = regConfig(cfg.(*elem.Config), addr, gp)
 	}
 

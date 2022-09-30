@@ -43,25 +43,6 @@ func (c *Status) Width() int64     { return c.st.Width }
 func (c *Status) SetAccess(a access.Access) { c.st.Access = a }
 func (c *Status) Access() access.Access     { return c.st.Access }
 
-// HasDecreasingAccessOrder returns true if status must be accessed
-// from the end register to the start register order.
-// It is useful only in case of some atomic statuses.
-// If the end register is wider, then starting reading from the end register
-// saves some flip flops, becase the atomic shadow regsiter can be narrower.
-func (s *Status) HasDecreasingAccessOrder() bool {
-	if !s.st.Atomic {
-		return false
-	}
-
-	if asc, ok := s.st.Access.(access.SingleContinuous); ok {
-		if asc.IsEndRegWider() {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (s *Status) Hash() int64 {
 	return 0
 }

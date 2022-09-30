@@ -60,13 +60,6 @@ type Config interface {
 	Width() int64
 
 	Access() access.Access
-
-	// HasDecreasingAccessOrder returns true if config must be accessed
-	// from the end register to the start register order.
-	// It is useful only in case of some atomic configs.
-	// If the end register is narrower, then starting writing from the end register
-	// saves some flip flops, becase the atomic shadow regsiter can be narrower.
-	HasDecreasingAccessOrder() bool
 }
 
 type Func interface {
@@ -121,13 +114,6 @@ type Status interface {
 	Width() int64
 
 	Access() access.Access
-
-	// HasDecreasingAccessOrder returns true if status must be accessed
-	// from the end register to the start register order.
-	// It is useful only in case of some atomic statuses.
-	// If the end register is wider, then starting reading from the end register
-	// saves some flip flops, becase the atomic shadow regsiter can be narrower.
-	HasDecreasingAccessOrder() bool
 }
 
 type Stream interface {
