@@ -68,6 +68,13 @@ type Func interface {
 	Params() []Param
 	Returns() []Return
 
+	// ParamsBufSize returns size of the buffer required to store all parameters.
+	// The type of the single buffer element depends on the bus width.
+	ParamsBufSize() int64
+	// ReturnsBufSize returns size of the buffer required to store all returns.
+	// The type of the single buffer element depends on the bus width.
+	ReturnsBufSize() int64
+
 	StbAddr() int64
 	AckAddr() int64
 

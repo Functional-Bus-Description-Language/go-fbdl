@@ -75,3 +75,25 @@ func (f *Func) AreAllParamsSingleSingle() bool {
 func (f *Func) Hash() int64 {
 	return 0
 }
+
+func (f *Func) ParamsBufSize() int64 {
+	params := f.fun.Params
+	l := len(params)
+
+	if l == 0 {
+		return 0
+	}
+
+	return params[l-1].Access().EndAddr() - params[0].Access().StartAddr() + 1
+}
+
+func (f *Func) ReturnsBufSize() int64 {
+	rets := f.fun.Returns
+	l := len(rets)
+
+	if l == 0 {
+		return 0
+	}
+
+	return rets[l-1].Access().EndAddr() - rets[0].Access().StartAddr() + 1
+}
