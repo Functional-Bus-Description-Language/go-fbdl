@@ -66,7 +66,6 @@ func regFunc(fun *elem.Func, addr int64) int64 {
 		}
 
 		r.SetAccess(a)
-		fun.AddReturn(r)
 	}
 
 	if len(returns) > 0 {
