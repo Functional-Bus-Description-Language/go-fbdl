@@ -109,7 +109,9 @@ func checkIndentAndTrailingSemicolon(code []string) error {
 		}
 
 		if len(line) > 0 && line[len(line)-1] == ';' {
-			return fmt.Errorf("line %d: extra ';' at end of line", i+1)
+			if strings.TrimSpace(line)[0] != '#' {
+				return fmt.Errorf("line %d: extra ';' at end of line", i+1)
+			}
 		}
 
 		indent, err := getIndent(line)
