@@ -80,20 +80,6 @@
 						"StartBit": 0,
 						"EndBit": 7
 					}
-				},
-				{
-					"Name": "r",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Groups": null,
-					"Width": 8,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 3,
-						"StartBit": 0,
-						"EndBit": 7
-					}
 				}
 			],
 			"StbAddr": 2,

@@ -48,20 +48,6 @@
 						"StartBit": 16,
 						"EndBit": 31
 					}
-				},
-				{
-					"Name": "r",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Groups": null,
-					"Width": 16,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"StartBit": 16,
-						"EndBit": 31
-					}
 				}
 			],
 			"StbAddr": 2,

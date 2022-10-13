@@ -47,34 +47,6 @@
 						"StartBit": 17,
 						"EndBit": 31
 					}
-				},
-				{
-					"Name": "a",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Groups": null,
-					"Width": 17,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"StartBit": 0,
-						"EndBit": 16
-					}
-				},
-				{
-					"Name": "b",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Groups": null,
-					"Width": 15,
-					"Access": {
-						"Strategy": "Single",
-						"Addr": 2,
-						"StartBit": 17,
-						"EndBit": 31
-					}
 				}
 			],
 			"StbAddr": 2,
