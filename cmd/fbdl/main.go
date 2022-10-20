@@ -83,7 +83,7 @@ func main() {
 	}
 
 	if bus != nil {
-		reg.Registerify(bus, args.NoTimestamp)
+		reg.Registerify(bus, args.AddTimestamp)
 	}
 
 	if args.DumpReg != "" {

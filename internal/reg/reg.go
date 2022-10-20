@@ -13,18 +13,20 @@ import (
 
 var busWidth int64
 
-func Registerify(bus *elem.Block, noTimestamp bool) {
+func Registerify(bus *elem.Block, addTimestamp bool) {
 	busWidth = bus.Width()
 	access.Init(busWidth)
 
 	// addr is currently block internal access address, not global address.
-	// 0 and 1 are reserved for ID and TIMESTAMP.
-	addr := int64(2)
-	if noTimestamp {
-		addr = 1
-	}
+	// 0 is reserved for ID, even if ID is not generated.
+	addr := int64(1)
 
 	addr = regFunctionalities(bus, addr)
+
+	timestampAddr := addr
+	if addTimestamp {
+		addr += 1
+	}
 
 	sizes := access.Sizes{}
 
@@ -58,12 +60,12 @@ func Registerify(bus *elem.Block, noTimestamp bool) {
 	id.SetDefault(fbdlVal.MakeBitStr(dflt))
 	bus.AddStatus(id)
 
-	if !noTimestamp {
+	if addTimestamp {
 		if bus.HasElement("TIMESTAMP") {
 			log.Fatalf("'TIMESTAMP' is reserved element name in main bus")
 		}
 		ts := timestamp()
-		ts.SetAccess(access.MakeSingle(1, 0, busWidth))
+		ts.SetAccess(access.MakeSingle(timestampAddr, 0, busWidth))
 		bus.AddStatus(ts)
 	}
 }

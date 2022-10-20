@@ -38,7 +38,7 @@ for dir in $(find . -maxdepth 3 -mindepth 3 -type d);
 do
 	echo "  $dir"
 	cd "$dir"
-	../../../../../fbdl -no-timestamp -r bus.fbd
+	../../../../../fbdl -r bus.fbd
 	diff --color golden.json reg.json
 	if $update; then
 		cp reg.json golden.json

@@ -10,7 +10,7 @@ import (
 
 // Compile compiles functional bus description for a main bus named mainName located in the file which path is provided as mainPath.
 // If noTimestamp is true, then the bus timestamp is not generated.
-func Compile(mainPath, mainName string, noTimestamp bool) (elem.Block, map[string]elem.Package, error) {
+func Compile(mainPath, mainName string, addTimestamp bool) (elem.Block, map[string]elem.Package, error) {
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
@@ -26,7 +26,7 @@ func Compile(mainPath, mainName string, noTimestamp bool) (elem.Block, map[strin
 		pkgs[k] = v
 	}
 
-	reg.Registerify(bus, noTimestamp)
+	reg.Registerify(bus, addTimestamp)
 
 	return bus, pkgs, nil
 }
