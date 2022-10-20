@@ -24,7 +24,7 @@
 			"Width": 10,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 2,
+				"Addr": 1,
 				"StartBit": 0,
 				"EndBit": 9
 			}
@@ -41,7 +41,7 @@
 			"Width": 8,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 3,
+				"Addr": 2,
 				"StartBit": 0,
 				"EndBit": 7
 			}
@@ -56,7 +56,7 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Default": "x\"00000000\"",
+			"Default": "x\"6a6d04ab\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
@@ -66,31 +66,14 @@
 				"StartBit": 0,
 				"EndBit": 31
 			}
-		},
-		{
-			"Name": "TIMESTAMP",
-			"Doc": "Bus generation timestamp.",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 1,
-				"StartBit": 0,
-				"EndBit": 31
-			}
 		}
 	],
 	"Streams": null,
 	"Subblocks": null,
 	"Sizes": {
 		"BlockAligned": 4,
-		"Compact": 4,
-		"Own": 4
+		"Compact": 3,
+		"Own": 3
 	},
 	"AddrSpace": {
 		"Start": 0,

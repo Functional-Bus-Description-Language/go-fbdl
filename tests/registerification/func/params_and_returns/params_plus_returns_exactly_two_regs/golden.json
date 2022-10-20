@@ -28,7 +28,7 @@
 					"Width": 20,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 2,
+						"Addr": 1,
 						"StartBit": 0,
 						"EndBit": 19
 					}
@@ -42,7 +42,7 @@
 					"Width": 12,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 2,
+						"Addr": 1,
 						"StartBit": 20,
 						"EndBit": 31
 					}
@@ -56,7 +56,7 @@
 					"Width": 4,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 3,
+						"Addr": 2,
 						"StartBit": 0,
 						"EndBit": 3
 					}
@@ -70,7 +70,7 @@
 					"Width": 8,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 3,
+						"Addr": 2,
 						"StartBit": 4,
 						"EndBit": 11
 					}
@@ -86,7 +86,7 @@
 					"Width": 7,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 3,
+						"Addr": 2,
 						"StartBit": 12,
 						"EndBit": 18
 					}
@@ -100,14 +100,14 @@
 					"Width": 13,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 3,
+						"Addr": 2,
 						"StartBit": 19,
 						"EndBit": 31
 					}
 				}
 			],
-			"StbAddr": 3,
-			"AckAddr": 3
+			"StbAddr": 2,
+			"AckAddr": 2
 		}
 	],
 	"Masks": null,
@@ -124,7 +124,7 @@
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 4,
+				"Addr": 3,
 				"StartBit": 0,
 				"EndBit": 31
 			}
@@ -135,7 +135,7 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Default": "x\"00000000\"",
+			"Default": "x\"5ad30478\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
@@ -145,34 +145,17 @@
 				"StartBit": 0,
 				"EndBit": 31
 			}
-		},
-		{
-			"Name": "TIMESTAMP",
-			"Doc": "Bus generation timestamp.",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Default": "x\"00000000\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 1,
-				"StartBit": 0,
-				"EndBit": 31
-			}
 		}
 	],
 	"Streams": null,
 	"Subblocks": null,
 	"Sizes": {
-		"BlockAligned": 8,
-		"Compact": 5,
-		"Own": 5
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
 	},
 	"AddrSpace": {
 		"Start": 0,
-		"End": 7
+		"End": 3
 	}
 }
