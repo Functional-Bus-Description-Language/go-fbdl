@@ -13,7 +13,7 @@ func Compile(mainPath, mainName string) (elem.Block, map[string]elem.Package, er
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
-	bus, insPkgs, err := ins.Instantiate(packages, mainName, false)
+	bus, insPkgs, err := ins.Instantiate(packages, mainName)
 	if err != nil {
 		return nil, nil, fmt.Errorf("instantiation: %v", err)
 	}
@@ -25,7 +25,7 @@ func Compile(mainPath, mainName string) (elem.Block, map[string]elem.Package, er
 		pkgs[k] = v
 	}
 
-	reg.Registerify(bus)
+	reg.Registerify(bus, false)
 
 	return bus, pkgs, nil
 }

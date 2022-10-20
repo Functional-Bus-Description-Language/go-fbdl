@@ -1,8 +1,8 @@
 package args
 
 type Args struct {
-	Debug         bool
-	ZeroTimestamp bool
+	Debug       bool
+	NoTimestamp bool
 
 	Main string
 
@@ -16,7 +16,7 @@ type Args struct {
 
 func isValidFlag(f string) bool {
 	flags := map[string]bool{
-		"-help": true, "-version": true, "-debug": true, "-zero-timestamp": true,
+		"-help": true, "-version": true, "-debug": true, "-no-timestamp": true,
 	}
 	if _, ok := flags[f]; ok {
 		return true

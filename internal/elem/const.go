@@ -1,6 +1,12 @@
 package elem
 
 import (
+	"bytes"
+	"encoding/binary"
+	"golang.org/x/exp/maps"
+	"hash/adler32"
+	"sort"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
@@ -19,6 +25,7 @@ type ConstContainer struct {
 
 func (c ConstContainer) BoolConsts() map[string]bool       { return c.cc.BoolConsts }
 func (c ConstContainer) BoolListConsts() map[string][]bool { return c.cc.BoolListConsts }
+func (c ConstContainer) FloatConsts() map[string]float64   { return c.cc.FloatConsts }
 func (c ConstContainer) IntConsts() map[string]int64       { return c.cc.IntConsts }
 func (c ConstContainer) IntListConsts() map[string][]int64 { return c.cc.IntListConsts }
 func (c ConstContainer) StrConsts() map[string]string      { return c.cc.StrConsts }
@@ -142,6 +149,67 @@ func (c *ConstContainer) addStrConst(name string, v val.Value) {
 		c.cc.StrConsts = map[string]string{name: s}
 	}
 	c.cc.StrConsts[name] = s
+}
+
+func (c ConstContainer) Hash() uint32 {
+	buf := bytes.Buffer{}
+
+	write := func(data any) {
+		err := binary.Write(&buf, binary.LittleEndian, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// BoolConsts
+	keys := maps.Keys(c.BoolConsts())
+	sort.Strings(keys)
+	for _, key := range keys {
+		write(c.BoolConsts()[key])
+	}
+
+	// BoolListConsts
+	keys = maps.Keys(c.BoolListConsts())
+	sort.Strings(keys)
+	for _, key := range keys {
+		list := c.BoolListConsts()[key]
+		for _, val := range list {
+			write(val)
+		}
+	}
+
+	// FloatConsts
+	keys = maps.Keys(c.FloatConsts())
+	sort.Strings(keys)
+	for _, key := range keys {
+		write(c.FloatConsts()[key])
+	}
+
+	// IntConsts
+	keys = maps.Keys(c.IntConsts())
+	sort.Strings(keys)
+	for _, key := range keys {
+		write(c.IntConsts()[key])
+	}
+
+	// IntListConsts
+	keys = maps.Keys(c.IntListConsts())
+	sort.Strings(keys)
+	for _, key := range keys {
+		list := c.IntListConsts()[key]
+		for _, val := range list {
+			write(val)
+		}
+	}
+
+	// StrConsts
+	keys = maps.Keys(c.StrConsts())
+	sort.Strings(keys)
+	for _, key := range keys {
+		buf.Write([]byte(c.StrConsts()[key]))
+	}
+
+	return adler32.Checksum(buf.Bytes())
 }
 
 // constifyBoolList tries to constify list as an bool list.

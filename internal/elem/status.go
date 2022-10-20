@@ -1,6 +1,11 @@
 package elem
 
 import (
+	"bytes"
+	"encoding/binary"
+	"hash/adler32"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
@@ -43,6 +48,38 @@ func (c *Status) Width() int64     { return c.st.Width }
 func (c *Status) SetAccess(a access.Access) { c.st.Access = a }
 func (c *Status) Access() access.Access     { return c.st.Access }
 
-func (s *Status) Hash() int64 {
-	return 0
+func (s *Status) Hash() uint32 {
+	buf := bytes.Buffer{}
+
+	write := func(data any) {
+		err := binary.Write(&buf, binary.LittleEndian, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Elem
+	write(s.Elem.Hash())
+
+	// Atomic
+	write(s.Atomic())
+
+	// Default
+	buf.Write([]byte(s.Default()))
+
+	// Groups
+	for _, g := range s.Groups() {
+		buf.Write([]byte(g))
+	}
+
+	// Once
+	write(s.Once())
+
+	// Width
+	write(s.Width())
+
+	// Access
+	write(hash.AccessAccess(s.Access()))
+
+	return adler32.Checksum(buf.Bytes())
 }

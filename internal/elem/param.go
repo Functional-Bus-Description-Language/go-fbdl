@@ -1,6 +1,11 @@
 package elem
 
 import (
+	"bytes"
+	"encoding/binary"
+	"hash/adler32"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
@@ -33,6 +38,29 @@ type Param struct {
 	param
 }
 
-func (p *Param) Hash() int64 {
-	return 0
+func (p *Param) Hash() uint32 {
+	buf := bytes.Buffer{}
+
+	write := func(data any) {
+		err := binary.Write(&buf, binary.LittleEndian, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Elem
+	write(p.Elem.Hash())
+
+	// Groups
+	for _, g := range p.Groups() {
+		buf.Write([]byte(g))
+	}
+
+	// Width
+	write(p.Width())
+
+	// Access
+	write(hash.AccessAccess(p.Access()))
+
+	return adler32.Checksum(buf.Bytes())
 }

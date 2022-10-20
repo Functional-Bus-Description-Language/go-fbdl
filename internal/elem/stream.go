@@ -1,6 +1,10 @@
 package elem
 
 import (
+	"bytes"
+	"encoding/binary"
+	"hash/adler32"
+
 	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
@@ -80,6 +84,31 @@ func (s *Stream) IsEmpty() bool {
 	return false
 }
 
-func (s *Stream) Hash() int64 {
-	return 0
+func (s *Stream) Hash() uint32 {
+	buf := bytes.Buffer{}
+
+	write := func(data any) {
+		err := binary.Write(&buf, binary.LittleEndian, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Elem
+	write(s.Elem.Hash())
+
+	// Params
+	for _, p := range s.Params() {
+		write(p.Hash())
+	}
+
+	// Returns
+	for _, r := range s.Returns() {
+		write(r.Hash())
+	}
+
+	// StbAddr
+	write(s.StbAddr())
+
+	return adler32.Checksum(buf.Bytes())
 }

@@ -21,8 +21,8 @@ func Parse() Args {
 			printHelp()
 		case "-version":
 			printVersion()
-		case "-zero-timestamp":
-			args.ZeroTimestamp = true
+		case "-no-timestamp":
+			args.NoTimestamp = true
 		default:
 			panic(fmt.Sprintf("unhandled flag '%s', implement me", f))
 		}

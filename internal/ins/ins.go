@@ -10,7 +10,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	fbdlElem "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 const dfltBusWidth int64 = 32
@@ -48,7 +47,7 @@ func setBusWidth(main prs.Symbol) error {
 
 // Instantiate main bus within given packages scope.
 // MainName is the name of the main bus.
-func Instantiate(packages prs.Packages, mainName string, zeroTimestamp bool) (*elem.Block, map[string]*elem.Package, error) {
+func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[string]*elem.Package, error) {
 	main, ok := packages["main"][0].Symbols.Get(mainName, prs.ElemInst)
 	if !ok {
 		return nil, nil, fmt.Errorf("'%s' bus not found", mainName)
@@ -88,25 +87,6 @@ func Instantiate(packages prs.Packages, mainName string, zeroTimestamp bool) (*e
 			}
 		}
 	}
-
-	if mainBus.HasElement("ID") {
-		log.Fatalf("'ID' is reserved element name in Main bus")
-	}
-
-	id := id()
-	hash := int64(mainBus.Hash())
-	if busWidth < 32 {
-		hash = hash & ((1 << busWidth) - 1)
-	}
-	// Ignore error, the value has been trimmed to the proper width.
-	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
-	id.SetDefault(fbdlVal.MakeBitStr(dflt))
-	mainBus.AddStatus(id)
-
-	if mainBus.HasElement("TIMESTAMP") {
-		log.Fatalf("'TIMESTAMP' is reserved element name in Main bus")
-	}
-	mainBus.AddStatus(timestamp(zeroTimestamp))
 
 	pkgs := constifyPackages(packages)
 

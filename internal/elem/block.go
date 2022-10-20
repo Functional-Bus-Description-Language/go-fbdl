@@ -1,8 +1,14 @@
 package elem
 
 import (
+	"bytes"
+	"encoding/binary"
+	"hash/adler32"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 )
 
 type blk struct {
@@ -114,8 +120,60 @@ func (b *Block) HasElement(name string) bool {
 	return false
 }
 
-func (b *Block) Hash() int64 {
-	return 0
+func (b *Block) Hash() uint32 {
+	buf := bytes.Buffer{}
+
+	write := func(data any) {
+		err := binary.Write(&buf, binary.LittleEndian, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Elem
+	write(b.Elem.Hash())
+
+	// Masters
+	write(b.Masters())
+
+	// Width
+	write(b.Width())
+
+	// ConstContainer
+	write(b.ConstContainer.Hash())
+
+	// Configs
+	for _, c := range b.Configs() {
+		write(c.Hash())
+	}
+	// Funcs
+	for _, f := range b.Funcs() {
+		write(f.Hash())
+	}
+	// Masks
+	for _, m := range b.Masks() {
+		write(m.Hash())
+	}
+	// Statuses
+	for _, s := range b.Statuses() {
+		write(s.Hash())
+	}
+	// Streams
+	for _, s := range b.Streams() {
+		write(s.Hash())
+	}
+	// Subblocks
+	for _, s := range b.Subblocks() {
+		write(s.Hash())
+	}
+
+	// Sizes
+	write(hash.AccessSizes(b.Sizes()))
+
+	// AddrSpace
+	write(hash.AccessAddrSpace(b.AddrSpace()))
+
+	return adler32.Checksum(buf.Bytes())
 }
 
 // ElemsWithGroups return list of inner elements belonging to any group.

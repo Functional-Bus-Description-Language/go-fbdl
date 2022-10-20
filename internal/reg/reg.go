@@ -4,28 +4,34 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+	"log"
 	"sort"
 )
 
 var busWidth int64
 
-func Registerify(regBus *elem.Block) {
-	busWidth = regBus.Width()
+func Registerify(bus *elem.Block, noTimestamp bool) {
+	busWidth = bus.Width()
 	access.Init(busWidth)
 
 	// addr is currently block internal access address, not global address.
 	// 0 and 1 are reserved for ID and TIMESTAMP.
 	addr := int64(2)
+	if noTimestamp {
+		addr = 1
+	}
 
-	addr = regFunctionalities(regBus, addr)
+	addr = regFunctionalities(bus, addr)
 
 	sizes := access.Sizes{}
 
 	sizes.Compact = addr
 	sizes.Own = addr
 
-	for _, sb := range regBus.Subblocks() {
+	for _, sb := range bus.Subblocks() {
 		sbSizes := regBlock(sb.(*elem.Block))
 		sizes.Compact += sb.Count() * sbSizes.Compact
 		sizes.BlockAligned += sb.Count() * sbSizes.BlockAligned
@@ -33,16 +39,33 @@ func Registerify(regBus *elem.Block) {
 
 	sizes.BlockAligned = util.AlignToPowerOf2(sizes.BlockAligned + sizes.Own)
 
-	regBus.SetSizes(sizes)
-
-	id := regBus.Status("ID").(*elem.Status)
-	id.SetAccess(access.MakeSingle(0, 0, id.Width()))
-
-	ts := regBus.Status("TIMESTAMP").(*elem.Status)
-	ts.SetAccess(access.MakeSingle(1, 0, busWidth))
+	bus.SetSizes(sizes)
 
 	// Base address property is not yet supported, so it starts from 0.
-	assignGlobalAccessAddresses(regBus, 0)
+	assignGlobalAccessAddresses(bus, 0)
+
+	if bus.HasElement("ID") {
+		log.Fatalf("'ID' is reserved element name in main bus")
+	}
+	id := id()
+	id.SetAccess(access.MakeSingle(0, 0, id.Width()))
+	hash := int64(bus.Hash())
+	if busWidth < 32 {
+		hash = hash & ((1 << busWidth) - 1)
+	}
+	// Ignore error, the value has been trimmed to the proper width.
+	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
+	id.SetDefault(fbdlVal.MakeBitStr(dflt))
+	bus.AddStatus(id)
+
+	if !noTimestamp {
+		if bus.HasElement("TIMESTAMP") {
+			log.Fatalf("'TIMESTAMP' is reserved element name in main bus")
+		}
+		ts := timestamp()
+		ts.SetAccess(access.MakeSingle(1, 0, busWidth))
+		bus.AddStatus(ts)
+	}
 }
 
 func regFunctionalities(blk *elem.Block, addr int64) int64 {

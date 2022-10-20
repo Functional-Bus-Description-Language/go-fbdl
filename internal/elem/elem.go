@@ -1,5 +1,11 @@
 package elem
 
+import (
+	"bytes"
+	"encoding/binary"
+	"hash/adler32"
+)
+
 // elem is base type for all elements.
 type elem struct {
 	Name    string
@@ -29,4 +35,29 @@ func (e *Elem) SetElem(el Elem) {
 	e.SetDoc(el.Doc())
 	e.SetIsArray(el.IsArray())
 	e.SetCount(el.Count())
+}
+
+func (e *Elem) Hash() uint32 {
+	buf := bytes.Buffer{}
+
+	// Name
+	buf.Write([]byte(e.Name()))
+
+	// Doc
+	buf.Write([]byte(e.Doc()))
+
+	// IsArray
+	if e.IsArray() {
+		buf.WriteByte(1)
+	} else {
+		buf.WriteByte(0)
+	}
+
+	// Count
+	err := binary.Write(&buf, binary.LittleEndian, e.Count())
+	if err != nil {
+		panic(err)
+	}
+
+	return adler32.Checksum(buf.Bytes())
 }

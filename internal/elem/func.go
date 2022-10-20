@@ -1,6 +1,10 @@
 package elem
 
 import (
+	"bytes"
+	"encoding/binary"
+	"hash/adler32"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
@@ -72,8 +76,36 @@ func (f *Func) AreAllParamsSingleSingle() bool {
 	return true
 }
 
-func (f *Func) Hash() int64 {
-	return 0
+func (f *Func) Hash() uint32 {
+	buf := bytes.Buffer{}
+
+	write := func(data any) {
+		err := binary.Write(&buf, binary.LittleEndian, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Elem
+	write(f.Elem.Hash())
+
+	// Params
+	for _, p := range f.Params() {
+		write(p.Hash())
+	}
+
+	// Returns
+	for _, r := range f.Returns() {
+		write(r.Hash())
+	}
+
+	// StbAddr
+	write(f.StbAddr())
+
+	// AckAddr
+	write(f.AckAddr())
+
+	return adler32.Checksum(buf.Bytes())
 }
 
 func (f *Func) ParamsBufSize() int64 {

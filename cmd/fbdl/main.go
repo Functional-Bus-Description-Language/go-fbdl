@@ -65,7 +65,7 @@ func main() {
 	if args.Main != "" {
 		mainName = args.Main
 	}
-	bus, pkgsConsts, err := ins.Instantiate(packages, mainName, args.ZeroTimestamp)
+	bus, pkgsConsts, err := ins.Instantiate(packages, mainName)
 	if err != nil {
 		log.Fatalf("instantiation: %v", err)
 	}
@@ -83,7 +83,7 @@ func main() {
 	}
 
 	if bus != nil {
-		reg.Registerify(bus)
+		reg.Registerify(bus, args.NoTimestamp)
 	}
 
 	if args.DumpReg != "" {

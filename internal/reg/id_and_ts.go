@@ -1,4 +1,4 @@
-package ins
+package reg
 
 import (
 	"math"
@@ -10,9 +10,7 @@ import (
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
-// If zero is true, then the timestamp will eqaul zero.
-// If zero is false, then the timestamp  will be the bus generation timestamp.
-func timestamp(zero bool) *elem.Status {
+func timestamp() *elem.Status {
 	ts := elem.Status{}
 
 	ts.SetName("TIMESTAMP")
@@ -29,12 +27,7 @@ func timestamp(zero bool) *elem.Status {
 
 	ts.SetWidth(width)
 
-	var timestamp val.Int
-	if zero {
-		timestamp = val.Int(0)
-	} else {
-		timestamp = val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
-	}
+	timestamp := val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
 
 	dflt, err := val.BitStrFromInt(timestamp, width)
 	if err != nil {

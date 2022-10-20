@@ -11,7 +11,7 @@ type Element interface {
 	Doc() string
 	IsArray() bool
 	Count() int64
-	Hash() int64
+	Hash() uint32
 }
 
 type ConstContainer interface {

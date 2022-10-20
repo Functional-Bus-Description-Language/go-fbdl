@@ -12,10 +12,10 @@ Usage:
   fbdl [flags] [parameters] /path/to/main/fbd/file
 
 Flags:
-  -help            Display help.
-  -version         Display version.
-  -debug           Print debug messages.
-  -zero-timestamp  Zero bus timestamp. Useful for regression tests.
+  -help          Display help.
+  -version       Display version.
+  -debug         Print debug messages.
+  -no-timestamp  Don't generate bus timestamp. Useful for regression tests.
 
 Parameters:
   -main name  Name of the main bus. Useful for testbenches.
