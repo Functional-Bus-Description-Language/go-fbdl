@@ -1,0 +1,1 @@
+bus.fbd: line 2: instantiating element 's': 'static' element must have 'default' property set

@@ -47,6 +47,8 @@ func insStatic(typeChain []prs.Element) (*elem.Static, error) {
 			return &st, err
 		}
 		st.SetDefault(fbdlVal.MakeBitStr(dflt))
+	} else {
+		return &st, fmt.Errorf("'static' element must have 'default' property set")
 	}
 
 	return &st, nil
