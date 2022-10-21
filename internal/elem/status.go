@@ -7,18 +7,16 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 type status struct {
 	Elem
 
 	// Properties
-	Atomic  bool
-	Default val.BitStr
-	Groups  []string
-	Once    bool
-	Width   int64
+	Atomic bool
+	Groups []string
+	Once   bool
+	Width  int64
 
 	Access access.Access
 }
@@ -32,9 +30,6 @@ func (s *Status) Type() string { return "status" }
 
 func (c *Status) SetAtomic(a bool) { c.status.Atomic = a }
 func (c *Status) Atomic() bool     { return c.status.Atomic }
-
-func (c *Status) SetDefault(d val.BitStr) { c.status.Default = d }
-func (c *Status) Default() val.BitStr     { return c.status.Default }
 
 func (c *Status) SetGroups(g []string) { c.status.Groups = g }
 func (c *Status) Groups() []string     { return c.status.Groups }
@@ -63,9 +58,6 @@ func (s *Status) Hash() uint32 {
 
 	// Atomic
 	write(s.Atomic())
-
-	// Default
-	buf.Write([]byte(s.Default()))
 
 	// Groups
 	for _, g := range s.Groups() {

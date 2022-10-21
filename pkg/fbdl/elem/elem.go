@@ -127,7 +127,6 @@ type Status interface {
 	Element
 
 	Atomic() bool
-	Default() val.BitStr
 	Groups() []string
 	Once() bool
 	Width() int64
