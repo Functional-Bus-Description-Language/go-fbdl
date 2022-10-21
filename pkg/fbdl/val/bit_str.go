@@ -188,3 +188,9 @@ func (bs BitStr) Uint64() uint64 {
 
 	return u
 }
+
+// ValueLiteral returns the internal value pattern of bit string represented as a string.
+// For example, ValueLiteral for x"AB" returns AB, for b"1100" returns 1100.
+func (bs BitStr) ValueLiteral() string {
+	return string(bs[2 : len(bs)-2])
+}

@@ -33,7 +33,7 @@ func IsValidProperty(p string, t string) error {
 		// It creates some problems as not all programming languges support it.
 		"param":  []string{"groups", "range", "width"},
 		"return": []string{"groups", "width"},
-		"static": []string{"groups", "once", "width"},
+		"static": []string{"default", "groups", "once", "width"},
 		"status": []string{"atomic", "groups", "once", "width"},
 		"stream": []string{},
 	}

@@ -6,9 +6,12 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 type staticDiary struct {
+	dfltSet   bool
+	dflt      val.Value
 	groupsSet bool
 	onceSet   bool
 	widthSet  bool
@@ -38,6 +41,14 @@ func insStatic(typeChain []prs.Element) (*elem.Static, error) {
 
 	fillStaticProps(&st, diary)
 
+	if diary.dfltSet {
+		dflt, err := processDefault(st.Width(), diary.dflt)
+		if err != nil {
+			return &st, err
+		}
+		st.SetDefault(fbdlVal.MakeBitStr(dflt))
+	}
+
 	return &st, nil
 }
 
@@ -56,6 +67,12 @@ func applyStaticType(st *elem.Static, typ prs.Element, diary *staticDiary) error
 		}
 
 		switch prop.Name {
+		case "default":
+			if diary.dfltSet {
+				return fmt.Errorf(propAlreadySetMsg, "default")
+			}
+			diary.dflt = v
+			diary.dfltSet = true
 		case "groups":
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
