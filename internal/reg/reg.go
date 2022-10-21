@@ -58,7 +58,7 @@ func Registerify(bus *elem.Block, addTimestamp bool) {
 	// Ignore error, the value has been trimmed to the proper width.
 	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
 	id.SetDefault(fbdlVal.MakeBitStr(dflt))
-	bus.AddStatus(id)
+	bus.AddStatic(id)
 
 	if addTimestamp {
 		if bus.HasElement("TIMESTAMP") {
@@ -66,7 +66,7 @@ func Registerify(bus *elem.Block, addTimestamp bool) {
 		}
 		ts := timestamp()
 		ts.SetAccess(access.MakeSingle(timestampAddr, 0, busWidth))
-		bus.AddStatus(ts)
+		bus.AddStatic(ts)
 	}
 }
 
@@ -78,6 +78,7 @@ func regFunctionalities(blk *elem.Block, addr int64) int64 {
 	//addr = regGroups(blk, addr)
 	addr = regConfigs(blk, addr, &gp)
 	addr = regMasks(blk, addr)
+	addr = regStatics(blk, addr, &gp)
 	addr = regStatuses(blk, addr, &gp)
 
 	return addr
@@ -127,15 +128,46 @@ func regMasks(blk *elem.Block, addr int64) int64 {
 	return addr
 }
 
+func regStatics(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
+	statics := []*elem.Static{}
+
+	for _, st := range blk.Statics() {
+		// Omit elements that have been already registerified as group members.
+		if st.Access() != nil {
+			continue
+		}
+		statics = append(statics, st.(*elem.Static))
+	}
+
+	sortFunc := func(sts []*elem.Static) func(int, int) bool {
+		return func(i, j int) bool {
+			if sts[i].IsArray() && !sts[j].IsArray() {
+				return true
+			} else if !sts[i].IsArray() && sts[j].IsArray() {
+				return false
+			}
+
+			if sts[i].Width() > sts[j].Width() {
+				return true
+			}
+			return false
+		}
+	}
+
+	sort.SliceStable(statics, sortFunc(statics))
+
+	for _, st := range statics {
+		addr = regStatic(st, addr, gp)
+	}
+
+	return addr
+}
+
 func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	atomicSts := []*elem.Status{}
 	nonAtomicSts := []*elem.Status{}
 
 	for _, st := range blk.Statuses() {
-		// FIXME: This will fail if user defines ID or TIMESTAMP status elements.
-		if st.Name() == "ID" || st.Name() == "TIMESTAMP" {
-			continue
-		}
 		// Omit elements that have been already registerified as group members.
 		if st.Access() != nil {
 			continue

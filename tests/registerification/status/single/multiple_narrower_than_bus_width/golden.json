@@ -14,6 +14,24 @@
 	"Configs": null,
 	"Funcs": null,
 	"Masks": null,
+	"Statics": [
+		{
+			"Name": "ID",
+			"Doc": "Bus identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Default": "x\"a37905f3\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
 	"Statuses": [
 		{
 			"Name": "S1",
@@ -81,23 +99,6 @@
 				"Addr": 1,
 				"StartBit": 16,
 				"EndBit": 24
-			}
-		},
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Default": "x\"a37905f3\"",
-			"Groups": null,
-			"Once": false,
-			"Width": 32,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 0,
-				"StartBit": 0,
-				"EndBit": 31
 			}
 		}
 	],

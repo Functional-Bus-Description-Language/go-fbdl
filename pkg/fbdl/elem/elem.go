@@ -111,6 +111,17 @@ type Return interface {
 	Access() access.Access
 }
 
+type Static interface {
+	Element
+
+	Default() val.BitStr
+	Groups() []string
+	Once() bool
+	Width() int64
+
+	Access() access.Access
+}
+
 type Status interface {
 	Element
 

@@ -113,6 +113,8 @@ func insElement(pe prs.Element) fbdlElem.Element {
 		e, err = insParam(typeChain)
 	case "return":
 		e, err = insReturn(typeChain)
+	case "static":
+		e, err = insStatic(typeChain)
 	case "status":
 		e, err = insStatus(typeChain)
 	case "stream":

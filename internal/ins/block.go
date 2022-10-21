@@ -132,6 +132,8 @@ func addBlockInnerElement(blk *elem.Block, e fbdl.Element) {
 		blk.AddFunc(e)
 	case (*elem.Mask):
 		blk.AddMask(e)
+	case (*elem.Static):
+		blk.AddStatic(e)
 	case (*elem.Status):
 		blk.AddStatus(e)
 	case (*elem.Stream):

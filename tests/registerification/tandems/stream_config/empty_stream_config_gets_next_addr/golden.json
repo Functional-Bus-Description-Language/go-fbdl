@@ -32,13 +32,12 @@
 	],
 	"Funcs": null,
 	"Masks": null,
-	"Statuses": [
+	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Atomic": true,
 			"Default": "x\"59d004b4\"",
 			"Groups": null,
 			"Once": false,
@@ -51,6 +50,7 @@
 			}
 		}
 	],
+	"Statuses": null,
 	"Streams": [
 		{
 			"Name": "S",

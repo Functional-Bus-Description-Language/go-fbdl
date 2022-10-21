@@ -9,7 +9,7 @@ import (
 
 func IsBaseType(t string) bool {
 	baseTypes := [...]string{
-		"block", "bus", "config", "func", "mask", "param", "return", "status", "stream",
+		"block", "bus", "config", "func", "mask", "param", "return", "static", "status", "stream",
 	}
 
 	for i := range baseTypes {
@@ -33,6 +33,7 @@ func IsValidProperty(p string, t string) error {
 		// It creates some problems as not all programming languges support it.
 		"param":  []string{"groups", "range", "width"},
 		"return": []string{"groups", "width"},
+		"static": []string{"groups", "once", "width"},
 		"status": []string{"atomic", "groups", "once", "width"},
 		"stream": []string{},
 	}
@@ -74,6 +75,7 @@ func IsValidInnerType(it string, ot string) bool {
 		"func":   []string{"param", "return"},
 		"mask":   []string{},
 		"param":  []string{},
+		"static": []string{},
 		"status": []string{},
 		"stream": []string{"param", "return"},
 	}

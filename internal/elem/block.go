@@ -25,6 +25,7 @@ type blk struct {
 	Configs   []fbdl.Config
 	Funcs     []fbdl.Func
 	Masks     []fbdl.Mask
+	Statics   []fbdl.Static
 	Statuses  []fbdl.Status
 	Streams   []fbdl.Stream
 	Subblocks []fbdl.Block
@@ -59,6 +60,9 @@ func (b *Block) Masks() []fbdl.Mask { return b.blk.Masks }
 
 func (b *Block) AddStatus(s *Status)     { b.blk.Statuses = append(b.blk.Statuses, s) }
 func (b *Block) Statuses() []fbdl.Status { return b.blk.Statuses }
+
+func (b *Block) AddStatic(s *Static)    { b.blk.Statics = append(b.blk.Statics, s) }
+func (b *Block) Statics() []fbdl.Static { return b.blk.Statics }
 
 func (b *Block) AddStream(s *Stream)    { b.blk.Streams = append(b.blk.Streams, s) }
 func (b *Block) Streams() []fbdl.Stream { return b.blk.Streams }
@@ -96,6 +100,11 @@ func (b *Block) HasElement(name string) bool {
 	}
 	for i := range b.blk.Masks {
 		if b.blk.Masks[i].Name() == name {
+			return true
+		}
+	}
+	for i := range b.blk.Statics {
+		if b.blk.Statics[i].Name() == name {
 			return true
 		}
 	}
@@ -153,6 +162,10 @@ func (b *Block) Hash() uint32 {
 	// Masks
 	for _, m := range b.Masks() {
 		write(m.Hash())
+	}
+	// Statics
+	for _, s := range b.Statics() {
+		write(s.Hash())
 	}
 	// Statuses
 	for _, s := range b.Statuses() {

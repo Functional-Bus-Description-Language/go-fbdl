@@ -10,14 +10,13 @@ import (
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
-func timestamp() *elem.Status {
-	ts := elem.Status{}
+func timestamp() *elem.Static {
+	ts := elem.Static{}
 
 	ts.SetName("TIMESTAMP")
 	ts.SetDoc("Bus generation timestamp.")
 	ts.SetIsArray(false)
 	ts.SetCount(1)
-	ts.SetAtomic(true)
 
 	width := busWidth
 	// Limit timestamp width. 36 bits is enough, do not waste resources.
@@ -40,14 +39,13 @@ func timestamp() *elem.Status {
 }
 
 // Value generation is not yet supported.
-func id() *elem.Status {
-	id := elem.Status{}
+func id() *elem.Static {
+	id := elem.Static{}
 
 	id.SetName("ID")
 	id.SetDoc("Bus identifier.")
 	id.SetIsArray(false)
 	id.SetCount(1)
-	id.SetAtomic(true)
 
 	width := busWidth
 	// Current implementaiton uses adler32 for hash, no sense to make ID wider.

@@ -10,7 +10,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
-type st struct {
+type status struct {
 	Elem
 
 	// Properties
@@ -25,28 +25,28 @@ type st struct {
 
 // Status represents status element.
 type Status struct {
-	st
+	status
 }
 
 func (s *Status) Type() string { return "status" }
 
-func (c *Status) SetAtomic(a bool) { c.st.Atomic = a }
-func (c *Status) Atomic() bool     { return c.st.Atomic }
+func (c *Status) SetAtomic(a bool) { c.status.Atomic = a }
+func (c *Status) Atomic() bool     { return c.status.Atomic }
 
-func (c *Status) SetDefault(d val.BitStr) { c.st.Default = d }
-func (c *Status) Default() val.BitStr     { return c.st.Default }
+func (c *Status) SetDefault(d val.BitStr) { c.status.Default = d }
+func (c *Status) Default() val.BitStr     { return c.status.Default }
 
-func (c *Status) SetGroups(g []string) { c.st.Groups = g }
-func (c *Status) Groups() []string     { return c.st.Groups }
+func (c *Status) SetGroups(g []string) { c.status.Groups = g }
+func (c *Status) Groups() []string     { return c.status.Groups }
 
-func (c *Status) SetOnce(a bool) { c.st.Once = a }
-func (c *Status) Once() bool     { return c.st.Once }
+func (c *Status) SetOnce(a bool) { c.status.Once = a }
+func (c *Status) Once() bool     { return c.status.Once }
 
-func (c *Status) SetWidth(w int64) { c.st.Width = w }
-func (c *Status) Width() int64     { return c.st.Width }
+func (c *Status) SetWidth(w int64) { c.status.Width = w }
+func (c *Status) Width() int64     { return c.status.Width }
 
-func (c *Status) SetAccess(a access.Access) { c.st.Access = a }
-func (c *Status) Access() access.Access     { return c.st.Access }
+func (c *Status) SetAccess(a access.Access) { c.status.Access = a }
+func (c *Status) Access() access.Access     { return c.status.Access }
 
 func (s *Status) Hash() uint32 {
 	buf := bytes.Buffer{}
