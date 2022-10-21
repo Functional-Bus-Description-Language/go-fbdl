@@ -69,8 +69,8 @@ func IsValidProperty(p string, t string) error {
 // IsValidInnerType returns true if given inner type is valid for given outter type.
 func IsValidInnerType(it string, ot string) bool {
 	validTypes := map[string][]string{
-		"block":  []string{"block", "config", "func", "mask", "status", "stream"},
-		"bus":    []string{"block", "config", "func", "mask", "status", "stream"},
+		"block":  []string{"block", "config", "func", "mask", "static", "status", "stream"},
+		"bus":    []string{"block", "config", "func", "mask", "static", "status", "stream"},
 		"config": []string{},
 		"func":   []string{"param", "return"},
 		"mask":   []string{},
