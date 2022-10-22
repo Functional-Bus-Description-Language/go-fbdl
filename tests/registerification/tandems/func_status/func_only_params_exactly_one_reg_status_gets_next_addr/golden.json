@@ -93,7 +93,6 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Default": "",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
