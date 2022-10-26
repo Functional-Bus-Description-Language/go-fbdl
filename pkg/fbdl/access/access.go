@@ -1,12 +1,12 @@
 package access
 
 type Access interface {
-	RegCount() int64 // RegCount returns the number of occupied registers.
+	RegCount() int64 // Number of occupied registers.
 	StartAddr() int64
 	EndAddr() int64
 	StartBit() int64
 	EndBit() int64
-	Width() int64 // Width returns total width of single element.
-	FirstRegWidth() int64
-	LastRegWidth() int64
+	Width() int64         // Total width of single element.
+	StartRegWidth() int64 // Width occupied in the first register.
+	EndRegWidth() int64   // Width occupied in the last register.
 }
