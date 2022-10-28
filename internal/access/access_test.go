@@ -9,58 +9,6 @@ func init() {
 	busWidth = 32
 }
 
-func TestMakeSingle(t *testing.T) {
-	var tests = []struct {
-		baseAddr int64
-		baseBit  int64
-		width    int64
-		want     Access
-	}{
-		{0, 0, 1,
-			SingleSingle{
-				Addr:     0,
-				startBit: 0,
-				endBit:   0,
-			},
-		},
-		{1, 31, 2,
-			SingleContinuous{
-				regCount:  2,
-				startAddr: 1,
-				startBit:  31,
-				endBit:    0,
-			},
-		},
-		{2, 30, 57,
-			SingleContinuous{
-				regCount:  3,
-				startAddr: 2,
-				startBit:  30,
-				endBit:    22,
-			},
-		},
-		{3, 0, 32,
-			SingleSingle{
-				Addr:     3,
-				startBit: 0,
-				endBit:   31,
-			},
-		},
-	}
-
-	for i, test := range tests {
-		got := MakeSingle(test.baseAddr, test.baseBit, test.width)
-
-		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
-			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
-		}
-
-		if got != test.want {
-			t.Errorf("[%d] got %v, want %v", i, got, test.want)
-		}
-	}
-}
-
 func TestMakeArrayContinuous(t *testing.T) {
 	var tests = []struct {
 		startAddr int64
@@ -69,33 +17,42 @@ func TestMakeArrayContinuous(t *testing.T) {
 		width     int64
 		want      Access
 	}{
-		{0, 1, 0, 32,
-			ArrayContinuous{
-				regCount:  1,
+		{0, 1, 0, 32, ArrayContinuous{
+			ac: ac{
+				StartAddr: 0,
+				EndAddr: 0,
+				StartMask: makeMask(0, 31),
+				EndMask: makeMask(0, 31),
 				ItemCount: 1,
 				ItemWidth: 32,
-				startAddr: 0,
-				startBit:  0,
 			},
-		},
-		{1, 4, 0, 5,
-			ArrayContinuous{
-				regCount:  1,
+		}},
+		{1, 4, 0, 5, ArrayContinuous{
+			ac: ac{
+				StartAddr: 1,
+				EndAddr: 1,
+				StartMask: makeMask(0, 4),
+				EndMask: makeMask(15, 19),
 				ItemCount: 4,
 				ItemWidth: 5,
-				startAddr: 1,
-				startBit:  0,
 			},
-		},
-		{2, 2, 20, 23,
-			ArrayContinuous{
-				regCount:  3,
+		}},
+		{2, 2, 20, 23, ArrayContinuous{
+			ac: ac{
+				StartAddr: 2,
+				EndAddr: 4,
+				StartMask: makeMask(0, 4),
+				EndMask: makeMask(15, 19),
 				ItemCount: 2,
 				ItemWidth: 23,
-				startAddr: 2,
+			},
+
+			ArrayContinuous{
+				ItemCount: 2,
+				ItemWidth: 23,
 				startBit:  20,
 			},
-		},
+		}},
 		{3, 2, 20, 22,
 			ArrayContinuous{
 				regCount:  2,

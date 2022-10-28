@@ -1,9 +1,9 @@
 package reg
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 // regAtomicStatus registerifies an Atomic Status element.

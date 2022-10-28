@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
 	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
@@ -60,10 +60,11 @@ func (f *Func) ParamsStartAddr() int64 {
 		return f.fun.StbAddr
 	}
 
-	return f.fun.Params[0].Access().StartAddr()
+	return f.fun.Params[0].Access().(access.Access).StartAddr()
 }
 
 // AreAllParamsSingleSingle returns true if accesses to all parameters are of type AccessSingleSingle.
+/*
 func (f *Func) AreAllParamsSingleSingle() bool {
 	for _, p := range f.fun.Params {
 		switch p.Access().(type) {
@@ -75,6 +76,7 @@ func (f *Func) AreAllParamsSingleSingle() bool {
 	}
 	return true
 }
+*/
 
 func (f *Func) Hash() uint32 {
 	buf := bytes.Buffer{}
@@ -116,7 +118,7 @@ func (f *Func) ParamsBufSize() int64 {
 		return 0
 	}
 
-	return params[l-1].Access().EndAddr() - params[0].Access().StartAddr() + 1
+	return params[l-1].Access().(access.Access).EndAddr() - params[0].Access().(access.Access).StartAddr() + 1
 }
 
 func (f *Func) ReturnsBufSize() int64 {
@@ -127,5 +129,5 @@ func (f *Func) ReturnsBufSize() int64 {
 		return 0
 	}
 
-	return rets[l-1].Access().EndAddr() - rets[0].Access().StartAddr() + 1
+	return rets[l-1].Access().(access.Access).EndAddr() - rets[0].Access().(access.Access).StartAddr() + 1
 }

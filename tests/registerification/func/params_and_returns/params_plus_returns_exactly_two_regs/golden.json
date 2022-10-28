@@ -29,8 +29,10 @@
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 1,
-						"StartBit": 0,
-						"EndBit": 19
+						"Mask": {
+							"Start": 0,
+							"End": 19
+						}
 					}
 				},
 				{
@@ -43,8 +45,10 @@
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 1,
-						"StartBit": 20,
-						"EndBit": 31
+						"Mask": {
+							"Start": 0,
+							"End": 11
+						}
 					}
 				},
 				{
@@ -56,9 +60,11 @@
 					"Width": 4,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 2,
-						"StartBit": 0,
-						"EndBit": 3
+						"Addr": 1,
+						"Mask": {
+							"Start": 0,
+							"End": 3
+						}
 					}
 				},
 				{
@@ -70,9 +76,11 @@
 					"Width": 8,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 2,
-						"StartBit": 4,
-						"EndBit": 11
+						"Addr": 1,
+						"Mask": {
+							"Start": 0,
+							"End": 7
+						}
 					}
 				}
 			],
@@ -86,9 +94,11 @@
 					"Width": 7,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 2,
-						"StartBit": 12,
-						"EndBit": 18
+						"Addr": 1,
+						"Mask": {
+							"Start": 0,
+							"End": 6
+						}
 					}
 				},
 				{
@@ -100,14 +110,16 @@
 					"Width": 13,
 					"Access": {
 						"Strategy": "Single",
-						"Addr": 2,
-						"StartBit": 19,
-						"EndBit": 31
+						"Addr": 1,
+						"Mask": {
+							"Start": 7,
+							"End": 19
+						}
 					}
 				}
 			],
-			"StbAddr": 2,
-			"AckAddr": 2
+			"StbAddr": 1,
+			"AckAddr": 1
 		}
 	],
 	"Masks": null,
@@ -117,15 +129,17 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"5ad30478\"",
+			"Default": "x\"5ded0483\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
-				"StartBit": 0,
-				"EndBit": 31
+				"Mask": {
+					"Start": 0,
+					"End": 31
+				}
 			}
 		}
 	],
@@ -141,18 +155,20 @@
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 3,
-				"StartBit": 0,
-				"EndBit": 31
+				"Addr": 2,
+				"Mask": {
+					"Start": 0,
+					"End": 31
+				}
 			}
 		}
 	],
 	"Streams": null,
 	"Subblocks": null,
 	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 4,
-		"Own": 4
+		"Own": 3,
+		"Compact": 3,
+		"BlockAligned": 4
 	},
 	"AddrSpace": {
 		"Start": 0,

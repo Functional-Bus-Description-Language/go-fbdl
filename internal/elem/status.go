@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
+	fbdlAccess "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 type status struct {
@@ -18,7 +18,7 @@ type status struct {
 	Once   bool
 	Width  int64
 
-	Access access.Access
+	Access fbdlAccess.Access
 }
 
 // Status represents status element.
@@ -40,8 +40,8 @@ func (c *Status) Once() bool     { return c.status.Once }
 func (c *Status) SetWidth(w int64) { c.status.Width = w }
 func (c *Status) Width() int64     { return c.status.Width }
 
-func (c *Status) SetAccess(a access.Access) { c.status.Access = a }
-func (c *Status) Access() access.Access     { return c.status.Access }
+func (c *Status) SetAccess(a fbdlAccess.Access) { c.status.Access = a }
+func (c *Status) Access() fbdlAccess.Access     { return c.status.Access }
 
 func (s *Status) Hash() uint32 {
 	buf := bytes.Buffer{}
@@ -71,7 +71,7 @@ func (s *Status) Hash() uint32 {
 	write(s.Width())
 
 	// Access
-	write(hash.AccessAccess(s.Access()))
+	write(s.Access().(access.Access).Hash())
 
 	return adler32.Checksum(buf.Bytes())
 }

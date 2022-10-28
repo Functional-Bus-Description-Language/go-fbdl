@@ -20,15 +20,17 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"8cf805c5\"",
+			"Default": "x\"86b204f3\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 0,
-				"StartBit": 0,
-				"EndBit": 31
+				"Mask": {
+					"Start": 0,
+					"End": 31
+				}
 			}
 		}
 	],
@@ -45,8 +47,10 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
-				"StartBit": 0,
-				"EndBit": 19
+				"Mask": {
+					"Start": 0,
+					"End": 19
+				}
 			}
 		},
 		{
@@ -61,17 +65,19 @@
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 2,
-				"StartBit": 0,
-				"EndBit": 12
+				"Mask": {
+					"Start": 0,
+					"End": 12
+				}
 			}
 		}
 	],
 	"Streams": null,
 	"Subblocks": null,
 	"Sizes": {
-		"BlockAligned": 4,
+		"Own": 3,
 		"Compact": 3,
-		"Own": 3
+		"BlockAligned": 4
 	},
 	"AddrSpace": {
 		"Start": 0,

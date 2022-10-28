@@ -1,8 +1,8 @@
 package reg
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 // regStream registerifies a Stream element.
@@ -48,9 +48,9 @@ func regUpstream(s *elem.Stream, addr int64) int64 {
 		r.SetAccess(a)
 	}
 
-	s.SetStbAddr(returns[len(returns)-1].Access().EndAddr())
+	s.SetStbAddr(returns[len(returns)-1].Access().(access.Access).EndAddr())
 
-	lastAccess := returns[len(returns)-1].Access()
+	lastAccess := returns[len(returns)-1].Access().(access.Access)
 	if lastAccess.EndBit() < busWidth-1 {
 		addr += 1
 	}

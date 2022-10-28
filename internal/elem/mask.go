@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
+	fbdlAccess "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -21,7 +21,7 @@ type mask struct {
 	Once    bool
 	Width   int64
 
-	Access access.Access
+	Access fbdlAccess.Access
 }
 
 type Mask struct {
@@ -45,8 +45,8 @@ func (m *Mask) Once() bool     { return m.mask.Once }
 func (m *Mask) SetWidth(w int64) { m.mask.Width = w }
 func (m *Mask) Width() int64     { return m.mask.Width }
 
-func (m *Mask) SetAccess(a access.Access) { m.mask.Access = a }
-func (m *Mask) Access() access.Access     { return m.mask.Access }
+func (m *Mask) SetAccess(a fbdlAccess.Access) { m.mask.Access = a }
+func (m *Mask) Access() fbdlAccess.Access     { return m.mask.Access }
 
 func (m *Mask) Hash() uint32 {
 	buf := bytes.Buffer{}
@@ -79,7 +79,7 @@ func (m *Mask) Hash() uint32 {
 	write(m.Width())
 
 	// Access
-	write(hash.AccessAccess(m.Access()))
+	write(m.Access().(access.Access).Hash())
 
 	return adler32.Checksum(buf.Bytes())
 }

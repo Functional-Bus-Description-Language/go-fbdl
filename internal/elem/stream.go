@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
 	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
@@ -66,9 +67,9 @@ func (s *Stream) IsUpstream() bool { return !s.IsDownstream() }
 
 func (s *Stream) StartAddr() int64 {
 	if len(s.stream.Params) > 0 {
-		return s.stream.Params[0].Access().StartAddr()
+		return s.stream.Params[0].Access().(access.Access).StartAddr()
 	} else if len(s.stream.Returns) > 0 {
-		return s.stream.Returns[0].Access().StartAddr()
+		return s.stream.Returns[0].Access().(access.Access).StartAddr()
 	}
 
 	// For empty stream return strobe address.

@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
+	fbdlAccess "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 // Return represents return element.
@@ -17,7 +17,7 @@ type ret struct {
 	Groups []string
 	Width  int64
 
-	Access access.Access
+	Access fbdlAccess.Access
 }
 
 // Return represents return element.
@@ -33,8 +33,8 @@ func (r *Return) Groups() []string     { return r.ret.Groups }
 func (r *Return) SetWidth(w int64) { r.ret.Width = w }
 func (r *Return) Width() int64     { return r.ret.Width }
 
-func (r *Return) SetAccess(a access.Access) { r.ret.Access = a }
-func (r *Return) Access() access.Access     { return r.ret.Access }
+func (r *Return) SetAccess(a fbdlAccess.Access) { r.ret.Access = a }
+func (r *Return) Access() fbdlAccess.Access     { return r.ret.Access }
 
 func (r *Return) Hash() uint32 {
 	buf := bytes.Buffer{}
@@ -58,7 +58,7 @@ func (r *Return) Hash() uint32 {
 	write(r.Width())
 
 	// Access
-	write(hash.AccessAccess(r.Access()))
+	write(r.Access().(access.Access).Hash())
 
 	return adler32.Checksum(buf.Bytes())
 }

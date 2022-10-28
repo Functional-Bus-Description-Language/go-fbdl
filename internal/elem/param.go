@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
+	fbdlAccess "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 type param struct {
@@ -19,7 +19,7 @@ type param struct {
 	Groups []string
 	Width  int64
 
-	Access access.Access
+	Access fbdlAccess.Access
 }
 
 func (p *Param) Type() string { return "param" }
@@ -30,8 +30,8 @@ func (p *Param) Groups() []string     { return p.param.Groups }
 func (p *Param) SetWidth(w int64) { p.param.Width = w }
 func (p *Param) Width() int64     { return p.param.Width }
 
-func (p *Param) SetAccess(a access.Access) { p.param.Access = a }
-func (p *Param) Access() access.Access     { return p.param.Access }
+func (p *Param) SetAccess(a fbdlAccess.Access) { p.param.Access = a }
+func (p *Param) Access() fbdlAccess.Access     { return p.param.Access }
 
 // Param represents param element.
 type Param struct {
@@ -60,7 +60,7 @@ func (p *Param) Hash() uint32 {
 	write(p.Width())
 
 	// Access
-	write(hash.AccessAccess(p.Access()))
+	write(p.Access().(access.Access).Hash())
 
 	return adler32.Checksum(buf.Bytes())
 }

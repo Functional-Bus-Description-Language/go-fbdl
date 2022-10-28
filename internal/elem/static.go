@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
+	fbdlAccess "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -19,7 +19,7 @@ type static struct {
 	Once    bool
 	Width   int64
 
-	Access access.Access
+	Access fbdlAccess.Access
 }
 
 // Static represents static element.
@@ -41,8 +41,8 @@ func (c *Static) Once() bool     { return c.static.Once }
 func (c *Static) SetWidth(w int64) { c.static.Width = w }
 func (c *Static) Width() int64     { return c.static.Width }
 
-func (c *Static) SetAccess(a access.Access) { c.static.Access = a }
-func (c *Static) Access() access.Access     { return c.static.Access }
+func (c *Static) SetAccess(a fbdlAccess.Access) { c.static.Access = a }
+func (c *Static) Access() fbdlAccess.Access     { return c.static.Access }
 
 func (s *Static) Hash() uint32 {
 	buf := bytes.Buffer{}
@@ -72,7 +72,7 @@ func (s *Static) Hash() uint32 {
 	write(s.Width())
 
 	// Access
-	write(hash.AccessAccess(s.Access()))
+	write(s.Access().(access.Access).Hash())
 
 	return adler32.Checksum(buf.Bytes())
 }

@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
+	fbdlAccess "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -21,7 +21,7 @@ type cfg struct {
 	Once  bool
 	Width int64
 
-	Access access.Access
+	Access fbdlAccess.Access
 }
 
 // Config represents config element.
@@ -46,8 +46,8 @@ func (c *Config) Once() bool     { return c.cfg.Once }
 func (c *Config) SetWidth(w int64) { c.cfg.Width = w }
 func (c *Config) Width() int64     { return c.cfg.Width }
 
-func (c *Config) SetAccess(a access.Access) { c.cfg.Access = a }
-func (c *Config) Access() access.Access     { return c.cfg.Access }
+func (c *Config) SetAccess(a fbdlAccess.Access) { c.cfg.Access = a }
+func (c *Config) Access() fbdlAccess.Access     { return c.cfg.Access }
 
 func (c *Config) Hash() uint32 {
 	buf := bytes.Buffer{}
@@ -80,7 +80,7 @@ func (c *Config) Hash() uint32 {
 	write(c.Width())
 
 	// Access
-	write(hash.AccessAccess(c.Access()))
+	write(c.Access().(access.Access).Hash())
 
 	return adler32.Checksum(buf.Bytes())
 }

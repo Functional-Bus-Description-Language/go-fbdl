@@ -1,11 +1,11 @@
 package reg
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 	"log"
 	"sort"
@@ -28,20 +28,21 @@ func Registerify(bus *elem.Block, addTimestamp bool) {
 		addr += 1
 	}
 
-	sizes := access.Sizes{}
-
-	sizes.Compact = addr
-	sizes.Own = addr
+	compact := addr
+	own := addr
+	blockAligned := int64(0)
 
 	for _, sb := range bus.Subblocks() {
 		sbSizes := regBlock(sb.(*elem.Block))
-		sizes.Compact += sb.Count() * sbSizes.Compact
-		sizes.BlockAligned += sb.Count() * sbSizes.BlockAligned
+		compact += sb.Count() * sbSizes.Compact()
+		blockAligned += sb.Count() * sbSizes.BlockAligned()
 	}
 
-	sizes.BlockAligned = util.AlignToPowerOf2(sizes.BlockAligned + sizes.Own)
-
-	bus.SetSizes(sizes)
+	bus.SetSizes(
+		access.MakeSizes(
+			own, compact, util.AlignToPowerOf2(blockAligned+own),
+		),
+	)
 
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(bus, 0)
@@ -225,16 +226,19 @@ func regBlock(blk *elem.Block) access.Sizes {
 	addr := int64(0)
 
 	addr = regFunctionalities(blk, addr)
-	sizes := access.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
+	own := addr
+	compact := addr
+	blockAligned := int64(0)
 
 	for _, sb := range blk.Subblocks() {
 		b := regBlock(sb.(*elem.Block))
-		sizes.Compact += sb.Count() * b.Compact
-		sizes.BlockAligned += sb.Count() * b.BlockAligned
+		compact += sb.Count() * b.Compact()
+		blockAligned += sb.Count() * b.BlockAligned()
 	}
 
-	sizes.BlockAligned = util.AlignToPowerOf2(addr + sizes.BlockAligned)
-
+	sizes := access.MakeSizes(
+		own, compact, util.AlignToPowerOf2(addr+blockAligned),
+	)
 	blk.SetSizes(sizes)
 
 	return sizes

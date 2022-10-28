@@ -5,10 +5,9 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/access"
+	fbdlAccess "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
-
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 )
 
 type blk struct {
@@ -30,8 +29,8 @@ type blk struct {
 	Streams   []fbdl.Stream
 	Subblocks []fbdl.Block
 
-	Sizes     access.Sizes
-	AddrSpace access.AddrSpace
+	Sizes     fbdlAccess.Sizes
+	AddrSpace fbdlAccess.AddrSpace
 
 	//Groups []Group `json:"-"`
 }
@@ -70,11 +69,11 @@ func (b *Block) Streams() []fbdl.Stream { return b.blk.Streams }
 func (b *Block) AddSubblock(sb *Block)   { b.blk.Subblocks = append(b.blk.Subblocks, sb) }
 func (b *Block) Subblocks() []fbdl.Block { return b.blk.Subblocks }
 
-func (b *Block) SetSizes(s access.Sizes) { b.blk.Sizes = s }
-func (b *Block) Sizes() access.Sizes     { return b.blk.Sizes }
+func (b *Block) SetSizes(s fbdlAccess.Sizes) { b.blk.Sizes = s }
+func (b *Block) Sizes() fbdlAccess.Sizes     { return b.blk.Sizes }
 
-func (b *Block) SetAddrSpace(as access.AddrSpace) { b.blk.AddrSpace = as }
-func (b *Block) AddrSpace() access.AddrSpace      { return b.blk.AddrSpace }
+func (b *Block) SetAddrSpace(as fbdlAccess.AddrSpace) { b.blk.AddrSpace = as }
+func (b *Block) AddrSpace() fbdlAccess.AddrSpace      { return b.blk.AddrSpace }
 
 // Status returns pointer to the Status if status with given name exists
 // within the block. Otherwise it returns nil.
@@ -181,10 +180,10 @@ func (b *Block) Hash() uint32 {
 	}
 
 	// Sizes
-	write(hash.AccessSizes(b.Sizes()))
+	write(b.Sizes().(access.Sizes).Hash())
 
 	// AddrSpace
-	write(hash.AccessAddrSpace(b.AddrSpace()))
+	write(b.AddrSpace().(access.AddrSpace).Hash())
 
 	return adler32.Checksum(buf.Bytes())
 }
