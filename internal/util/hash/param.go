@@ -2,7 +2,6 @@ package hash
 
 import (
 	"bytes"
-	"encoding/binary"
 	"hash/adler32"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
@@ -11,15 +10,8 @@ import (
 func hashParam(p *elem.Param) uint32 {
 	buf := bytes.Buffer{}
 
-	write := func(data any) {
-		err := binary.Write(&buf, binary.LittleEndian, data)
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	// Elem
-	write(Hash(&p.Elem))
+	write(&buf, Hash(&p.Elem))
 
 	// Groups
 	for _, g := range p.Groups {
@@ -27,10 +19,10 @@ func hashParam(p *elem.Param) uint32 {
 	}
 
 	// Width
-	write(p.Width)
+	write(&buf, p.Width)
 
 	// Access
-	write(Hash(p.Access))
+	write(&buf, Hash(p.Access))
 
 	return adler32.Checksum(buf.Bytes())
 }

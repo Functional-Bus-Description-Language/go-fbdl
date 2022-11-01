@@ -2,7 +2,6 @@ package hash
 
 import (
 	"bytes"
-	"encoding/binary"
 	"hash/adler32"
 	"sort"
 
@@ -13,18 +12,11 @@ import (
 func hashConstContainer(c *elem.ConstContainer) uint32 {
 	buf := bytes.Buffer{}
 
-	write := func(data any) {
-		err := binary.Write(&buf, binary.LittleEndian, data)
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	// BoolConsts
 	keys := maps.Keys(c.BoolConsts)
 	sort.Strings(keys)
 	for _, key := range keys {
-		write(c.BoolConsts[key])
+		write(&buf, c.BoolConsts[key])
 	}
 
 	// BoolListConsts
@@ -33,7 +25,7 @@ func hashConstContainer(c *elem.ConstContainer) uint32 {
 	for _, key := range keys {
 		list := c.BoolListConsts[key]
 		for _, val := range list {
-			write(val)
+			write(&buf, val)
 		}
 	}
 
@@ -41,14 +33,14 @@ func hashConstContainer(c *elem.ConstContainer) uint32 {
 	keys = maps.Keys(c.FloatConsts)
 	sort.Strings(keys)
 	for _, key := range keys {
-		write(c.FloatConsts[key])
+		write(&buf, c.FloatConsts[key])
 	}
 
 	// IntConsts
 	keys = maps.Keys(c.IntConsts)
 	sort.Strings(keys)
 	for _, key := range keys {
-		write(c.IntConsts[key])
+		write(&buf, c.IntConsts[key])
 	}
 
 	// IntListConsts
@@ -57,7 +49,7 @@ func hashConstContainer(c *elem.ConstContainer) uint32 {
 	for _, key := range keys {
 		list := c.IntListConsts[key]
 		for _, val := range list {
-			write(val)
+			write(&buf, val)
 		}
 	}
 

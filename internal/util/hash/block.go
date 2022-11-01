@@ -2,7 +2,6 @@ package hash
 
 import (
 	"bytes"
-	"encoding/binary"
 	"hash/adler32"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
@@ -11,59 +10,52 @@ import (
 func hashBlock(b *elem.Block) uint32 {
 	buf := bytes.Buffer{}
 
-	write := func(data any) {
-		err := binary.Write(&buf, binary.LittleEndian, data)
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	// Elem
-	write(Hash(&b.Elem))
+	write(&buf, Hash(&b.Elem))
 
 	// Masters
-	write(b.Masters)
+	write(&buf, b.Masters)
 
 	// Width
-	write(b.Width)
+	write(&buf, b.Width)
 
 	// ConstContainer
-	write(Hash(&b.ConstContainer))
+	write(&buf, Hash(&b.ConstContainer))
 
 	// Configs
 	for _, c := range b.Configs {
-		write(Hash(c))
+		write(&buf, Hash(c))
 	}
 	// Funcs
 	for _, f := range b.Funcs {
-		write(Hash(f))
+		write(&buf, Hash(f))
 	}
 	// Masks
 	for _, m := range b.Masks {
-		write(Hash(m))
+		write(&buf, Hash(m))
 	}
 	// Statics
 	for _, s := range b.Statics {
-		write(Hash(s))
+		write(&buf, Hash(s))
 	}
 	// Statuses
 	for _, s := range b.Statuses {
-		write(Hash(s))
+		write(&buf, Hash(s))
 	}
 	// Streams
 	for _, s := range b.Streams {
-		write(Hash(s))
+		write(&buf, Hash(s))
 	}
 	// Subblocks
 	for _, s := range b.Subblocks {
-		write(Hash(s))
+		write(&buf, Hash(s))
 	}
 
 	// Sizes
-	write(Hash(b.Sizes))
+	write(&buf, Hash(b.Sizes))
 
 	// AddrSpace
-	write(Hash(b.AddrSpace))
+	write(&buf, Hash(b.AddrSpace))
 
 	return adler32.Checksum(buf.Bytes())
 }

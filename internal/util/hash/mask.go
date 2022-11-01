@@ -2,7 +2,6 @@ package hash
 
 import (
 	"bytes"
-	"encoding/binary"
 	"hash/adler32"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
@@ -11,18 +10,11 @@ import (
 func hashMask(m *elem.Mask) uint32 {
 	buf := bytes.Buffer{}
 
-	write := func(data any) {
-		err := binary.Write(&buf, binary.LittleEndian, data)
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	// Elem
-	write(Hash(&m.Elem))
+	write(&buf, Hash(&m.Elem))
 
 	// Atomic
-	write(m.Atomic)
+	write(&buf, m.Atomic)
 
 	// Default
 	buf.Write([]byte(m.Default))
@@ -33,13 +25,13 @@ func hashMask(m *elem.Mask) uint32 {
 	}
 
 	// Once
-	write(m.Once)
+	write(&buf, m.Once)
 
 	// Width
-	write(m.Width)
+	write(&buf, m.Width)
 
 	// Access
-	write(Hash(m.Access))
+	write(&buf, Hash(m.Access))
 
 	return adler32.Checksum(buf.Bytes())
 }
