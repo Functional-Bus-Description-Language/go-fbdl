@@ -14,3 +14,5 @@ type Status struct {
 
 	Access access.Access
 }
+
+func (s *Status) GroupNames() []string { return s.Groups }

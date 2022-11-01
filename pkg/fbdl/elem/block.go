@@ -23,3 +23,25 @@ type Block struct {
 	Sizes     access.Sizes
 	AddrSpace access.AddrSpace
 }
+
+func (b *Block) GroupedElems() []Groupable {
+	elemsWithGrps := []Groupable{}
+
+	for _, c := range b.Configs {
+		if len(c.Groups) > 0 {
+			elemsWithGrps = append(elemsWithGrps, c)
+		}
+	}
+	for _, m := range b.Masks {
+		if len(m.Groups) > 0 {
+			elemsWithGrps = append(elemsWithGrps, m)
+		}
+	}
+	for _, s := range b.Statuses {
+		if len(s.Groups) > 0 {
+			elemsWithGrps = append(elemsWithGrps, s)
+		}
+	}
+
+	return elemsWithGrps
+}

@@ -12,3 +12,5 @@ type Param struct {
 
 	Access access.Access
 }
+
+func (p *Param) GroupNames() []string { return p.Groups }

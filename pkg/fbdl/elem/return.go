@@ -12,3 +12,5 @@ type Return struct {
 
 	Access access.Access
 }
+
+func (r *Return) GroupNames() []string { return r.Groups }

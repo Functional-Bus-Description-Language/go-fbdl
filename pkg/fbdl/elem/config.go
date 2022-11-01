@@ -17,3 +17,5 @@ type Config struct {
 
 	Access access.Access
 }
+
+func (c *Config) GroupNames() []string { return c.Groups }

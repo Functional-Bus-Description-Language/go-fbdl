@@ -149,7 +149,7 @@ func addBlockInnerElement(blk *elem.Block, e any) {
 }
 
 func checkBlockGroups(blk *elem.Block) error {
-	elemsWithGrps := elem.Grouped(blk)
+	elemsWithGrps := blk.GroupedElems()
 
 	if len(elemsWithGrps) == 0 {
 		return nil
@@ -158,7 +158,7 @@ func checkBlockGroups(blk *elem.Block) error {
 	groups := make(map[string][]elem.Groupable)
 
 	for _, e := range elemsWithGrps {
-		grps := elem.Groups(e)
+		grps := e.GroupNames()
 		for _, g := range grps {
 			if _, ok := groups[g]; !ok {
 				groups[g] = []elem.Groupable{}
@@ -183,9 +183,9 @@ func checkBlockGroups(blk *elem.Block) error {
 
 	// Check groups order.
 	for i, e1 := range elemsWithGrps[:len(elemsWithGrps)-1] {
-		grps1 := elem.Groups(e1)
+		grps1 := e1.GroupNames()
 		for _, e2 := range elemsWithGrps[i+1:] {
-			grps2 := elem.Groups(e2)
+			grps2 := e2.GroupNames()
 			indexes := []int{}
 			for _, g1 := range grps1 {
 				for j2, g2 := range grps2 {
