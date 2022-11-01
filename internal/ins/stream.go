@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func insStream(typeChain []prs.Element) (*elem.Stream, error) {
@@ -14,7 +14,7 @@ func insStream(typeChain []prs.Element) (*elem.Stream, error) {
 		return nil, fmt.Errorf("%v", err)
 	}
 	stream := elem.Stream{}
-	stream.SetElem(e)
+	stream.Elem = e
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -31,7 +31,7 @@ func insStream(typeChain []prs.Element) (*elem.Stream, error) {
 	return &stream, nil
 }
 
-func applyStreamType(stream *elem.Stream, typ prs.Element) error {
+func applyStreamType(strm *elem.Stream, typ prs.Element) error {
 	for _, s := range typ.Symbols() {
 		pe, ok := s.(*prs.Inst)
 		if !ok {
@@ -40,19 +40,19 @@ func applyStreamType(stream *elem.Stream, typ prs.Element) error {
 
 		e := insElement(pe)
 
-		if !util.IsValidInnerType(e.Type(), "func") {
-			return fmt.Errorf(invalidInnerTypeMsg, e.Name(), e.Type(), "func")
+		if !util.IsValidInnerType(elem.Type(e), "func") {
+			return fmt.Errorf(invalidInnerTypeMsg, elem.Name(e), elem.Type(e), "func")
 		}
 
-		if stream.HasElement(e.Name()) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.Name())
+		if stream.HasElement(strm, elem.Name(e)) {
+			return fmt.Errorf(elemWithNameAlreadyInstMsg, elem.Name(e))
 		}
 
-		err := addStreamInnerElement(stream, e)
+		err := addStreamInnerElement(strm, e)
 		if err != nil {
 			return fmt.Errorf(
 				"line %d: cannot instantiate element '%s': %v",
-				pe.LineNum(), e.Name(), err,
+				pe.LineNum(), elem.Name(e), err,
 			)
 		}
 	}
@@ -60,20 +60,20 @@ func applyStreamType(stream *elem.Stream, typ prs.Element) error {
 	return nil
 }
 
-func addStreamInnerElement(stream *elem.Stream, e fbdl.Element) error {
-	if (e.Type() == "return" && len(stream.Params()) > 0) ||
-		(e.Type() == "param" && len(stream.Returns()) > 0) {
+func addStreamInnerElement(s *elem.Stream, e elem.Element) error {
+	if (elem.Type(e) == "return" && len(s.Params) > 0) ||
+		(elem.Type(e) == "param" && len(s.Returns) > 0) {
 		return fmt.Errorf(
 			"all 'stream' inner elements must be of the same base type and must be 'param' or 'return', "+
-				"'%s' base type is '%s'", e.Name(), e.Type(),
+				"'%s' base type is '%s'", elem.Name(e), elem.Type(e),
 		)
 	}
 
 	switch e := e.(type) {
 	case (*elem.Param):
-		stream.AddParam(e)
+		s.Params = append(s.Params, e)
 	case (*elem.Return):
-		stream.AddReturn(e)
+		s.Returns = append(s.Returns, e)
 	default:
 		panic("should never happen")
 	}

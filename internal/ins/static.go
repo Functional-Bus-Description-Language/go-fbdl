@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -23,7 +23,7 @@ func insStatic(typeChain []prs.Element) (*elem.Static, error) {
 		return nil, fmt.Errorf("%v", err)
 	}
 	st := elem.Static{}
-	st.SetElem(e)
+	st.Elem = e
 
 	diary := staticDiary{}
 
@@ -42,11 +42,11 @@ func insStatic(typeChain []prs.Element) (*elem.Static, error) {
 	fillStaticProps(&st, diary)
 
 	if diary.dfltSet {
-		dflt, err := processDefault(st.Width(), diary.dflt)
+		dflt, err := processDefault(st.Width, diary.dflt)
 		if err != nil {
 			return &st, err
 		}
-		st.SetDefault(fbdlVal.MakeBitStr(dflt))
+		st.Default = fbdlVal.MakeBitStr(dflt)
 	} else {
 		return &st, fmt.Errorf("'static' element must have 'default' property set")
 	}
@@ -79,19 +79,19 @@ func applyStaticType(st *elem.Static, typ prs.Element, diary *staticDiary) error
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
 			}
-			st.SetGroups(makeGroupList(v))
+			st.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "once":
 			if diary.onceSet {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
-			st.SetOnce(bool(v.(val.Bool)))
+			st.Once = bool(v.(val.Bool))
 			diary.onceSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			st.SetWidth(int64(v.(val.Int)))
+			st.Width = int64(v.(val.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")
@@ -103,6 +103,6 @@ func applyStaticType(st *elem.Static, typ prs.Element, diary *staticDiary) error
 
 func fillStaticProps(st *elem.Static, diary staticDiary) {
 	if !diary.widthSet {
-		st.SetWidth(busWidth)
+		st.Width = busWidth
 	}
 }

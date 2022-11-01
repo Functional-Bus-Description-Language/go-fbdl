@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	fbdlElem "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 const dfltBusWidth int64 = 32
@@ -93,10 +92,10 @@ func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[strin
 	return mainBus, pkgs, nil
 }
 
-func insElement(pe prs.Element) fbdlElem.Element {
+func insElement(pe prs.Element) elem.Element {
 	typeChain := resolveToBaseType(pe)
 
-	var e fbdlElem.Element
+	var e elem.Element
 	var err error
 
 	typ := typeChain[0].Type()

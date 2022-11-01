@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type statusDiary struct {
@@ -21,7 +21,7 @@ func insStatus(typeChain []prs.Element) (*elem.Status, error) {
 		return nil, fmt.Errorf("%v", err)
 	}
 	st := elem.Status{}
-	st.SetElem(e)
+	st.Elem = e
 
 	diary := statusDiary{}
 
@@ -61,25 +61,25 @@ func applyStatusType(st *elem.Status, typ prs.Element, diary *statusDiary) error
 			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
-			st.SetAtomic(bool(v.(val.Bool)))
+			st.Atomic = bool(v.(val.Bool))
 			diary.atomicSet = true
 		case "groups":
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
 			}
-			st.SetGroups(makeGroupList(v))
+			st.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "once":
 			if diary.onceSet {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
-			st.SetOnce(bool(v.(val.Bool)))
+			st.Once = bool(v.(val.Bool))
 			diary.onceSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			st.SetWidth(int64(v.(val.Int)))
+			st.Width = int64(v.(val.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")
@@ -91,9 +91,9 @@ func applyStatusType(st *elem.Status, typ prs.Element, diary *statusDiary) error
 
 func fillStatusProps(st *elem.Status, diary statusDiary) {
 	if !diary.atomicSet {
-		st.SetAtomic(true)
+		st.Atomic = true
 	}
 	if !diary.widthSet {
-		st.SetWidth(busWidth)
+		st.Width = busWidth
 	}
 }

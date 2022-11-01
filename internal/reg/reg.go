@@ -1,11 +1,13 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 	"log"
 	"sort"
@@ -14,7 +16,7 @@ import (
 var busWidth int64
 
 func Registerify(bus *elem.Block, addTimestamp bool) {
-	busWidth = bus.Width()
+	busWidth = bus.Width
 	access.Init(busWidth)
 
 	// addr is currently block internal access address, not global address.
@@ -33,40 +35,40 @@ func Registerify(bus *elem.Block, addTimestamp bool) {
 	sizes.Compact = addr
 	sizes.Own = addr
 
-	for _, sb := range bus.Subblocks() {
-		sbSizes := regBlock(sb.(*elem.Block))
-		sizes.Compact += sb.Count() * sbSizes.Compact
-		sizes.BlockAligned += sb.Count() * sbSizes.BlockAligned
+	for _, sb := range bus.Subblocks {
+		sbSizes := regBlock(sb)
+		sizes.Compact += sb.Count * sbSizes.Compact
+		sizes.BlockAligned += sb.Count * sbSizes.BlockAligned
 	}
 
 	sizes.BlockAligned = util.AlignToPowerOf2(sizes.BlockAligned + sizes.Own)
 
-	bus.SetSizes(sizes)
+	bus.Sizes = sizes
 
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(bus, 0)
 
-	if bus.HasElement("ID") {
+	if block.HasElement(bus, "ID") {
 		log.Fatalf("'ID' is reserved element name in main bus")
 	}
 	id := id()
-	id.SetAccess(access.MakeSingle(0, 0, id.Width()))
-	hash := int64(bus.Hash())
+	id.Access = access.MakeSingle(0, 0, id.Width)
+	hash := int64(hash.Hash(bus))
 	if busWidth < 32 {
 		hash = hash & ((1 << busWidth) - 1)
 	}
 	// Ignore error, the value has been trimmed to the proper width.
 	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
-	id.SetDefault(fbdlVal.MakeBitStr(dflt))
-	bus.AddStatic(id)
+	id.Default = fbdlVal.MakeBitStr(dflt)
+	bus.Statics = append(bus.Statics, id)
 
 	if addTimestamp {
-		if bus.HasElement("TIMESTAMP") {
+		if block.HasElement(bus, "TIMESTAMP") {
 			log.Fatalf("'TIMESTAMP' is reserved element name in main bus")
 		}
 		ts := timestamp()
-		ts.SetAccess(access.MakeSingle(timestampAddr, 0, busWidth))
-		bus.AddStatic(ts)
+		ts.Access = access.MakeSingle(timestampAddr, 0, busWidth)
+		bus.Statics = append(bus.Statics, ts)
 	}
 }
 
@@ -105,24 +107,24 @@ func regGroups(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 */
 
 func regFuncs(blk *elem.Block, addr int64) int64 {
-	for _, fun := range blk.Funcs() {
-		addr = regFunc(fun.(*elem.Func), addr)
+	for _, fun := range blk.Funcs {
+		addr = regFunc(fun, addr)
 	}
 
 	return addr
 }
 
 func regStreams(blk *elem.Block, addr int64) int64 {
-	for _, stream := range blk.Streams() {
-		addr = regStream(stream.(*elem.Stream), addr)
+	for _, stream := range blk.Streams {
+		addr = regStream(stream, addr)
 	}
 
 	return addr
 }
 
 func regMasks(blk *elem.Block, addr int64) int64 {
-	for _, mask := range blk.Masks() {
-		addr = regMask(mask.(*elem.Mask), addr)
+	for _, mask := range blk.Masks {
+		addr = regMask(mask, addr)
 	}
 
 	return addr
@@ -131,23 +133,23 @@ func regMasks(blk *elem.Block, addr int64) int64 {
 func regStatics(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	statics := []*elem.Static{}
 
-	for _, st := range blk.Statics() {
+	for _, st := range blk.Statics {
 		// Omit elements that have been already registerified as group members.
-		if st.Access() != nil {
+		if st.Access != nil {
 			continue
 		}
-		statics = append(statics, st.(*elem.Static))
+		statics = append(statics, st)
 	}
 
 	sortFunc := func(sts []*elem.Static) func(int, int) bool {
 		return func(i, j int) bool {
-			if sts[i].IsArray() && !sts[j].IsArray() {
+			if sts[i].IsArray && !sts[j].IsArray {
 				return true
-			} else if !sts[i].IsArray() && sts[j].IsArray() {
+			} else if !sts[i].IsArray && sts[j].IsArray {
 				return false
 			}
 
-			if sts[i].Width() > sts[j].Width() {
+			if sts[i].Width > sts[j].Width {
 				return true
 			}
 			return false
@@ -167,28 +169,28 @@ func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	atomicSts := []*elem.Status{}
 	nonAtomicSts := []*elem.Status{}
 
-	for _, st := range blk.Statuses() {
+	for _, st := range blk.Statuses {
 		// Omit elements that have been already registerified as group members.
-		if st.Access() != nil {
+		if st.Access != nil {
 			continue
 		}
 
-		if st.Atomic() {
-			atomicSts = append(atomicSts, st.(*elem.Status))
+		if st.Atomic {
+			atomicSts = append(atomicSts, st)
 		} else {
-			nonAtomicSts = append(nonAtomicSts, st.(*elem.Status))
+			nonAtomicSts = append(nonAtomicSts, st)
 		}
 	}
 
 	sortFunc := func(sts []*elem.Status) func(int, int) bool {
 		return func(i, j int) bool {
-			if sts[i].IsArray() && !sts[j].IsArray() {
+			if sts[i].IsArray && !sts[j].IsArray {
 				return true
-			} else if !sts[i].IsArray() && sts[j].IsArray() {
+			} else if !sts[i].IsArray && sts[j].IsArray {
 				return false
 			}
 
-			if sts[i].Width() > sts[j].Width() {
+			if sts[i].Width > sts[j].Width {
 				return true
 			}
 			return false
@@ -209,13 +211,13 @@ func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 }
 
 func regConfigs(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
-	for _, cfg := range blk.Configs() {
+	for _, cfg := range blk.Configs {
 		// Omit elements that have been already registerified as group members.
-		if cfg.Access() != nil {
+		if cfg.Access != nil {
 			continue
 		}
 
-		addr = regConfig(cfg.(*elem.Config), addr, gp)
+		addr = regConfig(cfg, addr, gp)
 	}
 
 	return addr
@@ -227,15 +229,15 @@ func regBlock(blk *elem.Block) access.Sizes {
 	addr = regFunctionalities(blk, addr)
 	sizes := access.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
-	for _, sb := range blk.Subblocks() {
-		b := regBlock(sb.(*elem.Block))
-		sizes.Compact += sb.Count() * b.Compact
-		sizes.BlockAligned += sb.Count() * b.BlockAligned
+	for _, sb := range blk.Subblocks {
+		b := regBlock(sb)
+		sizes.Compact += sb.Count * b.Compact
+		sizes.BlockAligned += sb.Count * b.BlockAligned
 	}
 
 	sizes.BlockAligned = util.AlignToPowerOf2(addr + sizes.BlockAligned)
 
-	blk.SetSizes(sizes)
+	blk.Sizes = sizes
 
 	return sizes
 }

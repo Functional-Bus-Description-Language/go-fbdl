@@ -1,149 +1,72 @@
 package elem
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+	"fmt"
 )
 
 type Element interface {
-	Type() string
-	Name() string
-	Doc() string
-	IsArray() bool
-	Count() int64
-	Hash() uint32
+	isElement() bool
 }
 
-type ConstContainer interface {
-	HasConsts() bool
-
-	BoolConsts() map[string]bool
-	BoolListConsts() map[string][]bool
-	IntConsts() map[string]int64
-	IntListConsts() map[string][]int64
-	StrConsts() map[string]string
+type Elem struct {
+	Name    string
+	Doc     string
+	IsArray bool
+	Count   int64
 }
 
-type Package interface {
-	ConstContainer
+func (e Elem) isElement() bool { return true }
+
+func Name(e Element) string {
+	switch e := e.(type) {
+	case *Block:
+		return e.Name
+	case *Config:
+		return e.Name
+	case *Func:
+		return e.Name
+	case *Mask:
+		return e.Name
+	case *Param:
+		return e.Name
+	case *Return:
+		return e.Name
+	case *Static:
+		return e.Name
+	case *Status:
+		return e.Name
+	case *Stream:
+		return e.Name
+	default:
+		panic(
+			fmt.Sprintf("%T is not an element", e),
+		)
+	}
 }
 
-type Block interface {
-	Element
-
-	Masters() int64
-	Width() int64
-
-	ConstContainer
-
-	Configs() []Config
-	Funcs() []Func
-	Masks() []Mask
-	Statics() []Static
-	Statuses() []Status
-	Streams() []Stream
-	Subblocks() []Block
-
-	Status(name string) Status
-
-	Sizes() access.Sizes
-	AddrSpace() access.AddrSpace
-}
-
-type Config interface {
-	Element
-
-	Atomic() bool
-	Default() val.BitStr
-	Groups() []string
-	//Range()   Range
-	Once() bool
-	Width() int64
-
-	Access() access.Access
-}
-
-type Func interface {
-	Element
-
-	Params() []Param
-	Returns() []Return
-
-	// ParamsBufSize returns size of the buffer required to store all parameters.
-	// The type of the single buffer element depends on the bus width.
-	ParamsBufSize() int64
-	// ReturnsBufSize returns size of the buffer required to store all returns.
-	// The type of the single buffer element depends on the bus width.
-	ReturnsBufSize() int64
-
-	StbAddr() int64
-	AckAddr() int64
-
-	ParamsStartAddr() int64
-}
-
-type Mask interface {
-	Element
-
-	Atomic() bool
-	Default() val.BitStr
-	Groups() []string
-	Once() bool
-	Width() int64
-
-	Access() access.Access
-}
-
-type Param interface {
-	Element
-
-	Groups() []string
-	Width() int64
-
-	Access() access.Access
-}
-
-type Return interface {
-	Element
-
-	Groups() []string
-	Width() int64
-
-	Access() access.Access
-}
-
-type Static interface {
-	Element
-
-	Default() val.BitStr
-	Groups() []string
-	Once() bool
-	Width() int64
-
-	Access() access.Access
-}
-
-type Status interface {
-	Element
-
-	Atomic() bool
-	Groups() []string
-	Once() bool
-	Width() int64
-
-	Access() access.Access
-}
-
-type Stream interface {
-	Element
-
-	Params() []Param
-	Returns() []Return
-
-	StbAddr() int64
-
-	IsDownstream() bool
-	IsUpstream() bool
-
-	StartAddr() int64
+func Type(e Element) string {
+	switch e.(type) {
+	case *Block:
+		return "block"
+	case *Config:
+		return "config"
+	case *Func:
+		return "func"
+	case *Mask:
+		return "mask"
+	case *Param:
+		return "param"
+	case *Return:
+		return "return"
+	case *Static:
+		return "static"
+	case *Status:
+		return "status"
+	case *Stream:
+		return "stream"
+	default:
+		panic(
+			fmt.Sprintf("%T is not an element", e),
+		)
+	}
 }

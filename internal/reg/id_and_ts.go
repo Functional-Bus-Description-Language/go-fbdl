@@ -4,8 +4,8 @@ import (
 	"math"
 	"time"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
@@ -13,10 +13,10 @@ import (
 func timestamp() *elem.Static {
 	ts := elem.Static{}
 
-	ts.SetName("TIMESTAMP")
-	ts.SetDoc("Bus generation timestamp.")
-	ts.SetIsArray(false)
-	ts.SetCount(1)
+	ts.Name = "TIMESTAMP"
+	ts.Doc = "Bus generation timestamp."
+	ts.IsArray = false
+	ts.Count = 1
 
 	width := busWidth
 	// Limit timestamp width. 36 bits is enough, do not waste resources.
@@ -24,7 +24,7 @@ func timestamp() *elem.Static {
 		width = 36
 	}
 
-	ts.SetWidth(width)
+	ts.Width = width
 
 	timestamp := val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
 
@@ -33,7 +33,7 @@ func timestamp() *elem.Static {
 		panic("TIMESTAMP")
 	}
 
-	ts.SetDefault(fbdlVal.MakeBitStr(dflt))
+	ts.Default = fbdlVal.MakeBitStr(dflt)
 
 	return &ts
 }
@@ -42,10 +42,10 @@ func timestamp() *elem.Static {
 func id() *elem.Static {
 	id := elem.Static{}
 
-	id.SetName("ID")
-	id.SetDoc("Bus identifier.")
-	id.SetIsArray(false)
-	id.SetCount(1)
+	id.Name = "ID"
+	id.Doc = "Bus identifier."
+	id.IsArray = false
+	id.Count = 1
 
 	width := busWidth
 	// Current implementaiton uses adler32 for hash, no sense to make ID wider.
@@ -53,7 +53,7 @@ func id() *elem.Static {
 		width = 32
 	}
 
-	id.SetWidth(width)
+	id.Width = width
 
 	return &id
 }

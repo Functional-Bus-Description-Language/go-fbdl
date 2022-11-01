@@ -2,9 +2,9 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 const propAlreadySetMsg string = "cannot set property '%s', property is already set in one of ancestor types"
@@ -37,11 +37,12 @@ func makeElem(typeChain []prs.Element) (elem.Elem, error) {
 		}
 	}
 
-	e := elem.Elem{}
-	e.SetName(name)
-	e.SetDoc(doc)
-	e.SetIsArray(isArray)
-	e.SetCount(count)
+	e := elem.Elem{
+		Name:    name,
+		Doc:     doc,
+		IsArray: isArray,
+		Count:   count,
+	}
 
 	return e, nil
 }

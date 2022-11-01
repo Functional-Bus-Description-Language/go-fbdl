@@ -2,11 +2,12 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	"golang.org/x/exp/maps"
 	"log"
 	"sort"
@@ -24,7 +25,7 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 		return nil, fmt.Errorf("%v", err)
 	}
 	blk := elem.Block{}
-	blk.SetElem(e)
+	blk.Elem = e
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -40,7 +41,7 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 
 	fillBlockProps(&blk)
 
-	err = checkBlockGroups(blk)
+	err = checkBlockGroups(&blk)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
@@ -64,15 +65,15 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 
 		switch prop.Name {
 		case "masters":
-			if blk.Masters() != 0 {
+			if blk.Masters != 0 {
 				return fmt.Errorf(propAlreadySetMsg, "masters")
 			}
-			blk.SetMasters(int64(v.(val.Int)))
+			blk.Masters = int64(v.(val.Int))
 		case "width":
-			if blk.Width() != 0 {
+			if blk.Width != 0 {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			blk.SetWidth(int64(v.(val.Int)))
+			blk.Width = int64(v.(val.Int))
 		default:
 			panic("should never happen")
 		}
@@ -80,7 +81,7 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 
 	for _, s := range typ.Symbols() {
 		if c, ok := s.(*prs.Const); ok {
-			if blk.HasConst(c.Name()) {
+			if constContainer.HasConst(blk.ConstContainer, c.Name()) {
 				return fmt.Errorf(
 					"const '%s' is already defined in one of ancestor types", c.Name(),
 				)
@@ -92,7 +93,7 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 					"cannot evaluate expression for const '%s': %v", c.Name(), err,
 				)
 			}
-			blk.AddConst(c.Name(), val)
+			constContainer.AddConst(&blk.ConstContainer, c.Name(), val)
 		}
 
 		_, ok := s.(*prs.Inst)
@@ -102,12 +103,14 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 
 		e := insElement(s.(prs.Element))
 
-		if !util.IsValidInnerType(e.Type(), "block") {
-			return fmt.Errorf(invalidInnerTypeMsg, e.Name(), e.Type(), "block")
+		if !util.IsValidInnerType(elem.Type(e), "block") {
+			return fmt.Errorf(
+				invalidInnerTypeMsg, elem.Name(e), elem.Type(e), "block",
+			)
 		}
 
-		if blk.HasElement(e.Name()) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.Name())
+		if block.HasElement(blk, elem.Name(e)) {
+			return fmt.Errorf(elemWithNameAlreadyInstMsg, elem.Name(e))
 		}
 		addBlockInnerElement(blk, e)
 	}
@@ -116,49 +119,49 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 }
 
 func fillBlockProps(blk *elem.Block) {
-	if blk.Masters() == 0 {
-		blk.SetMasters(1)
+	if blk.Masters == 0 {
+		blk.Masters = 1
 	}
-	if blk.Width() == 0 {
-		blk.SetWidth(32)
+	if blk.Width == 0 {
+		blk.Width = 32
 	}
 }
 
-func addBlockInnerElement(blk *elem.Block, e fbdl.Element) {
+func addBlockInnerElement(blk *elem.Block, e any) {
 	switch e := e.(type) {
 	case (*elem.Config):
-		blk.AddConfig(e)
+		block.AddConfig(blk, e)
 	case (*elem.Func):
-		blk.AddFunc(e)
+		block.AddFunc(blk, e)
 	case (*elem.Mask):
-		blk.AddMask(e)
+		block.AddMask(blk, e)
 	case (*elem.Static):
-		blk.AddStatic(e)
+		block.AddStatic(blk, e)
 	case (*elem.Status):
-		blk.AddStatus(e)
+		block.AddStatus(blk, e)
 	case (*elem.Stream):
-		blk.AddStream(e)
+		block.AddStream(blk, e)
 	case (*elem.Block):
-		blk.AddSubblock(e)
+		block.AddSubblock(blk, e)
 	default:
 		panic("should never happen")
 	}
 }
 
-func checkBlockGroups(blk elem.Block) error {
-	elemsWithGrps := blk.ElemsWithGroups()
+func checkBlockGroups(blk *elem.Block) error {
+	elemsWithGrps := elem.Grouped(blk)
 
 	if len(elemsWithGrps) == 0 {
 		return nil
 	}
 
-	groups := make(map[string][]fbdl.Element)
+	groups := make(map[string][]elem.Groupable)
 
 	for _, e := range elemsWithGrps {
-		grps := e.Groups()
+		grps := elem.Groups(e)
 		for _, g := range grps {
 			if _, ok := groups[g]; !ok {
-				groups[g] = []fbdl.Element{}
+				groups[g] = []elem.Groupable{}
 			}
 			groups[g] = append(groups[g], e)
 		}
@@ -166,7 +169,7 @@ func checkBlockGroups(blk elem.Block) error {
 
 	// Check for element and group names conflict.
 	for grpName := range groups {
-		if blk.HasElement(grpName) {
+		if block.HasElement(blk, grpName) {
 			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
 		}
 	}
@@ -174,15 +177,15 @@ func checkBlockGroups(blk elem.Block) error {
 	// Check for groups with single element.
 	for name, g := range groups {
 		if len(g) == 1 {
-			return fmt.Errorf("group %q has only one element '%s'", name, g[0].Name())
+			return fmt.Errorf("group %q has only one element '%s'", name, elem.Name(g[0]))
 		}
 	}
 
 	// Check groups order.
 	for i, e1 := range elemsWithGrps[:len(elemsWithGrps)-1] {
-		grps1 := e1.Groups()
+		grps1 := elem.Groups(e1)
 		for _, e2 := range elemsWithGrps[i+1:] {
-			grps2 := e2.Groups()
+			grps2 := elem.Groups(e2)
 			indexes := []int{}
 			for _, g1 := range grps1 {
 				for j2, g2 := range grps2 {
@@ -199,7 +202,7 @@ func checkBlockGroups(blk elem.Block) error {
 						"conflicting order of groups, "+
 							"group %q is after group %q in element '%s', "+
 							"but before group %q in element '%s'",
-						grps2[id], grps2[id+1], e1.Name(), grps2[id+1], e2.Name(),
+						grps2[id], grps2[id+1], elem.Name(e1), grps2[id+1], elem.Name(e2),
 					)
 				}
 				prevId = id
@@ -214,7 +217,7 @@ func checkBlockGroups(blk elem.Block) error {
 		g1 := groups[grpName1]
 		elemNames1 := make([]string, 0, len(g1))
 		for _, e := range g1 {
-			elemNames1 = append(elemNames1, e.Name())
+			elemNames1 = append(elemNames1, elem.Name(e))
 		}
 		for _, grpName2 := range grpNames {
 			g2 := groups[grpName2]
@@ -223,7 +226,7 @@ func checkBlockGroups(blk elem.Block) error {
 			}
 			elemNames2 := make([]string, 0, len(g2))
 			for _, e := range g2 {
-				elemNames2 = append(elemNames2, e.Name())
+				elemNames2 = append(elemNames2, elem.Name(e))
 			}
 			if len(elemNames1) != len(elemNames2) {
 				continue

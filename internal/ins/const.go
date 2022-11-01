@@ -1,8 +1,9 @@
 package ins
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func constifyPackages(packages prs.Packages) map[string]*elem.Package {
@@ -30,7 +31,7 @@ func constifyPkg(pkg *prs.Package) *elem.Package {
 			if err != nil {
 				panic("not yet implemented")
 			}
-			p.AddConst(c.Name(), v)
+			constContainer.AddConst(&p.ConstContainer, c.Name(), v)
 		}
 	}
 

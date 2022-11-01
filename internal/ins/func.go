@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	fbdl "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/fun"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func insFunc(typeChain []prs.Element) (*elem.Func, error) {
@@ -14,7 +14,7 @@ func insFunc(typeChain []prs.Element) (*elem.Func, error) {
 		return nil, fmt.Errorf("%v", err)
 	}
 	fun := elem.Func{}
-	fun.SetElem(e)
+	fun.Elem = e
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -31,7 +31,7 @@ func insFunc(typeChain []prs.Element) (*elem.Func, error) {
 	return &fun, nil
 }
 
-func applyFuncType(fun *elem.Func, typ prs.Element) error {
+func applyFuncType(f *elem.Func, typ prs.Element) error {
 	for _, s := range typ.Symbols() {
 		pe, ok := s.(*prs.Inst)
 		if !ok {
@@ -40,25 +40,25 @@ func applyFuncType(fun *elem.Func, typ prs.Element) error {
 
 		e := insElement(pe)
 
-		if !util.IsValidInnerType(e.Type(), "func") {
-			return fmt.Errorf(invalidInnerTypeMsg, e.Name(), e.Type(), "func")
+		if !util.IsValidInnerType(elem.Type(e), "func") {
+			return fmt.Errorf(invalidInnerTypeMsg, elem.Name(e), elem.Type(e), "func")
 		}
 
-		if fun.HasElement(e.Name()) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.Name())
+		if fun.HasElement(f, elem.Name(e)) {
+			return fmt.Errorf(elemWithNameAlreadyInstMsg, elem.Name(e))
 		}
-		addFuncInnerElement(fun, e)
+		addFuncInnerElement(f, e)
 	}
 
 	return nil
 }
 
-func addFuncInnerElement(fun *elem.Func, e fbdl.Element) {
+func addFuncInnerElement(fun *elem.Func, e elem.Element) {
 	switch e := e.(type) {
 	case (*elem.Param):
-		fun.AddParam(e)
+		fun.Params = append(fun.Params, e)
 	case (*elem.Return):
-		fun.AddReturn(e)
+		fun.Returns = append(fun.Returns, e)
 	default:
 		panic("should never happen")
 	}

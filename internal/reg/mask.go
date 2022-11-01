@@ -1,15 +1,15 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 // regMask registerifies a Mask element.
 func regMask(mask *elem.Mask, addr int64) int64 {
 	var a access.Access
 
-	if mask.IsArray() {
+	if mask.IsArray {
 		panic("not yet implemented")
 		/* Should it be implemented the same way as for Status?
 		if width == busWidth {
@@ -22,11 +22,11 @@ func regMask(mask *elem.Mask, addr int64) int64 {
 		}
 		*/
 	} else {
-		a = access.MakeSingle(addr, 0, mask.Width())
+		a = access.MakeSingle(addr, 0, mask.Width)
 	}
 	addr += a.RegCount()
 
-	mask.SetAccess(a)
+	mask.Access = a
 
 	return addr
 }

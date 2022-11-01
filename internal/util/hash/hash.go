@@ -3,12 +3,12 @@
 package hash
 
 import (
-	"bytes"
 	"encoding/binary"
-	"hash/adler32"
+	"fmt"
 	"io"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 func write(buf io.Writer, data any) {
@@ -18,34 +18,39 @@ func write(buf io.Writer, data any) {
 	}
 }
 
-func AccessSizes(sizes access.Sizes) uint32 {
-	buf := bytes.Buffer{}
-
-	write(&buf, sizes.BlockAligned)
-	write(&buf, sizes.Compact)
-	write(&buf, sizes.Own)
-
-	return adler32.Checksum(buf.Bytes())
-}
-
-func AccessAddrSpace(as access.AddrSpace) uint32 {
-	buf := bytes.Buffer{}
-
-	write(&buf, as.Start())
-	write(&buf, as.End())
-	write(&buf, as.IsArray())
-	write(&buf, as.Count())
-
-	return adler32.Checksum(buf.Bytes())
-}
-
-func AccessAccess(a access.Access) uint32 {
-	buf := bytes.Buffer{}
-
-	write(&buf, a.StartAddr())
-	write(&buf, a.EndAddr())
-	write(&buf, a.StartBit())
-	write(&buf, a.EndBit())
-
-	return adler32.Checksum(buf.Bytes())
+func Hash(data any) uint32 {
+	switch d := data.(type) {
+	case access.AddrSpaceSingle:
+		return hashAccessAddrSpace(d)
+	case access.Sizes:
+		return hashAccessSizes(d)
+	case access.Access:
+		return hashAccessAccess(d)
+	case *elem.Elem:
+		return hashElem(d)
+	case *elem.Block:
+		return hashBlock(d)
+	case *elem.Config:
+		return hashConfig(d)
+	case *elem.ConstContainer:
+		return hashConstContainer(d)
+	case *elem.Func:
+		return hashFunc(d)
+	case *elem.Mask:
+		return hashMask(d)
+	case *elem.Param:
+		return hashParam(d)
+	case *elem.Return:
+		return hashReturn(d)
+	case *elem.Static:
+		return hashStatic(d)
+	case *elem.Status:
+		return hashStatus(d)
+	case *elem.Stream:
+		return hashStream(d)
+	default:
+		panic(
+			fmt.Sprintf("Hash not implemented for %T\n", data),
+		)
+	}
 }

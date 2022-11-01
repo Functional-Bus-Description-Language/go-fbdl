@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
 type returnDiary struct {
@@ -19,7 +19,7 @@ func insReturn(typeChain []prs.Element) (*elem.Return, error) {
 		return nil, fmt.Errorf("%v", err)
 	}
 	ret := elem.Return{}
-	ret.SetElem(e)
+	ret.Elem = e
 
 	diary := returnDiary{}
 
@@ -59,13 +59,13 @@ func applyReturnType(ret *elem.Return, typ prs.Element, diary *returnDiary) erro
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
 			}
-			ret.SetGroups(makeGroupList(v))
+			ret.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			ret.SetWidth(int64(v.(val.Int)))
+			ret.Width = int64(v.(val.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")
@@ -77,6 +77,6 @@ func applyReturnType(ret *elem.Return, typ prs.Element, diary *returnDiary) erro
 
 func fillReturnProps(ret *elem.Return, diary returnDiary) {
 	if !diary.widthSet {
-		ret.SetWidth(busWidth)
+		ret.Width = busWidth
 	}
 }

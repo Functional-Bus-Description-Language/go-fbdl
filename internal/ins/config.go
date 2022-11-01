@@ -2,10 +2,10 @@ package ins
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/elem"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -25,7 +25,7 @@ func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 		return nil, err
 	}
 	cfg := elem.Config{}
-	cfg.SetElem(e)
+	cfg.Elem = e
 
 	diary := configDiary{}
 
@@ -44,11 +44,11 @@ func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 	fillConfigProps(&cfg, diary)
 
 	if diary.dfltSet {
-		dflt, err := processDefault(cfg.Width(), diary.dflt)
+		dflt, err := processDefault(cfg.Width, diary.dflt)
 		if err != nil {
 			return &cfg, err
 		}
-		cfg.SetDefault(fbdlVal.MakeBitStr(dflt))
+		cfg.Default = fbdlVal.MakeBitStr(dflt)
 	}
 
 	return &cfg, nil
@@ -73,7 +73,7 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, "atomic")
 			}
-			cfg.SetAtomic(bool(v.(val.Bool)))
+			cfg.Atomic = (bool(v.(val.Bool)))
 			diary.atomicSet = true
 		case "default":
 			if diary.dfltSet {
@@ -87,19 +87,19 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
 			}
-			cfg.SetGroups(makeGroupList(v))
+			cfg.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "once":
 			if diary.onceSet {
 				return fmt.Errorf(propAlreadySetMsg, "once")
 			}
-			cfg.SetOnce(bool(v.(val.Bool)))
+			cfg.Once = bool(v.(val.Bool))
 			diary.onceSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
-			cfg.SetWidth(int64(v.(val.Int)))
+			cfg.Width = int64(v.(val.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")
@@ -111,9 +111,9 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 
 func fillConfigProps(cfg *elem.Config, diary configDiary) {
 	if !diary.atomicSet {
-		cfg.SetAtomic(true)
+		cfg.Atomic = true
 	}
 	if !diary.widthSet {
-		cfg.SetWidth(busWidth)
+		cfg.Width = busWidth
 	}
 }
