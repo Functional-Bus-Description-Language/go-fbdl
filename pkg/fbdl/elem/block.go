@@ -2,6 +2,7 @@ package elem
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/addrSpace"
 )
 
 type Block struct {
@@ -21,7 +22,7 @@ type Block struct {
 	Subblocks []*Block
 
 	Sizes     access.Sizes
-	AddrSpace access.AddrSpace
+	AddrSpace addrSpace.AddrSpace
 }
 
 func (b *Block) GroupedElems() []Groupable {
@@ -44,4 +45,10 @@ func (b *Block) GroupedElems() []Groupable {
 	}
 
 	return elemsWithGrps
+}
+
+// StartAddr returns block start address.
+// In case of array of blocks it returns the start address of the first block.
+func (b *Block) StartAddr() int64 {
+	return addrSpace.Start(b.AddrSpace)
 }

@@ -60,7 +60,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"6a2105fb\"",
+			"Default": "x\"69c505ce\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

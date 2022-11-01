@@ -38,7 +38,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"82ce0677\"",
+			"Default": "x\"8272064a\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

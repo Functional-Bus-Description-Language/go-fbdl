@@ -61,7 +61,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"43a80387\"",
+			"Default": "x\"4370036c\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

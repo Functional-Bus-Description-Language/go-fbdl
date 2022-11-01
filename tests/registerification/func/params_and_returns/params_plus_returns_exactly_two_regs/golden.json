@@ -117,7 +117,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"5ad30478\"",
+			"Default": "x\"5a77044b\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

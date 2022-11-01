@@ -20,7 +20,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"8cf805c5\"",
+			"Default": "x\"8c9c0598\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

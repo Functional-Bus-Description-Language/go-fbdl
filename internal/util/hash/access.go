@@ -17,17 +17,6 @@ func hashAccessSizes(sizes access.Sizes) uint32 {
 	return adler32.Checksum(buf.Bytes())
 }
 
-func hashAccessAddrSpace(as access.AddrSpace) uint32 {
-	buf := bytes.Buffer{}
-
-	write(&buf, as.Start())
-	write(&buf, as.End())
-	write(&buf, as.IsArray())
-	write(&buf, as.Count())
-
-	return adler32.Checksum(buf.Bytes())
-}
-
 func hashAccessAccess(a access.Access) uint32 {
 	buf := bytes.Buffer{}
 

@@ -1,7 +1,7 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/addrSpace"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 	"sort"
 	"strings"
@@ -16,13 +16,13 @@ func assignGlobalAccessAddresses(bus *elem.Block, baseAddr int64) {
 
 func assignGlobalAccessAddressesBlockAlign(blk *elem.Block, baseAddr int64) {
 	if blk.IsArray {
-		blk.AddrSpace = access.MakeAddrSpaceArray(
-			baseAddr, int64(blk.Count), blk.Sizes.BlockAligned,
-		)
+		blk.AddrSpace = addrSpace.Array{
+			Start: baseAddr, Count: int64(blk.Count), BlockSize: blk.Sizes.BlockAligned,
+		}
 	} else {
-		blk.AddrSpace = access.MakeAddrSpaceSingle(
-			baseAddr, baseAddr+blk.Sizes.BlockAligned-1,
-		)
+		blk.AddrSpace = addrSpace.Single{
+			Start: baseAddr, End: baseAddr + blk.Sizes.BlockAligned - 1,
+		}
 	}
 
 	if len(blk.Subblocks) == 0 {
@@ -50,7 +50,7 @@ func assignGlobalAccessAddressesBlockAlign(blk *elem.Block, baseAddr int64) {
 	}
 	sort.Slice(blk.Subblocks, sortFunc)
 
-	subblockBaseAddr := blk.AddrSpace.End() + 1
+	subblockBaseAddr := addrSpace.End(blk.AddrSpace) + 1
 	// Iterate subblocks in decreasing size order.
 	for i := len(blk.Subblocks) - 1; i >= 0; i-- {
 		sb := blk.Subblocks[i]

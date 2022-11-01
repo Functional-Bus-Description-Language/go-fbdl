@@ -8,6 +8,7 @@ import (
 	"io"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/addrSpace"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
@@ -20,8 +21,8 @@ func write(buf io.Writer, data any) {
 
 func Hash(data any) uint32 {
 	switch d := data.(type) {
-	case access.AddrSpaceSingle:
-		return hashAccessAddrSpace(d)
+	case addrSpace.AddrSpace:
+		return hashAddrSpace(d)
 	case access.Sizes:
 		return hashAccessSizes(d)
 	case access.Access:
