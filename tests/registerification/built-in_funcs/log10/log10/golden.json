@@ -1,0 +1,80 @@
+{
+	"Name": "Main",
+	"Doc": "",
+	"IsArray": false,
+	"Count": 1,
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"FloatConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": null,
+	"Funcs": null,
+	"Masks": null,
+	"Statics": [
+		{
+			"Name": "ID",
+			"Doc": "Bus identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Default": "x\"461f0397\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
+	"Statuses": [
+		{
+			"Name": "s_int",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"Once": false,
+			"Width": 3,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"StartBit": 4,
+				"EndBit": 6
+			}
+		},
+		{
+			"Name": "s_float",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"Once": false,
+			"Width": 4,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"StartBit": 0,
+				"EndBit": 3
+			}
+		}
+	],
+	"Streams": null,
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 2,
+		"Compact": 2,
+		"Own": 2
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 1
+	}
+}

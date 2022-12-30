@@ -181,6 +181,8 @@ func (c Call) Eval() (val.Value, error) {
 		return evalFloor(c)
 	case "log2":
 		return evalLog2(c)
+	case "log10":
+		return evalLog10(c)
 	}
 
 	panic("should never happen")

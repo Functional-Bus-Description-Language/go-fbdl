@@ -11,11 +11,11 @@ import (
 // and that the number of arguments for given call is valid.
 func assertCall(c Call) error {
 	validFuncNames := map[string]bool{
-		"ceil": true, "floor": true, "log2": true,
+		"ceil": true, "floor": true, "log2": true, "log10": true,
 	}
 
 	validArgCount := map[string]int{
-		"ceil": 1, "floor": 1, "log2": 1,
+		"ceil": 1, "floor": 1, "log2": 1, "log10": 1,
 	}
 
 	if ok := validFuncNames[c.funcName]; !ok {
@@ -92,6 +92,36 @@ func evalLog2(c Call) (val.Value, error) {
 	}
 
 	r := math.Log2(f)
+	if r == float64(int64(r)) {
+		return val.Int(int64(r)), nil
+	}
+
+	return val.Float(r), nil
+}
+
+func evalLog10(c Call) (val.Value, error) {
+	arg, err := c.args[0].Eval()
+	if err != nil {
+		return nil, fmt.Errorf("log10 argument evaluation: %v", err)
+	}
+
+	argType := "unknown"
+	f := float64(0.0)
+
+	switch arg := arg.(type) {
+	case val.Int:
+		argType = "int"
+		f = float64(arg)
+	case val.Float:
+		argType = "float"
+		f = float64(arg)
+	}
+
+	if argType != "int" && argType != "float" {
+		return nil, fmt.Errorf("cannot evaluate log10 for argument of %s type", argType)
+	}
+
+	r := math.Log10(f)
 	if r == float64(int64(r)) {
 		return val.Int(int64(r)), nil
 	}
