@@ -1,0 +1,6 @@
+const int = 8
+const float = 15.8
+
+Main bus
+	s_int status; width = log2(int)
+	s_float status; width = ceil(log2(float))
