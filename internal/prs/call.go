@@ -11,11 +11,11 @@ import (
 // and that the number of arguments for given call is valid.
 func assertCall(c Call) error {
 	validFuncNames := map[string]bool{
-		"ceil": true, "log2": true,
+		"ceil": true, "floor": true, "log2": true,
 	}
 
 	validArgCount := map[string]int{
-		"ceil": 1, "log2": 1,
+		"ceil": 1, "floor": 1, "log2": 1,
 	}
 
 	if ok := validFuncNames[c.funcName]; !ok {
@@ -49,6 +49,24 @@ func evalCeil(c Call) (val.Value, error) {
 	}
 
 	return val.Int(int64(math.Ceil(f))), nil
+}
+
+func evalFloor(c Call) (val.Value, error) {
+	arg, err := c.args[0].Eval()
+	if err != nil {
+		return nil, fmt.Errorf("floor argument evaluation: %v", err)
+	}
+
+	f := float64(0.0)
+
+	switch arg := arg.(type) {
+	case val.Int:
+		return arg, nil
+	case val.Float:
+		f = float64(arg)
+	}
+
+	return val.Int(int64(math.Floor(f))), nil
 }
 
 func evalLog2(c Call) (val.Value, error) {

@@ -177,6 +177,8 @@ func (c Call) Eval() (val.Value, error) {
 	switch c.funcName {
 	case "ceil":
 		return evalCeil(c)
+	case "floor":
+		return evalFloor(c)
 	case "log2":
 		return evalLog2(c)
 	}
