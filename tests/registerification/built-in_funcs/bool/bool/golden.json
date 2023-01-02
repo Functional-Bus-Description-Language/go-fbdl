@@ -11,7 +11,59 @@
 	"IntConsts": null,
 	"IntListConsts": null,
 	"StrConsts": null,
-	"Configs": null,
+	"Configs": [
+		{
+			"Name": "c1",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": false,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		},
+		{
+			"Name": "c2",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		},
+		{
+			"Name": "c3",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
 	"Funcs": null,
 	"Masks": null,
 	"Statics": [
@@ -20,7 +72,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"44ee03c6\"",
+			"Default": "x\"716b0697\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
@@ -32,49 +84,16 @@
 			}
 		}
 	],
-	"Statuses": [
-		{
-			"Name": "s_int",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Groups": null,
-			"Once": false,
-			"Width": 1,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 1,
-				"StartBit": 3,
-				"EndBit": 3
-			}
-		},
-		{
-			"Name": "s_float",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Groups": null,
-			"Once": false,
-			"Width": 3,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 1,
-				"StartBit": 0,
-				"EndBit": 2
-			}
-		}
-	],
+	"Statuses": null,
 	"Streams": null,
 	"Subblocks": null,
 	"Sizes": {
-		"BlockAligned": 2,
-		"Compact": 2,
-		"Own": 2
+		"BlockAligned": 4,
+		"Compact": 4,
+		"Own": 4
 	},
 	"AddrSpace": {
 		"Start": 0,
-		"End": 1
+		"End": 3
 	}
 }

@@ -175,6 +175,8 @@ type Call struct {
 
 func (c Call) Eval() (val.Value, error) {
 	switch c.funcName {
+	case "bool":
+		return evalBool(c)
 	case "ceil":
 		return evalCeil(c)
 	case "floor":

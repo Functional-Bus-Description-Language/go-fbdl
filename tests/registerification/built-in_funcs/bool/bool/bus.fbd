@@ -1,0 +1,4 @@
+Main bus
+	c1 config; atomic = bool(0)
+	c2 config; atomic = bool(-1)
+	c3 config; atomic = bool(7)

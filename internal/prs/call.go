@@ -11,11 +11,11 @@ import (
 // and that the number of arguments for given call is valid.
 func assertCall(c Call) error {
 	validFuncNames := map[string]bool{
-		"ceil": true, "floor": true, "log2": true, "log10": true,
+		"bool": true, "ceil": true, "floor": true, "log2": true, "log10": true,
 	}
 
 	validArgCount := map[string]int{
-		"ceil": 1, "floor": 1, "log2": 1, "log10": 1,
+		"bool": 1, "ceil": 1, "floor": 1, "log2": 1, "log10": 1,
 	}
 
 	if ok := validFuncNames[c.funcName]; !ok {
@@ -31,6 +31,23 @@ func assertCall(c Call) error {
 	}
 
 	return nil
+}
+
+func evalBool(c Call) (val.Value, error) {
+	arg, err := c.args[0].Eval()
+	if err != nil {
+		return nil, fmt.Errorf("bool argument evaluation: %v", err)
+	}
+
+	switch arg := arg.(type) {
+	case val.Int:
+		if arg != 0 {
+			return val.Bool(true), nil
+		}
+		return val.Bool(false), nil
+	}
+
+	return nil, fmt.Errorf("invalid argument type '%s' for bool function", arg.Type())
 }
 
 func evalCeil(c Call) (val.Value, error) {
