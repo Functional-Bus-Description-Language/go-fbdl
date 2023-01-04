@@ -5,11 +5,11 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
-// regFunc registerifies a Func element.
-func regFunc(fun *elem.Func, addr int64) int64 {
+// regProc registerifies a Proc element.
+func regProc(proc *elem.Proc, addr int64) int64 {
 	var a access.Access
 
-	params := fun.Params
+	params := proc.Params
 	baseBit := int64(0)
 	for _, p := range params {
 		if p.IsArray {
@@ -30,10 +30,10 @@ func regFunc(fun *elem.Func, addr int64) int64 {
 	}
 
 	if len(params) == 0 {
-		fun.StbAddr = addr
+		proc.StbAddr = addr
 		//addr += 1
 	} else {
-		fun.StbAddr = params[len(params)-1].Access.EndAddr()
+		proc.StbAddr = params[len(params)-1].Access.EndAddr()
 		// If the last register is not fully occupied go to next address.
 		// TODO: This is a potential place for adding a gap struct instance
 		// for further address space optimization.
@@ -45,7 +45,7 @@ func regFunc(fun *elem.Func, addr int64) int64 {
 		*/
 	}
 
-	returns := fun.Returns
+	returns := proc.Returns
 	for _, r := range returns {
 		if r.IsArray {
 			a = access.MakeArrayContinuous(r.Count, addr, baseBit, r.Width)
@@ -65,7 +65,7 @@ func regFunc(fun *elem.Func, addr int64) int64 {
 	}
 
 	if len(returns) > 0 {
-		fun.AckAddr = returns[len(returns)-1].Access.EndAddr()
+		proc.AckAddr = returns[len(returns)-1].Access.EndAddr()
 	}
 
 	if len(params) == 0 && len(returns) == 0 {

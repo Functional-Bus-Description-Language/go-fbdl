@@ -2,9 +2,9 @@
 # Params occupy more than one register, returns occupy less than one register.
 # The sum of all widths is exactly two registers.
 # StbAddr and AckAddr must be equal.
-# Element after the func must get next address.
+# Element after the proc must get next address.
 Main bus
-	F func
+	P proc
 		p1 param; width = 20
 		p2 param; width = 12
 		p3 param; width = 4

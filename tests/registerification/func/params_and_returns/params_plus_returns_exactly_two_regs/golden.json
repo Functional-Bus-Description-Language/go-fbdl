@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "All params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nStbAddr and AckAddr must be equal.\nElement after the func must get next address.",
+	"Doc": "All params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nStbAddr and AckAddr must be equal.\nElement after the proc must get next address.",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -12,9 +12,10 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": [
+	"Masks": null,
+	"Procs": [
 		{
-			"Name": "F",
+			"Name": "P",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -110,14 +111,13 @@
 			"AckAddr": 2
 		}
 	],
-	"Masks": null,
 	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"5a77044b\"",
+			"Default": "x\"5c760415\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

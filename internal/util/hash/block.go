@@ -26,13 +26,13 @@ func hashBlock(b *elem.Block) uint32 {
 	for _, c := range b.Configs {
 		write(&buf, Hash(c))
 	}
-	// Funcs
-	for _, f := range b.Funcs {
-		write(&buf, Hash(f))
-	}
 	// Masks
 	for _, m := range b.Masks {
 		write(&buf, Hash(m))
+	}
+	// Procs
+	for _, p := range b.Procs {
+		write(&buf, Hash(p))
 	}
 	// Statics
 	for _, s := range b.Statics {

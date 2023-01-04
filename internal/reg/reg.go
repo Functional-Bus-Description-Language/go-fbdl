@@ -75,7 +75,7 @@ func Registerify(bus *elem.Block, addTimestamp bool) {
 func regFunctionalities(blk *elem.Block, addr int64) int64 {
 	gp := gap.Pool{}
 
-	addr = regFuncs(blk, addr)
+	addr = regProcs(blk, addr)
 	addr = regStreams(blk, addr)
 	//addr = regGroups(blk, addr)
 	addr = regConfigs(blk, addr, &gp)
@@ -106,9 +106,9 @@ func regGroups(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 }
 */
 
-func regFuncs(blk *elem.Block, addr int64) int64 {
-	for _, fun := range blk.Funcs {
-		addr = regFunc(fun, addr)
+func regProcs(blk *elem.Block, addr int64) int64 {
+	for _, fun := range blk.Procs {
+		addr = regProc(fun, addr)
 	}
 
 	return addr

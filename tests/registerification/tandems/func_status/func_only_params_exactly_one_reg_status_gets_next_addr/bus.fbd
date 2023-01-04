@@ -1,6 +1,6 @@
-# Status right after the func must get next address when func occupies exactly one register and has only params.
+# Status right after the proc must get next address when proc occupies exactly one register and has only params.
 Main bus
-	F func
+	P proc
 		a param; width = 28
 		b param; width = 3
 		c param; width = 1

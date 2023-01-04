@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Status right after the func must get new address even if there are only returns and there is enough space for the status.\nIn such case status cannot be put into the func register as this would lead to spurious function acknowledgements during status read.",
+	"Doc": "Status right after the proc must get new address even if there are only returns and there is enough space for the status.\nIn such case status cannot be put into the proc register as this would lead to spurious procedure acknowledgements during status read.",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -12,9 +12,10 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": [
+	"Masks": null,
+	"Procs": [
 		{
-			"Name": "F",
+			"Name": "P",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -39,14 +40,13 @@
 			"AckAddr": 1
 		}
 	],
-	"Masks": null,
 	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"7a5905a3\"",
+			"Default": "x\"5d2c04e2\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

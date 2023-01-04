@@ -1,5 +1,5 @@
-# Config right after the func must get new address even if the func has no params and returns.
-# In such case config cannot be put into the func register as this would lead to spurious function strobes during config write.
+# Config right after the proc must get new address even if the proc has no params and returns.
+# In such case config cannot be put into the proc register as this would lead to spurious procedure strobes during config write.
 Main bus
-	F func
+	P proc
 	C config

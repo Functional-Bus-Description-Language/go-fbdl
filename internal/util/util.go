@@ -9,7 +9,7 @@ import (
 
 func IsBaseType(t string) bool {
 	baseTypes := [...]string{
-		"block", "bus", "config", "func", "mask", "param", "return", "static", "status", "stream",
+		"block", "bus", "config", "mask", "param", "proc", "return", "static", "status", "stream",
 	}
 
 	for i := range baseTypes {
@@ -27,11 +27,11 @@ func IsValidProperty(p string, t string) error {
 		"block":  []string{},
 		"bus":    []string{"masters", "width"},
 		"config": []string{"atomic", "default", "groups", "range", "once", "width"},
-		"func":   []string{},
 		"mask":   []string{"atomic", "default", "groups", "once", "width"},
 		// TODO: Decide if "default" should be possible for param.
 		// It creates some problems as not all programming languges support it.
 		"param":  []string{"groups", "range", "width"},
+		"proc":   []string{},
 		"return": []string{"groups", "width"},
 		"static": []string{"default", "groups", "once", "width"},
 		"status": []string{"atomic", "groups", "once", "width"},
@@ -69,12 +69,13 @@ func IsValidProperty(p string, t string) error {
 // IsValidInnerType returns true if given inner type is valid for given outter type.
 func IsValidInnerType(it string, ot string) bool {
 	validTypes := map[string][]string{
-		"block":  []string{"block", "config", "func", "mask", "static", "status", "stream"},
-		"bus":    []string{"block", "config", "func", "mask", "static", "status", "stream"},
+		"block":  []string{"block", "config", "mask", "proc", "static", "status", "stream"},
+		"bus":    []string{"block", "config", "mask", "proc", "static", "status", "stream"},
 		"config": []string{},
-		"func":   []string{"param", "return"},
 		"mask":   []string{},
 		"param":  []string{},
+		"proc":   []string{"param", "return"},
+		"return": []string{},
 		"static": []string{},
 		"status": []string{},
 		"stream": []string{"param", "return"},

@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Returns fitting single register must get the same address.\nElement after the func must get the next address.",
+	"Doc": "Returns fitting single register must get the same address.\nElement after the proc must get the next address.",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -12,9 +12,10 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": [
+	"Masks": null,
+	"Procs": [
 		{
-			"Name": "F",
+			"Name": "P",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -53,14 +54,13 @@
 			"AckAddr": 1
 		}
 	],
-	"Masks": null,
 	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"6d8d05e0\"",
+			"Default": "x\"73a305e3\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

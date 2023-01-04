@@ -1,8 +1,8 @@
-# Config right after the func must get new address even if the last func register has only returns.
-# In such case config cannot be put into the last func register as config is readable.
+# Config right after the proc must get new address even if the last proc register has only returns.
+# In such case config cannot be put into the last proc register as config is readable.
 # A config read would lead to spurious acknowledgement generation.
 Main bus
-	F func
+	P proc
 		p1 param; width = 30
 		p2 param; width = 2
 		r return; width = 8

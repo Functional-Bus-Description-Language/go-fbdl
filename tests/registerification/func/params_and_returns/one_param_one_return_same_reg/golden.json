@@ -12,9 +12,10 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": [
+	"Masks": null,
+	"Procs": [
 		{
-			"Name": "F",
+			"Name": "P",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -54,14 +55,13 @@
 			"AckAddr": 1
 		}
 	],
-	"Masks": null,
 	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"4370036c\"",
+			"Default": "x\"3f970325\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

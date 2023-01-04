@@ -1,6 +1,6 @@
-# Status right after the func must get new address even if there are only returns and there is enough space for the status.
-# In such case status cannot be put into the func register as this would lead to spurious function acknowledgements during status read.
+# Status right after the proc must get new address even if there are only returns and there is enough space for the status.
+# In such case status cannot be put into the proc register as this would lead to spurious procedure acknowledgements during status read.
 Main bus
-	F func
+	P proc
 		r return; width = 8
 	S status; width = 4

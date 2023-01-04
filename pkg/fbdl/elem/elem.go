@@ -23,11 +23,11 @@ func Name(e Element) string {
 		return e.Name
 	case *Config:
 		return e.Name
-	case *Func:
-		return e.Name
 	case *Mask:
 		return e.Name
 	case *Param:
+		return e.Name
+	case *Proc:
 		return e.Name
 	case *Return:
 		return e.Name
@@ -50,12 +50,12 @@ func Type(e Element) string {
 		return "block"
 	case *Config:
 		return "config"
-	case *Func:
-		return "func"
 	case *Mask:
 		return "mask"
 	case *Param:
 		return "param"
+	case *Proc:
+		return "proc"
 	case *Return:
 		return "return"
 	case *Static:

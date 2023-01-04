@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/fun"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/proc"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
-func insFunc(typeChain []prs.Element) (*elem.Func, error) {
+func insProc(typeChain []prs.Element) (*elem.Proc, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	fun := elem.Func{}
-	fun.Elem = e
+	proc := elem.Proc{}
+	proc.Elem = e
 
 	tci := typeChainIter(typeChain)
 	for {
@@ -22,16 +22,16 @@ func insFunc(typeChain []prs.Element) (*elem.Func, error) {
 		if !ok {
 			break
 		}
-		err := applyFuncType(&fun, typ)
+		err := applyProcType(&proc, typ)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
 	}
 
-	return &fun, nil
+	return &proc, nil
 }
 
-func applyFuncType(f *elem.Func, typ prs.Element) error {
+func applyProcType(p *elem.Proc, typ prs.Element) error {
 	for _, s := range typ.Symbols() {
 		pe, ok := s.(*prs.Inst)
 		if !ok {
@@ -40,25 +40,25 @@ func applyFuncType(f *elem.Func, typ prs.Element) error {
 
 		e := insElement(pe)
 
-		if !util.IsValidInnerType(elem.Type(e), "func") {
-			return fmt.Errorf(invalidInnerTypeMsg, elem.Name(e), elem.Type(e), "func")
+		if !util.IsValidInnerType(elem.Type(e), "proc") {
+			return fmt.Errorf(invalidInnerTypeMsg, elem.Name(e), elem.Type(e), "proc")
 		}
 
-		if fun.HasElement(f, elem.Name(e)) {
+		if proc.HasElement(p, elem.Name(e)) {
 			return fmt.Errorf(elemWithNameAlreadyInstMsg, elem.Name(e))
 		}
-		addFuncInnerElement(f, e)
+		addProcInnerElement(p, e)
 	}
 
 	return nil
 }
 
-func addFuncInnerElement(fun *elem.Func, e elem.Element) {
+func addProcInnerElement(p *elem.Proc, e elem.Element) {
 	switch e := e.(type) {
 	case (*elem.Param):
-		fun.Params = append(fun.Params, e)
+		p.Params = append(p.Params, e)
 	case (*elem.Return):
-		fun.Returns = append(fun.Returns, e)
+		p.Returns = append(p.Returns, e)
 	default:
 		panic("should never happen")
 	}

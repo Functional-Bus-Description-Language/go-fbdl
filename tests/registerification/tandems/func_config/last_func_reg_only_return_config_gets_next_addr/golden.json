@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Config right after the func must get new address even if the last func register has only returns.\nIn such case config cannot be put into the last func register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
+	"Doc": "Config right after the proc must get new address even if the last proc register has only returns.\nIn such case config cannot be put into the last proc register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -30,9 +30,10 @@
 			}
 		}
 	],
-	"Funcs": [
+	"Masks": null,
+	"Procs": [
 		{
-			"Name": "F",
+			"Name": "P",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -86,14 +87,13 @@
 			"AckAddr": 2
 		}
 	],
-	"Masks": null,
 	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"616104ae\"",
+			"Default": "x\"605a04f4\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

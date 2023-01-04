@@ -12,8 +12,8 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": null,
 	"Masks": null,
+	"Procs": null,
 	"Statics": [
 		{
 			"Name": "ID",

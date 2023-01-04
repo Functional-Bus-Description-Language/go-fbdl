@@ -104,12 +104,12 @@ func insElement(pe prs.Element) elem.Element {
 		e, err = insBlock(typeChain)
 	case "config":
 		e, err = insConfig(typeChain)
-	case "func":
-		e, err = insFunc(typeChain)
 	case "mask":
 		e, err = insMask(typeChain)
 	case "param":
 		e, err = insParam(typeChain)
+	case "proc":
+		e, err = insProc(typeChain)
 	case "return":
 		e, err = insReturn(typeChain)
 	case "static":

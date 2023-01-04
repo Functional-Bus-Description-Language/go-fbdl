@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Status right after the func must get next address when func occupies exactly one register and has only params.",
+	"Doc": "Status right after the proc must get next address when proc occupies exactly one register and has only params.",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -12,9 +12,10 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
-	"Funcs": [
+	"Masks": null,
+	"Procs": [
 		{
-			"Name": "F",
+			"Name": "P",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -67,14 +68,13 @@
 			"AckAddr": 0
 		}
 	],
-	"Masks": null,
 	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"508f050e\"",
+			"Default": "x\"5b3e0597\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

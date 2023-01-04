@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Config right after the func must get new address even if the func has no params and returns.\nIn such case config cannot be put into the func register as this would lead to spurious function strobes during config write.",
+	"Doc": "Config right after the proc must get new address even if the proc has no params and returns.\nIn such case config cannot be put into the proc register as this would lead to spurious procedure strobes during config write.",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -30,9 +30,10 @@
 			}
 		}
 	],
-	"Funcs": [
+	"Masks": null,
+	"Procs": [
 		{
-			"Name": "F",
+			"Name": "P",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -42,14 +43,13 @@
 			"AckAddr": 0
 		}
 	],
-	"Masks": null,
 	"Statics": [
 		{
 			"Name": "ID",
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"5bf80458\"",
+			"Default": "x\"59b7046b\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

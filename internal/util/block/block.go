@@ -5,8 +5,8 @@ import (
 )
 
 func AddConfig(b *elem.Block, c *elem.Config)  { b.Configs = append(b.Configs, c) }
-func AddFunc(b *elem.Block, f *elem.Func)      { b.Funcs = append(b.Funcs, f) }
 func AddMask(b *elem.Block, m *elem.Mask)      { b.Masks = append(b.Masks, m) }
+func AddProc(b *elem.Block, f *elem.Proc)      { b.Procs = append(b.Procs, f) }
 func AddStatic(b *elem.Block, s *elem.Static)  { b.Statics = append(b.Statics, s) }
 func AddStatus(b *elem.Block, s *elem.Status)  { b.Statuses = append(b.Statuses, s) }
 func AddStream(b *elem.Block, s *elem.Stream)  { b.Streams = append(b.Streams, s) }
@@ -18,13 +18,13 @@ func HasElement(blk *elem.Block, name string) bool {
 			return true
 		}
 	}
-	for i := range blk.Funcs {
-		if blk.Funcs[i].Name == name {
+	for i := range blk.Masks {
+		if blk.Masks[i].Name == name {
 			return true
 		}
 	}
-	for i := range blk.Masks {
-		if blk.Masks[i].Name == name {
+	for i := range blk.Procs {
+		if blk.Procs[i].Name == name {
 			return true
 		}
 	}

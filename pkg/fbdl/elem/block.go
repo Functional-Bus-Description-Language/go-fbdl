@@ -14,8 +14,8 @@ type Block struct {
 	ConstContainer
 
 	Configs   []*Config
-	Funcs     []*Func
 	Masks     []*Mask
+	Procs     []*Proc
 	Statics   []*Static
 	Statuses  []*Status
 	Streams   []*Stream

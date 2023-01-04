@@ -47,8 +47,8 @@
 			}
 		}
 	],
-	"Funcs": null,
 	"Masks": null,
+	"Procs": null,
 	"Statics": [
 		{
 			"Name": "ID",

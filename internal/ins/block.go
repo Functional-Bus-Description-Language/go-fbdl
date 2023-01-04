@@ -131,10 +131,10 @@ func addBlockInnerElement(blk *elem.Block, e any) {
 	switch e := e.(type) {
 	case (*elem.Config):
 		block.AddConfig(blk, e)
-	case (*elem.Func):
-		block.AddFunc(blk, e)
 	case (*elem.Mask):
 		block.AddMask(blk, e)
+	case (*elem.Proc):
+		block.AddProc(blk, e)
 	case (*elem.Static):
 		block.AddStatic(blk, e)
 	case (*elem.Status):

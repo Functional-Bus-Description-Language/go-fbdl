@@ -1,6 +1,6 @@
 package elem
 
-type Func struct {
+type Proc struct {
 	Elem
 
 	Params  []*Param
@@ -10,8 +10,8 @@ type Func struct {
 	AckAddr int64
 }
 
-func (f *Func) ParamsBufSize() int64 {
-	params := f.Params
+func (p *Proc) ParamsBufSize() int64 {
+	params := p.Params
 	l := len(params)
 
 	if l == 0 {
@@ -21,10 +21,10 @@ func (f *Func) ParamsBufSize() int64 {
 	return params[l-1].Access.EndAddr() - params[0].Access.StartAddr() + 1
 }
 
-func (f *Func) ParamsStartAddr() int64 {
-	if len(f.Params) == 0 {
-		return f.StbAddr
+func (p *Proc) ParamsStartAddr() int64 {
+	if len(p.Params) == 0 {
+		return p.StbAddr
 	}
 
-	return f.Params[0].Access.StartAddr()
+	return p.Params[0].Access.StartAddr()
 }
