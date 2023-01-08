@@ -24,7 +24,7 @@ func IsBaseType(t string) bool {
 // IsValidProperty returns true if given property is valid for given base type.
 func IsValidProperty(p string, t string) error {
 	validProps := map[string][]string{
-		"block":  []string{},
+		"block":  []string{"masters"},
 		"bus":    []string{"masters", "width"},
 		"config": []string{"atomic", "default", "groups", "range", "once", "width"},
 		"mask":   []string{"atomic", "default", "groups", "once", "width"},
