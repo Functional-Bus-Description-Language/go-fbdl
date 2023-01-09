@@ -64,8 +64,8 @@
 				}
 			],
 			"Returns": null,
-			"StbAddr": 1,
-			"AckAddr": 0
+			"CallAddr": 1,
+			"ExitAddr": 0
 		}
 	],
 	"Statics": [

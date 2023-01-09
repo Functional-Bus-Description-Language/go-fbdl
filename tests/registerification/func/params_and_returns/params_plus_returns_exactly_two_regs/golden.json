@@ -107,8 +107,8 @@
 					}
 				}
 			],
-			"StbAddr": 2,
-			"AckAddr": 2
+			"CallAddr": 2,
+			"ExitAddr": 2
 		}
 	],
 	"Statics": [

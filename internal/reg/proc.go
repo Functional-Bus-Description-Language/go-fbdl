@@ -30,10 +30,10 @@ func regProc(proc *elem.Proc, addr int64) int64 {
 	}
 
 	if len(params) == 0 {
-		proc.StbAddr = addr
+		proc.CallAddr = addr
 		//addr += 1
 	} else {
-		proc.StbAddr = params[len(params)-1].Access.EndAddr()
+		proc.CallAddr = params[len(params)-1].Access.EndAddr()
 		// If the last register is not fully occupied go to next address.
 		// TODO: This is a potential place for adding a gap struct instance
 		// for further address space optimization.
@@ -65,7 +65,7 @@ func regProc(proc *elem.Proc, addr int64) int64 {
 	}
 
 	if len(returns) > 0 {
-		proc.AckAddr = returns[len(returns)-1].Access.EndAddr()
+		proc.ExitAddr = returns[len(returns)-1].Access.EndAddr()
 	}
 
 	if len(params) == 0 && len(returns) == 0 {

@@ -83,8 +83,8 @@
 					}
 				}
 			],
-			"StbAddr": 1,
-			"AckAddr": 2
+			"CallAddr": 1,
+			"ExitAddr": 2
 		}
 	],
 	"Statics": [

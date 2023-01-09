@@ -6,8 +6,8 @@ type Proc struct {
 	Params  []*Param
 	Returns []*Return
 
-	StbAddr int64
-	AckAddr int64
+	CallAddr int64
+	ExitAddr int64
 }
 
 func (p *Proc) ParamsBufSize() int64 {
@@ -23,7 +23,7 @@ func (p *Proc) ParamsBufSize() int64 {
 
 func (p *Proc) ParamsStartAddr() int64 {
 	if len(p.Params) == 0 {
-		return p.StbAddr
+		return p.CallAddr
 	}
 
 	return p.Params[0].Access.StartAddr()
