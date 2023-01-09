@@ -1,0 +1,3 @@
+Main bus
+	C config; width = 17
+	S status; atomic = false

@@ -1,0 +1,102 @@
+{
+	"Name": "Main",
+	"Doc": "",
+	"IsArray": false,
+	"Count": 1,
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"FloatConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": [
+		{
+			"Name": "C",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": false,
+			"Default": "x\"0000000000000000000\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 76,
+			"Access": {
+				"Strategy": "Continuous",
+				"RegCount": 3,
+				"StartAddr": 1,
+				"StartBit": 0,
+				"EndBit": 11
+			}
+		}
+	],
+	"Masks": [
+		{
+			"Name": "M",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": false,
+			"Default": "",
+			"Groups": null,
+			"Once": false,
+			"Width": 128,
+			"Access": {
+				"Strategy": "Continuous",
+				"RegCount": 4,
+				"StartAddr": 4,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
+	"Procs": null,
+	"Statics": [
+		{
+			"Name": "ID",
+			"Doc": "Bus identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Default": "x\"5e210507\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
+	"Statuses": [
+		{
+			"Name": "S",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"Groups": null,
+			"Once": false,
+			"Width": 17,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 3,
+				"StartBit": 12,
+				"EndBit": 28
+			}
+		}
+	],
+	"Streams": null,
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 8,
+		"Compact": 8,
+		"Own": 8
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 7
+	}
+}
