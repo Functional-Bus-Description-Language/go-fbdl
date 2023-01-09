@@ -389,8 +389,8 @@ func parseSingleLineInstantiation(n ts.Node, parent Searchable) ([]Symbol, error
 			i.args, err = parseArgumentList(nc, parent)
 		case ";", "comment":
 			continue
-		case "multi_property_assignment":
-			i.props, err = parseMultiPropertyAssignment(nc, &i)
+		case "property_assignments":
+			i.props, err = parsePropertyAssignments(nc, &i)
 		default:
 			panic("should never happen")
 		}
@@ -423,27 +423,30 @@ func parseElementBody(n ts.Node, element Searchable) (PropContainer, SymbolConta
 		switch t {
 		case "ERROR":
 			if nc.PrevSibling().Type() == "element_anonymous_single_line_instantiation" &&
-				nc.NextSibling().Type() == "single_property_assignment" {
+				nc.NextSibling().Type() == "property_assignments" {
 				return props, symbols, fmt.Errorf(
 					"line %d: column %d: missing ';' or newline", nc.LineNum(), nc.Column()-1,
 				)
 			} else {
 				return props, symbols, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", n.LineNum())
 			}
-		case "single_property_assignment":
-			name := nc.Child(0).Content()
-			if _, ok := props.Get(name); ok {
-				return props,
-					symbols,
-					fmt.Errorf("line %d: property '%s' assigned at least twice in the same element body", nc.LineNum(), name)
-			}
-			expr, err := MakeExpr(nc.Child(2), element)
+		case "property_assignments":
+			ps, err := parsePropertyAssignments(nc, element)
 			if err != nil {
 				return props,
 					symbols,
-					fmt.Errorf("line %d: single property assignment: %v", nc.LineNum(), err)
+					fmt.Errorf("line %d: property assignments: %v", nc.LineNum(), err)
 			}
-			props.Add(Prop{LineNum: nc.LineNum(), Name: name, Value: expr})
+			for _, p := range ps {
+				if _, ok := props.Get(p.Name); ok {
+					return props,
+						symbols,
+						fmt.Errorf(
+							"line %d: property '%s' assigned at least twice in the same element body", nc.LineNum(), p.Name,
+						)
+				}
+				props.Add(p)
+			}
 		default:
 			var ss []Symbol
 			switch t {
@@ -604,8 +607,8 @@ func parseSingleLineTypeDefinition(n ts.Node, parent Searchable) ([]Symbol, erro
 			t.args, err = parseArgumentList(nc, parent)
 		case ";":
 			continue
-		case "multi_property_assignment":
-			t.props, err = parseMultiPropertyAssignment(nc, &t)
+		case "property_assignments":
+			t.props, err = parsePropertyAssignments(nc, &t)
 		case "ERROR":
 			return nil, fmt.Errorf("line %d: invalid syntax, tree-sitter ERROR", nc.LineNum())
 		default:
@@ -690,7 +693,7 @@ func parseMultiConstantDefinition(n ts.Node) ([]Symbol, error) {
 	return symbols, nil
 }
 
-func parseMultiPropertyAssignment(n ts.Node, element Searchable) (PropContainer, error) {
+func parsePropertyAssignments(n ts.Node, element Searchable) (PropContainer, error) {
 	props := PropContainer{}
 
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
