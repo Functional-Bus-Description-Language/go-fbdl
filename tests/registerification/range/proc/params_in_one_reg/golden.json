@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Params fitting single register must get the same address.\nElement after the proc must get the next address.",
+	"Doc": "",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -26,13 +26,16 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
-					"Range": null,
-					"Width": 10,
+					"Range": [
+						10,
+						15
+					],
+					"Width": 4,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 1,
 						"StartBit": 0,
-						"EndBit": 9
+						"EndBit": 3
 					}
 				},
 				{
@@ -41,12 +44,51 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
-					"Range": null,
-					"Width": 22,
+					"Range": [
+						16,
+						128
+					],
+					"Width": 8,
 					"Access": {
 						"Strategy": "Single",
 						"Addr": 1,
-						"StartBit": 10,
+						"StartBit": 4,
+						"EndBit": 11
+					}
+				},
+				{
+					"Name": "p3",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Range": [
+						1,
+						65535
+					],
+					"Width": 16,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 1,
+						"StartBit": 12,
+						"EndBit": 27
+					}
+				},
+				{
+					"Name": "p4",
+					"Doc": "",
+					"IsArray": false,
+					"Count": 1,
+					"Groups": null,
+					"Range": [
+						9,
+						14
+					],
+					"Width": 4,
+					"Access": {
+						"Strategy": "Single",
+						"Addr": 1,
+						"StartBit": 28,
 						"EndBit": 31
 					}
 				}
@@ -62,7 +104,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"61e804d2\"",
+			"Default": "x\"313f02b1\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
@@ -74,33 +116,16 @@
 			}
 		}
 	],
-	"Statuses": [
-		{
-			"Name": "St",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Groups": null,
-			"Once": false,
-			"Width": 32,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 2,
-				"StartBit": 0,
-				"EndBit": 31
-			}
-		}
-	],
+	"Statuses": null,
 	"Streams": null,
 	"Subblocks": null,
 	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
+		"BlockAligned": 2,
+		"Compact": 2,
+		"Own": 2
 	},
 	"AddrSpace": {
 		"Start": 0,
-		"End": 3
+		"End": 1
 	}
 }

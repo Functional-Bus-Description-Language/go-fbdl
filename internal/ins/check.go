@@ -60,27 +60,49 @@ func checkProp(prop prs.Prop) error {
 			return fmt.Errorf("'masters' property must be positive, current value (%d)", v)
 		}
 	case "range":
-		v, ok := pv.(val.List)
-		if !ok {
-			return fmt.Errorf(invalidTypeMsg, name, "list", pv.Type())
-		}
-		if len(v) != 2 {
-			return fmt.Errorf("length of 'range' property value list must equal 2, current length %d", len(v))
-		}
-		v0, ok := v[0].(val.Int)
-		if !ok {
-			return fmt.Errorf(
-				"first value in 'range' property value list must be of type 'integer', current type '%s'", v[0].Type(),
-			)
-		}
-		v1, ok := v[1].(val.Int)
-		if !ok {
-			return fmt.Errorf(
-				"second value in 'range' property value list must be of type 'integer', current type '%s'", v[1].Type(),
-			)
-		}
-		if v0 > v1 {
-			return fmt.Errorf("lower bound in 'range' property value list cannot be greater than upper bound")
+		switch v := pv.(type) {
+		case val.Int:
+			if v < 0 {
+				return fmt.Errorf("'range' property value must be natural, value %d is negative", v)
+			}
+		case val.List:
+			if len(v) == 0 {
+				return fmt.Errorf("'range' property value list must not be empty")
+			}
+			if len(v)%2 != 0 {
+				return fmt.Errorf("length of 'range' property value list must be even, current length %d", len(v))
+			}
+			lower := true
+			var lowerBound, upperBound int64
+			for i, bound := range v {
+				bound_val, ok := bound.(val.Int)
+				if !ok {
+					return fmt.Errorf(
+						"all values in 'range' property list must be of type 'integer', value with index %d is of type '%s'",
+						i, bound.Type(),
+					)
+				}
+				if bound_val < 0 {
+					return fmt.Errorf(
+						"'range' property value must be natural, value with index %d is negative (%d)", i, bound_val,
+					)
+				}
+				if lower {
+					lowerBound = int64(bound_val)
+					lower = false
+				} else {
+					upperBound = int64(bound_val)
+					lower = true
+				}
+				if lower && lowerBound > upperBound {
+					return fmt.Errorf(
+						"'range' property list, lower bound with index %d (%d) is greater than upper bound with index %d (%d)",
+						i-1, lowerBound, i, upperBound,
+					)
+				}
+			}
+		default:
+			return fmt.Errorf(invalidTypeMsg, name, "integer or list", pv.Type())
 		}
 	case "width":
 		v, ok := pv.(val.Int)
@@ -98,6 +120,7 @@ func checkProp(prop prs.Prop) error {
 }
 
 /*
+TODO: Implement it somewhere.
 func checkPropConflict(elem *Element, prop string) error {
 	msg := `cannot set '%s' property, because '%s' property is already set in one of ancestor types`
 

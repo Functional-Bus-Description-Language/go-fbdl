@@ -26,6 +26,7 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
+					"Range": null,
 					"Width": 16,
 					"Access": {
 						"Strategy": "Single",

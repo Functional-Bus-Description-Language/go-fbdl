@@ -1,0 +1,6 @@
+Main bus
+	P proc
+		p1 param; range = [10, 15] # 4 bits
+		p2 param; range = [16, 128] # 8 bits
+		p3 param; range = [1, 2**16 - 1] # 16 bits
+		p4 param; range = [9, 14] # 4 bits

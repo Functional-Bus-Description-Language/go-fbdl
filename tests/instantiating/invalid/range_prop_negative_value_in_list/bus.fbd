@@ -1,0 +1,3 @@
+Main bus
+	P proc
+		PI param; range = [1, -127]

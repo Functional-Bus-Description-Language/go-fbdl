@@ -6,12 +6,13 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 type paramDiary struct {
 	groupsSet bool
-	//rangeSet   bool
-	widthSet bool
+	rangeSet  bool
+	widthSet  bool
 }
 
 func insParam(typeChain []prs.Element) (*elem.Param, error) {
@@ -63,7 +64,20 @@ func applyParamType(param *elem.Param, typ prs.Element, diary *paramDiary) error
 			param.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "range":
-			panic("not yet implemented")
+			if diary.rangeSet {
+				return fmt.Errorf(propAlreadySetMsg, "range")
+			}
+			var rang fbdlVal.Range
+			switch r := v.(type) {
+			case val.Int:
+				rang = []int64{0, int64(r)}
+			case val.List:
+				for _, bound := range r {
+					rang = append(rang, int64(bound.(val.Int)))
+				}
+			}
+			param.Range = rang
+			diary.rangeSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
@@ -80,6 +94,10 @@ func applyParamType(param *elem.Param, typ prs.Element, diary *paramDiary) error
 
 func fillParamProps(param *elem.Param, diary paramDiary) {
 	if !diary.widthSet {
-		param.Width = busWidth
+		if !diary.rangeSet {
+			param.Width = busWidth
+		} else {
+			param.Width = param.Range.Width()
+		}
 	}
 }

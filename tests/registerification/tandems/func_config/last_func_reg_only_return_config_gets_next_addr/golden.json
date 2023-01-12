@@ -20,6 +20,7 @@
 			"Atomic": true,
 			"Default": "",
 			"Groups": null,
+			"Range": null,
 			"Once": false,
 			"Width": 8,
 			"Access": {
@@ -44,6 +45,7 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
+					"Range": null,
 					"Width": 30,
 					"Access": {
 						"Strategy": "Single",
@@ -58,6 +60,7 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
+					"Range": null,
 					"Width": 2,
 					"Access": {
 						"Strategy": "Single",

@@ -11,9 +11,9 @@ type Config struct {
 	Atomic  bool
 	Default val.BitStr
 	Groups  []string
-	//Range   Range
-	Once  bool
-	Width int64
+	Range   val.Range
+	Once    bool
+	Width   int64
 
 	Access access.Access
 }

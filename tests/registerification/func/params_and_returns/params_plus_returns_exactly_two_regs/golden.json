@@ -26,6 +26,7 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
+					"Range": null,
 					"Width": 20,
 					"Access": {
 						"Strategy": "Single",
@@ -40,6 +41,7 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
+					"Range": null,
 					"Width": 12,
 					"Access": {
 						"Strategy": "Single",
@@ -54,6 +56,7 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
+					"Range": null,
 					"Width": 4,
 					"Access": {
 						"Strategy": "Single",
@@ -68,6 +71,7 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
+					"Range": null,
 					"Width": 8,
 					"Access": {
 						"Strategy": "Single",

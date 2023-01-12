@@ -14,9 +14,9 @@ type configDiary struct {
 	dfltSet   bool
 	dflt      val.Value
 	groupsSet bool
-	//rangeSet  bool
-	onceSet  bool
-	widthSet bool
+	rangeSet  bool
+	onceSet   bool
+	widthSet  bool
 }
 
 func insConfig(typeChain []prs.Element) (*elem.Config, error) {
@@ -82,7 +82,20 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			diary.dflt = v
 			diary.dfltSet = true
 		case "range":
-			panic("not yet implemented")
+			if diary.rangeSet {
+				return fmt.Errorf(propAlreadySetMsg, "range")
+			}
+			var rang fbdlVal.Range
+			switch r := v.(type) {
+			case val.Int:
+				rang = []int64{0, int64(r)}
+			case val.List:
+				for _, bound := range r {
+					rang = append(rang, int64(bound.(val.Int)))
+				}
+			}
+			cfg.Range = rang
+			diary.rangeSet = true
 		case "groups":
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
@@ -114,6 +127,10 @@ func fillConfigProps(cfg *elem.Config, diary configDiary) {
 		cfg.Atomic = true
 	}
 	if !diary.widthSet {
-		cfg.Width = busWidth
+		if !diary.rangeSet {
+			cfg.Width = busWidth
+		} else {
+			cfg.Width = cfg.Range.Width()
+		}
 	}
 }

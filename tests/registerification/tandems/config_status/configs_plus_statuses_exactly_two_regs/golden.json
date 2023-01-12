@@ -20,6 +20,7 @@
 			"Atomic": true,
 			"Default": "",
 			"Groups": null,
+			"Range": null,
 			"Once": false,
 			"Width": 20,
 			"Access": {
@@ -37,6 +38,7 @@
 			"Atomic": true,
 			"Default": "",
 			"Groups": null,
+			"Range": null,
 			"Once": false,
 			"Width": 14,
 			"Access": {
