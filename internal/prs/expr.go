@@ -42,6 +42,8 @@ func MakeExpr(n ts.Node, s Searchable) (Expr, error) {
 		expr = MakeStringLiteral(n)
 	case "subscript":
 		expr, err = MakeSubscript(n, s)
+	case "time_literal":
+		expr, err = MakeTimeLiteral(n, s)
 	case "true":
 		expr = MakeTrue()
 	case "unary_operation":
@@ -432,6 +434,48 @@ func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
 	}
 
 	return Subscript{name: name, idx: idx, s: s}, nil
+}
+
+type TimeLiteral struct {
+	v    Expr
+	unit string
+}
+
+func MakeTimeLiteral(n ts.Node, s Searchable) (TimeLiteral, error) {
+	intLiteral, err := MakeExpr(n.Child(0), s)
+	if err != nil {
+		return TimeLiteral{}, fmt.Errorf("make time literal: integer literal: %v", err)
+	}
+	switch intLiteral.(type) {
+	case ZeroLiteral, DecimalLiteral, HexLiteral:
+		break
+	default:
+		return TimeLiteral{}, fmt.Errorf("make time literal: invalid integer literal")
+	}
+	return TimeLiteral{intLiteral, n.Child(1).Content()}, nil
+}
+
+func (tl TimeLiteral) Eval() (val.Value, error) {
+	v, err := tl.v.Eval()
+	if err != nil {
+		return val.Time{}, fmt.Errorf("time evaluation, cannot evaluate integer literal: %v", err)
+	}
+
+	var t val.Time
+
+	switch tl.unit {
+	case "s":
+		t = val.Time{S: int64(v.(val.Int)), Ns: 0}
+	case "ms":
+		t = val.Time{S: 0, Ns: 1000000 * int64(v.(val.Int))}
+	case "us":
+		t = val.Time{S: 0, Ns: 1000 * int64(v.(val.Int))}
+	case "ns":
+		t = val.Time{S: 0, Ns: int64(v.(val.Int))}
+	}
+
+	t.Normalize()
+	return t, nil
 }
 
 type True struct{}
