@@ -78,11 +78,11 @@ type BinaryOperation struct {
 func (bo BinaryOperation) Eval() (val.Value, error) {
 	left, err := bo.left.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("binary operation: left operand: %v", err)
+		return val.Int(0), fmt.Errorf("binary operation, left operand: %v", err)
 	}
 	right, err := bo.right.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("binary operation: right operand: %v", err)
+		return val.Int(0), fmt.Errorf("binary operation, right operand: %v", err)
 	}
 
 	if left, ok := left.(val.Int); ok {
@@ -114,7 +114,7 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 		}
 	}
 
-	return val.Int(0), fmt.Errorf("unknown operand type")
+	return val.Int(0), fmt.Errorf("binary operation, unknown operand type")
 }
 
 func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
@@ -503,7 +503,7 @@ type UnaryOperation struct {
 func (uo UnaryOperation) Eval() (val.Value, error) {
 	operand, err := uo.operand.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("unary operation: operand: %v", err)
+		return val.Int(0), fmt.Errorf("unary operation, operand: %v", err)
 	}
 
 	if operand, ok := operand.(val.Int); ok {
@@ -517,7 +517,7 @@ func (uo UnaryOperation) Eval() (val.Value, error) {
 		}
 	}
 
-	return val.Int(0), fmt.Errorf("unknown operand type")
+	return val.Int(0), fmt.Errorf("unary operation, unknown operand type '%s'", operand.Type())
 }
 
 func MakeUnaryOperation(n ts.Node, s Searchable) (UnaryOperation, error) {

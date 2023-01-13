@@ -23,6 +23,13 @@ func checkProp(prop prs.Prop) error {
 		if _, ok := pv.(val.Bool); !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "bool", pv.Type())
 		}
+	case "delay":
+		switch pv.(type) {
+		case val.Time:
+			break
+		default:
+			return fmt.Errorf(invalidTypeMsg, name, "time", pv.Type())
+		}
 	case "default":
 		switch pv.(type) {
 		case val.Int, val.BitStr:

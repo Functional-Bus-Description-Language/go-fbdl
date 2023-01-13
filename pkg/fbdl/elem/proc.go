@@ -1,7 +1,13 @@
 package elem
 
+import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+)
+
 type Proc struct {
 	Elem
+
+	Delay *val.Time
 
 	Params  []*Param
 	Returns []*Return

@@ -31,7 +31,7 @@ func IsValidProperty(p string, t string) error {
 		// TODO: Decide if "default" should be possible for param.
 		// It creates some problems as not all programming languges support it.
 		"param":  []string{"groups", "range", "width"},
-		"proc":   []string{},
+		"proc":   []string{"delay"},
 		"return": []string{"groups", "width"},
 		"static": []string{"default", "groups", "once", "width"},
 		"status": []string{"atomic", "groups", "once", "width"},
