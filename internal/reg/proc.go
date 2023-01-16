@@ -29,20 +29,18 @@ func regProc(proc *elem.Proc, addr int64) int64 {
 		p.Access = a
 	}
 
-	callAddr := addr
 	if len(params) > 0 {
-		callAddr = params[len(params)-1].Access.EndAddr()
-		// If the last register is not fully occupied go to next address.
-		// TODO: This is a potential place for adding a gap struct instance
-		// for further address space optimization.
-		/*
-			lastAccess := params[len(params)-1].Access
-			if lastAccess.EndBit() < busWidth-1 {
-				addr += 1
-			}
-		*/
+		callAddr := params[len(params)-1].Access.EndAddr()
+		proc.CallAddr = &callAddr
+	} else if len(proc.Returns) > 0 {
+		if proc.Delay != nil {
+			callAddr := addr
+			proc.CallAddr = &callAddr
+		}
+	} else {
+		callAddr := addr
+		proc.CallAddr = &callAddr
 	}
-	proc.CallAddr = &callAddr
 
 	returns := proc.Returns
 	for _, r := range returns {
@@ -66,6 +64,11 @@ func regProc(proc *elem.Proc, addr int64) int64 {
 	if len(returns) > 0 {
 		exitAddr := returns[len(returns)-1].Access.EndAddr()
 		proc.ExitAddr = &exitAddr
+	} else if len(params) == 0 {
+		if proc.Delay != nil {
+			exitAddr := addr
+			proc.ExitAddr = &exitAddr
+		}
 	}
 
 	if len(params) == 0 && len(returns) == 0 {

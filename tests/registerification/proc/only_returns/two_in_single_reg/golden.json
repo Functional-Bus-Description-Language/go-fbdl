@@ -51,7 +51,7 @@
 					}
 				}
 			],
-			"CallAddr": 1,
+			"CallAddr": null,
 			"ExitAddr": 1
 		}
 	],
@@ -61,7 +61,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"73a305e3\"",
+			"Default": "x\"6d5c056f\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,
