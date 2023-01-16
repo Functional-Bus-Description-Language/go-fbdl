@@ -13,8 +13,8 @@ type Proc struct {
 	Params  []*Param
 	Returns []*Return
 
-	CallAddr int64
-	ExitAddr int64
+	CallAddr *int64
+	ExitAddr *int64
 }
 
 func (p *Proc) ParamsBufSize() int64 {

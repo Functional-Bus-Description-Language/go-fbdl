@@ -96,7 +96,7 @@
 			],
 			"Returns": null,
 			"CallAddr": 1,
-			"ExitAddr": 0
+			"ExitAddr": null
 		}
 	],
 	"Statics": [
@@ -105,7 +105,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"313f02b1\"",
+			"Default": "x\"352e0310\"",
 			"Groups": null,
 			"Once": false,
 			"Width": 32,

@@ -23,11 +23,15 @@ func hashProc(p *elem.Proc) uint32 {
 		write(&buf, Hash(r))
 	}
 
-	// StbAddr
-	write(&buf, p.CallAddr)
+	// CallAddr
+	if p.CallAddr != nil {
+		write(&buf, p.CallAddr)
+	}
 
-	// AckAddr
-	write(&buf, p.ExitAddr)
+	// ExitAddr
+	if p.ExitAddr != nil {
+		write(&buf, p.ExitAddr)
+	}
 
 	return adler32.Checksum(buf.Bytes())
 }
