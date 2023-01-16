@@ -64,7 +64,7 @@ func regProc(proc *elem.Proc, addr int64) int64 {
 	if len(returns) > 0 {
 		exitAddr := returns[len(returns)-1].Access.EndAddr()
 		proc.ExitAddr = &exitAddr
-	} else if len(params) == 0 {
+	} else if len(params) >= 0 {
 		if proc.Delay != nil {
 			exitAddr := addr
 			proc.ExitAddr = &exitAddr
