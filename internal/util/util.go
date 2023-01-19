@@ -28,8 +28,6 @@ func IsValidProperty(p string, t string) error {
 		"bus":    []string{"masters", "width"},
 		"config": []string{"atomic", "default", "groups", "range", "once", "width"},
 		"mask":   []string{"atomic", "default", "groups", "once", "width"},
-		// TODO: Decide if "default" should be possible for param.
-		// It creates some problems as not all programming languges support it.
 		"param":  []string{"groups", "range", "width"},
 		"proc":   []string{"delay"},
 		"return": []string{"groups", "width"},
