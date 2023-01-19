@@ -47,12 +47,20 @@ func makeElem(typeChain []prs.Element) (elem.Elem, error) {
 	return e, nil
 }
 
-func makeGroupList(v val.Value) []string {
-	vGrps := v.(val.List)
-	grps := make([]string, 0, len(vGrps))
-	for _, g := range vGrps {
-		grps = append(grps, string(g.(val.Str)))
+func makeGroupList(propVal val.Value) []string {
+	var grps []string
+	switch v := propVal.(type) {
+	case val.Str:
+		grps = []string{string(v)}
+	case val.List:
+		grps = make([]string, 0, len(v))
+		for _, g := range v {
+			grps = append(grps, string(g.(val.Str)))
+		}
+	default:
+		panic("should never happen")
 	}
+
 	return grps
 }
 

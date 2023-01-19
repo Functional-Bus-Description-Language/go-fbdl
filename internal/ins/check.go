@@ -38,25 +38,29 @@ func checkProp(prop prs.Prop) error {
 			return fmt.Errorf(invalidTypeMsg, name, "integer or bit string", pv.Type())
 		}
 	case "groups":
-		groups, ok := pv.(val.List)
-		if !ok {
-			return fmt.Errorf(invalidTypeMsg, name, "list", pv.Type())
-		}
-		if len(groups) == 0 {
-			return fmt.Errorf("groups list of length 0 makes no sense")
-		}
-		for i, v := range groups {
-			if _, ok := v.(val.Str); !ok {
-				return fmt.Errorf("all values in groups list must be of type 'string', item %d is of type '%s'", i, v.Type())
+		switch v := pv.(type) {
+		case val.Str:
+			break
+		case val.List:
+			groups := v
+			if len(groups) == 0 {
+				return fmt.Errorf("groups list of length 0 makes no sense")
 			}
-		}
-		groupsMap := make(map[string]int)
-		for i, v := range groups {
-			g := v.(val.Str)
-			if firstIdx, exists := groupsMap[string(g)]; exists {
-				return fmt.Errorf("duplicated %q in groups list, first item %d, second item %d", g, firstIdx, i)
+			for i, v := range groups {
+				if _, ok := v.(val.Str); !ok {
+					return fmt.Errorf("all values in groups list must be of type 'string', item %d is of type '%s'", i, v.Type())
+				}
 			}
-			groupsMap[string(g)] = i
+			groupsMap := make(map[string]int)
+			for i, v := range groups {
+				g := v.(val.Str)
+				if firstIdx, exists := groupsMap[string(g)]; exists {
+					return fmt.Errorf("duplicated %q in groups list, first item %d, second item %d", g, firstIdx, i)
+				}
+				groupsMap[string(g)] = i
+			}
+		default:
+			return fmt.Errorf(invalidTypeMsg, name, "string or [string]", pv.Type())
 		}
 	case "masters":
 		v, ok := pv.(val.Int)
@@ -109,7 +113,7 @@ func checkProp(prop prs.Prop) error {
 				}
 			}
 		default:
-			return fmt.Errorf(invalidTypeMsg, name, "integer or list", pv.Type())
+			return fmt.Errorf(invalidTypeMsg, name, "integer or [integer]", pv.Type())
 		}
 	case "width":
 		v, ok := pv.(val.Int)
