@@ -1,0 +1,59 @@
+{
+	"Name": "Main",
+	"Doc": "",
+	"IsArray": false,
+	"Count": 1,
+	"Masters": 1,
+	"Width": 32,
+	"BoolConsts": null,
+	"BoolListConsts": null,
+	"FloatConsts": null,
+	"IntConsts": null,
+	"IntListConsts": null,
+	"StrConsts": null,
+	"Configs": null,
+	"Masks": null,
+	"Procs": [
+		{
+			"Name": "P",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Delay": null,
+			"Params": null,
+			"Returns": null,
+			"CallAddr": 1,
+			"ExitAddr": null
+		}
+	],
+	"Statics": [
+		{
+			"Name": "ID",
+			"Doc": "Bus identifier.",
+			"IsArray": false,
+			"Count": 1,
+			"Default": "x\"381d0337\"",
+			"Groups": null,
+			"Once": false,
+			"Width": 32,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 0,
+				"StartBit": 0,
+				"EndBit": 31
+			}
+		}
+	],
+	"Statuses": null,
+	"Streams": null,
+	"Subblocks": null,
+	"Sizes": {
+		"BlockAligned": 2,
+		"Compact": 2,
+		"Own": 2
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 1
+	}
+}

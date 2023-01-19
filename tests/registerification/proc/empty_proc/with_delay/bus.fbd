@@ -1,0 +1,4 @@
+Main bus
+	P proc
+		delay = 1 ms
+		p param
