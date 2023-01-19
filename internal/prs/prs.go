@@ -731,7 +731,6 @@ func parseParameterList(n ts.Node, parent Searchable) ([]Param, error) {
 		nc := n.Child(i)
 		t := nc.Type()
 
-		// TODO: check if switch case works as expected here.
 		if t == "(" || t == "=" || t == "," || t == ")" {
 			continue
 		}
