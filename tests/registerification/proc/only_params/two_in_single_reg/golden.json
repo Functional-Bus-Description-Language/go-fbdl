@@ -63,9 +63,8 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"6cc90597\"",
+			"InitValue": "x\"6cca0597\"",
 			"Groups": null,
-			"Once": false,
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
@@ -83,7 +82,6 @@
 			"Count": 1,
 			"Atomic": true,
 			"Groups": null,
-			"Once": false,
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",

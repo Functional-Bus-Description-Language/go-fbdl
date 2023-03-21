@@ -10,13 +10,12 @@ import (
 )
 
 type configDiary struct {
-	atomicSet bool
-	dfltSet   bool
-	dflt      val.Value
-	groupsSet bool
-	rangeSet  bool
-	onceSet   bool
-	widthSet  bool
+	atomicSet  bool
+	initValSet bool
+	initVal    val.Value
+	groupsSet  bool
+	rangeSet   bool
+	widthSet   bool
 }
 
 func insConfig(typeChain []prs.Element) (*elem.Config, error) {
@@ -43,12 +42,12 @@ func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 
 	fillConfigProps(&cfg, diary)
 
-	if diary.dfltSet {
-		dflt, err := processDefault(cfg.Width, diary.dflt)
+	if diary.initValSet {
+		val, err := processValue(cfg.Width, diary.initVal)
 		if err != nil {
 			return &cfg, err
 		}
-		cfg.Default = fbdlVal.MakeBitStr(dflt)
+		cfg.InitValue = fbdlVal.MakeBitStr(val)
 	}
 
 	return &cfg, nil
@@ -75,12 +74,12 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			}
 			cfg.Atomic = (bool(v.(val.Bool)))
 			diary.atomicSet = true
-		case "default":
-			if diary.dfltSet {
+		case "init-value":
+			if diary.initValSet {
 				return fmt.Errorf(propAlreadySetMsg, "default")
 			}
-			diary.dflt = v
-			diary.dfltSet = true
+			diary.initVal = v
+			diary.initValSet = true
 		case "range":
 			if diary.rangeSet {
 				return fmt.Errorf(propAlreadySetMsg, "range")
@@ -102,12 +101,6 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			}
 			cfg.Groups = makeGroupList(v)
 			diary.groupsSet = true
-		case "once":
-			if diary.onceSet {
-				return fmt.Errorf(propAlreadySetMsg, "once")
-			}
-			cfg.Once = bool(v.(val.Bool))
-			diary.onceSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")

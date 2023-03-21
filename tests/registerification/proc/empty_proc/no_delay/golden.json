@@ -32,9 +32,8 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"381d0337\"",
+			"InitValue": "x\"381d0337\"",
 			"Groups": null,
-			"Once": false,
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",

@@ -11,7 +11,6 @@ import (
 type statusDiary struct {
 	atomicSet bool
 	groupsSet bool
-	onceSet   bool
 	widthSet  bool
 }
 
@@ -69,12 +68,6 @@ func applyStatusType(st *elem.Status, typ prs.Element, diary *statusDiary) error
 			}
 			st.Groups = makeGroupList(v)
 			diary.groupsSet = true
-		case "once":
-			if diary.onceSet {
-				return fmt.Errorf(propAlreadySetMsg, "once")
-			}
-			st.Once = bool(v.(val.Bool))
-			diary.onceSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")

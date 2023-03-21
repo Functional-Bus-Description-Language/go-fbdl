@@ -16,16 +16,13 @@ func hashMask(m *elem.Mask) uint32 {
 	// Atomic
 	write(&buf, m.Atomic)
 
-	// Default
-	buf.Write([]byte(m.Default))
+	// InitValue
+	buf.Write([]byte(m.InitValue))
 
 	// Groups
 	for _, g := range m.Groups {
 		buf.Write([]byte(g))
 	}
-
-	// Once
-	write(&buf, m.Once)
 
 	// Width
 	write(&buf, m.Width)

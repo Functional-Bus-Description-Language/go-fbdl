@@ -699,7 +699,7 @@ func parsePropertyAssignments(n ts.Node, element Searchable) (PropContainer, err
 	for i := 0; uint32(i) < n.ChildCount(); i++ {
 		nc := n.Child(i)
 		switch nc.Type() {
-		case "identifier":
+		case "property_identifier":
 			name := nc.Content()
 			if _, ok := props.Get(name); ok {
 				return props,

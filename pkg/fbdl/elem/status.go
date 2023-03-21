@@ -9,7 +9,6 @@ type Status struct {
 
 	Atomic bool
 	Groups []string
-	Once   bool
 	Width  int64
 
 	Access access.Access

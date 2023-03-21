@@ -19,7 +19,7 @@ func checkProp(prop prs.Prop) error {
 	name := prop.Name
 
 	switch name {
-	case "atomic", "once":
+	case "atomic":
 		if _, ok := pv.(val.Bool); !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "bool", pv.Type())
 		}
@@ -30,7 +30,7 @@ func checkProp(prop prs.Prop) error {
 		default:
 			return fmt.Errorf(invalidTypeMsg, name, "time", pv.Type())
 		}
-	case "default":
+	case "init-value":
 		switch pv.(type) {
 		case val.Int, val.BitStr:
 			break

@@ -58,8 +58,8 @@ func Registerify(bus *elem.Block, addTimestamp bool) {
 		hash = hash & ((1 << busWidth) - 1)
 	}
 	// Ignore error, the value has been trimmed to the proper width.
-	dflt, _ := val.BitStrFromInt(val.Int(hash), busWidth)
-	id.Default = fbdlVal.MakeBitStr(dflt)
+	val, _ := val.BitStrFromInt(val.Int(hash), busWidth)
+	id.InitValue = fbdlVal.MakeBitStr(val)
 	bus.Statics = append(bus.Statics, id)
 
 	if addTimestamp {

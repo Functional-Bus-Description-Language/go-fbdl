@@ -13,16 +13,13 @@ func hashStatic(s *elem.Static) uint32 {
 	// Elem
 	write(&buf, Hash(&s.Elem))
 
-	// Default
-	buf.Write([]byte(s.Default))
+	// InitValue
+	buf.Write([]byte(s.InitValue))
 
 	// Groups
 	for _, g := range s.Groups {
 		buf.Write([]byte(g))
 	}
-
-	// Once
-	write(&buf, s.Once)
 
 	// Width
 	write(&buf, s.Width)

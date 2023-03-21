@@ -21,9 +21,6 @@ func hashStatus(s *elem.Status) uint32 {
 		buf.Write([]byte(g))
 	}
 
-	// Once
-	write(&buf, s.Once)
-
 	// Width
 	write(&buf, s.Width)
 

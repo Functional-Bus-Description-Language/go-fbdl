@@ -18,10 +18,9 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": false,
-			"Default": "x\"0000000000000000000\"",
+			"InitValue": "x\"0000000000000000000\"",
 			"Groups": null,
 			"Range": null,
-			"Once": false,
 			"Width": 76,
 			"Access": {
 				"Strategy": "Continuous",
@@ -39,9 +38,8 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": false,
-			"Default": "",
+			"InitValue": "",
 			"Groups": null,
-			"Once": false,
 			"Width": 128,
 			"Access": {
 				"Strategy": "Continuous",
@@ -59,9 +57,8 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"5e210507\"",
+			"InitValue": "x\"769706aa\"",
 			"Groups": null,
-			"Once": false,
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
@@ -79,7 +76,6 @@
 			"Count": 1,
 			"Atomic": true,
 			"Groups": null,
-			"Once": false,
 			"Width": 17,
 			"Access": {
 				"Strategy": "Single",

@@ -28,12 +28,12 @@ func timestamp() *elem.Static {
 
 	timestamp := val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
 
-	dflt, err := val.BitStrFromInt(timestamp, width)
+	val, err := val.BitStrFromInt(timestamp, width)
 	if err != nil {
 		panic("TIMESTAMP")
 	}
 
-	ts.Default = fbdlVal.MakeBitStr(dflt)
+	ts.InitValue = fbdlVal.MakeBitStr(val)
 
 	return &ts
 }

@@ -26,13 +26,13 @@ func IsValidProperty(p string, t string) error {
 	validProps := map[string][]string{
 		"block":  []string{"masters"},
 		"bus":    []string{"masters", "width"},
-		"config": []string{"atomic", "default", "groups", "range", "once", "width"},
-		"mask":   []string{"atomic", "default", "groups", "once", "width"},
+		"config": []string{"atomic", "init-value", "groups", "range", "width"},
+		"mask":   []string{"atomic", "init-value", "groups", "width"},
 		"param":  []string{"groups", "range", "width"},
 		"proc":   []string{"delay"},
 		"return": []string{"groups", "width"},
-		"static": []string{"default", "groups", "once", "width"},
-		"status": []string{"atomic", "groups", "once", "width"},
+		"static": []string{"init-value", "groups", "width"},
+		"status": []string{"atomic", "groups", "width"},
 		"stream": []string{},
 	}
 

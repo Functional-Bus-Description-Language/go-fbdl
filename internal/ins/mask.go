@@ -15,7 +15,6 @@ type maskDiary struct {
 	dflt      val.Value
 	groupsSet bool
 	//rangeSet   bool
-	onceSet  bool
 	widthSet bool
 }
 
@@ -44,11 +43,11 @@ func insMask(typeChain []prs.Element) (*elem.Mask, error) {
 	fillMaskProps(&mask, diary)
 
 	if diary.dfltSet {
-		dflt, err := processDefault(mask.Width, diary.dflt)
+		dflt, err := processValue(mask.Width, diary.dflt)
 		if err != nil {
 			return &mask, err
 		}
-		mask.Default = fbdlVal.MakeBitStr(dflt)
+		mask.InitValue = fbdlVal.MakeBitStr(dflt)
 	}
 
 	return &mask, nil
@@ -83,12 +82,6 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, diary *maskDiary) error {
 			}
 			mask.Groups = makeGroupList(v)
 			diary.groupsSet = true
-		case "once":
-			if diary.onceSet {
-				return fmt.Errorf(propAlreadySetMsg, "once")
-			}
-			mask.Once = bool(v.(val.Bool))
-			diary.onceSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")

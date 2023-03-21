@@ -18,10 +18,9 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Default": "",
+			"InitValue": "",
 			"Groups": null,
 			"Range": null,
-			"Once": false,
 			"Width": 8,
 			"Access": {
 				"Strategy": "Single",
@@ -97,9 +96,8 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Default": "x\"605a04f4\"",
+			"InitValue": "x\"60af04fa\"",
 			"Groups": null,
-			"Once": false,
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",

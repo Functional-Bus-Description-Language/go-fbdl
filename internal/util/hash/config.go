@@ -16,16 +16,13 @@ func hashConfig(c *elem.Config) uint32 {
 	// Atomic
 	write(&buf, c.Atomic)
 
-	// Default
-	buf.Write([]byte(c.Default))
+	// InitValue
+	buf.Write([]byte(c.InitValue))
 
 	// Groups
 	for _, g := range c.Groups {
 		buf.Write([]byte(g))
 	}
-
-	// Once
-	write(&buf, c.Once)
 
 	// Width
 	write(&buf, c.Width)
