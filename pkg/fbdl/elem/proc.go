@@ -60,3 +60,18 @@ func (p *Proc) ReturnsStartAddr() int64 {
 
 	return p.Returns[0].Access.StartAddr()
 }
+
+// IsEmpty returns true if proc is empty proc (has no params and no returns).
+func (p *Proc) IsEmpty() bool {
+	return len(p.Params) == 0 && len(p.Returns) == 0
+}
+
+// IsParam returns true if proc is param proc (has only params).
+func (p *Proc) IsParam() bool {
+	return len(p.Params) > 0 && len(p.Returns) == 0
+}
+
+// IsReturn returns true if proc is return proc (has only returns).
+func (p *Proc) IsReturn() bool {
+	return len(p.Params) == 0 && len(p.Returns) > 0
+}

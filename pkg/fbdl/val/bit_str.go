@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// BitStr (bit string) is used for representing default values.
+// BitStr (bit string) is used for representing init values.
 // BitStr type is needed for 2 reasons:
 //
 //   1. To support default value for registers with arbitrary width.
