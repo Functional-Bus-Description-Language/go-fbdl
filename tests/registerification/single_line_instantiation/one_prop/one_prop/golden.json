@@ -5,6 +5,15 @@
 	"Count": 1,
 	"Masters": 1,
 	"Width": 32,
+	"Sizes": {
+		"BlockAligned": 4,
+		"Compact": 3,
+		"Own": 3
+	},
+	"AddrSpace": {
+		"Start": 0,
+		"End": 3
+	},
 	"BoolConsts": null,
 	"BoolListConsts": null,
 	"FloatConsts": null,
@@ -67,14 +76,5 @@
 		}
 	],
 	"Streams": null,
-	"Subblocks": null,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	}
+	"Subblocks": null
 }

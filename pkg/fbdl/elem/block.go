@@ -11,6 +11,9 @@ type Block struct {
 	Masters int64
 	Width   int64
 
+	Sizes     access.Sizes
+	AddrSpace addrSpace.AddrSpace
+
 	ConstContainer
 
 	Configs   []*Config
@@ -20,9 +23,6 @@ type Block struct {
 	Statuses  []*Status
 	Streams   []*Stream
 	Subblocks []*Block
-
-	Sizes     access.Sizes
-	AddrSpace addrSpace.AddrSpace
 }
 
 func (b *Block) GroupedElems() []Groupable {
