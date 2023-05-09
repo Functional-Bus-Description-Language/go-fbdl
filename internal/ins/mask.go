@@ -10,12 +10,15 @@ import (
 )
 
 type maskDiary struct {
-	atomicSet  bool
-	initValSet bool
-	initVal    val.Value
-	groupsSet  bool
-	//rangeSet   bool
-	widthSet bool
+	atomicSet   bool
+	initValSet  bool
+	initVal     val.Value
+	groupsSet   bool
+	readValSet  bool
+	readVal     val.Value
+	resetValSet bool
+	resetVal    val.Value
+	widthSet    bool
 }
 
 func insMask(typeChain []prs.Element) (*elem.Mask, error) {
@@ -41,13 +44,9 @@ func insMask(typeChain []prs.Element) (*elem.Mask, error) {
 	}
 
 	fillMaskProps(&mask, diary)
-
-	if diary.initValSet {
-		initVal, err := processValue(diary.initVal, mask.Width)
-		if err != nil {
-			return &mask, err
-		}
-		mask.InitValue = fbdlVal.MakeBitStr(initVal)
+	err = fillMaskValues(&mask, diary)
+	if err != nil {
+		return nil, err
 	}
 
 	return &mask, nil
@@ -81,7 +80,23 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, diary *maskDiary) error {
 			mask.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "init-value":
-			panic("not yet implemented")
+			if diary.initValSet {
+				return fmt.Errorf(propAlreadySetMsg, "init-value")
+			}
+			diary.initVal = v
+			diary.initValSet = true
+		case "read-value":
+			if diary.readValSet {
+				return fmt.Errorf(propAlreadySetMsg, "read-value")
+			}
+			diary.readVal = v
+			diary.readValSet = true
+		case "reset-value":
+			if diary.resetValSet {
+				return fmt.Errorf(propAlreadySetMsg, "reset-value")
+			}
+			diary.resetVal = v
+			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
@@ -103,4 +118,32 @@ func fillMaskProps(mask *elem.Mask, diary maskDiary) {
 	if !diary.widthSet {
 		mask.Width = busWidth
 	}
+}
+
+func fillMaskValues(mask *elem.Mask, diary maskDiary) error {
+	if diary.initValSet {
+		val, err := processValue(diary.initVal, mask.Width)
+		if err != nil {
+			return fmt.Errorf("'init-value': %v", err)
+		}
+		mask.InitValue = fbdlVal.MakeBitStr(val)
+	}
+
+	if diary.resetValSet {
+		val, err := processValue(diary.resetVal, mask.Width)
+		if err != nil {
+			return fmt.Errorf("'reset-value': %v", err)
+		}
+		mask.ResetValue = fbdlVal.MakeBitStr(val)
+	}
+
+	if diary.readValSet {
+		val, err := processValue(diary.readVal, mask.Width)
+		if err != nil {
+			return fmt.Errorf("'read-value': %v", err)
+		}
+		mask.ReadValue = fbdlVal.MakeBitStr(val)
+	}
+
+	return nil
 }

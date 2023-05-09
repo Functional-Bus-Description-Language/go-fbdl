@@ -31,6 +31,8 @@
 			"InitValue": "x\"0000000000000000000\"",
 			"Groups": null,
 			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 76,
 			"Access": {
 				"Strategy": "Continuous",
@@ -50,6 +52,8 @@
 			"Atomic": false,
 			"InitValue": "",
 			"Groups": null,
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 128,
 			"Access": {
 				"Strategy": "Continuous",

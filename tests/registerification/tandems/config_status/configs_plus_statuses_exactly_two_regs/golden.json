@@ -31,6 +31,8 @@
 			"InitValue": "",
 			"Groups": null,
 			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 20,
 			"Access": {
 				"Strategy": "Single",
@@ -48,6 +50,8 @@
 			"InitValue": "",
 			"Groups": null,
 			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 14,
 			"Access": {
 				"Strategy": "Single",

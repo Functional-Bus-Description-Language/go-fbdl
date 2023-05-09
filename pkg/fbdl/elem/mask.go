@@ -8,10 +8,12 @@ import (
 type Mask struct {
 	Elem
 
-	Atomic    bool
-	InitValue val.BitStr
-	Groups    []string
-	Width     int64
+	Atomic     bool
+	InitValue  val.BitStr
+	Groups     []string
+	ReadValue  val.BitStr
+	ResetValue val.BitStr
+	Width      int64
 
 	Access access.Access
 }
