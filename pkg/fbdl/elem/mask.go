@@ -9,8 +9,8 @@ type Mask struct {
 	Elem
 
 	Atomic     bool
-	InitValue  val.BitStr
 	Groups     []string
+	InitValue  val.BitStr
 	ReadValue  val.BitStr
 	ResetValue val.BitStr
 	Width      int64
