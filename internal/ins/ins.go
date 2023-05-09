@@ -106,6 +106,8 @@ func insElement(pe prs.Element) elem.Element {
 		e, err = insConfig(typeChain)
 	case "mask":
 		e, err = insMask(typeChain)
+	case "memory":
+		e, err = insMemory(typeChain)
 	case "param":
 		e, err = insParam(typeChain)
 	case "proc":

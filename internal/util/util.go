@@ -9,7 +9,7 @@ import (
 
 func IsBaseType(t string) bool {
 	baseTypes := [...]string{
-		"block", "bus", "config", "mask", "param", "proc", "return", "static", "status", "stream",
+		"block", "bus", "config", "mask", "memory", "param", "proc", "return", "static", "status", "stream",
 	}
 
 	for i := range baseTypes {
@@ -28,6 +28,7 @@ func IsValidProperty(p string, t string) error {
 		"bus":    []string{"masters", "reset", "width"},
 		"config": []string{"atomic", "groups", "init-value", "range", "read-value", "reset-value", "width"},
 		"mask":   []string{"atomic", "groups", "init-value", "read-value", "reset-value", "width"},
+		"memory": []string{"access", "byte-write-enable", "read-latency", "size", "width"},
 		"param":  []string{"groups", "range", "width"},
 		"proc":   []string{"delay"},
 		"return": []string{"groups", "width"},
@@ -67,10 +68,11 @@ func IsValidProperty(p string, t string) error {
 // IsValidInnerType returns true if given inner type is valid for given outter type.
 func IsValidInnerType(it string, ot string) bool {
 	validTypes := map[string][]string{
-		"block":  []string{"block", "config", "mask", "proc", "static", "status", "stream"},
-		"bus":    []string{"block", "config", "mask", "proc", "static", "status", "stream"},
+		"block":  []string{"block", "config", "mask", "memory", "proc", "static", "status", "stream"},
+		"bus":    []string{"block", "config", "mask", "memory", "proc", "static", "status", "stream"},
 		"config": []string{},
 		"mask":   []string{},
+		"memory": []string{},
 		"param":  []string{},
 		"proc":   []string{"param", "return"},
 		"return": []string{},

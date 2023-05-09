@@ -1,0 +1,1 @@
+bus.fbd: line 2: instantiating element 'M': 'memory' must have 'read-latency' property set when its access equals "Read Write"

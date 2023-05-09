@@ -6,6 +6,7 @@ import (
 
 func AddConfig(b *elem.Block, c *elem.Config)  { b.Configs = append(b.Configs, c) }
 func AddMask(b *elem.Block, m *elem.Mask)      { b.Masks = append(b.Masks, m) }
+func AddMemory(b *elem.Block, m *elem.Memory)  { b.Memories = append(b.Memories, m) }
 func AddProc(b *elem.Block, f *elem.Proc)      { b.Procs = append(b.Procs, f) }
 func AddStatic(b *elem.Block, s *elem.Static)  { b.Statics = append(b.Statics, s) }
 func AddStatus(b *elem.Block, s *elem.Status)  { b.Statuses = append(b.Statuses, s) }

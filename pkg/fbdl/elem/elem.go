@@ -25,6 +25,8 @@ func Name(e Element) string {
 		return e.Name
 	case *Mask:
 		return e.Name
+	case *Memory:
+		return e.Name
 	case *Param:
 		return e.Name
 	case *Proc:
@@ -52,6 +54,8 @@ func Type(e Element) string {
 		return "config"
 	case *Mask:
 		return "mask"
+	case *Memory:
+		return "memory"
 	case *Param:
 		return "param"
 	case *Proc:

@@ -19,7 +19,17 @@ func checkProp(prop prs.Prop) error {
 	name := prop.Name
 
 	switch name {
-	case "atomic":
+	case "access":
+		v, ok := pv.(val.Str)
+		if !ok {
+			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+		}
+		if v != "Read Write" && v != "Read Only" && v != "Write Only" {
+			return fmt.Errorf(
+				"'access' property must be \"Read Write\", \"Read Only\" or \"Write Only\", current value (%q)", v,
+			)
+		}
+	case "atomic", "byte-write-enable":
 		if _, ok := pv.(val.Bool); !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "bool", pv.Type())
 		}
@@ -124,13 +134,13 @@ func checkProp(prop prs.Prop) error {
 		if reset != "Sync" && reset != "Async" {
 			return fmt.Errorf("'reset' property must be \"Sync\" or \"Async\", current value (%q)", reset)
 		}
-	case "width":
+	case "read-latency", "size", "width":
 		v, ok := pv.(val.Int)
 		if !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "integer", pv.Type())
 		}
 		if v < 0 {
-			return fmt.Errorf("'width' property must be natural, current value (%d)", v)
+			return fmt.Errorf("'%s' property must be natural, current value (%d)", prop.Name, v)
 		}
 	default:
 		panic(fmt.Sprintf("checkProp() for property '%s' not yet implemented", name))

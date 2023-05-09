@@ -19,6 +19,7 @@ type Block struct {
 
 	Configs   []*Config
 	Masks     []*Mask
+	Memories  []*Memory
 	Procs     []*Proc
 	Statics   []*Static
 	Statuses  []*Status
