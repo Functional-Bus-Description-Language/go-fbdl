@@ -115,6 +115,15 @@ func checkProp(prop prs.Prop) error {
 		default:
 			return fmt.Errorf(invalidTypeMsg, name, "integer or [integer]", pv.Type())
 		}
+	case "reset":
+		v, ok := pv.(val.Str)
+		if !ok {
+			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+		}
+		reset := string(v)
+		if reset != "Sync" && reset != "Async" {
+			return fmt.Errorf("'reset' property must be \"Sync\" or \"Async\", current value (%q)", reset)
+		}
 	case "width":
 		v, ok := pv.(val.Int)
 		if !ok {

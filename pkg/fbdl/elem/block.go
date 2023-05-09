@@ -9,6 +9,7 @@ type Block struct {
 	Elem
 
 	Masters int64
+	Reset   string
 	Width   int64
 
 	Sizes     access.Sizes

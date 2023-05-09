@@ -69,13 +69,18 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 				return fmt.Errorf(propAlreadySetMsg, "masters")
 			}
 			blk.Masters = int64(v.(val.Int))
+		case "reset":
+			if blk.Reset != "" {
+				return fmt.Errorf(propAlreadySetMsg, "reset")
+			}
+			blk.Reset = string(v.(val.Str))
 		case "width":
 			if blk.Width != 0 {
 				return fmt.Errorf(propAlreadySetMsg, "width")
 			}
 			blk.Width = int64(v.(val.Int))
 		default:
-			panic("should never happen")
+			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
 		}
 	}
 

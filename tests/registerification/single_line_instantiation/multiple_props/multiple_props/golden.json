@@ -4,6 +4,7 @@
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
+	"Reset": "",
 	"Width": 32,
 	"Sizes": {
 		"BlockAligned": 8,
