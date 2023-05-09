@@ -10,12 +10,16 @@ import (
 )
 
 type configDiary struct {
-	atomicSet  bool
-	initValSet bool
-	initVal    val.Value
-	groupsSet  bool
-	rangeSet   bool
-	widthSet   bool
+	atomicSet   bool
+	initValSet  bool
+	initVal     val.Value
+	groupsSet   bool
+	rangeSet    bool
+	readValSet  bool
+	readVal     val.Value
+	resetValSet bool
+	resetVal    val.Value
+	widthSet    bool
 }
 
 func insConfig(typeChain []prs.Element) (*elem.Config, error) {
@@ -41,13 +45,9 @@ func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 	}
 
 	fillConfigProps(&cfg, diary)
-
-	if diary.initValSet {
-		val, err := processValue(cfg.Width, diary.initVal)
-		if err != nil {
-			return &cfg, err
-		}
-		cfg.InitValue = fbdlVal.MakeBitStr(val)
+	err = fillConfigValues(&cfg, diary)
+	if err != nil {
+		return nil, err
 	}
 
 	return &cfg, nil
@@ -76,7 +76,7 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			diary.atomicSet = true
 		case "init-value":
 			if diary.initValSet {
-				return fmt.Errorf(propAlreadySetMsg, "default")
+				return fmt.Errorf(propAlreadySetMsg, "init-value")
 			}
 			diary.initVal = v
 			diary.initValSet = true
@@ -101,6 +101,18 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			}
 			cfg.Groups = makeGroupList(v)
 			diary.groupsSet = true
+		case "read-value":
+			if diary.readValSet {
+				return fmt.Errorf(propAlreadySetMsg, "read-value")
+			}
+			diary.readVal = v
+			diary.readValSet = true
+		case "reset-value":
+			if diary.resetValSet {
+				return fmt.Errorf(propAlreadySetMsg, "reset-value")
+			}
+			diary.resetVal = v
+			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
@@ -108,7 +120,7 @@ func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) erro
 			cfg.Width = int64(v.(val.Int))
 			diary.widthSet = true
 		default:
-			panic("should never happen")
+			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
 		}
 	}
 
@@ -126,4 +138,32 @@ func fillConfigProps(cfg *elem.Config, diary configDiary) {
 			cfg.Width = cfg.Range.Width()
 		}
 	}
+}
+
+func fillConfigValues(cfg *elem.Config, diary configDiary) error {
+	if diary.initValSet {
+		val, err := processValue(diary.initVal, cfg.Width)
+		if err != nil {
+			return fmt.Errorf("'init-value': %v", err)
+		}
+		cfg.InitValue = fbdlVal.MakeBitStr(val)
+	}
+
+	if diary.resetValSet {
+		val, err := processValue(diary.resetVal, cfg.Width)
+		if err != nil {
+			return fmt.Errorf("'reset-value': %v", err)
+		}
+		cfg.ResetValue = fbdlVal.MakeBitStr(val)
+	}
+
+	if diary.readValSet {
+		val, err := processValue(diary.readVal, cfg.Width)
+		if err != nil {
+			return fmt.Errorf("'read-value': %v", err)
+		}
+		cfg.ReadValue = fbdlVal.MakeBitStr(val)
+	}
+
+	return nil
 }

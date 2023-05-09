@@ -67,13 +67,13 @@ func makeGroupList(propVal val.Value) []string {
 // processValue processes the '*-value' property.
 // If the value is BitStr, it checks whether its width is not greater than the width.
 // If the value is Int, it tries to convert it to the BitStr with width of width argument.
-func processValue(width int64, v val.Value) (val.BitStr, error) {
+func processValue(v val.Value, width int64) (val.BitStr, error) {
 	dflt := val.BitStr("")
 
 	if bs, ok := v.(val.BitStr); ok {
 		if bs.BitWidth() > width {
 			return dflt, fmt.Errorf(
-				"width of 'default' bit string (%d) is greater than value of 'width' property (%d)",
+				"width of bit string (%d) is greater than value of 'width' property (%d)",
 				bs.BitWidth(), width,
 			)
 		}
@@ -82,7 +82,7 @@ func processValue(width int64, v val.Value) (val.BitStr, error) {
 	if i, ok := v.(val.Int); ok {
 		bs, err := val.BitStrFromInt(i, width)
 		if err != nil {
-			return dflt, fmt.Errorf("processing 'default' property: %v", err)
+			return dflt, err
 		}
 		dflt = bs
 	}

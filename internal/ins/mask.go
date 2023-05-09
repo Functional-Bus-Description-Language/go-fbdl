@@ -10,10 +10,10 @@ import (
 )
 
 type maskDiary struct {
-	atomicSet bool
-	dfltSet   bool
-	dflt      val.Value
-	groupsSet bool
+	atomicSet  bool
+	initValSet bool
+	initVal    val.Value
+	groupsSet  bool
 	//rangeSet   bool
 	widthSet bool
 }
@@ -42,12 +42,12 @@ func insMask(typeChain []prs.Element) (*elem.Mask, error) {
 
 	fillMaskProps(&mask, diary)
 
-	if diary.dfltSet {
-		dflt, err := processValue(mask.Width, diary.dflt)
+	if diary.initValSet {
+		initVal, err := processValue(diary.initVal, mask.Width)
 		if err != nil {
 			return &mask, err
 		}
-		mask.InitValue = fbdlVal.MakeBitStr(dflt)
+		mask.InitValue = fbdlVal.MakeBitStr(initVal)
 	}
 
 	return &mask, nil
@@ -74,14 +74,14 @@ func applyMaskType(mask *elem.Mask, typ prs.Element, diary *maskDiary) error {
 			}
 			mask.Atomic = bool(v.(val.Bool))
 			diary.atomicSet = true
-		case "default":
-			panic("not yet implemented")
 		case "groups":
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
 			}
 			mask.Groups = makeGroupList(v)
 			diary.groupsSet = true
+		case "init-value":
+			panic("not yet implemented")
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")

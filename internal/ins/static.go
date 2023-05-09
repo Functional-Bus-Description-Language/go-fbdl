@@ -10,10 +10,10 @@ import (
 )
 
 type staticDiary struct {
-	dfltSet   bool
-	dflt      val.Value
-	groupsSet bool
-	widthSet  bool
+	initValSet bool
+	initVal    val.Value
+	groupsSet  bool
+	widthSet   bool
 }
 
 func insStatic(typeChain []prs.Element) (*elem.Static, error) {
@@ -40,12 +40,12 @@ func insStatic(typeChain []prs.Element) (*elem.Static, error) {
 
 	fillStaticProps(&st, diary)
 
-	if diary.dfltSet {
-		dflt, err := processValue(st.Width, diary.dflt)
+	if diary.initValSet {
+		initVal, err := processValue(diary.initVal, st.Width)
 		if err != nil {
 			return &st, err
 		}
-		st.InitValue = fbdlVal.MakeBitStr(dflt)
+		st.InitValue = fbdlVal.MakeBitStr(initVal)
 	} else {
 		return &st, fmt.Errorf("'static' element must have 'init-value' property set")
 	}
@@ -68,18 +68,18 @@ func applyStaticType(st *elem.Static, typ prs.Element, diary *staticDiary) error
 		}
 
 		switch prop.Name {
-		case "default":
-			if diary.dfltSet {
-				return fmt.Errorf(propAlreadySetMsg, "default")
-			}
-			diary.dflt = v
-			diary.dfltSet = true
 		case "groups":
 			if diary.groupsSet {
 				return fmt.Errorf(propAlreadySetMsg, "groups")
 			}
 			st.Groups = makeGroupList(v)
 			diary.groupsSet = true
+		case "init-value":
+			if diary.initValSet {
+				return fmt.Errorf(propAlreadySetMsg, "init-value")
+			}
+			diary.initVal = v
+			diary.initValSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")

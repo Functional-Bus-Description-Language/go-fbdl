@@ -30,7 +30,7 @@ func checkProp(prop prs.Prop) error {
 		default:
 			return fmt.Errorf(invalidTypeMsg, name, "time", pv.Type())
 		}
-	case "init-value":
+	case "init-value", "read-value", "reset-value":
 		switch pv.(type) {
 		case val.Int, val.BitStr:
 			break

@@ -8,11 +8,13 @@ import (
 type Config struct {
 	Elem
 
-	Atomic    bool
-	InitValue val.BitStr
-	Groups    []string
-	Range     val.Range
-	Width     int64
+	Atomic     bool
+	InitValue  val.BitStr
+	Groups     []string
+	Range      val.Range
+	ReadValue  val.BitStr
+	ResetValue val.BitStr
+	Width      int64
 
 	Access access.Access
 }
