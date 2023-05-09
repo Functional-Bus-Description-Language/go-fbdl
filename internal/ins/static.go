@@ -10,10 +10,14 @@ import (
 )
 
 type staticDiary struct {
-	initValSet bool
-	initVal    val.Value
-	groupsSet  bool
-	widthSet   bool
+	initValSet  bool
+	initVal     val.Value
+	groupsSet   bool
+	readValSet  bool
+	readVal     val.Value
+	resetValSet bool
+	resetVal    val.Value
+	widthSet    bool
 }
 
 func insStatic(typeChain []prs.Element) (*elem.Static, error) {
@@ -39,15 +43,9 @@ func insStatic(typeChain []prs.Element) (*elem.Static, error) {
 	}
 
 	fillStaticProps(&st, diary)
-
-	if diary.initValSet {
-		initVal, err := processValue(diary.initVal, st.Width)
-		if err != nil {
-			return &st, err
-		}
-		st.InitValue = fbdlVal.MakeBitStr(initVal)
-	} else {
-		return &st, fmt.Errorf("'static' element must have 'init-value' property set")
+	err = fillStaticValues(&st, diary)
+	if err != nil {
+		return nil, err
 	}
 
 	return &st, nil
@@ -80,6 +78,18 @@ func applyStaticType(st *elem.Static, typ prs.Element, diary *staticDiary) error
 			}
 			diary.initVal = v
 			diary.initValSet = true
+		case "read-value":
+			if diary.readValSet {
+				return fmt.Errorf(propAlreadySetMsg, "read-value")
+			}
+			diary.readVal = v
+			diary.readValSet = true
+		case "reset-value":
+			if diary.resetValSet {
+				return fmt.Errorf(propAlreadySetMsg, "reset-value")
+			}
+			diary.resetVal = v
+			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")
@@ -98,4 +108,34 @@ func fillStaticProps(st *elem.Static, diary staticDiary) {
 	if !diary.widthSet {
 		st.Width = busWidth
 	}
+}
+
+func fillStaticValues(st *elem.Static, diary staticDiary) error {
+	if diary.initValSet {
+		val, err := processValue(diary.initVal, st.Width)
+		if err != nil {
+			return fmt.Errorf("'init-value': %v", err)
+		}
+		st.InitValue = fbdlVal.MakeBitStr(val)
+	} else {
+		return fmt.Errorf("'static' element must have 'init-value' property set")
+	}
+
+	if diary.resetValSet {
+		val, err := processValue(diary.resetVal, st.Width)
+		if err != nil {
+			return fmt.Errorf("'reset-value': %v", err)
+		}
+		st.ResetValue = fbdlVal.MakeBitStr(val)
+	}
+
+	if diary.readValSet {
+		val, err := processValue(diary.readVal, st.Width)
+		if err != nil {
+			return fmt.Errorf("'read-value': %v", err)
+		}
+		st.ReadValue = fbdlVal.MakeBitStr(val)
+	}
+
+	return nil
 }

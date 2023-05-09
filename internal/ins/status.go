@@ -6,12 +6,15 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
 type statusDiary struct {
-	atomicSet bool
-	groupsSet bool
-	widthSet  bool
+	atomicSet  bool
+	groupsSet  bool
+	readValSet bool
+	readVal    val.Value
+	widthSet   bool
 }
 
 func insStatus(typeChain []prs.Element) (*elem.Status, error) {
@@ -37,6 +40,14 @@ func insStatus(typeChain []prs.Element) (*elem.Status, error) {
 	}
 
 	fillStatusProps(&st, diary)
+
+	if diary.readValSet {
+		val, err := processValue(diary.readVal, st.Width)
+		if err != nil {
+			return nil, fmt.Errorf("'read-value': %v", err)
+		}
+		st.ReadValue = fbdlVal.MakeBitStr(val)
+	}
 
 	return &st, nil
 }
@@ -68,6 +79,12 @@ func applyStatusType(st *elem.Status, typ prs.Element, diary *statusDiary) error
 			}
 			st.Groups = makeGroupList(v)
 			diary.groupsSet = true
+		case "read-value":
+			if diary.readValSet {
+				return fmt.Errorf(propAlreadySetMsg, "read-value")
+			}
+			diary.readVal = v
+			diary.readValSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, "width")

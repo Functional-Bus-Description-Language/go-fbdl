@@ -42,8 +42,10 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"381d0337\"",
 			"Groups": null,
+			"InitValue": "x\"381d0337\"",
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",

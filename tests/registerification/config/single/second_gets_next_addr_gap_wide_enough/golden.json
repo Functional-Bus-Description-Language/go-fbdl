@@ -69,8 +69,10 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"6b1404bc\"",
 			"Groups": null,
+			"InitValue": "x\"6b1404bc\"",
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",

@@ -50,8 +50,10 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"57d2052f\"",
 			"Groups": null,
+			"InitValue": "x\"57d2052f\"",
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
@@ -69,6 +71,7 @@
 			"Count": 1,
 			"Atomic": false,
 			"Groups": null,
+			"ReadValue": "",
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",

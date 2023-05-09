@@ -8,9 +8,11 @@ import (
 type Static struct {
 	Elem
 
-	InitValue val.BitStr
-	Groups    []string
-	Width     int64
+	Groups     []string
+	InitValue  val.BitStr
+	ReadValue  val.BitStr
+	ResetValue val.BitStr
+	Width      int64
 
 	Access access.Access
 }

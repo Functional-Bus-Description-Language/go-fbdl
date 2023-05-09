@@ -132,8 +132,10 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"5c770415\"",
 			"Groups": null,
+			"InitValue": "x\"5c770415\"",
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
@@ -151,6 +153,7 @@
 			"Count": 1,
 			"Atomic": true,
 			"Groups": null,
+			"ReadValue": "",
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",

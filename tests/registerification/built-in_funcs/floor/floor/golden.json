@@ -30,8 +30,10 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"4d25043f\"",
 			"Groups": null,
+			"InitValue": "x\"4d25043f\"",
+			"ReadValue": "",
+			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
@@ -49,6 +51,7 @@
 			"Count": 1,
 			"Atomic": true,
 			"Groups": null,
+			"ReadValue": "",
 			"Width": 8,
 			"Access": {
 				"Strategy": "Single",
@@ -64,6 +67,7 @@
 			"Count": 1,
 			"Atomic": true,
 			"Groups": null,
+			"ReadValue": "",
 			"Width": 15,
 			"Access": {
 				"Strategy": "Single",
