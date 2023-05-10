@@ -23,6 +23,8 @@ func Name(e Element) string {
 		return e.Name
 	case *Config:
 		return e.Name
+	case *Irq:
+		return e.Name
 	case *Mask:
 		return e.Name
 	case *Memory:
@@ -52,6 +54,8 @@ func Type(e Element) string {
 		return "block"
 	case *Config:
 		return "config"
+	case *Irq:
+		return "irq"
 	case *Mask:
 		return "mask"
 	case *Memory:

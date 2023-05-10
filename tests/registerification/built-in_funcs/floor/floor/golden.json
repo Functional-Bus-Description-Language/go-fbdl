@@ -22,6 +22,7 @@
 	"IntListConsts": null,
 	"StrConsts": null,
 	"Configs": null,
+	"Irqs": null,
 	"Masks": null,
 	"Memories": null,
 	"Procs": null,

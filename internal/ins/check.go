@@ -29,9 +29,19 @@ func checkProp(prop prs.Prop) error {
 				"'access' property must be \"Read Write\", \"Read Only\" or \"Write Only\", current value (%q)", v,
 			)
 		}
-	case "atomic", "byte-write-enable":
+	case "add-enable", "atomic", "byte-write-enable":
 		if _, ok := pv.(val.Bool); !ok {
 			return fmt.Errorf(invalidTypeMsg, name, "bool", pv.Type())
+		}
+	case "clear":
+		v, ok := pv.(val.Str)
+		if !ok {
+			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+		}
+		if v != "Explicit" && v != "On Read" {
+			return fmt.Errorf(
+				"'clear' property must be \"Explicit\" or \"On Read\", current value (%q)", v,
+			)
 		}
 	case "delay":
 		switch pv.(type) {
@@ -40,7 +50,7 @@ func checkProp(prop prs.Prop) error {
 		default:
 			return fmt.Errorf(invalidTypeMsg, name, "time", pv.Type())
 		}
-	case "init-value", "read-value", "reset-value":
+	case "enable-init-value", "enable-reset-value", "init-value", "read-value", "reset-value":
 		switch pv.(type) {
 		case val.Int, val.BitStr:
 			break
@@ -71,6 +81,17 @@ func checkProp(prop prs.Prop) error {
 			}
 		default:
 			return fmt.Errorf(invalidTypeMsg, name, "string or [string]", pv.Type())
+		}
+	case "in-trigger", "out-trigger":
+		v, ok := pv.(val.Str)
+		if !ok {
+			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+		}
+		if v != "Edge" && v != "Level" {
+			return fmt.Errorf(
+				"'%s' property must be \"Edge\" or \"Level\", current value (%q)",
+				name, v,
+			)
 		}
 	case "masters":
 		v, ok := pv.(val.Int)

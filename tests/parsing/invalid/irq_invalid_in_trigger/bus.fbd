@@ -1,0 +1,3 @@
+Main bus
+	i irq
+		in-trigger = "abc"

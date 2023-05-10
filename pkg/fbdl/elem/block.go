@@ -18,6 +18,7 @@ type Block struct {
 	ConstContainer
 
 	Configs   []*Config
+	Irqs      []*Irq
 	Masks     []*Mask
 	Memories  []*Memory
 	Procs     []*Proc

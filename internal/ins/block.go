@@ -136,6 +136,8 @@ func addBlockInnerElement(blk *elem.Block, e any) {
 	switch e := e.(type) {
 	case (*elem.Config):
 		block.AddConfig(blk, e)
+	case (*elem.Irq):
+		block.AddIrq(blk, e)
 	case (*elem.Mask):
 		block.AddMask(blk, e)
 	case (*elem.Memory):

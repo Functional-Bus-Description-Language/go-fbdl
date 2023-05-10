@@ -5,6 +5,7 @@ import (
 )
 
 func AddConfig(b *elem.Block, c *elem.Config)  { b.Configs = append(b.Configs, c) }
+func AddIrq(b *elem.Block, i *elem.Irq)        { b.Irqs = append(b.Irqs, i) }
 func AddMask(b *elem.Block, m *elem.Mask)      { b.Masks = append(b.Masks, m) }
 func AddMemory(b *elem.Block, m *elem.Memory)  { b.Memories = append(b.Memories, m) }
 func AddProc(b *elem.Block, f *elem.Proc)      { b.Procs = append(b.Procs, f) }
