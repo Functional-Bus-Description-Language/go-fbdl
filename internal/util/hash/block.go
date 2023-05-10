@@ -26,8 +26,16 @@ func hashBlock(b *elem.Block) uint32 {
 	for _, c := range b.Configs {
 		write(&buf, Hash(c))
 	}
+	// Irqs
+	for _, i := range b.Irqs {
+		write(&buf, Hash(i))
+	}
 	// Masks
 	for _, m := range b.Masks {
+		write(&buf, Hash(m))
+	}
+	// Memories
+	for _, m := range b.Memories {
 		write(&buf, Hash(m))
 	}
 	// Procs

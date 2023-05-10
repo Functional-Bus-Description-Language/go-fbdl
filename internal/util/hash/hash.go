@@ -35,8 +35,12 @@ func Hash(data any) uint32 {
 		return hashConfig(d)
 	case *elem.ConstContainer:
 		return hashConstContainer(d)
+	case *elem.Irq:
+		return hashIrq(d)
 	case *elem.Mask:
 		return hashMask(d)
+	case *elem.Memory:
+		return hashMemory(d)
 	case *elem.Proc:
 		return hashProc(d)
 	case *elem.Param:
