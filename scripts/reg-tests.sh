@@ -36,6 +36,12 @@ echo -e "Running registerification tests\n"
 
 for dir in $(find . -maxdepth 3 -mindepth 3 -type d);
 do
+	testname=`basename $dir`
+	# Ignore tests starting with '_' character.
+	if [ ${testname::1} = "_" ]; then
+		continue
+	fi
+
 	echo "  $dir"
 	cd "$dir"
 	../../../../../fbdl -r bus.fbd

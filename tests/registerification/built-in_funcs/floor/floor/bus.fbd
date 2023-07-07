@@ -2,5 +2,5 @@ const int = 8
 const float = 15.8
 
 Main bus
-	s_int status; width = floor(int)
-	s_float status; width = floor(float)
+	c_int config; width = floor(int)
+	c_float config; width = floor(float)

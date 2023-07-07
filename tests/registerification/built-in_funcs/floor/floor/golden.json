@@ -7,13 +7,13 @@
 	"Reset": "",
 	"Width": 32,
 	"Sizes": {
-		"BlockAligned": 2,
-		"Compact": 2,
-		"Own": 2
+		"BlockAligned": 4,
+		"Compact": 3,
+		"Own": 3
 	},
 	"AddrSpace": {
 		"Start": 0,
-		"End": 1
+		"End": 3
 	},
 	"BoolConsts": null,
 	"BoolListConsts": null,
@@ -21,7 +21,46 @@
 	"IntConsts": null,
 	"IntListConsts": null,
 	"StrConsts": null,
-	"Configs": null,
+	"Configs": [
+		{
+			"Name": "c_int",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 8,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 1,
+				"StartBit": 0,
+				"EndBit": 7
+			}
+		},
+		{
+			"Name": "c_float",
+			"Doc": "",
+			"IsArray": false,
+			"Count": 1,
+			"Atomic": true,
+			"InitValue": "",
+			"Groups": null,
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 15,
+			"Access": {
+				"Strategy": "Single",
+				"Addr": 2,
+				"StartBit": 0,
+				"EndBit": 14
+			}
+		}
+	],
 	"Irqs": null,
 	"Masks": null,
 	"Memories": null,
@@ -33,7 +72,7 @@
 			"IsArray": false,
 			"Count": 1,
 			"Groups": null,
-			"InitValue": "x\"4d25043f\"",
+			"InitValue": "x\"538e051e\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
@@ -45,40 +84,7 @@
 			}
 		}
 	],
-	"Statuses": [
-		{
-			"Name": "s_int",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Groups": null,
-			"ReadValue": "",
-			"Width": 8,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 1,
-				"StartBit": 15,
-				"EndBit": 22
-			}
-		},
-		{
-			"Name": "s_float",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"Groups": null,
-			"ReadValue": "",
-			"Width": 15,
-			"Access": {
-				"Strategy": "Single",
-				"Addr": 1,
-				"StartBit": 0,
-				"EndBit": 14
-			}
-		}
-	],
+	"Statuses": null,
 	"Streams": null,
 	"Subblocks": null
 }

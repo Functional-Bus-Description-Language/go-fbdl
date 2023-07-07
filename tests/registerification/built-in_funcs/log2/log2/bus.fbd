@@ -1,5 +1,5 @@
-const int = 8
-const float = 15.8
+const int = 131072
+const float = 262144.8
 
 Main bus
 	s_int status; width = log2(int)

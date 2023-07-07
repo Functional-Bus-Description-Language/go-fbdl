@@ -7,13 +7,13 @@
 	"Reset": "",
 	"Width": 32,
 	"Sizes": {
-		"BlockAligned": 2,
-		"Compact": 2,
-		"Own": 2
+		"BlockAligned": 4,
+		"Compact": 3,
+		"Own": 3
 	},
 	"AddrSpace": {
 		"Start": 0,
-		"End": 1
+		"End": 3
 	},
 	"BoolConsts": null,
 	"BoolListConsts": null,
@@ -33,7 +33,7 @@
 			"IsArray": false,
 			"Count": 1,
 			"Groups": null,
-			"InitValue": "x\"3e990315\"",
+			"InitValue": "x\"511d04a1\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
@@ -54,12 +54,12 @@
 			"Atomic": true,
 			"Groups": null,
 			"ReadValue": "",
-			"Width": 3,
+			"Width": 17,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 1,
-				"StartBit": 4,
-				"EndBit": 6
+				"Addr": 2,
+				"StartBit": 0,
+				"EndBit": 16
 			}
 		},
 		{
@@ -70,12 +70,12 @@
 			"Atomic": true,
 			"Groups": null,
 			"ReadValue": "",
-			"Width": 4,
+			"Width": 19,
 			"Access": {
 				"Strategy": "Single",
 				"Addr": 1,
 				"StartBit": 0,
-				"EndBit": 3
+				"EndBit": 18
 			}
 		}
 	],
