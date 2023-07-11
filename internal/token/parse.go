@@ -97,6 +97,10 @@ func Parse(src []byte) (Stream, error) {
 			t = parseEqualityOperator(&c)
 		} else if b == '=' {
 			t = parseAssignmentOperator(&c)
+		} else if b == '(' {
+			t = parseLeftParenthesis(&c)
+		} else if b == ')' {
+			t = parseRightParenthesis(&c)
 		} else if (b == 'b' || b == 'B') && nb == '"' {
 			t, err = parseBinaryBitStringLiteral(&c, src)
 		} else if (b == 'o' || b == 'O') && nb == '"' {
@@ -232,6 +236,18 @@ func parseEqualityOperator(c *context) Token {
 
 func parseAssignmentOperator(c *context) Token {
 	t := Token{Kind: ASS, Pos: Position{Start: c.idx, End: c.idx}}
+	c.idx++
+	return t
+}
+
+func parseLeftParenthesis(c *context) Token {
+	t := Token{Kind: LPAREN, Pos: Position{Start: c.idx, End: c.idx}}
+	c.idx++
+	return t
+}
+
+func parseRightParenthesis(c *context) Token {
+	t := Token{Kind: RPAREN, Pos: Position{Start: c.idx, End: c.idx}}
 	c.idx++
 	return t
 }

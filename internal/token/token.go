@@ -61,9 +61,6 @@ const (
 	LBRACK // [
 	RBRACK // ]
 
-	LBRACE // {
-	RBRACE // }
-
 	COMMA     // ,
 	SEMICOLON // ;
 
@@ -112,6 +109,8 @@ const (
 	// Tokens currently not used by the language specification.
 	PERIOD // .
 	COLON  // :
+	LBRACE // {
+	RBRACE // }
 	//unused_end
 )
 
