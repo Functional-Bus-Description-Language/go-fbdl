@@ -51,7 +51,8 @@ func Parse(src []byte) (Stream, error) {
 
 		t.Kind = INVALID
 		err = nil
-		b := src[c.idx]
+		b := src[c.idx]            // Current byte
+		nb := nextByte(src, c.idx) // Next byte
 
 		if b == ' ' {
 			err = parseSpace(&c, s)
@@ -67,11 +68,15 @@ func Parse(src []byte) (Stream, error) {
 			t, err = parseSemicolon(&c, s)
 		} else if b == '!' {
 			t = parseNegationOperator(&c)
-		} else if (b == 'b' || b == 'B') && nextByte(src, c.idx) == '"' {
+		} else if b == '=' && nb == '=' {
+			t = parseEqualityOperator(&c)
+		} else if b == '=' {
+			t = parseAssignmentOperator(&c)
+		} else if (b == 'b' || b == 'B') && nb == '"' {
 			t, err = parseBinaryBitStringLiteral(&c, src)
-		} else if (b == 'o' || b == 'O') && nextByte(src, c.idx) == '"' {
+		} else if (b == 'o' || b == 'O') && nb == '"' {
 			t, err = parseOctalBitStringLiteral(&c, src)
-		} else if (b == 'x' || b == 'X') && nextByte(src, c.idx) == '"' {
+		} else if (b == 'x' || b == 'X') && nb == '"' {
 			t, err = parseHexBitStringLiteral(&c, src)
 		} else if isDigit(b) {
 			t, err = parseNumberLiteral(&c, src)
@@ -186,6 +191,18 @@ func parseSemicolon(c *context, s Stream) (Token, error) {
 
 func parseNegationOperator(c *context) Token {
 	t := Token{Kind: NEG, Pos: Position{Start: c.idx, End: c.idx}}
+	c.idx++
+	return t
+}
+
+func parseEqualityOperator(c *context) Token {
+	t := Token{Kind: EQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	c.idx += 2
+	return t
+}
+
+func parseAssignmentOperator(c *context) Token {
+	t := Token{Kind: ASS, Pos: Position{Start: c.idx, End: c.idx}}
 	c.idx++
 	return t
 }

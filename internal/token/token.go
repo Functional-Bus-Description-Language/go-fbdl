@@ -27,6 +27,7 @@ const (
 	NEG // !
 
 	// Binary arithmetic operators
+	ASS // =
 	ADD // +
 	SUB // -
 	MUL // *
