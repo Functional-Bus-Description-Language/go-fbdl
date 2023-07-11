@@ -43,12 +43,12 @@ func TestParse(t *testing.T) {
 	for i, test := range tests {
 		got, err := Parse([]byte(test.src))
 		if err != nil {
-			t.Errorf("%d: error is not nil: %v", i, err)
+			t.Fatalf("%d: error is not nil: %v", i, err)
 		}
 
 		for j, tok := range test.want {
 			if got[j] != tok {
-				t.Errorf("\nTest %d, token %d:\n got: %+v\nwant: %+v", i, j, got[j], tok)
+				t.Fatalf("\nTest %d, token %d:\n got: %+v\nwant: %+v", i, j, got[j], tok)
 			}
 		}
 	}
@@ -68,16 +68,19 @@ func TestParseError(t *testing.T) {
 		{ // 2
 			" ; \n", fmt.Errorf("1:2: extra ';' at the end of line"),
 		},
+		{ // 3
+			";;", fmt.Errorf("1:2: redundant ';'"),
+		},
 	}
 
 	for i, test := range tests {
 		_, err := Parse([]byte(test.src))
 		if err == nil {
-			t.Errorf("%d: err = nil, expecting != nil", i)
+			t.Fatalf("%d: err = nil, expecting != nil", i)
 		}
 
 		if err.Error() != test.err.Error() {
-			t.Errorf("%d:\n got: %v\nwant: %v", i, err, test.err)
+			t.Fatalf("%d:\n got: %v\nwant: %v", i, err, test.err)
 		}
 	}
 }

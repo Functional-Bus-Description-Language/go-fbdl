@@ -54,7 +54,7 @@ func Parse(src []byte) (Stream, error) {
 		} else if b == '#' {
 			t = parseComment(&c, src)
 		} else if b == ';' {
-			t = parseSemicolon(&c)
+			t, err = parseSemicolon(&c, s)
 		} else if isDigit(b) {
 			t, err = parseNumberLiteral(&c, src)
 		}
@@ -126,7 +126,15 @@ func parseComment(c *context, src []byte) Token {
 	}
 }
 
-func parseSemicolon(c *context) Token {
+func parseSemicolon(c *context, s Stream) (Token, error) {
+	if prev_tok, ok := s.LastToken(); ok {
+		if prev_tok.Kind == SEMICOLON {
+			return Token{}, fmt.Errorf(
+				"%d:%d: redundant ';'", prev_tok.Pos.Line, c.col(c.idx),
+			)
+		}
+	}
+
 	t := Token{
 		Kind: SEMICOLON,
 		Pos: Position{
@@ -135,7 +143,7 @@ func parseSemicolon(c *context) Token {
 		},
 	}
 	c.idx++
-	return t
+	return t, nil
 }
 
 func isDigit(b byte) bool {
