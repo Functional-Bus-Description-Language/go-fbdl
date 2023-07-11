@@ -64,7 +64,7 @@ const (
 	COMMA     // ,
 	SEMICOLON // ;
 
-	//keyword_start
+	keyword_start
 	CONST
 	IMPORT
 	TYPE
@@ -80,7 +80,7 @@ const (
 	STATIC
 	STREAM
 	functionality_end
-	//keyword_end
+	keyword_end
 
 	property_start
 	ACCESS

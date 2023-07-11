@@ -366,24 +366,37 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 	if !hasHyphen {
 		// Firstly assume word is a keyword
 		t = parseKeyword(word, c)
-		// Start and End are already set by the parseKeyword function
+		// If it is not a keyword, then it might be a property or identifier.
 		if t.Kind == INVALID {
-			// If it is not keyword, then it must be identifier
-			t.Kind = IDENT
-		} else {
-			// In other case this might be a keyword, but not necessarily,
-			// as for example "const block = true" is valid semantically.
-			if prev_tok, ok := s.LastToken(); ok {
-				k := prev_tok.Kind
-				if k == CONST ||
-					(isOperator(k) && t.Kind != BOOL) ||
-					(k == NEWLINE && isFunctionality(t.Kind)) {
-					t.Kind = IDENT
-				}
+			t = parseProperty(word, c)
+			// If it is not property, then it must be an identifier.
+			if t.Kind == INVALID {
+				t.Kind = IDENT
 			} else {
-				if isFunctionality(t.Kind) {
-					t.Kind = IDENT
+				// However, properties are properties only if they are in valid place,
+				// otherwise, these are regular identifiers.
+				if prev_tok, ok := s.LastToken(); ok {
+					if prev_tok.Kind != NEWLINE && prev_tok.Kind != SEMICOLON {
+						t.Kind = IDENT
+					}
 				}
+			}
+		}
+	} else {
+		// Firstly assume word is a property
+		t = parseProperty(word, c)
+		// If it is not property, then it is part of an expression.
+		if t.Kind == INVALID {
+			panic("unimplemented")
+		} else {
+			// It might be property, or part of an expression.
+			prev_tok, ok := s.LastToken()
+			if !ok {
+				return t, nil
+			}
+			// It is part of an expression.
+			if prev_tok.Kind != NEWLINE && prev_tok.Kind != SEMICOLON {
+				panic("unimplemented")
 			}
 		}
 	}
@@ -405,7 +418,7 @@ func parseKeyword(word []byte, c *context) Token {
 		t.Kind = CONST
 	case "import":
 		t.Kind = IMPORT
-	case "IRQ":
+	case "irq":
 		t.Kind = IRQ
 	case "mask":
 		t.Kind = MASK
@@ -423,6 +436,55 @@ func parseKeyword(word []byte, c *context) Token {
 		t.Kind = STREAM
 	case "type":
 		t.Kind = TYPE
+	}
+
+	return t
+}
+
+func parseProperty(word []byte, c *context) Token {
+	t := Token{Kind: INVALID, Pos: Position{Start: c.idx, End: c.idx + len(word) - 1}}
+
+	switch string(word) {
+	case "access":
+		t.Kind = ACCESS
+	case "add-enable":
+		t.Kind = ADD_ENABLE
+	case "atomic":
+		t.Kind = ATOMIC
+	case "byte-write-enable":
+		t.Kind = BYTE_WRITE_ENABLE
+	case "clear":
+		t.Kind = CLEAR
+	case "delay":
+		t.Kind = DELAY
+	case "enable-init-value":
+		t.Kind = ENABLE_INIT_VALUE
+	case "enable-reset-value":
+		t.Kind = ENABLE_RESET_VALUE
+	case "groups":
+		t.Kind = GROUPS
+	case "init-value":
+		t.Kind = INIT_VALUE
+	case "in-trigger":
+		t.Kind = IN_TRIGGER
+	case "masters":
+		t.Kind = MASTERS
+	case "out-trigger":
+		t.Kind = OUT_TRIGGER
+	case "range":
+		t.Kind = RANGE
+	case "read-latency":
+		t.Kind = READ_LATENCY
+	case "read-value":
+		t.Kind = READ_VALUE
+	case "reset":
+		t.Kind = RESET
+	case "reset-value":
+		t.Kind = RESET_VALUE
+	case "size":
+		t.Kind = SIZE
+	case "width":
+		t.Kind = WIDTH
 	}
 
 	return t

@@ -48,19 +48,25 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{ // 5
-			"const bus = true",
+			"foo mask; atomic = false",
 			Stream{
-				Token{Kind: CONST, Pos: Position{Start: 0, End: 4, Line: 1, Column: 1}},
-				Token{Kind: IDENT, Pos: Position{Start: 6, End: 8, Line: 1, Column: 7}},
-				Token{Kind: ASS, Pos: Position{Start: 10, End: 10, Line: 1, Column: 11}},
-				Token{Kind: BOOL, Pos: Position{Start: 12, End: 15, Line: 1, Column: 13}},
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 2, Line: 1, Column: 1}},
+				Token{Kind: MASK, Pos: Position{Start: 4, End: 7, Line: 1, Column: 5}},
+				Token{Kind: SEMICOLON, Pos: Position{Start: 8, End: 8, Line: 1, Column: 9}},
+				Token{Kind: ATOMIC, Pos: Position{Start: 10, End: 15, Line: 1, Column: 11}},
+				Token{Kind: ASS, Pos: Position{Start: 17, End: 17, Line: 1, Column: 18}},
+				Token{Kind: BOOL, Pos: Position{Start: 19, End: 23, Line: 1, Column: 20}},
 			},
 		},
 		{ // 6
-			"bus bus",
+			"i irq; add-enable = true",
 			Stream{
-				Token{Kind: IDENT, Pos: Position{Start: 0, End: 2, Line: 1, Column: 1}},
-				Token{Kind: BUS, Pos: Position{Start: 4, End: 6, Line: 1, Column: 5}},
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 0, Line: 1, Column: 1}},
+				Token{Kind: IRQ, Pos: Position{Start: 2, End: 4, Line: 1, Column: 3}},
+				Token{Kind: SEMICOLON, Pos: Position{Start: 5, End: 5, Line: 1, Column: 6}},
+				Token{Kind: ADD_ENABLE, Pos: Position{Start: 7, End: 16, Line: 1, Column: 8}},
+				Token{Kind: ASS, Pos: Position{Start: 18, End: 18, Line: 1, Column: 19}},
+				Token{Kind: BOOL, Pos: Position{Start: 20, End: 23, Line: 1, Column: 21}},
 			},
 		},
 	}
@@ -69,6 +75,13 @@ func TestParse(t *testing.T) {
 		got, err := Parse([]byte(test.src))
 		if err != nil {
 			t.Fatalf("%d: error is not nil: %v", i, err)
+		}
+
+		if len(got) != len(test.want) {
+			t.Fatalf(
+				"\nTest: %d\n\nCode:\n%s\n\nInvalid number of tokens: got %d, want %d",
+				i, test.src, len(got), len(test.want),
+			)
 		}
 
 		for j, tok := range test.want {
