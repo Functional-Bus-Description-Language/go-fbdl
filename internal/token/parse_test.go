@@ -73,7 +73,10 @@ func TestParse(t *testing.T) {
 
 		for j, tok := range test.want {
 			if got[j] != tok {
-				t.Fatalf("\nTest %d, token %d:\n got: %+v\nwant: %+v", i, j, got[j], tok)
+				t.Fatalf(
+					"\nTest: %d\n\nCode:\n%s\n\nToken: %d\ngot: %+v\nwant: %+v",
+					i, test.src, j, got[j], tok,
+				)
 			}
 		}
 	}
