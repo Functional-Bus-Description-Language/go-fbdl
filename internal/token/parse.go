@@ -101,6 +101,10 @@ func Parse(src []byte) (Stream, error) {
 			t = parseLeftParenthesis(&c)
 		} else if b == ')' {
 			t = parseRightParenthesis(&c)
+		} else if b == '[' {
+			t = parseLeftBracket(&c)
+		} else if b == ']' {
+			t = parseRightBracket(&c)
 		} else if (b == 'b' || b == 'B') && nb == '"' {
 			t, err = parseBinaryBitStringLiteral(&c, src)
 		} else if (b == 'o' || b == 'O') && nb == '"' {
@@ -248,6 +252,18 @@ func parseLeftParenthesis(c *context) Token {
 
 func parseRightParenthesis(c *context) Token {
 	t := Token{Kind: RPAREN, Pos: Position{Start: c.idx, End: c.idx}}
+	c.idx++
+	return t
+}
+
+func parseLeftBracket(c *context) Token {
+	t := Token{Kind: LBRACK, Pos: Position{Start: c.idx, End: c.idx}}
+	c.idx++
+	return t
+}
+
+func parseRightBracket(c *context) Token {
+	t := Token{Kind: RBRACK, Pos: Position{Start: c.idx, End: c.idx}}
 	c.idx++
 	return t
 }
