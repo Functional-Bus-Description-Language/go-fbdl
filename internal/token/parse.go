@@ -5,15 +5,24 @@ import (
 )
 
 type context struct {
-	line uint
-	//indent uint       // Current indent level
-	idx         uint // Start index
-	newline_idx uint // Last newline index
+	line int
+	//indent int       // Current indent level
+	idx         int // Start index
+	newline_idx int // Last newline index
 }
 
-// Col returns column number.
-func (c context) col() uint {
-	return c.idx - c.newline_idx
+// Col returns column number for given index.
+func (c context) col(idx int) int {
+	return idx - c.newline_idx
+}
+
+// nextByte returns byte with index equal idx + 1.
+// If (idx + 1) >= len(src), then 0 is returned.
+func nextByte(src []byte, idx int) byte {
+	if idx+1 >= len(src) {
+		return 0
+	}
+	return src[idx+1]
 }
 
 // Parse parses src byte array containing the source code and returns token Stream.
@@ -25,9 +34,10 @@ func Parse(src []byte) (Stream, error) {
 		t   Token
 	)
 	c.line = 1
+	c.newline_idx = -1
 
 	for {
-		if int(c.idx) == len(src) {
+		if c.idx == len(src) {
 			break
 		}
 
@@ -41,6 +51,8 @@ func Parse(src []byte) (Stream, error) {
 			err = parseTab(&c, s)
 		} else if b == '\n' {
 			t, err = parseNewline(&c, s)
+		} else if b == '#' {
+			t = parseComment(&c, src)
 		} else if isDigit(b) {
 			t, err = parseNumberLiteral(&c, src)
 		}
@@ -53,9 +65,10 @@ func Parse(src []byte) (Stream, error) {
 			t.Pos.Line = c.line
 			if t.Kind == NEWLINE {
 				c.line++
+			} else {
+				t.Pos.Column = c.col(t.Pos.Start)
 			}
 
-			t.Pos.Column = c.col()
 			s = append(s, t)
 			c.idx = t.Pos.End + 1
 		}
@@ -68,7 +81,7 @@ func parseSpace(c *context, s Stream) error {
 	if t, ok := s.LastToken(); ok {
 		if t.Kind == NEWLINE {
 			return fmt.Errorf(
-				"%d:%d: space character ' ' not allowed for indent", c.line, c.col(),
+				"%d:%d: space character ' ' not allowed for indent", c.line, c.col(c.idx),
 			)
 		}
 	}
@@ -84,11 +97,23 @@ func parseTab(c *context, s Stream) error {
 func parseNewline(c *context, s Stream) (Token, error) {
 	t := Token{
 		Kind: NEWLINE,
-		Pos:  Position{Start: c.idx, End: c.idx},
+		Pos:  Position{Start: c.idx, End: c.idx, Column: c.col(c.idx)},
 	}
 	c.newline_idx = c.idx
 	c.idx++
 	return t, nil
+}
+
+func parseComment(c *context, src []byte) Token {
+	t := Token{Kind: COMMENT, Pos: Position{Start: c.idx}}
+
+	for {
+		c.idx++
+		if c.idx >= len(src) || src[c.idx] == '\n' {
+			t.Pos.End = c.idx - 1
+			return t
+		}
+	}
 }
 
 func isDigit(b byte) bool {

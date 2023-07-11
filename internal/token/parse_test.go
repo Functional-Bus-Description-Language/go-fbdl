@@ -17,6 +17,19 @@ func TestParse(t *testing.T) {
 				Token{Kind: NEWLINE, Pos: Position{Start: 1, End: 1, Line: 2, Column: 1}},
 			},
 		},
+		{ // 1
+			"# Comment line",
+			Stream{
+				Token{Kind: COMMENT, Pos: Position{Start: 0, End: 13, Line: 1, Column: 1}},
+			},
+		},
+		{ // 2
+			"# Comment\n",
+			Stream{
+				Token{Kind: COMMENT, Pos: Position{Start: 0, End: 8, Line: 1, Column: 1}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 9, End: 9, Line: 1, Column: 10}},
+			},
+		},
 	}
 
 	for i, test := range tests {
