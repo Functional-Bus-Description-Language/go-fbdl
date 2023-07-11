@@ -9,8 +9,8 @@ import (
 // BitStr (bit string) is used for representing init values.
 // BitStr type is needed for 2 reasons:
 //
-//   1. To support default value for registers with arbitrary width.
-//   2. To support meta logic values supported in Hardware Description Languages.
+//  1. To support default value for registers with arbitrary width.
+//  2. To support meta logic values supported in Hardware Description Languages.
 type BitStr string
 
 func MakeBitStr(bs val.BitStr) BitStr { return BitStr(string(bs)) }

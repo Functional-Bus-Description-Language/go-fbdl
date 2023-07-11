@@ -21,10 +21,10 @@ func regAtomicStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	if st.Width > busWidth {
 		a = access.MakeSingleContinuous(addr, 0, st.Width)
 		addr += a.RegCount()
-	/*
-	} else if g, ok := gp.GetSingle(st.Width, false); ok {
-		a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
-	*/
+		/*
+			} else if g, ok := gp.GetSingle(st.Width, false); ok {
+				a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
+		*/
 	} else {
 		a = access.MakeSingleSingle(addr, 0, st.Width)
 		addr += a.RegCount()
@@ -75,10 +75,10 @@ func regNonAtomicStatus(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 
 func regNonAtomicStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	/*
-	var a access.Access
-	if g, ok := gp.GetSingle(st.Width, false); ok {
-		a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
-	} else {
+		var a access.Access
+		if g, ok := gp.GetSingle(st.Width, false); ok {
+			a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
+		} else {
 	*/
 	a := access.MakeSingle(addr, 0, st.Width)
 	addr += a.RegCount()

@@ -17,10 +17,10 @@ func regStatic(st *elem.Static, addr int64, gp *gap.Pool) int64 {
 
 func regStaticSingle(st *elem.Static, addr int64, gp *gap.Pool) int64 {
 	/*
-	var a access.Access
-	if g, ok := gp.GetSingle(st.Width, false); ok {
-		a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
-	} else {
+		var a access.Access
+		if g, ok := gp.GetSingle(st.Width, false); ok {
+			a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
+		} else {
 	*/
 
 	a := access.MakeSingle(addr, 0, st.Width)
