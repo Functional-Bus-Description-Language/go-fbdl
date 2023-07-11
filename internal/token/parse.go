@@ -65,6 +65,8 @@ func Parse(src []byte) (Stream, error) {
 			t, err = parseComma(&c, s)
 		} else if b == ';' {
 			t, err = parseSemicolon(&c, s)
+		} else if b == '!' {
+			t = parseNegationOperator(&c)
 		} else if (b == 'b' || b == 'B') && nextByte(src, c.idx) == '"' {
 			t, err = parseBinaryBitStringLiteral(&c, src)
 		} else if (b == 'o' || b == 'O') && nextByte(src, c.idx) == '"' {
@@ -180,6 +182,12 @@ func parseSemicolon(c *context, s Stream) (Token, error) {
 	}
 	c.idx++
 	return t, nil
+}
+
+func parseNegationOperator(c *context) Token {
+	t := Token{Kind: NEG, Pos: Position{Start: c.idx, End: c.idx}}
+	c.idx++
+	return t
 }
 
 func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {
