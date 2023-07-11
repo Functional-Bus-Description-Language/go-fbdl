@@ -25,6 +25,31 @@ func nextByte(src []byte, idx int) byte {
 	return src[idx+1]
 }
 
+// getWord returns word from the source starting from index idx.
+// The function assumes byte under idx is not a whitespace character.
+// The second return is true if word contains hyphen '-' character.
+func getWord(src []byte, idx int) ([]byte, bool) {
+	hasHyphen := false
+	end_idx := idx
+
+	for {
+		if end_idx >= len(src) {
+			return src[idx:end_idx], hasHyphen
+		}
+
+		b := src[end_idx]
+		if isLetter(b) || isDigit(b) || b == '_' || b == '-' {
+			if b == '-' {
+				hasHyphen = true
+			}
+			end_idx++
+			continue
+		} else {
+			return src[idx:end_idx], hasHyphen
+		}
+	}
+}
+
 func isDigit(b byte) bool {
 	return '0' <= b && b <= '9'
 }
@@ -80,6 +105,10 @@ func Parse(src []byte) (Stream, error) {
 			t, err = parseHexBitStringLiteral(&c, src)
 		} else if isDigit(b) {
 			t, err = parseNumberLiteral(&c, src)
+		} else if isLetter(b) {
+			t, err = parseWord(&c, src, s)
+		} else {
+			panic(fmt.Sprintf("unhandled byte '%c'", b))
 		}
 
 		if err != nil {
@@ -312,4 +341,73 @@ func parseNumberLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Pos: Position{Start: c.idx}}
 
 	return t, nil
+}
+
+func parseWord(c *context, src []byte, s Stream) (Token, error) {
+	var t Token
+	word, hasHyphen := getWord(src, c.idx)
+
+	if !hasHyphen {
+		// Firstly assume word is a keyword
+		t = parseKeyword(word, c)
+		// Start and End are already set by the parseKeyword function
+		if t.Kind == INVALID {
+			// If it is not keyword, then it must be identifier
+			t.Kind = IDENT
+		} else {
+			// In other case this might be a keyword, but not necessarily,
+			// as for example "const block = true" is valid semantically.
+			if prev_tok, ok := s.LastToken(); ok {
+				k := prev_tok.Kind
+				if k == CONST ||
+					(isOperator(k) && t.Kind != BOOL) ||
+					(k == NEWLINE && isFunctionality(t.Kind)) {
+					t.Kind = IDENT
+				}
+			} else {
+				if isFunctionality(t.Kind) {
+					t.Kind = IDENT
+				}
+			}
+		}
+	}
+
+	return t, nil
+}
+
+func parseKeyword(word []byte, c *context) Token {
+	t := Token{Kind: INVALID, Pos: Position{Start: c.idx, End: c.idx + len(word) - 1}}
+
+	switch string(word) {
+	case "false", "true":
+		t.Kind = BOOL
+	case "block":
+		t.Kind = BLOCK
+	case "bus":
+		t.Kind = BUS
+	case "const":
+		t.Kind = CONST
+	case "import":
+		t.Kind = IMPORT
+	case "IRQ":
+		t.Kind = IRQ
+	case "mask":
+		t.Kind = MASK
+	case "memory":
+		t.Kind = MEMORY
+	case "param":
+		t.Kind = PARAM
+	case "proc":
+		t.Kind = PROC
+	case "return":
+		t.Kind = RETURN
+	case "static":
+		t.Kind = STATIC
+	case "stream":
+		t.Kind = STREAM
+	case "type":
+		t.Kind = TYPE
+	}
+
+	return t
 }

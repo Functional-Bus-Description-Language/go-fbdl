@@ -38,6 +38,31 @@ func TestParse(t *testing.T) {
 				Token{Kind: COMMENT, Pos: Position{Start: 12, End: 22, Line: 2, Column: 1}},
 			},
 		},
+		{ // 4
+			"const A = true",
+			Stream{
+				Token{Kind: CONST, Pos: Position{Start: 0, End: 4, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 6, End: 6, Line: 1, Column: 7}},
+				Token{Kind: ASS, Pos: Position{Start: 8, End: 8, Line: 1, Column: 9}},
+				Token{Kind: BOOL, Pos: Position{Start: 10, End: 13, Line: 1, Column: 11}},
+			},
+		},
+		{ // 5
+			"const bus = true",
+			Stream{
+				Token{Kind: CONST, Pos: Position{Start: 0, End: 4, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 6, End: 8, Line: 1, Column: 7}},
+				Token{Kind: ASS, Pos: Position{Start: 10, End: 10, Line: 1, Column: 11}},
+				Token{Kind: BOOL, Pos: Position{Start: 12, End: 15, Line: 1, Column: 13}},
+			},
+		},
+		{ // 6
+			"bus bus",
+			Stream{
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 2, Line: 1, Column: 1}},
+				Token{Kind: BUS, Pos: Position{Start: 4, End: 6, Line: 1, Column: 5}},
+			},
+		},
 	}
 
 	for i, test := range tests {

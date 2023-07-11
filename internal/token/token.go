@@ -22,7 +22,7 @@ const (
 	TIME
 	literal_end
 
-	//operator_start
+	operator_start
 	// Unary operators
 	NEG // !
 
@@ -53,7 +53,7 @@ const (
 	AND // &
 	OR  // |
 	XOR // ^
-	//operator_end
+	operator_end
 
 	LPAREN // (
 	RPAREN // )
@@ -68,10 +68,12 @@ const (
 	SEMICOLON // ;
 
 	//keyword_start
-	BLOCK
-	BUS
 	CONST
 	IMPORT
+	TYPE
+	functionality_start
+	BLOCK
+	BUS
 	IRQ
 	MASK
 	MEMORY
@@ -80,7 +82,7 @@ const (
 	RETURN
 	STATIC
 	STREAM
-	TYPE
+	functionality_end
 	//keyword_end
 
 	property_start
@@ -112,6 +114,14 @@ const (
 	COLON  // :
 	//unused_end
 )
+
+func isOperator(k Kind) bool {
+	return operator_start < k && k < operator_end
+}
+
+func isFunctionality(k Kind) bool {
+	return functionality_start < k && k < functionality_end
+}
 
 type Token struct {
 	Kind Kind
