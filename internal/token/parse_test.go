@@ -89,6 +89,9 @@ func TestParseError(t *testing.T) {
 		{ // 9
 			"X\"0", fmt.Errorf("1:1: missing terminating '\"' in hex bit string literal"),
 		},
+		{ // 10
+			",,", fmt.Errorf("1:2: redundant ','"),
+		},
 	}
 
 	for i, test := range tests {

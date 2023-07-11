@@ -61,6 +61,8 @@ func Parse(src []byte) (Stream, error) {
 			t, err = parseNewline(&c, s)
 		} else if b == '#' {
 			t = parseComment(&c, src)
+		} else if b == ',' {
+			t, err = parseComma(&c, s)
 		} else if b == ';' {
 			t, err = parseSemicolon(&c, s)
 		} else if (b == 'b' || b == 'B') && nextByte(src, c.idx) == '"' {
@@ -138,6 +140,26 @@ func parseComment(c *context, src []byte) Token {
 			return t
 		}
 	}
+}
+
+func parseComma(c *context, s Stream) (Token, error) {
+	if prev_tok, ok := s.LastToken(); ok {
+		if prev_tok.Kind == COMMA {
+			return Token{}, fmt.Errorf(
+				"%d:%d: redundant ','", prev_tok.Pos.Line, c.col(c.idx),
+			)
+		}
+	}
+
+	t := Token{
+		Kind: COMMA,
+		Pos: Position{
+			Start: c.idx,
+			End:   c.idx,
+		},
+	}
+	c.idx++
+	return t, nil
 }
 
 func parseSemicolon(c *context, s Stream) (Token, error) {
