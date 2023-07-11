@@ -53,6 +53,8 @@ func Parse(src []byte) (Stream, error) {
 			t, err = parseNewline(&c, s)
 		} else if b == '#' {
 			t = parseComment(&c, src)
+		} else if b == ';' {
+			t = parseSemicolon(&c)
 		} else if isDigit(b) {
 			t, err = parseNumberLiteral(&c, src)
 		}
@@ -95,6 +97,14 @@ func parseTab(c *context, s Stream) error {
 }
 
 func parseNewline(c *context, s Stream) (Token, error) {
+	if prev_tok, ok := s.LastToken(); ok {
+		if prev_tok.Kind == SEMICOLON {
+			return Token{}, fmt.Errorf(
+				"%d:%d: extra ';' at the end of line", prev_tok.Pos.Line, prev_tok.Pos.Column,
+			)
+		}
+	}
+
 	t := Token{
 		Kind: NEWLINE,
 		Pos:  Position{Start: c.idx, End: c.idx, Column: c.col(c.idx)},
@@ -114,6 +124,18 @@ func parseComment(c *context, src []byte) Token {
 			return t
 		}
 	}
+}
+
+func parseSemicolon(c *context) Token {
+	t := Token{
+		Kind: SEMICOLON,
+		Pos: Position{
+			Start: c.idx,
+			End:   c.idx,
+		},
+	}
+	c.idx++
+	return t
 }
 
 func isDigit(b byte) bool {

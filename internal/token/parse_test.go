@@ -60,8 +60,13 @@ func TestParseError(t *testing.T) {
 		err error
 	}{
 		{ // 0
-			"\n ",
-			fmt.Errorf("2:1: space character ' ' not allowed for indent"),
+			"\n ", fmt.Errorf("2:1: space character ' ' not allowed for indent"),
+		},
+		{ // 1
+			";\n", fmt.Errorf("1:1: extra ';' at the end of line"),
+		},
+		{ // 2
+			" ; \n", fmt.Errorf("1:2: extra ';' at the end of line"),
 		},
 	}
 
