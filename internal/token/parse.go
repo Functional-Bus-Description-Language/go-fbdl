@@ -25,6 +25,14 @@ func nextByte(src []byte, idx int) byte {
 	return src[idx+1]
 }
 
+func isDigit(b byte) bool {
+	return '0' <= b && b <= '9'
+}
+
+func isLetter(b byte) bool {
+	return ('a' <= b && b <= 'z') || ('A' <= b && b <= 'Z')
+}
+
 // Parse parses src byte array containing the source code and returns token Stream.
 func Parse(src []byte) (Stream, error) {
 	var (
@@ -55,6 +63,8 @@ func Parse(src []byte) (Stream, error) {
 			t = parseComment(&c, src)
 		} else if b == ';' {
 			t, err = parseSemicolon(&c, s)
+		} else if (b == 'b' || b == 'B') && nextByte(src, c.idx) == '"' {
+			t, err = parseBinaryBitStringLiteral(&c, src)
 		} else if isDigit(b) {
 			t, err = parseNumberLiteral(&c, src)
 		}
@@ -146,8 +156,36 @@ func parseSemicolon(c *context, s Stream) (Token, error) {
 	return t, nil
 }
 
-func isDigit(b byte) bool {
-	return '0' <= b && b <= '9'
+func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {
+	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
+
+	// Skip b"
+	c.idx += 2
+	for {
+		if c.idx >= len(src) {
+			return t, fmt.Errorf(
+				"%d:%d: missing terminating '\"' in binary bit string literal",
+				c.line, c.col(t.Pos.Start),
+			)
+		}
+
+		b := src[c.idx]
+
+		if b == '"' {
+			t.Pos.End = c.idx
+			return t, nil
+		}
+
+		switch b {
+		case '0', '1', '-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			c.idx++
+		default:
+			return t, fmt.Errorf(
+				"%d:%d: invalid character '%c' in binary bit string literal",
+				c.line, c.col(c.idx), b,
+			)
+		}
+	}
 }
 
 func parseNumberLiteral(c *context, src []byte) (Token, error) {

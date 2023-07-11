@@ -71,6 +71,12 @@ func TestParseError(t *testing.T) {
 		{ // 3
 			";;", fmt.Errorf("1:2: redundant ';'"),
 		},
+		{ // 4
+			"b\"01-uUwWxXzZa\"", fmt.Errorf("1:14: invalid character 'a' in binary bit string literal"),
+		},
+		{ // 5
+			"b\"0", fmt.Errorf("1:1: missing terminating '\"' in binary bit string literal"),
+		},
 	}
 
 	for i, test := range tests {
