@@ -72,10 +72,22 @@ func TestParseError(t *testing.T) {
 			";;", fmt.Errorf("1:2: redundant ';'"),
 		},
 		{ // 4
-			"b\"01-uUwWxXzZa\"", fmt.Errorf("1:14: invalid character 'a' in binary bit string literal"),
+			"b\"01-uUwWxXzZ3\"", fmt.Errorf("1:14: invalid character '3' in binary bit string literal"),
 		},
 		{ // 5
-			"b\"0", fmt.Errorf("1:1: missing terminating '\"' in binary bit string literal"),
+			"B\"0", fmt.Errorf("1:1: missing terminating '\"' in binary bit string literal"),
+		},
+		{ // 6
+			"o\"01234567-uUwWxXzZ8\"", fmt.Errorf("1:20: invalid character '8' in octal bit string literal"),
+		},
+		{ // 7
+			"O\"0", fmt.Errorf("1:1: missing terminating '\"' in octal bit string literal"),
+		},
+		{ // 8
+			"x\"0123456789aAbBcCdDeEfF-uUwWxXzZ8g\"", fmt.Errorf("1:35: invalid character 'g' in hex bit string literal"),
+		},
+		{ // 9
+			"X\"0", fmt.Errorf("1:1: missing terminating '\"' in hex bit string literal"),
 		},
 	}
 

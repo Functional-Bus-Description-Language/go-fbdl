@@ -65,6 +65,10 @@ func Parse(src []byte) (Stream, error) {
 			t, err = parseSemicolon(&c, s)
 		} else if (b == 'b' || b == 'B') && nextByte(src, c.idx) == '"' {
 			t, err = parseBinaryBitStringLiteral(&c, src)
+		} else if (b == 'o' || b == 'O') && nextByte(src, c.idx) == '"' {
+			t, err = parseOctalBitStringLiteral(&c, src)
+		} else if (b == 'x' || b == 'X') && nextByte(src, c.idx) == '"' {
+			t, err = parseHexBitStringLiteral(&c, src)
 		} else if isDigit(b) {
 			t, err = parseNumberLiteral(&c, src)
 		}
@@ -177,11 +181,79 @@ func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {
 		}
 
 		switch b {
-		case '0', '1', '-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+		case '0', '1',
+			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			c.idx++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in binary bit string literal",
+				c.line, c.col(c.idx), b,
+			)
+		}
+	}
+}
+
+func parseOctalBitStringLiteral(c *context, src []byte) (Token, error) {
+	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
+
+	// Skip o"
+	c.idx += 2
+	for {
+		if c.idx >= len(src) {
+			return t, fmt.Errorf(
+				"%d:%d: missing terminating '\"' in octal bit string literal",
+				c.line, c.col(t.Pos.Start),
+			)
+		}
+
+		b := src[c.idx]
+
+		if b == '"' {
+			t.Pos.End = c.idx
+			return t, nil
+		}
+
+		switch b {
+		case '0', '1', '2', '3', '4', '5', '6', '7',
+			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			c.idx++
+		default:
+			return t, fmt.Errorf(
+				"%d:%d: invalid character '%c' in octal bit string literal",
+				c.line, c.col(c.idx), b,
+			)
+		}
+	}
+}
+
+func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
+	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
+
+	// Skip x"
+	c.idx += 2
+	for {
+		if c.idx >= len(src) {
+			return t, fmt.Errorf(
+				"%d:%d: missing terminating '\"' in hex bit string literal",
+				c.line, c.col(t.Pos.Start),
+			)
+		}
+
+		b := src[c.idx]
+
+		if b == '"' {
+			t.Pos.End = c.idx
+			return t, nil
+		}
+
+		switch b {
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
+			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			c.idx++
+		default:
+			return t, fmt.Errorf(
+				"%d:%d: invalid character '%c' in hex bit string literal",
 				c.line, c.col(c.idx), b,
 			)
 		}
