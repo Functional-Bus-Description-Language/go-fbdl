@@ -91,6 +91,8 @@ func Parse(src []byte) (Stream, error) {
 			t, err = parseComma(&c, s)
 		} else if b == ';' {
 			t, err = parseSemicolon(&c, s)
+		} else if b == '!' && nb == '=' {
+			t = parseNonequalityOperator(&c)
 		} else if b == '!' {
 			t = parseNegationOperator(&c)
 		} else if b == '=' && nb == '=' {
@@ -236,6 +238,10 @@ func parseSemicolon(c *context, s Stream) (Token, error) {
 		},
 	}
 	return t, nil
+}
+
+func parseNonequalityOperator(c *context) Token {
+	return Token{Kind: NEQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
 }
 
 func parseNegationOperator(c *context) Token {
