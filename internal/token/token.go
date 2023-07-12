@@ -71,6 +71,7 @@ const (
 	functionality_start
 	BLOCK
 	BUS
+	CONFIG
 	IRQ
 	MASK
 	MEMORY

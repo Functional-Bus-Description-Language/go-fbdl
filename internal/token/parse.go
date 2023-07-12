@@ -369,10 +369,86 @@ func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
 }
 
 func parseNumberLiteral(c *context, src []byte) (Token, error) {
-	panic("unimplemented")
-	t := Token{Pos: Position{Start: c.idx}}
+	b := src[c.idx]
+	nb := nextByte(src, c.idx)
+
+	if b == '0' && (nb == 'b' || nb == 'B') {
+		return parseBinaryInt(c, src)
+	} else if b == '0' && (nb == 'o' || nb == 'O') {
+		return parseOctalInt(c, src)
+	} else if b == '0' && (nb == 'x' || nb == 'X') {
+		return parseHexInt(c, src)
+	}
+
+	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+	hasPoint := false
+	hasE := false
+	end_idx := c.idx
+
+byteLoop:
+	for {
+		if end_idx >= len(src) {
+			break
+		}
+
+		end_idx++
+		b := src[end_idx]
+		if isDigit(b) {
+			continue
+		}
+		switch b {
+		case '.':
+			if hasPoint {
+				return t, fmt.Errorf(
+					"%d:%d: second point character '.' in number literal",
+					c.line, c.col(end_idx),
+				)
+			} else {
+				if hasE {
+					return t, fmt.Errorf(
+						"%d:%d: point character '.' after exponent in number literal",
+						c.line, c.col(end_idx),
+					)
+				}
+				hasPoint = true
+			}
+		case 'e', 'E':
+			if hasE {
+				return t, fmt.Errorf(
+					"%d:%d: second exponent in number literal",
+					c.line, c.col(end_idx),
+				)
+			} else {
+				hasE = true
+			}
+		case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',':
+			break byteLoop
+		default:
+			return t, fmt.Errorf(
+				"%d:%d: invalid character '%c' in number literal",
+				c.line, c.col(end_idx), b,
+			)
+		}
+	}
+
+	t.Pos.End = end_idx - 1
+	if hasPoint || hasE {
+		t.Kind = REAL
+	}
 
 	return t, nil
+}
+
+func parseBinaryInt(c *context, src []byte) (Token, error) {
+	panic("unimplemented")
+}
+
+func parseOctalInt(c *context, src []byte) (Token, error) {
+	panic("unimplemented")
+}
+
+func parseHexInt(c *context, src []byte) (Token, error) {
+	panic("unimplemented")
 }
 
 func parseWord(c *context, src []byte, s Stream) (Token, error) {
@@ -408,11 +484,27 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 			// It might be property, or part of an expression.
 			prev_tok, ok := s.LastToken()
 			if !ok {
+				// Safe to return, time literal units do not contain hyphen '-'.
 				return t, nil
 			}
 			// It is part of an expression.
 			if prev_tok.Kind != NEWLINE && prev_tok.Kind != SEMICOLON {
 				panic("unimplemented")
+			}
+		}
+	}
+
+	// The word might be the unit of time literal
+	if t.Kind == IDENT {
+		if prev_tok, ok := s.LastToken(); ok {
+			if prev_tok.Kind == INT {
+				switch string(word) {
+				case "ns", "us", "ms", "s":
+					idx := len(s) - 1
+					s[idx].Kind = TIME
+					s[idx].Pos.End = t.Pos.End
+					t.Kind = INVALID
+				}
 			}
 		}
 	}
@@ -430,6 +522,8 @@ func parseKeyword(word []byte, c *context) Token {
 		t.Kind = BLOCK
 	case "bus":
 		t.Kind = BUS
+	case "config":
+		t.Kind = CONFIG
 	case "const":
 		t.Kind = CONST
 	case "import":

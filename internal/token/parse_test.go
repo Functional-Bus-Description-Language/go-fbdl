@@ -69,12 +69,29 @@ func TestParse(t *testing.T) {
 				Token{Kind: BOOL, Pos: Position{Start: 20, End: 23, Line: 1, Column: 21}},
 			},
 		},
+		{ // 7
+			"type cfg_t(w = 10) config; width = w",
+			Stream{
+				Token{Kind: TYPE, Pos: Position{Start: 0, End: 3, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 5, End: 9, Line: 1, Column: 6}},
+				Token{Kind: LPAREN, Pos: Position{Start: 10, End: 10, Line: 1, Column: 11}},
+				Token{Kind: IDENT, Pos: Position{Start: 11, End: 11, Line: 1, Column: 12}},
+				Token{Kind: ASS, Pos: Position{Start: 13, End: 13, Line: 1, Column: 14}},
+				Token{Kind: INT, Pos: Position{Start: 15, End: 16, Line: 1, Column: 16}},
+				Token{Kind: RPAREN, Pos: Position{Start: 17, End: 17, Line: 1, Column: 18}},
+				Token{Kind: CONFIG, Pos: Position{Start: 19, End: 24, Line: 1, Column: 20}},
+				Token{Kind: SEMICOLON, Pos: Position{Start: 25, End: 25, Line: 1, Column: 26}},
+				Token{Kind: WIDTH, Pos: Position{Start: 27, End: 31, Line: 1, Column: 28}},
+				Token{Kind: ASS, Pos: Position{Start: 33, End: 33, Line: 1, Column: 34}},
+				Token{Kind: IDENT, Pos: Position{Start: 35, End: 35, Line: 1, Column: 36}},
+			},
+		},
 	}
 
 	for i, test := range tests {
 		got, err := Parse([]byte(test.src))
 		if err != nil {
-			t.Fatalf("%d: error is not nil: %v", i, err)
+			t.Fatalf("Test %d: error != nil: %v", i, err)
 		}
 
 		if len(got) != len(test.want) {
@@ -87,7 +104,7 @@ func TestParse(t *testing.T) {
 		for j, tok := range test.want {
 			if got[j] != tok {
 				t.Fatalf(
-					"\nTest: %d\n\nCode:\n%s\n\nToken: %d\ngot: %+v\nwant: %+v",
+					"\nTest: %d\n\nCode:\n%s\n\nToken: %d\n got: %+v\nwant: %+v",
 					i, test.src, j, got[j], tok,
 				)
 			}
@@ -132,6 +149,15 @@ func TestParseError(t *testing.T) {
 		},
 		{ // 10
 			",,", fmt.Errorf("1:2: redundant ','"),
+		},
+		{ // 11
+			"1.2.3", fmt.Errorf("1:4: second point character '.' in number literal"),
+		},
+		{ // 12
+			"1e2.", fmt.Errorf("1:4: point character '.' after exponent in number literal"),
+		},
+		{ // 13
+			"1e2d", fmt.Errorf("1:4: invalid character 'd' in number literal"),
 		},
 	}
 
