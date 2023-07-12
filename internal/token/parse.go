@@ -97,6 +97,12 @@ func Parse(src []byte) (Stream, error) {
 			t = parseEqualityOperator(&c)
 		} else if b == '=' {
 			t = parseAssignmentOperator(&c)
+		} else if b == '+' {
+			t = parseAdditionOperator(&c)
+		} else if b == '-' {
+			t = parseSubtractionOperator(&c)
+		} else if b == '%' {
+			t = parseRemainderOperator(&c)
 		} else if b == '(' {
 			t = parseLeftParenthesis(&c)
 		} else if b == ')' {
@@ -236,6 +242,18 @@ func parseEqualityOperator(c *context) Token {
 
 func parseAssignmentOperator(c *context) Token {
 	return Token{Kind: ASS, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseAdditionOperator(c *context) Token {
+	return Token{Kind: ADD, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseSubtractionOperator(c *context) Token {
+	return Token{Kind: SUB, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseRemainderOperator(c *context) Token {
+	return Token{Kind: REM, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseLeftParenthesis(c *context) Token {
