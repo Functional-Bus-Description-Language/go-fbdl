@@ -256,30 +256,30 @@ func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip b"
-	i := c.idx + 2
+	idx := c.idx + 2
 	for {
-		if i >= len(src) {
+		if idx >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in binary bit string literal",
 				c.line, c.col(t.Pos.Start),
 			)
 		}
 
-		b := src[i]
+		b := src[idx]
 
 		if b == '"' {
-			t.Pos.End = i
+			t.Pos.End = idx
 			return t, nil
 		}
 
 		switch b {
 		case '0', '1',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			i++
+			idx++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in binary bit string literal",
-				c.line, c.col(i), b,
+				c.line, c.col(idx), b,
 			)
 		}
 	}
@@ -289,30 +289,30 @@ func parseOctalBitStringLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip o"
-	i := c.idx + 2
+	idx := c.idx + 2
 	for {
-		if i >= len(src) {
+		if idx >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in octal bit string literal",
 				c.line, c.col(t.Pos.Start),
 			)
 		}
 
-		b := src[i]
+		b := src[idx]
 
 		if b == '"' {
-			t.Pos.End = i
+			t.Pos.End = idx
 			return t, nil
 		}
 
 		switch b {
 		case '0', '1', '2', '3', '4', '5', '6', '7',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			i++
+			idx++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in octal bit string literal",
-				c.line, c.col(i), b,
+				c.line, c.col(idx), b,
 			)
 		}
 	}
@@ -322,19 +322,19 @@ func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip x"
-	i := c.idx + 2
+	idx := c.idx + 2
 	for {
-		if i >= len(src) {
+		if idx >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in hex bit string literal",
 				c.line, c.col(t.Pos.Start),
 			)
 		}
 
-		b := src[i]
+		b := src[idx]
 
 		if b == '"' {
-			t.Pos.End = i
+			t.Pos.End = idx
 			return t, nil
 		}
 
@@ -342,11 +342,11 @@ func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			i++
+			idx++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in hex bit string literal",
-				c.line, c.col(i), b,
+				c.line, c.col(idx), b,
 			)
 		}
 	}
@@ -367,16 +367,16 @@ func parseNumberLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
 	hasPoint := false
 	hasE := false
-	end_idx := c.idx
+	idx := c.idx
 
 byteLoop:
 	for {
-		if end_idx >= len(src) {
+		if idx >= len(src) {
 			break
 		}
 
-		end_idx++
-		b := src[end_idx]
+		idx++
+		b := src[idx]
 		if isDigit(b) {
 			continue
 		}
@@ -385,13 +385,13 @@ byteLoop:
 			if hasPoint {
 				return t, fmt.Errorf(
 					"%d:%d: second point character '.' in number literal",
-					c.line, c.col(end_idx),
+					c.line, c.col(idx),
 				)
 			} else {
 				if hasE {
 					return t, fmt.Errorf(
 						"%d:%d: point character '.' after exponent in number literal",
-						c.line, c.col(end_idx),
+						c.line, c.col(idx),
 					)
 				}
 				hasPoint = true
@@ -400,7 +400,7 @@ byteLoop:
 			if hasE {
 				return t, fmt.Errorf(
 					"%d:%d: second exponent in number literal",
-					c.line, c.col(end_idx),
+					c.line, c.col(idx),
 				)
 			} else {
 				hasE = true
@@ -410,12 +410,12 @@ byteLoop:
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in number literal",
-				c.line, c.col(end_idx), b,
+				c.line, c.col(idx), b,
 			)
 		}
 	}
 
-	t.Pos.End = end_idx - 1
+	t.Pos.End = idx - 1
 	if hasPoint || hasE {
 		t.Kind = REAL
 	}
