@@ -147,6 +147,7 @@ func parseSpace(c *context, s Stream) error {
 			)
 		}
 	}
+	// TODO: Eat all spaces.
 	c.idx++
 	return nil
 }
@@ -170,7 +171,6 @@ func parseNewline(c *context, s Stream) (Token, error) {
 		Pos:  Position{Start: c.idx, End: c.idx, Column: c.col(c.idx)},
 	}
 	c.newline_idx = c.idx
-	c.idx++
 	return t, nil
 }
 
@@ -202,7 +202,6 @@ func parseComma(c *context, s Stream) (Token, error) {
 			End:   c.idx,
 		},
 	}
-	c.idx++
 	return t, nil
 }
 
@@ -222,80 +221,65 @@ func parseSemicolon(c *context, s Stream) (Token, error) {
 			End:   c.idx,
 		},
 	}
-	c.idx++
 	return t, nil
 }
 
 func parseNegationOperator(c *context) Token {
-	t := Token{Kind: NEG, Pos: Position{Start: c.idx, End: c.idx}}
-	c.idx++
-	return t
+	return Token{Kind: NEG, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseEqualityOperator(c *context) Token {
-	t := Token{Kind: EQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
-	c.idx += 2
-	return t
+	return Token{Kind: EQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
 }
 
 func parseAssignmentOperator(c *context) Token {
-	t := Token{Kind: ASS, Pos: Position{Start: c.idx, End: c.idx}}
-	c.idx++
-	return t
+	return Token{Kind: ASS, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseLeftParenthesis(c *context) Token {
-	t := Token{Kind: LPAREN, Pos: Position{Start: c.idx, End: c.idx}}
-	c.idx++
-	return t
+	return Token{Kind: LPAREN, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseRightParenthesis(c *context) Token {
-	t := Token{Kind: RPAREN, Pos: Position{Start: c.idx, End: c.idx}}
-	c.idx++
-	return t
+	return Token{Kind: RPAREN, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseLeftBracket(c *context) Token {
-	t := Token{Kind: LBRACK, Pos: Position{Start: c.idx, End: c.idx}}
-	c.idx++
-	return t
+	return Token{Kind: LBRACK, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseRightBracket(c *context) Token {
-	t := Token{Kind: RBRACK, Pos: Position{Start: c.idx, End: c.idx}}
-	c.idx++
-	return t
+	return Token{Kind: RBRACK, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip b"
-	c.idx += 2
+	i := c.idx + 2
 	for {
-		if c.idx >= len(src) {
+		if i >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in binary bit string literal",
 				c.line, c.col(t.Pos.Start),
 			)
 		}
 
-		b := src[c.idx]
+		b := src[i]
 
 		if b == '"' {
-			t.Pos.End = c.idx
+			t.Pos.End = i
 			return t, nil
 		}
 
 		switch b {
 		case '0', '1',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			c.idx++
+			i++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in binary bit string literal",
-				c.line, c.col(c.idx), b,
+				c.line, c.col(i), b,
 			)
 		}
 	}
@@ -305,30 +289,30 @@ func parseOctalBitStringLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip o"
-	c.idx += 2
+	i := c.idx + 2
 	for {
-		if c.idx >= len(src) {
+		if i >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in octal bit string literal",
 				c.line, c.col(t.Pos.Start),
 			)
 		}
 
-		b := src[c.idx]
+		b := src[i]
 
 		if b == '"' {
-			t.Pos.End = c.idx
+			t.Pos.End = i
 			return t, nil
 		}
 
 		switch b {
 		case '0', '1', '2', '3', '4', '5', '6', '7',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			c.idx++
+			i++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in octal bit string literal",
-				c.line, c.col(c.idx), b,
+				c.line, c.col(i), b,
 			)
 		}
 	}
@@ -338,19 +322,19 @@ func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip x"
-	c.idx += 2
+	i := c.idx + 2
 	for {
-		if c.idx >= len(src) {
+		if i >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in hex bit string literal",
 				c.line, c.col(t.Pos.Start),
 			)
 		}
 
-		b := src[c.idx]
+		b := src[i]
 
 		if b == '"' {
-			t.Pos.End = c.idx
+			t.Pos.End = i
 			return t, nil
 		}
 
@@ -358,11 +342,11 @@ func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			c.idx++
+			i++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in hex bit string literal",
-				c.line, c.col(c.idx), b,
+				c.line, c.col(i), b,
 			)
 		}
 	}
