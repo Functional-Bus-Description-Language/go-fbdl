@@ -105,6 +105,8 @@ func Parse(src []byte) (Stream, error) {
 			t = parseLeftBracket(&c)
 		} else if b == ']' {
 			t = parseRightBracket(&c)
+		} else if b == '"' {
+			t, err = parseString(&c, src)
 		} else if (b == 'b' || b == 'B') && nb == '"' {
 			t, err = parseBinaryBitStringLiteral(&c, src)
 		} else if (b == 'o' || b == 'O') && nb == '"' {
@@ -250,6 +252,26 @@ func parseLeftBracket(c *context) Token {
 
 func parseRightBracket(c *context) Token {
 	return Token{Kind: RBRACK, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseString(c *context, src []byte) (Token, error) {
+	t := Token{Kind: STRING, Pos: Position{Start: c.idx}}
+
+	idx := c.idx
+	for {
+		idx++
+		if idx >= len(src) {
+			return t, fmt.Errorf(
+				"%d:%d: unterminated string literal", c.line, c.col(c.idx),
+			)
+		}
+		b := src[idx]
+		if b == '"' || b == '\n' {
+			break
+		}
+	}
+	t.Pos.End = idx
+	return t, nil
 }
 
 func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {

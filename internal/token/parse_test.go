@@ -86,6 +86,21 @@ func TestParse(t *testing.T) {
 				Token{Kind: IDENT, Pos: Position{Start: 35, End: 35, Line: 1, Column: 36}},
 			},
 		},
+		{ // 8
+			"s static; groups = [\"a\", \"b\"]",
+			Stream{
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 0, Line: 1, Column: 1}},
+				Token{Kind: STATIC, Pos: Position{Start: 2, End: 7, Line: 1, Column: 3}},
+				Token{Kind: SEMICOLON, Pos: Position{Start: 8, End: 8, Line: 1, Column: 9}},
+				Token{Kind: GROUPS, Pos: Position{Start: 10, End: 15, Line: 1, Column: 11}},
+				Token{Kind: ASS, Pos: Position{Start: 17, End: 17, Line: 1, Column: 18}},
+				Token{Kind: LBRACK, Pos: Position{Start: 19, End: 19, Line: 1, Column: 20}},
+				Token{Kind: STRING, Pos: Position{Start: 20, End: 22, Line: 1, Column: 21}},
+				Token{Kind: COMMA, Pos: Position{Start: 23, End: 23, Line: 1, Column: 24}},
+				Token{Kind: STRING, Pos: Position{Start: 25, End: 27, Line: 1, Column: 26}},
+				Token{Kind: RBRACK, Pos: Position{Start: 28, End: 28, Line: 1, Column: 29}},
+			},
+		},
 	}
 
 	for i, test := range tests {
@@ -158,6 +173,9 @@ func TestParseError(t *testing.T) {
 		},
 		{ // 13
 			"1e2d", fmt.Errorf("1:4: invalid character 'd' in number literal"),
+		},
+		{ // 14
+			"\n\"str", fmt.Errorf("2:1: unterminated string literal"),
 		},
 	}
 
