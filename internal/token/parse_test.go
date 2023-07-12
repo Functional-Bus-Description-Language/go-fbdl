@@ -101,6 +101,14 @@ func TestParse(t *testing.T) {
 				Token{Kind: RBRACK, Pos: Position{Start: 28, End: 28, Line: 1, Column: 29}},
 			},
 		},
+		{ // 9
+			"import foo \"path\"",
+			Stream{
+				Token{Kind: IMPORT, Pos: Position{Start: 0, End: 5, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 7, End: 9, Line: 1, Column: 8}},
+				Token{Kind: STRING, Pos: Position{Start: 11, End: 16, Line: 1, Column: 12}},
+			},
+		},
 	}
 
 	for i, test := range tests {
