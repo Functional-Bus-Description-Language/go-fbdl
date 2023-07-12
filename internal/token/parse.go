@@ -103,6 +103,12 @@ func Parse(src []byte) (Stream, error) {
 			t = parseSubtractionOperator(&c)
 		} else if b == '%' {
 			t = parseRemainderOperator(&c)
+		} else if b == '*' && nb == '*' {
+			t = parseExponentiationOperator(&c)
+		} else if b == '*' {
+			t = parseMultiplicationOperator(&c)
+		} else if b == '/' {
+			t = parseDivisionOperator(&c)
 		} else if b == '(' {
 			t = parseLeftParenthesis(&c)
 		} else if b == ')' {
@@ -254,6 +260,18 @@ func parseSubtractionOperator(c *context) Token {
 
 func parseRemainderOperator(c *context) Token {
 	return Token{Kind: REM, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseExponentiationOperator(c *context) Token {
+	return Token{Kind: EXP, Pos: Position{Start: c.idx, End: c.idx + 1}}
+}
+
+func parseMultiplicationOperator(c *context) Token {
+	return Token{Kind: MUL, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseDivisionOperator(c *context) Token {
+	return Token{Kind: DIV, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseLeftParenthesis(c *context) Token {
