@@ -109,6 +109,19 @@ func TestParse(t *testing.T) {
 				Token{Kind: STRING, Pos: Position{Start: 11, End: 16, Line: 1, Column: 12}},
 			},
 		},
+		{ // 10
+			"const A = 2**5 - 1",
+			Stream{
+				Token{Kind: CONST, Pos: Position{Start: 0, End: 4, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 6, End: 6, Line: 1, Column: 7}},
+				Token{Kind: ASS, Pos: Position{Start: 8, End: 8, Line: 1, Column: 9}},
+				Token{Kind: INT, Pos: Position{Start: 10, End: 10, Line: 1, Column: 11}},
+				Token{Kind: EXP, Pos: Position{Start: 11, End: 12, Line: 1, Column: 12}},
+				Token{Kind: INT, Pos: Position{Start: 13, End: 13, Line: 1, Column: 14}},
+				Token{Kind: SUB, Pos: Position{Start: 15, End: 15, Line: 1, Column: 16}},
+				Token{Kind: INT, Pos: Position{Start: 17, End: 17, Line: 1, Column: 18}},
+			},
+		},
 	}
 
 	for i, test := range tests {

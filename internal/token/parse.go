@@ -471,11 +471,11 @@ func parseNumberLiteral(c *context, src []byte) (Token, error) {
 
 byteLoop:
 	for {
+		idx++
 		if idx >= len(src) {
 			break
 		}
 
-		idx++
 		b := src[idx]
 		if isDigit(b) {
 			continue
