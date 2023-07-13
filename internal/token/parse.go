@@ -72,7 +72,7 @@ func isHexDigit(b byte) bool {
 // after number literal.
 func isValidAfterNumber(b byte) bool {
 	switch b {
-	case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',':
+	case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',', '|':
 		return true
 	}
 	return false
@@ -155,6 +155,14 @@ func Parse(src []byte) (Stream, error) {
 			t = parseLeftBracket(&c)
 		} else if b == ']' {
 			t = parseRightBracket(&c)
+		} else if b == '&' && nb == '&' {
+			t = parseLogicalAnd(&c)
+		} else if b == '&' {
+			t = parseBitAnd(&c)
+		} else if b == '|' && nb == '|' {
+			t = parseLogicalOr(&c)
+		} else if b == '|' {
+			t = parseBitOr(&c)
 		} else if b == '"' {
 			t, err = parseString(&c, src)
 		} else if (b == 'b' || b == 'B') && nb == '"' {
@@ -354,6 +362,22 @@ func parseLeftBracket(c *context) Token {
 
 func parseRightBracket(c *context) Token {
 	return Token{Kind: RBRACK, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseLogicalAnd(c *context) Token {
+	return Token{Kind: LAND, Pos: Position{Start: c.idx, End: c.idx + 1}}
+}
+
+func parseBitAnd(c *context) Token {
+	return Token{Kind: AND, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseLogicalOr(c *context) Token {
+	return Token{Kind: LOR, Pos: Position{Start: c.idx, End: c.idx + 1}}
+}
+
+func parseBitOr(c *context) Token {
+	return Token{Kind: OR, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseString(c *context, src []byte) (Token, error) {

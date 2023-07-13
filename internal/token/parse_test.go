@@ -158,6 +158,31 @@ func TestParse(t *testing.T) {
 				Token{Kind: TIME, Pos: Position{Start: 14, End: 18, Line: 1, Column: 15}},
 			},
 		},
+		{
+			13,
+			"b [a&&true]block",
+			Stream{
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 0, Line: 1, Column: 1}},
+				Token{Kind: LBRACK, Pos: Position{Start: 2, End: 2, Line: 1, Column: 3}},
+				Token{Kind: IDENT, Pos: Position{Start: 3, End: 3, Line: 1, Column: 4}},
+				Token{Kind: LAND, Pos: Position{Start: 4, End: 5, Line: 1, Column: 5}},
+				Token{Kind: BOOL, Pos: Position{Start: 6, End: 9, Line: 1, Column: 7}},
+				Token{Kind: RBRACK, Pos: Position{Start: 10, End: 10, Line: 1, Column: 11}},
+				Token{Kind: BLOCK, Pos: Position{Start: 11, End: 15, Line: 1, Column: 12}},
+			},
+		},
+		{
+			14,
+			"const C_1 = 0xaf| 0x11",
+			Stream{
+				Token{Kind: CONST, Pos: Position{Start: 0, End: 4, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 6, End: 8, Line: 1, Column: 7}},
+				Token{Kind: ASS, Pos: Position{Start: 10, End: 10, Line: 1, Column: 11}},
+				Token{Kind: INT, Pos: Position{Start: 12, End: 15, Line: 1, Column: 13}},
+				Token{Kind: OR, Pos: Position{Start: 16, End: 16, Line: 1, Column: 17}},
+				Token{Kind: INT, Pos: Position{Start: 18, End: 21, Line: 1, Column: 19}},
+			},
+		},
 	}
 
 	for i, test := range tests {
