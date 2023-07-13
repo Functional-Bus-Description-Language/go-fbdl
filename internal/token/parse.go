@@ -54,6 +54,30 @@ func isDigit(b byte) bool {
 	return '0' <= b && b <= '9'
 }
 
+func isBinDigit(b byte) bool {
+	return '0' <= b && b <= '1'
+}
+
+func isOctalDigit(b byte) bool {
+	return '0' <= b && b <= '7'
+}
+
+func isHexDigit(b byte) bool {
+	return ('0' <= b && b <= '9') ||
+		('a' <= b && b <= 'f') ||
+		('A' <= b && b <= 'F')
+}
+
+// isValidAfterNumber returns true if character is a valid character
+// after number literal.
+func isValidAfterNumber(b byte) bool {
+	switch b {
+	case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',':
+		return true
+	}
+	return false
+}
+
 func isLetter(b byte) bool {
 	return ('a' <= b && b <= 'z') || ('A' <= b && b <= 'Z')
 }
@@ -469,7 +493,6 @@ func parseNumberLiteral(c *context, src []byte) (Token, error) {
 	hasE := false
 	idx := c.idx
 
-byteLoop:
 	for {
 		idx++
 		if idx >= len(src) {
@@ -480,8 +503,8 @@ byteLoop:
 		if isDigit(b) {
 			continue
 		}
-		switch b {
-		case '.':
+
+		if b == '.' {
 			if hasPoint {
 				return t, fmt.Errorf(
 					"%d:%d: second point character '.' in number literal",
@@ -496,7 +519,7 @@ byteLoop:
 				}
 				hasPoint = true
 			}
-		case 'e', 'E':
+		} else if b == 'e' || b == 'E' {
 			if hasE {
 				return t, fmt.Errorf(
 					"%d:%d: second exponent in number literal",
@@ -505,9 +528,9 @@ byteLoop:
 			} else {
 				hasE = true
 			}
-		case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',':
-			break byteLoop
-		default:
+		} else if isValidAfterNumber(b) {
+			break
+		} else {
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in number literal",
 				c.line, c.col(idx), b,
@@ -524,15 +547,78 @@ byteLoop:
 }
 
 func parseBinaryInt(c *context, src []byte) (Token, error) {
-	panic("unimplemented")
+	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+
+	// Skip 0b
+	idx := c.idx + 2
+	for {
+		if idx >= len(src) {
+			break
+		}
+		b := src[idx]
+		if isBinDigit(b) {
+			idx++
+		} else if isValidAfterNumber(b) {
+			break
+		} else {
+			return t, fmt.Errorf(
+				"%d:%d: invalid character '%c' in binary literal",
+				c.line, c.col(c.idx), b,
+			)
+		}
+	}
+	t.Pos.End = idx - 1
+	return t, nil
 }
 
 func parseOctalInt(c *context, src []byte) (Token, error) {
-	panic("unimplemented")
+	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+
+	// Skip 0o
+	idx := c.idx + 2
+	for {
+		if idx >= len(src) {
+			break
+		}
+		b := src[idx]
+		if isOctalDigit(b) {
+			idx++
+		} else if isValidAfterNumber(b) {
+			break
+		} else {
+			return t, fmt.Errorf(
+				"%d:%d: invalid character '%c' in octal literal",
+				c.line, c.col(c.idx), b,
+			)
+		}
+	}
+	t.Pos.End = idx - 1
+	return t, nil
 }
 
 func parseHexInt(c *context, src []byte) (Token, error) {
-	panic("unimplemented")
+	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+
+	// Skip 0x
+	idx := c.idx + 2
+	for {
+		if idx >= len(src) {
+			break
+		}
+		b := src[idx]
+		if isHexDigit(b) {
+			idx++
+		} else if isValidAfterNumber(b) {
+			break
+		} else {
+			return t, fmt.Errorf(
+				"%d:%d: invalid character '%c' in hex literal",
+				c.line, c.col(c.idx), b,
+			)
+		}
+	}
+	t.Pos.End = idx - 1
+	return t, nil
 }
 
 func parseWord(c *context, src []byte, s Stream) (Token, error) {

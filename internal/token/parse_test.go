@@ -122,6 +122,17 @@ func TestParse(t *testing.T) {
 				Token{Kind: INT, Pos: Position{Start: 17, End: 17, Line: 1, Column: 18}},
 			},
 		},
+		{ // 11
+			"const A1 = 0b1 << 0o3",
+			Stream{
+				Token{Kind: CONST, Pos: Position{Start: 0, End: 4, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 6, End: 7, Line: 1, Column: 7}},
+				Token{Kind: ASS, Pos: Position{Start: 9, End: 9, Line: 1, Column: 10}},
+				Token{Kind: INT, Pos: Position{Start: 11, End: 13, Line: 1, Column: 12}},
+				Token{Kind: SHL, Pos: Position{Start: 15, End: 16, Line: 1, Column: 16}},
+				Token{Kind: INT, Pos: Position{Start: 18, End: 20, Line: 1, Column: 19}},
+			},
+		},
 	}
 
 	for i, test := range tests {
