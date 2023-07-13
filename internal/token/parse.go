@@ -104,7 +104,7 @@ func Parse(src []byte) (Stream, error) {
 		nb := nextByte(src, c.idx) // Next byte
 
 		if b == ' ' {
-			err = parseSpace(&c, s)
+			err = parseSpace(&c, src, s)
 		} else if b == '\t' {
 			err = parseTab(&c, s)
 		} else if b == '\n' {
@@ -199,7 +199,7 @@ func Parse(src []byte) (Stream, error) {
 	return s, nil
 }
 
-func parseSpace(c *context, s Stream) error {
+func parseSpace(c *context, src []byte, s Stream) error {
 	if t, ok := s.LastToken(); ok {
 		if t.Kind == NEWLINE {
 			return fmt.Errorf(
@@ -207,8 +207,17 @@ func parseSpace(c *context, s Stream) error {
 			)
 		}
 	}
-	// TODO: Eat all spaces.
+
+	// Eat all spaces
 	c.idx++
+	for {
+		if src[c.idx] == ' ' {
+			c.idx++
+		} else {
+			break
+		}
+	}
+
 	return nil
 }
 
