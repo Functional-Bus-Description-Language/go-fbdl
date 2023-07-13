@@ -117,6 +117,12 @@ func Parse(src []byte) (Stream, error) {
 			t = parseLeftShiftOperator(&c)
 		} else if b == '<' {
 			t = parseLessThanOperator(&c)
+		} else if b == '>' && nb == '=' {
+			t = parseGreaterThanEqualOperator(&c)
+		} else if b == '>' && nb == '>' {
+			t = parseRightShiftOperator(&c)
+		} else if b == '>' {
+			t = parseGreaterThanOperator(&c)
 		} else if b == '(' {
 			t = parseLeftParenthesis(&c)
 		} else if b == ')' {
@@ -296,6 +302,18 @@ func parseLeftShiftOperator(c *context) Token {
 
 func parseLessThanOperator(c *context) Token {
 	return Token{Kind: LSS, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseGreaterThanEqualOperator(c *context) Token {
+	return Token{Kind: GEQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
+}
+
+func parseRightShiftOperator(c *context) Token {
+	return Token{Kind: SHR, Pos: Position{Start: c.idx, End: c.idx + 1}}
+}
+
+func parseGreaterThanOperator(c *context) Token {
+	return Token{Kind: GTR, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseLeftParenthesis(c *context) Token {
