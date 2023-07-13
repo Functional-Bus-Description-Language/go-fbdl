@@ -279,6 +279,14 @@ func TestParseError(t *testing.T) {
 			14,
 			"\n\"str", fmt.Errorf("2:1: unterminated string literal"),
 		},
+		{
+			15,
+			"\t", fmt.Errorf("1:1: tab character '\t' not allowed for alignment"),
+		},
+		{
+			16,
+			"Main bus\n\tc config;	width = 7", fmt.Errorf("2:11: tab character '\t' not allowed for alignment"),
+		},
 	}
 
 	for i, test := range tests {
@@ -288,7 +296,7 @@ func TestParseError(t *testing.T) {
 
 		_, err := Parse([]byte(test.src))
 		if err == nil {
-			t.Fatalf("%d: err = nil, expecting != nil", i)
+			t.Fatalf("%d: err == nil, expecting != nil", i)
 		}
 
 		if err.Error() != test.err.Error() {

@@ -222,6 +222,17 @@ func parseSpace(c *context, src []byte, s Stream) error {
 }
 
 func parseTab(c *context, s Stream) error {
+	errMsg := fmt.Sprintf(
+		"%d:%d: tab character '\t' not allowed for alignment", c.line, c.col(c.idx),
+	)
+	if t, ok := s.LastToken(); ok {
+		if t.Kind != NEWLINE {
+			return fmt.Errorf(errMsg)
+		}
+	} else {
+		return fmt.Errorf(errMsg)
+	}
+
 	c.idx++
 	return nil
 }
