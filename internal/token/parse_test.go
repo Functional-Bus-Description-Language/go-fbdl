@@ -146,6 +146,18 @@ func TestParse(t *testing.T) {
 				Token{Kind: INT, Pos: Position{Start: 18, End: 20, Line: 1, Column: 19}},
 			},
 		},
+		{
+			12,
+			"p proc; delay=10 ns",
+			Stream{
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 0, Line: 1, Column: 1}},
+				Token{Kind: PROC, Pos: Position{Start: 2, End: 5, Line: 1, Column: 3}},
+				Token{Kind: SEMICOLON, Pos: Position{Start: 6, End: 6, Line: 1, Column: 7}},
+				Token{Kind: DELAY, Pos: Position{Start: 8, End: 12, Line: 1, Column: 9}},
+				Token{Kind: ASS, Pos: Position{Start: 13, End: 13, Line: 1, Column: 14}},
+				Token{Kind: TIME, Pos: Position{Start: 14, End: 18, Line: 1, Column: 15}},
+			},
+		},
 	}
 
 	for i, test := range tests {

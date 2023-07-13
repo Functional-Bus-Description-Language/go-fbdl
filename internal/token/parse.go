@@ -674,6 +674,7 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 					s[idx].Kind = TIME
 					s[idx].Pos.End = t.Pos.End
 					t.Kind = INVALID
+					c.idx = t.Pos.End + 1
 				}
 			}
 		}
