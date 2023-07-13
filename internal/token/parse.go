@@ -111,6 +111,12 @@ func Parse(src []byte) (Stream, error) {
 			t = parseMultiplicationOperator(&c)
 		} else if b == '/' {
 			t = parseDivisionOperator(&c)
+		} else if b == '<' && nb == '=' {
+			t = parseLessThanEqualOperator(&c)
+		} else if b == '<' && nb == '<' {
+			t = parseLeftShiftOperator(&c)
+		} else if b == '<' {
+			t = parseLessThanOperator(&c)
 		} else if b == '(' {
 			t = parseLeftParenthesis(&c)
 		} else if b == ')' {
@@ -278,6 +284,18 @@ func parseMultiplicationOperator(c *context) Token {
 
 func parseDivisionOperator(c *context) Token {
 	return Token{Kind: DIV, Pos: Position{Start: c.idx, End: c.idx}}
+}
+
+func parseLessThanEqualOperator(c *context) Token {
+	return Token{Kind: LEQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
+}
+
+func parseLeftShiftOperator(c *context) Token {
+	return Token{Kind: SHL, Pos: Position{Start: c.idx, End: c.idx + 1}}
+}
+
+func parseLessThanOperator(c *context) Token {
+	return Token{Kind: LSS, Pos: Position{Start: c.idx, End: c.idx}}
 }
 
 func parseLeftParenthesis(c *context) Token {
