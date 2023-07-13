@@ -5,8 +5,8 @@ import (
 )
 
 type context struct {
-	line int
-	//indent int       // Current indent level
+	line        int
+	indent      int // Current indent level
 	idx         int // Start index
 	newline_idx int // Last newline index
 }
@@ -106,9 +106,9 @@ func Parse(src []byte) (Stream, error) {
 		if b == ' ' {
 			err = parseSpace(&c, src, s)
 		} else if b == '\t' {
-			err = parseTab(&c, s)
+			t, err = parseTab(&c, src, s)
 		} else if b == '\n' {
-			t, err = parseNewline(&c, s)
+			t, err = parseNewline(&c, src, s)
 		} else if b == '#' {
 			t = parseComment(&c, src)
 		} else if b == ',' {
@@ -221,29 +221,80 @@ func parseSpace(c *context, src []byte, s Stream) error {
 	return nil
 }
 
-func parseTab(c *context, s Stream) error {
+func parseTab(c *context, src []byte, s Stream) (Token, error) {
+	t := Token{Kind: INVALID, Pos: Position{Start: c.idx}}
+
 	errMsg := fmt.Sprintf(
 		"%d:%d: tab character '\t' not allowed for alignment", c.line, c.col(c.idx),
 	)
 	if t, ok := s.LastToken(); ok {
 		if t.Kind != NEWLINE {
-			return fmt.Errorf(errMsg)
+			return t, fmt.Errorf(errMsg)
 		}
 	} else {
-		return fmt.Errorf(errMsg)
+		return t, fmt.Errorf(errMsg)
 	}
 
-	c.idx++
-	return nil
+	indent := 1
+	for {
+		c.idx++
+		if c.idx >= len(src) {
+			break
+		}
+
+		b := src[c.idx]
+		if b == '\t' {
+			indent++
+		} else if b == ' ' {
+			return t, fmt.Errorf(
+				"%d:%d: space character ' ' right after tab character '\t'",
+				c.line, c.col(c.idx),
+			)
+		} else {
+			break
+		}
+	}
+
+	if indent == c.indent+1 {
+		t.Kind = INDENT_INC
+		t.Pos.End = c.idx - 1
+	} else if indent > c.indent+1 {
+		return t, fmt.Errorf(
+			"%d:%d: multi indent increase",
+			c.line, c.col(t.Pos.Start),
+		)
+	} else if indent < c.indent {
+		// Insert proper number of INDENT_DEC tokens.
+		t.Kind = INDENT_DEC
+		t.Pos.End = t.Pos.Start
+		for i := 0; indent+i < c.indent; i++ {
+			s = append(s, t)
+		}
+		t.Kind = INVALID
+	}
+
+	c.indent = indent
+
+	return t, nil
 }
 
-func parseNewline(c *context, s Stream) (Token, error) {
+func parseNewline(c *context, src []byte, s Stream) (Token, error) {
 	if prev_tok, ok := s.LastToken(); ok {
 		if prev_tok.Kind == SEMICOLON {
 			return Token{}, fmt.Errorf(
 				"%d:%d: extra ';' at the end of line", prev_tok.Pos.Line, prev_tok.Pos.Column,
 			)
 		}
+	}
+
+	if nextByte(src, c.idx) != '\t' && c.indent != 0 {
+		// Insert proper number of INDENT_DEC tokens.
+		t := Token{Kind: INDENT_DEC, Pos: Position{Start: c.idx, End: c.idx}}
+		t.Pos.End = t.Pos.Start
+		for i := 0; i < c.indent; i++ {
+			s = append(s, t)
+		}
+		c.indent = 0
 	}
 
 	t := Token{
@@ -702,7 +753,7 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 				return t, nil
 			}
 			// It is part of an expression.
-			if prev_tok.Kind != NEWLINE && prev_tok.Kind != SEMICOLON {
+			if prev_tok.Kind != INDENT_INC && prev_tok.Kind != SEMICOLON {
 				panic("unimplemented")
 			}
 		}

@@ -183,6 +183,23 @@ func TestParse(t *testing.T) {
 				Token{Kind: INT, Pos: Position{Start: 18, End: 21, Line: 1, Column: 19}},
 			},
 		},
+		{
+			15,
+			"Main bus\n\ti irq\n\t\tadd-enable = true",
+			Stream{
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 3, Line: 1, Column: 1}},
+				Token{Kind: BUS, Pos: Position{Start: 5, End: 7, Line: 1, Column: 6}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 8, End: 8, Line: 1, Column: 9}},
+				Token{Kind: INDENT_INC, Pos: Position{Start: 9, End: 9, Line: 2, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 10, End: 10, Line: 2, Column: 2}},
+				Token{Kind: IRQ, Pos: Position{Start: 12, End: 14, Line: 2, Column: 4}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 15, End: 15, Line: 2, Column: 7}},
+				Token{Kind: INDENT_INC, Pos: Position{Start: 16, End: 17, Line: 3, Column: 1}},
+				Token{Kind: ADD_ENABLE, Pos: Position{Start: 18, End: 27, Line: 3, Column: 3}},
+				Token{Kind: ASS, Pos: Position{Start: 29, End: 29, Line: 3, Column: 14}},
+				Token{Kind: BOOL, Pos: Position{Start: 31, End: 34, Line: 3, Column: 16}},
+			},
+		},
 	}
 
 	for i, test := range tests {
@@ -286,6 +303,14 @@ func TestParseError(t *testing.T) {
 		{
 			16,
 			"Main bus\n\tc config;	width = 7", fmt.Errorf("2:11: tab character '\t' not allowed for alignment"),
+		},
+		{
+			17,
+			"Main bus\n\t c config", fmt.Errorf("2:2: space character ' ' right after tab character '\t'"),
+		},
+		{
+			18,
+			"Main bus\n\t\tc config", fmt.Errorf("2:1: multi indent increase"),
 		},
 	}
 
