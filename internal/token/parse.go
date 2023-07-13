@@ -72,7 +72,7 @@ func isHexDigit(b byte) bool {
 // after number literal.
 func isValidAfterNumber(b byte) bool {
 	switch b {
-	case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',', '|':
+	case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',', '|', '&':
 		return true
 	}
 	return false
