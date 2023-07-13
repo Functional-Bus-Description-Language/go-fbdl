@@ -158,13 +158,13 @@ func Parse(src []byte) (Stream, error) {
 		} else if b == '"' {
 			t, err = parseString(&c, src)
 		} else if (b == 'b' || b == 'B') && nb == '"' {
-			t, err = parseBinaryBitStringLiteral(&c, src)
+			t, err = parseBinaryBitString(&c, src)
 		} else if (b == 'o' || b == 'O') && nb == '"' {
-			t, err = parseOctalBitStringLiteral(&c, src)
+			t, err = parseOctalBitString(&c, src)
 		} else if (b == 'x' || b == 'X') && nb == '"' {
-			t, err = parseHexBitStringLiteral(&c, src)
+			t, err = parseHexBitString(&c, src)
 		} else if isDigit(b) {
-			t, err = parseNumberLiteral(&c, src)
+			t, err = parseNumber(&c, src)
 		} else if isLetter(b) {
 			t, err = parseWord(&c, src, s)
 		} else {
@@ -376,7 +376,7 @@ func parseString(c *context, src []byte) (Token, error) {
 	return t, nil
 }
 
-func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {
+func parseBinaryBitString(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip b"
@@ -409,7 +409,7 @@ func parseBinaryBitStringLiteral(c *context, src []byte) (Token, error) {
 	}
 }
 
-func parseOctalBitStringLiteral(c *context, src []byte) (Token, error) {
+func parseOctalBitString(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip o"
@@ -442,7 +442,7 @@ func parseOctalBitStringLiteral(c *context, src []byte) (Token, error) {
 	}
 }
 
-func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
+func parseHexBitString(c *context, src []byte) (Token, error) {
 	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
 
 	// Skip x"
@@ -476,7 +476,7 @@ func parseHexBitStringLiteral(c *context, src []byte) (Token, error) {
 	}
 }
 
-func parseNumberLiteral(c *context, src []byte) (Token, error) {
+func parseNumber(c *context, src []byte) (Token, error) {
 	b := src[c.idx]
 	nb := nextByte(src, c.idx)
 
