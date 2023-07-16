@@ -184,15 +184,15 @@ func Parse(src []byte) (Stream, error) {
 		}
 
 		if t.Kind != INVALID {
-			t.Pos.Line = c.line
+			t.Line = c.line
 			if t.Kind == NEWLINE {
 				c.line++
 			} else {
-				t.Pos.Column = c.col(t.Pos.Start)
+				t.Column = c.col(t.Start)
 			}
 
 			s = append(s, t)
-			c.idx = t.Pos.End + 1
+			c.idx = t.End + 1
 		}
 	}
 
@@ -222,7 +222,7 @@ func parseSpace(c *context, src []byte, s Stream) error {
 }
 
 func parseTab(c *context, src []byte, s Stream) (Token, error) {
-	t := Token{Kind: INVALID, Pos: Position{Start: c.idx}}
+	t := Token{Kind: INVALID, Start: c.idx}
 
 	errMsg := fmt.Sprintf(
 		"%d:%d: tab character '\t' not allowed for alignment", c.line, c.col(c.idx),
@@ -257,16 +257,16 @@ func parseTab(c *context, src []byte, s Stream) (Token, error) {
 
 	if indent == c.indent+1 {
 		t.Kind = INDENT_INC
-		t.Pos.End = c.idx - 1
+		t.End = c.idx - 1
 	} else if indent > c.indent+1 {
 		return t, fmt.Errorf(
 			"%d:%d: multi indent increase",
-			c.line, c.col(t.Pos.Start),
+			c.line, c.col(t.Start),
 		)
 	} else if indent < c.indent {
 		// Insert proper number of INDENT_DEC tokens.
 		t.Kind = INDENT_DEC
-		t.Pos.End = t.Pos.Start
+		t.End = t.Start
 		for i := 0; indent+i < c.indent; i++ {
 			s = append(s, t)
 		}
@@ -282,36 +282,33 @@ func parseNewline(c *context, src []byte, s Stream) (Token, error) {
 	if prev_tok, ok := s.LastToken(); ok {
 		if prev_tok.Kind == SEMICOLON {
 			return Token{}, fmt.Errorf(
-				"%d:%d: extra ';' at the end of line", prev_tok.Pos.Line, prev_tok.Pos.Column,
+				"%d:%d: extra ';' at the end of line", prev_tok.Line, prev_tok.Column,
 			)
 		}
 	}
 
 	if nextByte(src, c.idx) != '\t' && c.indent != 0 {
 		// Insert proper number of INDENT_DEC tokens.
-		t := Token{Kind: INDENT_DEC, Pos: Position{Start: c.idx, End: c.idx}}
-		t.Pos.End = t.Pos.Start
+		t := Token{Kind: INDENT_DEC, Start: c.idx, End: c.idx}
+		t.End = t.Start
 		for i := 0; i < c.indent; i++ {
 			s = append(s, t)
 		}
 		c.indent = 0
 	}
 
-	t := Token{
-		Kind: NEWLINE,
-		Pos:  Position{Start: c.idx, End: c.idx, Column: c.col(c.idx)},
-	}
+	t := Token{Kind: NEWLINE, Start: c.idx, End: c.idx, Column: c.col(c.idx)}
 	c.newline_idx = c.idx
 	return t, nil
 }
 
 func parseComment(c *context, src []byte) Token {
-	t := Token{Kind: COMMENT, Pos: Position{Start: c.idx}}
+	t := Token{Kind: COMMENT, Start: c.idx}
 
 	for {
 		c.idx++
 		if c.idx >= len(src) || src[c.idx] == '\n' {
-			t.Pos.End = c.idx - 1
+			t.End = c.idx - 1
 			return t
 		}
 	}
@@ -321,18 +318,12 @@ func parseComma(c *context, s Stream) (Token, error) {
 	if prev_tok, ok := s.LastToken(); ok {
 		if prev_tok.Kind == COMMA {
 			return Token{}, fmt.Errorf(
-				"%d:%d: redundant ','", prev_tok.Pos.Line, c.col(c.idx),
+				"%d:%d: redundant ','", prev_tok.Line, c.col(c.idx),
 			)
 		}
 	}
 
-	t := Token{
-		Kind: COMMA,
-		Pos: Position{
-			Start: c.idx,
-			End:   c.idx,
-		},
-	}
+	t := Token{Kind: COMMA, Start: c.idx, End: c.idx}
 	return t, nil
 }
 
@@ -340,119 +331,113 @@ func parseSemicolon(c *context, s Stream) (Token, error) {
 	if prev_tok, ok := s.LastToken(); ok {
 		if prev_tok.Kind == SEMICOLON {
 			return Token{}, fmt.Errorf(
-				"%d:%d: redundant ';'", prev_tok.Pos.Line, c.col(c.idx),
+				"%d:%d: redundant ';'", prev_tok.Line, c.col(c.idx),
 			)
 		}
 	}
 
-	t := Token{
-		Kind: SEMICOLON,
-		Pos: Position{
-			Start: c.idx,
-			End:   c.idx,
-		},
-	}
+	t := Token{Kind: SEMICOLON, Start: c.idx, End: c.idx}
 	return t, nil
 }
 
 func parseNonequalityOperator(c *context) Token {
-	return Token{Kind: NEQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: NEQ, Start: c.idx, End: c.idx + 1}
 }
 
 func parseNegationOperator(c *context) Token {
-	return Token{Kind: NEG, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: NEG, Start: c.idx, End: c.idx}
 }
 
 func parseEqualityOperator(c *context) Token {
-	return Token{Kind: EQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: EQ, Start: c.idx, End: c.idx + 1}
 }
 
 func parseAssignmentOperator(c *context) Token {
-	return Token{Kind: ASS, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: ASS, Start: c.idx, End: c.idx}
 }
 
 func parseAdditionOperator(c *context) Token {
-	return Token{Kind: ADD, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: ADD, Start: c.idx, End: c.idx}
 }
 
 func parseSubtractionOperator(c *context) Token {
-	return Token{Kind: SUB, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: SUB, Start: c.idx, End: c.idx}
 }
 
 func parseRemainderOperator(c *context) Token {
-	return Token{Kind: REM, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: REM, Start: c.idx, End: c.idx}
 }
 
 func parseExponentiationOperator(c *context) Token {
-	return Token{Kind: EXP, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: EXP, Start: c.idx, End: c.idx + 1}
 }
 
 func parseMultiplicationOperator(c *context) Token {
-	return Token{Kind: MUL, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: MUL, Start: c.idx, End: c.idx}
 }
 
 func parseDivisionOperator(c *context) Token {
-	return Token{Kind: DIV, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: DIV, Start: c.idx, End: c.idx}
 }
 
 func parseLessThanEqualOperator(c *context) Token {
-	return Token{Kind: LEQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: LEQ, Start: c.idx, End: c.idx + 1}
 }
 
 func parseLeftShiftOperator(c *context) Token {
-	return Token{Kind: SHL, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: SHL, Start: c.idx, End: c.idx + 1}
 }
 
 func parseLessThanOperator(c *context) Token {
-	return Token{Kind: LSS, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: LSS, Start: c.idx, End: c.idx}
 }
 
 func parseGreaterThanEqualOperator(c *context) Token {
-	return Token{Kind: GEQ, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: GEQ, Start: c.idx, End: c.idx + 1}
 }
 
 func parseRightShiftOperator(c *context) Token {
-	return Token{Kind: SHR, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: SHR, Start: c.idx, End: c.idx + 1}
 }
 
 func parseGreaterThanOperator(c *context) Token {
-	return Token{Kind: GTR, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: GTR, Start: c.idx, End: c.idx}
 }
 
 func parseLeftParenthesis(c *context) Token {
-	return Token{Kind: LPAREN, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: LPAREN, Start: c.idx, End: c.idx}
 }
 
 func parseRightParenthesis(c *context) Token {
-	return Token{Kind: RPAREN, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: RPAREN, Start: c.idx, End: c.idx}
 }
 
 func parseLeftBracket(c *context) Token {
-	return Token{Kind: LBRACK, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: LBRACK, Start: c.idx, End: c.idx}
 }
 
 func parseRightBracket(c *context) Token {
-	return Token{Kind: RBRACK, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: RBRACK, Start: c.idx, End: c.idx}
 }
 
 func parseLogicalAnd(c *context) Token {
-	return Token{Kind: LAND, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: LAND, Start: c.idx, End: c.idx + 1}
 }
 
 func parseBitAnd(c *context) Token {
-	return Token{Kind: AND, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: AND, Start: c.idx, End: c.idx}
 }
 
 func parseLogicalOr(c *context) Token {
-	return Token{Kind: LOR, Pos: Position{Start: c.idx, End: c.idx + 1}}
+	return Token{Kind: LOR, Start: c.idx, End: c.idx + 1}
 }
 
 func parseBitOr(c *context) Token {
-	return Token{Kind: OR, Pos: Position{Start: c.idx, End: c.idx}}
+	return Token{Kind: OR, Start: c.idx, End: c.idx}
 }
 
 func parseString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: STRING, Pos: Position{Start: c.idx}}
+	t := Token{Kind: STRING, Start: c.idx}
 
 	idx := c.idx
 	for {
@@ -467,12 +452,12 @@ func parseString(c *context, src []byte) (Token, error) {
 			break
 		}
 	}
-	t.Pos.End = idx
+	t.End = idx
 	return t, nil
 }
 
 func parseBinaryBitString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
+	t := Token{Kind: BIT_STRING, Start: c.idx}
 
 	// Skip b"
 	idx := c.idx + 2
@@ -480,14 +465,14 @@ func parseBinaryBitString(c *context, src []byte) (Token, error) {
 		if idx >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in binary bit string literal",
-				c.line, c.col(t.Pos.Start),
+				c.line, c.col(t.Start),
 			)
 		}
 
 		b := src[idx]
 
 		if b == '"' {
-			t.Pos.End = idx
+			t.End = idx
 			return t, nil
 		}
 
@@ -505,7 +490,7 @@ func parseBinaryBitString(c *context, src []byte) (Token, error) {
 }
 
 func parseOctalBitString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
+	t := Token{Kind: BIT_STRING, Start: c.idx}
 
 	// Skip o"
 	idx := c.idx + 2
@@ -513,14 +498,14 @@ func parseOctalBitString(c *context, src []byte) (Token, error) {
 		if idx >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in octal bit string literal",
-				c.line, c.col(t.Pos.Start),
+				c.line, c.col(t.Start),
 			)
 		}
 
 		b := src[idx]
 
 		if b == '"' {
-			t.Pos.End = idx
+			t.End = idx
 			return t, nil
 		}
 
@@ -538,7 +523,7 @@ func parseOctalBitString(c *context, src []byte) (Token, error) {
 }
 
 func parseHexBitString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: BIT_STRING, Pos: Position{Start: c.idx}}
+	t := Token{Kind: BIT_STRING, Start: c.idx}
 
 	// Skip x"
 	idx := c.idx + 2
@@ -546,14 +531,14 @@ func parseHexBitString(c *context, src []byte) (Token, error) {
 		if idx >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in hex bit string literal",
-				c.line, c.col(t.Pos.Start),
+				c.line, c.col(t.Start),
 			)
 		}
 
 		b := src[idx]
 
 		if b == '"' {
-			t.Pos.End = idx
+			t.End = idx
 			return t, nil
 		}
 
@@ -583,7 +568,7 @@ func parseNumber(c *context, src []byte) (Token, error) {
 		return parseHexInt(c, src)
 	}
 
-	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+	t := Token{Kind: INT, Start: c.idx}
 	hasPoint := false
 	hasE := false
 	idx := c.idx
@@ -633,7 +618,7 @@ func parseNumber(c *context, src []byte) (Token, error) {
 		}
 	}
 
-	t.Pos.End = idx - 1
+	t.End = idx - 1
 	if hasPoint || hasE {
 		t.Kind = REAL
 	}
@@ -642,7 +627,7 @@ func parseNumber(c *context, src []byte) (Token, error) {
 }
 
 func parseBinaryInt(c *context, src []byte) (Token, error) {
-	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+	t := Token{Kind: INT, Start: c.idx}
 
 	// Skip 0b
 	idx := c.idx + 2
@@ -662,12 +647,12 @@ func parseBinaryInt(c *context, src []byte) (Token, error) {
 			)
 		}
 	}
-	t.Pos.End = idx - 1
+	t.End = idx - 1
 	return t, nil
 }
 
 func parseOctalInt(c *context, src []byte) (Token, error) {
-	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+	t := Token{Kind: INT, Start: c.idx}
 
 	// Skip 0o
 	idx := c.idx + 2
@@ -687,12 +672,12 @@ func parseOctalInt(c *context, src []byte) (Token, error) {
 			)
 		}
 	}
-	t.Pos.End = idx - 1
+	t.End = idx - 1
 	return t, nil
 }
 
 func parseHexInt(c *context, src []byte) (Token, error) {
-	t := Token{Kind: INT, Pos: Position{Start: c.idx}}
+	t := Token{Kind: INT, Start: c.idx}
 
 	// Skip 0x
 	idx := c.idx + 2
@@ -712,7 +697,7 @@ func parseHexInt(c *context, src []byte) (Token, error) {
 			)
 		}
 	}
-	t.Pos.End = idx - 1
+	t.End = idx - 1
 	return t, nil
 }
 
@@ -769,9 +754,9 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 				case "ns", "us", "ms", "s":
 					idx := len(s) - 1
 					s[idx].Kind = TIME
-					s[idx].Pos.End = t.Pos.End
+					s[idx].End = t.End
 					t.Kind = INVALID
-					c.idx = t.Pos.End + 1
+					c.idx = t.End + 1
 				}
 			}
 		}
@@ -781,7 +766,7 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 }
 
 func parseKeyword(word []byte, c *context) Token {
-	t := Token{Kind: INVALID, Pos: Position{Start: c.idx, End: c.idx + len(word) - 1}}
+	t := Token{Kind: INVALID, Start: c.idx, End: c.idx + len(word) - 1}
 
 	switch string(word) {
 	case "false", "true":
@@ -820,7 +805,7 @@ func parseKeyword(word []byte, c *context) Token {
 }
 
 func parseProperty(word []byte, c *context) Token {
-	t := Token{Kind: INVALID, Pos: Position{Start: c.idx, End: c.idx + len(word) - 1}}
+	t := Token{Kind: INVALID, Start: c.idx, End: c.idx + len(word) - 1}
 
 	switch string(word) {
 	case "access":

@@ -125,5 +125,10 @@ func isFunctionality(k Kind) bool {
 
 type Token struct {
 	Kind Kind
-	Pos  Position
+
+	// Token position
+	Start  int // First byte index of the token
+	End    int // Last byte index of the token
+	Line   int // Line number, starting at 1
+	Column int // Column number, starting at 1 (byte count)
 }
