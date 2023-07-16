@@ -218,6 +218,30 @@ func TestParse(t *testing.T) {
 				Token{Kind: BUS, Pos: Position{Start: 29, End: 31, Line: 4, Column: 6}},
 			},
 		},
+		{
+			17,
+			"Main bus\n\t# Comment\n\tc config\n\t\twidth = 6\n\t# Comment 2\n\ts stream",
+			Stream{
+				Token{Kind: IDENT, Pos: Position{Start: 0, End: 3, Line: 1, Column: 1}},
+				Token{Kind: BUS, Pos: Position{Start: 5, End: 7, Line: 1, Column: 6}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 8, End: 8, Line: 1, Column: 9}},
+				Token{Kind: INDENT_INC, Pos: Position{Start: 9, End: 9, Line: 2, Column: 1}},
+				Token{Kind: COMMENT, Pos: Position{Start: 10, End: 18, Line: 2, Column: 2}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 19, End: 19, Line: 2, Column: 11}},
+				Token{Kind: IDENT, Pos: Position{Start: 21, End: 21, Line: 3, Column: 2}},
+				Token{Kind: CONFIG, Pos: Position{Start: 23, End: 28, Line: 3, Column: 4}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 29, End: 29, Line: 3, Column: 10}},
+				Token{Kind: INDENT_INC, Pos: Position{Start: 30, End: 31, Line: 4, Column: 1}},
+				Token{Kind: WIDTH, Pos: Position{Start: 32, End: 36, Line: 4, Column: 3}},
+				Token{Kind: ASS, Pos: Position{Start: 38, End: 38, Line: 4, Column: 9}},
+				Token{Kind: INT, Pos: Position{Start: 40, End: 40, Line: 4, Column: 11}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 41, End: 41, Line: 4, Column: 12}},
+				Token{Kind: COMMENT, Pos: Position{Start: 43, End: 53, Line: 5, Column: 2}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 54, End: 54, Line: 5, Column: 13}},
+				Token{Kind: IDENT, Pos: Position{Start: 56, End: 56, Line: 6, Column: 2}},
+				Token{Kind: STREAM, Pos: Position{Start: 58, End: 63, Line: 6, Column: 4}},
+			},
+		},
 	}
 
 	for i, test := range tests {
