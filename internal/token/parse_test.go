@@ -200,6 +200,24 @@ func TestParse(t *testing.T) {
 				Token{Kind: BOOL, Pos: Position{Start: 31, End: 34, Line: 3, Column: 16}},
 			},
 		},
+		{
+			16,
+			"type t static\n\twidth=7\n\nMain bus",
+			Stream{
+				Token{Kind: TYPE, Pos: Position{Start: 0, End: 3, Line: 1, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 5, End: 5, Line: 1, Column: 6}},
+				Token{Kind: STATIC, Pos: Position{Start: 7, End: 12, Line: 1, Column: 8}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 13, End: 13, Line: 1, Column: 14}},
+				Token{Kind: INDENT_INC, Pos: Position{Start: 14, End: 14, Line: 2, Column: 1}},
+				Token{Kind: WIDTH, Pos: Position{Start: 15, End: 19, Line: 2, Column: 2}},
+				Token{Kind: ASS, Pos: Position{Start: 20, End: 20, Line: 2, Column: 7}},
+				Token{Kind: INT, Pos: Position{Start: 21, End: 21, Line: 2, Column: 8}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 22, End: 22, Line: 2, Column: 9}},
+				Token{Kind: NEWLINE, Pos: Position{Start: 23, End: 23, Line: 3, Column: 1}},
+				Token{Kind: IDENT, Pos: Position{Start: 24, End: 27, Line: 4, Column: 1}},
+				Token{Kind: BUS, Pos: Position{Start: 29, End: 31, Line: 4, Column: 6}},
+			},
+		},
 	}
 
 	for i, test := range tests {
@@ -209,7 +227,7 @@ func TestParse(t *testing.T) {
 
 		got, err := Parse([]byte(test.src))
 		if err != nil {
-			t.Fatalf("Test %d: error != nil: %v", i, err)
+			t.Fatalf("Test %d: err != nil: %v", i, err)
 		}
 
 		if len(got) != len(test.want) {
@@ -302,7 +320,7 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			16,
-			"Main bus\n\tc config;	width = 7", fmt.Errorf("2:11: tab character '\t' not allowed for alignment"),
+			"Main bus\n\tc config;\twidth = 7", fmt.Errorf("2:11: tab character '\t' not allowed for alignment"),
 		},
 		{
 			17,

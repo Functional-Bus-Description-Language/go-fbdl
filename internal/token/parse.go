@@ -72,7 +72,7 @@ func isHexDigit(b byte) bool {
 // after number literal.
 func isValidAfterNumber(b byte) bool {
 	switch b {
-	case ' ', '\t', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',', '|', '&':
+	case ' ', '\t', '\n', '(', ')', ']', '-', '+', '*', '/', '%', '=', '<', '>', ';', ':', ',', '|', '&':
 		return true
 	}
 	return false
@@ -733,7 +733,9 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 				// However, properties are properties only if they are in valid place,
 				// otherwise, these are regular identifiers.
 				if prev_tok, ok := s.LastToken(); ok {
-					if prev_tok.Kind != NEWLINE && prev_tok.Kind != SEMICOLON {
+					if prev_tok.Kind != NEWLINE &&
+						prev_tok.Kind != SEMICOLON &&
+						prev_tok.Kind != INDENT_INC {
 						t.Kind = IDENT
 					}
 				}
