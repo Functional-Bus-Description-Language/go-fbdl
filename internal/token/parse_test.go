@@ -17,6 +17,7 @@ func TestParse(t *testing.T) {
 			Stream{
 				Token{Kind: NEWLINE, Start: 0, End: 0, Line: 1, Column: 1},
 				Token{Kind: NEWLINE, Start: 1, End: 1, Line: 2, Column: 1},
+				Token{Kind: EOF, Start: 2, End: 2, Line: 3, Column: 1},
 			},
 		},
 		{
@@ -24,6 +25,7 @@ func TestParse(t *testing.T) {
 			"# Comment line",
 			Stream{
 				Token{Kind: COMMENT, Start: 0, End: 13, Line: 1, Column: 1},
+				Token{Kind: EOF, Start: 14, End: 14, Line: 1, Column: 15},
 			},
 		},
 		{
@@ -32,6 +34,7 @@ func TestParse(t *testing.T) {
 			Stream{
 				Token{Kind: COMMENT, Start: 0, End: 8, Line: 1, Column: 1},
 				Token{Kind: NEWLINE, Start: 9, End: 9, Line: 1, Column: 10},
+				Token{Kind: EOF, Start: 10, End: 10, Line: 2, Column: 1},
 			},
 		},
 		{
@@ -41,6 +44,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: COMMENT, Start: 0, End: 10, Line: 1, Column: 1},
 				Token{Kind: NEWLINE, Start: 11, End: 11, Line: 1, Column: 12},
 				Token{Kind: COMMENT, Start: 12, End: 22, Line: 2, Column: 1},
+				Token{Kind: EOF, Start: 23, End: 23, Line: 2, Column: 12},
 			},
 		},
 		{
@@ -51,6 +55,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: IDENT, Start: 6, End: 6, Line: 1, Column: 7},
 				Token{Kind: ASS, Start: 8, End: 8, Line: 1, Column: 9},
 				Token{Kind: BOOL, Start: 10, End: 13, Line: 1, Column: 11},
+				Token{Kind: EOF, Start: 14, End: 14, Line: 1, Column: 15},
 			},
 		},
 		{
@@ -63,6 +68,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: ATOMIC, Start: 10, End: 15, Line: 1, Column: 11},
 				Token{Kind: ASS, Start: 17, End: 17, Line: 1, Column: 18},
 				Token{Kind: BOOL, Start: 19, End: 23, Line: 1, Column: 20},
+				Token{Kind: EOF, Start: 24, End: 24, Line: 1, Column: 25},
 			},
 		},
 		{
@@ -75,6 +81,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: ADD_ENABLE, Start: 7, End: 16, Line: 1, Column: 8},
 				Token{Kind: ASS, Start: 18, End: 18, Line: 1, Column: 19},
 				Token{Kind: BOOL, Start: 20, End: 23, Line: 1, Column: 21},
+				Token{Kind: EOF, Start: 24, End: 24, Line: 1, Column: 25},
 			},
 		},
 		{
@@ -93,6 +100,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: WIDTH, Start: 27, End: 31, Line: 1, Column: 28},
 				Token{Kind: ASS, Start: 33, End: 33, Line: 1, Column: 34},
 				Token{Kind: IDENT, Start: 35, End: 35, Line: 1, Column: 36},
+				Token{Kind: EOF, Start: 36, End: 36, Line: 1, Column: 37},
 			},
 		},
 		{
@@ -109,6 +117,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: COMMA, Start: 23, End: 23, Line: 1, Column: 24},
 				Token{Kind: STRING, Start: 25, End: 27, Line: 1, Column: 26},
 				Token{Kind: RBRACK, Start: 28, End: 28, Line: 1, Column: 29},
+				Token{Kind: EOF, Start: 29, End: 29, Line: 1, Column: 30},
 			},
 		},
 		{
@@ -118,6 +127,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: IMPORT, Start: 0, End: 5, Line: 1, Column: 1},
 				Token{Kind: IDENT, Start: 7, End: 9, Line: 1, Column: 8},
 				Token{Kind: STRING, Start: 11, End: 16, Line: 1, Column: 12},
+				Token{Kind: EOF, Start: 17, End: 17, Line: 1, Column: 18},
 			},
 		},
 		{
@@ -132,6 +142,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: INT, Start: 13, End: 13, Line: 1, Column: 14},
 				Token{Kind: SUB, Start: 15, End: 15, Line: 1, Column: 16},
 				Token{Kind: INT, Start: 17, End: 17, Line: 1, Column: 18},
+				Token{Kind: EOF, Start: 18, End: 18, Line: 1, Column: 19},
 			},
 		},
 		{
@@ -144,6 +155,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: INT, Start: 11, End: 13, Line: 1, Column: 12},
 				Token{Kind: SHL, Start: 15, End: 16, Line: 1, Column: 16},
 				Token{Kind: INT, Start: 18, End: 20, Line: 1, Column: 19},
+				Token{Kind: EOF, Start: 21, End: 21, Line: 1, Column: 22},
 			},
 		},
 		{
@@ -156,6 +168,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: DELAY, Start: 8, End: 12, Line: 1, Column: 9},
 				Token{Kind: ASS, Start: 13, End: 13, Line: 1, Column: 14},
 				Token{Kind: TIME, Start: 14, End: 18, Line: 1, Column: 15},
+				Token{Kind: EOF, Start: 19, End: 19, Line: 1, Column: 20},
 			},
 		},
 		{
@@ -169,6 +182,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: BOOL, Start: 6, End: 9, Line: 1, Column: 7},
 				Token{Kind: RBRACK, Start: 10, End: 10, Line: 1, Column: 11},
 				Token{Kind: BLOCK, Start: 11, End: 15, Line: 1, Column: 12},
+				Token{Kind: EOF, Start: 16, End: 16, Line: 1, Column: 17},
 			},
 		},
 		{
@@ -181,6 +195,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: INT, Start: 12, End: 15, Line: 1, Column: 13},
 				Token{Kind: OR, Start: 16, End: 16, Line: 1, Column: 17},
 				Token{Kind: INT, Start: 18, End: 21, Line: 1, Column: 19},
+				Token{Kind: EOF, Start: 22, End: 22, Line: 1, Column: 23},
 			},
 		},
 		{
@@ -198,6 +213,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: ADD_ENABLE, Start: 18, End: 27, Line: 3, Column: 3},
 				Token{Kind: ASS, Start: 29, End: 29, Line: 3, Column: 14},
 				Token{Kind: BOOL, Start: 31, End: 34, Line: 3, Column: 16},
+				Token{Kind: EOF, Start: 35, End: 35, Line: 3, Column: 20},
 			},
 		},
 		{
@@ -216,6 +232,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: NEWLINE, Start: 23, End: 23, Line: 3, Column: 1},
 				Token{Kind: IDENT, Start: 24, End: 27, Line: 4, Column: 1},
 				Token{Kind: BUS, Start: 29, End: 31, Line: 4, Column: 6},
+				Token{Kind: EOF, Start: 32, End: 32, Line: 4, Column: 9},
 			},
 		},
 		{
@@ -240,6 +257,7 @@ func TestParse(t *testing.T) {
 				Token{Kind: NEWLINE, Start: 54, End: 54, Line: 5, Column: 13},
 				Token{Kind: IDENT, Start: 56, End: 56, Line: 6, Column: 2},
 				Token{Kind: STREAM, Start: 58, End: 63, Line: 6, Column: 4},
+				Token{Kind: EOF, Start: 64, End: 64, Line: 6, Column: 10},
 			},
 		},
 	}

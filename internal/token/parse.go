@@ -196,6 +196,8 @@ func Parse(src []byte) (Stream, error) {
 		}
 	}
 
+	s = append(s, Token{Kind: EOF, Start: c.idx, End: c.idx, Line: c.line, Column: c.col(c.idx)})
+
 	return s, nil
 }
 
