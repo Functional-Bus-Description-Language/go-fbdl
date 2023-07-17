@@ -5,15 +5,15 @@ import (
 )
 
 type context struct {
-	line        int
-	indent      int // Current indent level
-	idx         int // Start index
-	newline_idx int // Last newline index
+	line       int
+	indent     int // Current indent level
+	idx        int // Start index
+	newlineIdx int // Last newline index
 }
 
 // Col returns column number for given index.
 func (c context) col(idx int) int {
-	return idx - c.newline_idx
+	return idx - c.newlineIdx
 }
 
 // nextByte returns byte with index equal idx + 1.
@@ -91,7 +91,7 @@ func Parse(src []byte) (Stream, error) {
 		t   Token
 	)
 	c.line = 1
-	c.newline_idx = -1
+	c.newlineIdx = -1
 
 	for {
 		if c.idx == len(src) {
@@ -300,7 +300,7 @@ func parseNewline(c *context, src []byte, s Stream) (Token, error) {
 	}
 
 	t := Token{Kind: NEWLINE, Start: c.idx, End: c.idx, Column: c.col(c.idx)}
-	c.newline_idx = c.idx
+	c.newlineIdx = c.idx
 	return t, nil
 }
 
