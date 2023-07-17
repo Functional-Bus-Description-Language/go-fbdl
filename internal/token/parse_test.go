@@ -264,7 +264,7 @@ func TestParse(t *testing.T) {
 
 	for i, test := range tests {
 		if i != test.idx {
-			t.Fatalf("Invalid test index %d, expecting %d", test.idx, i)
+			t.Fatalf("Invalid test index %d, expected %d", test.idx, i)
 		}
 
 		got, err := Parse([]byte(test.src))
@@ -376,12 +376,12 @@ func TestParseError(t *testing.T) {
 
 	for i, test := range tests {
 		if i != test.idx {
-			t.Fatalf("Invalid test index %d, expecting %d", test.idx, i)
+			t.Fatalf("Invalid test index %d, expected %d", test.idx, i)
 		}
 
 		_, err := Parse([]byte(test.src))
 		if err == nil {
-			t.Fatalf("%d: err == nil, expecting != nil", i)
+			t.Fatalf("%d: err == nil, expected != nil", i)
 		}
 
 		if err.Error() != test.err.Error() {
