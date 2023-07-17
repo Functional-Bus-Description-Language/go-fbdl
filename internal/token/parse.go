@@ -110,7 +110,7 @@ func Parse(src []byte) (Stream, error) {
 		} else if b == '\n' {
 			t, err = parseNewline(&c, src, s)
 		} else if b == '#' {
-			t = parseComment(&c, src)
+			t = parseComment(&c, src, s)
 		} else if b == ',' {
 			t, err = parseComma(&c, s)
 		} else if b == ';' {
@@ -304,16 +304,28 @@ func parseNewline(c *context, src []byte, s Stream) (Token, error) {
 	return t, nil
 }
 
-func parseComment(c *context, src []byte) Token {
-	t := Token{Kind: COMMENT, Start: c.idx}
+func parseComment(c *context, src []byte, s Stream) Token {
+	t := Token{Kind: INVALID, Start: c.idx}
 
 	for {
 		c.idx++
 		if c.idx >= len(src) || src[c.idx] == '\n' {
 			t.End = c.idx - 1
-			return t
+			break
 		}
 	}
+
+	// Add comment to the token stream only if it is a potential documentation comment.
+	if prev_tok, ok := s.LastToken(); ok {
+		k := prev_tok.Kind
+		if k == NEWLINE || k == INDENT_INC || k == INDENT_DEC {
+			t.Kind = COMMENT
+		}
+	} else {
+		t.Kind = COMMENT
+	}
+
+	return t
 }
 
 func parseComma(c *context, s Stream) (Token, error) {

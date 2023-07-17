@@ -285,4 +285,3 @@ func isOperator(k Kind) bool {
 func isFunctionality(k Kind) bool {
 	return functionality_start < k && k < functionality_end
 }
-
