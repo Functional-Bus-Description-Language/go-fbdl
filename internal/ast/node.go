@@ -4,28 +4,43 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-type Import interface {
-	importNode()
-}
-
-type SingleImport struct {
-	Import token.Token
-	Name   token.Token
-	Path   token.Token
-}
-
-func (si SingleImport) importNode() {}
-
 type Comment struct {
 	Comments []token.Token
 }
 
-func (c Comment) add(t token.Token) {
-	c.Comments = append(c.Comments, t)
+type Import interface {
+	importNode()
 }
+
+// Import types
+type (
+	SingleImport struct {
+		Import token.Token
+		Name   token.Token
+		Path   token.Token
+	}
+)
+
+func (si SingleImport) importNode() {}
+
+type Const interface {
+	constNode()
+}
+
+// Const types
+type (
+	SingleConst struct {
+		Const token.Token
+		Name  token.Token
+		Ass   token.Token
+		Expr  Expr
+	}
+)
+
+func (sc SingleConst) constNode() {}
 
 type File struct {
 	Comments []Comment
 	Imports  []Import
-	//Consts ConstDecl
+	Consts   []Const
 }

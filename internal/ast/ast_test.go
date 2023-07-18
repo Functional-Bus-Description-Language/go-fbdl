@@ -2,8 +2,8 @@ package ast
 
 import (
 	"fmt"
-	"testing"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"testing"
 )
 
 func TestBuildError(t *testing.T) {
@@ -21,6 +21,11 @@ func TestBuildError(t *testing.T) {
 			1,
 			"import name +",
 			fmt.Errorf("1:13: unexpected +, expected string"),
+		},
+		{
+			2,
+			"const A = ]",
+			fmt.Errorf("1:11: unexpected ], expected expression"),
 		},
 	}
 
