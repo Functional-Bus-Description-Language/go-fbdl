@@ -16,7 +16,16 @@ type SingleImport struct {
 
 func (si SingleImport) importNode() {}
 
+type Comment struct {
+	Comments []token.Token
+}
+
+func (c Comment) add(t token.Token) {
+	c.Comments = append(c.Comments, t)
+}
+
 type File struct {
-	Imports []Import
+	Comments []Comment
+	Imports  []Import
 	//Consts ConstDecl
 }

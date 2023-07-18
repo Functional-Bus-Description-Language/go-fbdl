@@ -22,6 +22,8 @@ func Build(s token.Stream) (File, error) {
 		switch t.Kind {
 		case token.NEWLINE:
 			i++
+		case token.COMMENT:
+			i = buildComment(s, i, &f)
 		case token.IMPORT:
 			i, err = buildImport(s, i, &f)
 		default:
@@ -34,6 +36,32 @@ func Build(s token.Stream) (File, error) {
 	}
 
 	return f, nil
+}
+
+func buildComment(s token.Stream, i int, f *File) int {
+	c := Comment{}
+	c.add(s[i])
+
+	prevNewline := false
+	for {
+		i++
+		t := s[i]
+		k := t.Kind
+		if k == token.NEWLINE && prevNewline {
+			break
+		} else if k == token.NEWLINE {
+			prevNewline = true
+		} else if k == token.COMMENT {
+			c.add(t)
+			prevNewline = false
+		} else {
+			break
+		}
+	}
+
+	f.Comments = append(f.Comments, c)
+
+	return i
 }
 
 func buildImport(s token.Stream, i int, f *File) (int, error) {
