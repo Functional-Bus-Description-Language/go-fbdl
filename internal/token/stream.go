@@ -1,12 +1,12 @@
 package token
 
-type Stream []Token
+type TokenStream []Token
 
 // LastToken returns last token from the stream.
 // If stream is empty, the second return is false.
-func (s Stream) LastToken() (Token, bool) {
-	if len(s) == 0 {
-		return Token{}, false
+func (ts TokenStream) LastToken() (Token, bool) {
+	if len(ts) == 0 {
+		return nil, false
 	}
-	return s[len(s)-1], true
+	return ts[len(ts)-1], true
 }

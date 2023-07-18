@@ -4,15 +4,16 @@ import (
 	"fmt"
 )
 
-type context struct {
+// Parsing context
+type ctx struct {
 	line       int
 	indent     int // Current indent level
-	idx        int // Start index
+	i          int // Current buffer index
 	newlineIdx int // Last newline index
 }
 
 // Col returns column number for given index.
-func (c context) col(idx int) int {
+func (c ctx) col(idx int) int {
 	return idx - c.newlineIdx
 }
 
@@ -83,32 +84,32 @@ func isLetter(b byte) bool {
 }
 
 // Parse parses src byte array containing the source code and returns token Stream.
-func Parse(src []byte) (Stream, error) {
+func Parse(src []byte) (TokenStream, error) {
 	var (
-		c   context
+		c   ctx
 		err error
-		s   Stream
+		s   TokenStream
 		t   Token
 	)
 	c.line = 1
 	c.newlineIdx = -1
 
 	for {
-		if c.idx == len(src) {
+		if c.i == len(src) {
 			break
 		}
 
-		t.Kind = INVALID
+		t = None{}
 		err = nil
-		b := src[c.idx]            // Current byte
-		nb := nextByte(src, c.idx) // Next byte
+		b := src[c.i]            // Current byte
+		nb := nextByte(src, c.i) // Next byte
 
 		if b == ' ' {
 			err = parseSpace(&c, src, s)
 		} else if b == '\t' {
-			t, err = parseTab(&c, src, s)
+			err = parseTab(&c, src, &s)
 		} else if b == '\n' {
-			t, err = parseNewline(&c, src, s)
+			err = parseNewline(&c, src, &s)
 		} else if b == '#' {
 			t = parseComment(&c, src, s)
 		} else if b == ',' {
@@ -174,7 +175,7 @@ func Parse(src []byte) (Stream, error) {
 		} else if isDigit(b) {
 			t, err = parseNumber(&c, src)
 		} else if isLetter(b) {
-			t, err = parseWord(&c, src, s)
+			t, err = parseWord(&c, src, &s)
 		} else {
 			panic(fmt.Sprintf("unhandled byte '%c'", b))
 		}
@@ -183,38 +184,30 @@ func Parse(src []byte) (Stream, error) {
 			return s, err
 		}
 
-		if t.Kind != INVALID {
-			t.Line = c.line
-			if t.Kind == NEWLINE {
-				c.line++
-			} else {
-				t.Column = c.col(t.Start)
-			}
-
+		if _, ok := t.(None); !ok {
 			s = append(s, t)
-			c.idx = t.End + 1
 		}
 	}
 
-	s = append(s, Token{Kind: EOF, Start: c.idx, End: c.idx, Line: c.line, Column: c.col(c.idx)})
+	s = append(s, Eof{start: c.i, end: c.i, line: c.line, column: c.col(c.i)})
 
 	return s, nil
 }
 
-func parseSpace(c *context, src []byte, s Stream) error {
+func parseSpace(c *ctx, src []byte, s TokenStream) error {
 	if t, ok := s.LastToken(); ok {
-		if t.Kind == NEWLINE {
+		if _, ok := t.(Newline); ok {
 			return fmt.Errorf(
-				"%d:%d: space character ' ' not allowed for indent", c.line, c.col(c.idx),
+				"%d:%d: space character ' ' not allowed for indent", c.line, c.col(c.i),
 			)
 		}
 	}
 
 	// Eat all spaces
-	c.idx++
+	c.i++
 	for {
-		if src[c.idx] == ' ' {
-			c.idx++
+		if src[c.i] == ' ' {
+			c.i++
 		} else {
 			break
 		}
@@ -223,34 +216,34 @@ func parseSpace(c *context, src []byte, s Stream) error {
 	return nil
 }
 
-func parseTab(c *context, src []byte, s Stream) (Token, error) {
-	t := Token{Kind: INVALID, Start: c.idx}
+func parseTab(c *ctx, src []byte, s *TokenStream) error {
+	start := c.i
 
 	errMsg := fmt.Sprintf(
-		"%d:%d: tab character '\t' not allowed for alignment", c.line, c.col(c.idx),
+		"%d:%d: tab character '\t' not allowed for alignment", c.line, c.col(c.i),
 	)
 	if t, ok := s.LastToken(); ok {
-		if t.Kind != NEWLINE {
-			return t, fmt.Errorf(errMsg)
+		if _, ok := t.(Newline); !ok {
+			return fmt.Errorf(errMsg)
 		}
 	} else {
-		return t, fmt.Errorf(errMsg)
+		return fmt.Errorf(errMsg)
 	}
 
 	indent := 1
 	for {
-		c.idx++
-		if c.idx >= len(src) {
+		c.i++
+		if c.i >= len(src) {
 			break
 		}
 
-		b := src[c.idx]
+		b := src[c.i]
 		if b == '\t' {
 			indent++
 		} else if b == ' ' {
-			return t, fmt.Errorf(
+			return fmt.Errorf(
 				"%d:%d: space character ' ' right after tab character '\t'",
-				c.line, c.col(c.idx),
+				c.line, c.col(c.i),
 			)
 		} else {
 			break
@@ -258,301 +251,354 @@ func parseTab(c *context, src []byte, s Stream) (Token, error) {
 	}
 
 	if indent == c.indent+1 {
-		t.Kind = INDENT_INC
-		t.End = c.idx - 1
+		t := IndentInc{start, c.i - 1, c.line, c.col(start)}
+		*s = append(*s, t)
 	} else if indent > c.indent+1 {
-		return t, fmt.Errorf(
-			"%d:%d: multi indent increase",
-			c.line, c.col(t.Start),
-		)
+		return fmt.Errorf("%d:%d: multi indent increase", c.line, c.col(start))
 	} else if indent < c.indent {
 		// Insert proper number of INDENT_DEC tokens.
-		t.Kind = INDENT_DEC
-		t.End = t.Start
+		t := IndentDec{start, start, c.line, c.col(start)}
 		for i := 0; indent+i < c.indent; i++ {
-			s = append(s, t)
+			*s = append(*s, t)
 		}
-		t.Kind = INVALID
 	}
 
 	c.indent = indent
 
-	return t, nil
+	return nil
 }
 
-func parseNewline(c *context, src []byte, s Stream) (Token, error) {
-	if prev_tok, ok := s.LastToken(); ok {
-		if prev_tok.Kind == SEMICOLON {
-			return Token{}, fmt.Errorf(
-				"%d:%d: extra ';' at the end of line", prev_tok.Line, prev_tok.Column,
+func parseNewline(c *ctx, src []byte, s *TokenStream) error {
+	if t, ok := s.LastToken(); ok {
+		if _, ok := t.(Semicolon); ok {
+			return fmt.Errorf(
+				"%d:%d: extra ';' at the end of line", t.Line(), t.Column(),
 			)
 		}
 	}
 
-	if nextByte(src, c.idx) != '\t' && c.indent != 0 {
+	nl := Newline{c.i, c.i, c.line, c.col(c.i)}
+	*s = append(*s, nl)
+
+	nb := nextByte(src, c.i)
+	if nb != '\t' && nb != '\n' && c.indent != 0 {
 		// Insert proper number of INDENT_DEC tokens.
-		t := Token{Kind: INDENT_DEC, Start: c.idx, End: c.idx}
-		t.End = t.Start
+		t := IndentDec{c.i, c.i, c.line, c.col(c.i)}
 		for i := 0; i < c.indent; i++ {
-			s = append(s, t)
+			*s = append(*s, t)
 		}
 		c.indent = 0
 	}
 
-	t := Token{Kind: NEWLINE, Start: c.idx, End: c.idx, Column: c.col(c.idx)}
-	c.newlineIdx = c.idx
-	return t, nil
+	c.newlineIdx = c.i
+	c.line++
+	c.i++
+
+	return nil
 }
 
-func parseComment(c *context, src []byte, s Stream) Token {
-	t := Token{Kind: INVALID, Start: c.idx}
+func parseComment(c *ctx, src []byte, s TokenStream) Token {
+	t := Comment{start: c.i, line: c.line, column: c.col(c.i)}
 
 	for {
-		c.idx++
-		if c.idx >= len(src) || src[c.idx] == '\n' {
-			t.End = c.idx - 1
+		c.i++
+		if c.i >= len(src) || src[c.i] == '\n' {
+			t.end = c.i - 1
 			break
 		}
 	}
 
 	// Add comment to the token stream only if it is a potential documentation comment.
 	if prev_tok, ok := s.LastToken(); ok {
-		k := prev_tok.Kind
-		if k == NEWLINE || k == INDENT_INC || k == INDENT_DEC {
-			t.Kind = COMMENT
+		switch prev_tok.(type) {
+		case Newline, IndentInc, IndentDec:
+			return t
 		}
 	} else {
-		t.Kind = COMMENT
+		return t
 	}
 
-	return t
+	return nil
 }
 
-func parseComma(c *context, s Stream) (Token, error) {
-	if prev_tok, ok := s.LastToken(); ok {
-		if prev_tok.Kind == COMMA {
-			return Token{}, fmt.Errorf(
-				"%d:%d: redundant ','", prev_tok.Line, c.col(c.idx),
+func parseComma(c *ctx, s TokenStream) (Token, error) {
+	if t, ok := s.LastToken(); ok {
+		if _, ok := t.(Comma); ok {
+			return nil, fmt.Errorf(
+				"%d:%d: redundant ','", t.Line(), c.col(c.i),
 			)
 		}
 	}
 
-	t := Token{Kind: COMMA, Start: c.idx, End: c.idx}
+	t := Comma{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
 	return t, nil
 }
 
-func parseSemicolon(c *context, s Stream) (Token, error) {
-	if prev_tok, ok := s.LastToken(); ok {
-		if prev_tok.Kind == SEMICOLON {
-			return Token{}, fmt.Errorf(
-				"%d:%d: redundant ';'", prev_tok.Line, c.col(c.idx),
+func parseSemicolon(c *ctx, s TokenStream) (Token, error) {
+	if t, ok := s.LastToken(); ok {
+		if _, ok := t.(Semicolon); ok {
+			return nil, fmt.Errorf(
+				"%d:%d: redundant ';'", t.Line(), c.col(c.i),
 			)
 		}
 	}
 
-	t := Token{Kind: SEMICOLON, Start: c.idx, End: c.idx}
+	t := Semicolon{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
 	return t, nil
 }
 
-func parseNonequalityOperator(c *context) Token {
-	return Token{Kind: NEQ, Start: c.idx, End: c.idx + 1}
+func parseNonequalityOperator(c *ctx) Neq {
+	n := Neq{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return n
 }
 
-func parseNegationOperator(c *context) Token {
-	return Token{Kind: NEG, Start: c.idx, End: c.idx}
+func parseNegationOperator(c *ctx) Neg {
+	n := Neg{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return n
 }
 
-func parseEqualityOperator(c *context) Token {
-	return Token{Kind: EQ, Start: c.idx, End: c.idx + 1}
+func parseEqualityOperator(c *ctx) Eq {
+	e := Eq{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return e
 }
 
-func parseAssignmentOperator(c *context) Token {
-	return Token{Kind: ASS, Start: c.idx, End: c.idx}
+func parseAssignmentOperator(c *ctx) Ass {
+	a := Ass{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return a
 }
 
-func parseAdditionOperator(c *context) Token {
-	return Token{Kind: ADD, Start: c.idx, End: c.idx}
+func parseAdditionOperator(c *ctx) Add {
+	a := Add{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return a
 }
 
-func parseSubtractionOperator(c *context) Token {
-	return Token{Kind: SUB, Start: c.idx, End: c.idx}
+func parseSubtractionOperator(c *ctx) Sub {
+	s := Sub{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return s
 }
 
-func parseRemainderOperator(c *context) Token {
-	return Token{Kind: REM, Start: c.idx, End: c.idx}
+func parseRemainderOperator(c *ctx) Rem {
+	r := Rem{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return r
 }
 
-func parseExponentiationOperator(c *context) Token {
-	return Token{Kind: EXP, Start: c.idx, End: c.idx + 1}
+func parseExponentiationOperator(c *ctx) Exp {
+	e := Exp{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return e
 }
 
-func parseMultiplicationOperator(c *context) Token {
-	return Token{Kind: MUL, Start: c.idx, End: c.idx}
+func parseMultiplicationOperator(c *ctx) Mul {
+	m := Mul{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return m
 }
 
-func parseDivisionOperator(c *context) Token {
-	return Token{Kind: DIV, Start: c.idx, End: c.idx}
+func parseDivisionOperator(c *ctx) Div {
+	d := Div{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return d
 }
 
-func parseLessThanEqualOperator(c *context) Token {
-	return Token{Kind: LEQ, Start: c.idx, End: c.idx + 1}
+func parseLessThanEqualOperator(c *ctx) LessEq {
+	le := LessEq{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return le
 }
 
-func parseLeftShiftOperator(c *context) Token {
-	return Token{Kind: SHL, Start: c.idx, End: c.idx + 1}
+func parseLeftShiftOperator(c *ctx) LeftShift {
+	ls := LeftShift{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return ls
 }
 
-func parseLessThanOperator(c *context) Token {
-	return Token{Kind: LSS, Start: c.idx, End: c.idx}
+func parseLessThanOperator(c *ctx) Less {
+	l := Less{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return l
 }
 
-func parseGreaterThanEqualOperator(c *context) Token {
-	return Token{Kind: GEQ, Start: c.idx, End: c.idx + 1}
+func parseGreaterThanEqualOperator(c *ctx) GreaterEq {
+	ge := GreaterEq{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return ge
 }
 
-func parseRightShiftOperator(c *context) Token {
-	return Token{Kind: SHR, Start: c.idx, End: c.idx + 1}
+func parseRightShiftOperator(c *ctx) RightShift {
+	rs := RightShift{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return rs
 }
 
-func parseGreaterThanOperator(c *context) Token {
-	return Token{Kind: GTR, Start: c.idx, End: c.idx}
+func parseGreaterThanOperator(c *ctx) Greater {
+	g := Greater{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return g
 }
 
-func parseLeftParenthesis(c *context) Token {
-	return Token{Kind: LPAREN, Start: c.idx, End: c.idx}
+func parseLeftParenthesis(c *ctx) LeftParen {
+	lp := LeftParen{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return lp
 }
 
-func parseRightParenthesis(c *context) Token {
-	return Token{Kind: RPAREN, Start: c.idx, End: c.idx}
+func parseRightParenthesis(c *ctx) RightParen {
+	rp := RightParen{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return rp
 }
 
-func parseLeftBracket(c *context) Token {
-	return Token{Kind: LBRACK, Start: c.idx, End: c.idx}
+func parseLeftBracket(c *ctx) LeftBracket {
+	lb := LeftBracket{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return lb
 }
 
-func parseRightBracket(c *context) Token {
-	return Token{Kind: RBRACK, Start: c.idx, End: c.idx}
+func parseRightBracket(c *ctx) RightBracket {
+	rb := RightBracket{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return rb
 }
 
-func parseLogicalAnd(c *context) Token {
-	return Token{Kind: LAND, Start: c.idx, End: c.idx + 1}
+func parseLogicalAnd(c *ctx) And {
+	a := And{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return a
 }
 
-func parseBitAnd(c *context) Token {
-	return Token{Kind: AND, Start: c.idx, End: c.idx}
+func parseBitAnd(c *ctx) BitAnd {
+	ba := BitAnd{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return ba
 }
 
-func parseLogicalOr(c *context) Token {
-	return Token{Kind: LOR, Start: c.idx, End: c.idx + 1}
+func parseLogicalOr(c *ctx) Or {
+	o := Or{c.i, c.i + 1, c.line, c.col(c.i)}
+	c.i += 2
+	return o
 }
 
-func parseBitOr(c *context) Token {
-	return Token{Kind: OR, Start: c.idx, End: c.idx}
+func parseBitOr(c *ctx) BitOr {
+	bo := BitOr{c.i, c.i, c.line, c.col(c.i)}
+	c.i++
+	return bo
 }
 
-func parseString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: STRING, Start: c.idx}
+func parseString(c *ctx, src []byte) (String, error) {
+	t := String{start: c.i, line: c.line, column: c.col(c.i)}
 
-	idx := c.idx
 	for {
-		idx++
-		if idx >= len(src) {
+		c.i++
+		if c.i >= len(src) {
 			return t, fmt.Errorf(
-				"%d:%d: unterminated string literal", c.line, c.col(c.idx),
+				"%d:%d: unterminated string literal", c.line, c.col(t.start),
 			)
 		}
-		b := src[idx]
-		if b == '"' || b == '\n' {
+		b := src[c.i]
+		if b == '"' {
 			break
 		}
 	}
-	t.End = idx
+	t.end = c.i
+	c.i++
 	return t, nil
 }
 
-func parseBinaryBitString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: BIT_STRING, Start: c.idx}
+func parseBinaryBitString(c *ctx, src []byte) (Token, error) {
+	t := BitString{start: c.i, line: c.line, column: c.col(c.i)}
 
 	// Skip b"
-	idx := c.idx + 2
+	c.i += 2
 	for {
-		if idx >= len(src) {
+		if c.i >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in binary bit string literal",
-				c.line, c.col(t.Start),
+				c.line, c.col(t.start),
 			)
 		}
 
-		b := src[idx]
+		b := src[c.i]
 
 		if b == '"' {
-			t.End = idx
+			t.end = c.i
+			c.i++
 			return t, nil
 		}
 
 		switch b {
 		case '0', '1',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			idx++
+			c.i++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in binary bit string literal",
-				c.line, c.col(idx), b,
+				c.line, c.col(c.i), b,
 			)
 		}
 	}
 }
 
-func parseOctalBitString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: BIT_STRING, Start: c.idx}
+func parseOctalBitString(c *ctx, src []byte) (Token, error) {
+	t := BitString{start: c.i, line: c.line, column: c.col(c.i)}
 
 	// Skip o"
-	idx := c.idx + 2
+	c.i += 2
 	for {
-		if idx >= len(src) {
+		if c.i >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in octal bit string literal",
-				c.line, c.col(t.Start),
+				c.line, c.col(t.start),
 			)
 		}
 
-		b := src[idx]
+		b := src[c.i]
 
 		if b == '"' {
-			t.End = idx
+			t.end = c.i
+			c.i++
 			return t, nil
 		}
 
 		switch b {
 		case '0', '1', '2', '3', '4', '5', '6', '7',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			idx++
+			c.i++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in octal bit string literal",
-				c.line, c.col(idx), b,
+				c.line, c.col(c.i), b,
 			)
 		}
 	}
 }
 
-func parseHexBitString(c *context, src []byte) (Token, error) {
-	t := Token{Kind: BIT_STRING, Start: c.idx}
+func parseHexBitString(c *ctx, src []byte) (Token, error) {
+	t := BitString{start: c.i, line: c.line, column: c.col(c.i)}
 
 	// Skip x"
-	idx := c.idx + 2
+	c.i += 2
 	for {
-		if idx >= len(src) {
+		if c.i >= len(src) {
 			return t, fmt.Errorf(
 				"%d:%d: missing terminating '\"' in hex bit string literal",
-				c.line, c.col(t.Start),
+				c.line, c.col(t.start),
 			)
 		}
 
-		b := src[idx]
+		b := src[c.i]
 
 		if b == '"' {
-			t.End = idx
+			t.end = c.i
+			c.i++
 			return t, nil
 		}
 
@@ -560,19 +606,19 @@ func parseHexBitString(c *context, src []byte) (Token, error) {
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
-			idx++
+			c.i++
 		default:
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in hex bit string literal",
-				c.line, c.col(idx), b,
+				c.line, c.col(c.i), b,
 			)
 		}
 	}
 }
 
-func parseNumber(c *context, src []byte) (Token, error) {
-	b := src[c.idx]
-	nb := nextByte(src, c.idx)
+func parseNumber(c *ctx, src []byte) (Number, error) {
+	b := src[c.i]
+	nb := nextByte(src, c.i)
 
 	if b == '0' && (nb == 'b' || nb == 'B') {
 		return parseBinaryInt(c, src)
@@ -582,42 +628,41 @@ func parseNumber(c *context, src []byte) (Token, error) {
 		return parseHexInt(c, src)
 	}
 
-	t := Token{Kind: INT, Start: c.idx}
+	i := Int{start: c.i, line: c.line, column: c.col(c.i)}
 	hasPoint := false
 	hasE := false
-	idx := c.idx
 
 	for {
-		idx++
-		if idx >= len(src) {
+		c.i++
+		if c.i >= len(src) {
 			break
 		}
 
-		b := src[idx]
+		b := src[c.i]
 		if isDigit(b) {
 			continue
 		}
 
 		if b == '.' {
 			if hasPoint {
-				return t, fmt.Errorf(
+				return nil, fmt.Errorf(
 					"%d:%d: second point character '.' in number literal",
-					c.line, c.col(idx),
+					c.line, c.col(c.i),
 				)
 			} else {
 				if hasE {
-					return t, fmt.Errorf(
+					return nil, fmt.Errorf(
 						"%d:%d: point character '.' after exponent in number literal",
-						c.line, c.col(idx),
+						c.line, c.col(c.i),
 					)
 				}
 				hasPoint = true
 			}
 		} else if b == 'e' || b == 'E' {
 			if hasE {
-				return t, fmt.Errorf(
+				return nil, fmt.Errorf(
 					"%d:%d: second exponent in number literal",
-					c.line, c.col(idx),
+					c.line, c.col(c.i),
 				)
 			} else {
 				hasE = true
@@ -625,117 +670,120 @@ func parseNumber(c *context, src []byte) (Token, error) {
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return t, fmt.Errorf(
+			return nil, fmt.Errorf(
 				"%d:%d: invalid character '%c' in number literal",
-				c.line, c.col(idx), b,
+				c.line, c.col(c.i), b,
 			)
 		}
 	}
 
-	t.End = idx - 1
+	i.end = c.i - 1
+	var n Number = i
 	if hasPoint || hasE {
-		t.Kind = REAL
+		n = Real{i.start, i.end, i.line, i.column}
 	}
 
-	return t, nil
+	return n, nil
 }
 
-func parseBinaryInt(c *context, src []byte) (Token, error) {
-	t := Token{Kind: INT, Start: c.idx}
+func parseBinaryInt(c *ctx, src []byte) (Int, error) {
+	t := Int{start: c.i, line: c.line, column: c.col(c.i)}
 
 	// Skip 0b
-	idx := c.idx + 2
+	c.i += 2
 	for {
-		if idx >= len(src) {
+		if c.i >= len(src) {
 			break
 		}
-		b := src[idx]
+		b := src[c.i]
 		if isBinDigit(b) {
-			idx++
+			c.i++
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in binary literal",
-				c.line, c.col(c.idx), b,
+				c.line, c.col(c.i), b,
 			)
 		}
 	}
-	t.End = idx - 1
+	t.end = c.i - 1
 	return t, nil
 }
 
-func parseOctalInt(c *context, src []byte) (Token, error) {
-	t := Token{Kind: INT, Start: c.idx}
+func parseOctalInt(c *ctx, src []byte) (Int, error) {
+	t := Int{start: c.i, line: c.line, column: c.col(c.i)}
 
 	// Skip 0o
-	idx := c.idx + 2
+	c.i += 2
 	for {
-		if idx >= len(src) {
+		if c.i >= len(src) {
 			break
 		}
-		b := src[idx]
+		b := src[c.i]
 		if isOctalDigit(b) {
-			idx++
+			c.i++
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in octal literal",
-				c.line, c.col(c.idx), b,
+				c.line, c.col(c.i), b,
 			)
 		}
 	}
-	t.End = idx - 1
+	t.end = c.i - 1
 	return t, nil
 }
 
-func parseHexInt(c *context, src []byte) (Token, error) {
-	t := Token{Kind: INT, Start: c.idx}
+func parseHexInt(c *ctx, src []byte) (Int, error) {
+	t := Int{start: c.i, line: c.line, column: c.col(c.i)}
 
 	// Skip 0x
-	idx := c.idx + 2
+	c.i += 2
 	for {
-		if idx >= len(src) {
+		if c.i >= len(src) {
 			break
 		}
-		b := src[idx]
+		b := src[c.i]
 		if isHexDigit(b) {
-			idx++
+			c.i++
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
 			return t, fmt.Errorf(
 				"%d:%d: invalid character '%c' in hex literal",
-				c.line, c.col(c.idx), b,
+				c.line, c.col(c.i), b,
 			)
 		}
 	}
-	t.End = idx - 1
+	t.end = c.i - 1
 	return t, nil
 }
 
-func parseWord(c *context, src []byte, s Stream) (Token, error) {
+func parseWord(c *ctx, src []byte, s *TokenStream) (Token, error) {
 	var t Token
-	word, hasHyphen := getWord(src, c.idx)
+	defer func() { c.i = t.End() + 1 }()
+	word, hasHyphen := getWord(src, c.i)
 
 	if !hasHyphen {
 		// Firstly assume word is a keyword
 		t = parseKeyword(word, c)
 		// If it is not a keyword, then it might be a property or identifier.
-		if t.Kind == INVALID {
+		if _, ok := t.(None); ok {
 			t = parseProperty(word, c)
 			// If it is not property, then it must be an identifier.
-			if t.Kind == INVALID {
-				t.Kind = IDENT
+			if _, ok := t.(None); ok {
+				t = Ident{t.Start(), t.End(), t.Line(), t.Column()}
 			} else {
 				// However, properties are properties only if they are in valid place,
 				// otherwise, these are regular identifiers.
 				if prev_tok, ok := s.LastToken(); ok {
-					if prev_tok.Kind != NEWLINE &&
-						prev_tok.Kind != SEMICOLON &&
-						prev_tok.Kind != INDENT_INC {
-						t.Kind = IDENT
+					switch prev_tok.(type) {
+					case Newline, Semicolon, IndentInc:
+						// Do nothing, this is property
+					default:
+						t = Ident{t.Start(), t.End(), t.Line(), t.Column()}
 					}
 				}
 			}
@@ -744,7 +792,7 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 		// Firstly assume word is a property
 		t = parseProperty(word, c)
 		// If it is not property, then it is part of an expression.
-		if t.Kind == INVALID {
+		if _, ok := t.(None); ok {
 			panic("unimplemented")
 		} else {
 			// It might be property, or part of an expression.
@@ -754,23 +802,30 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 				return t, nil
 			}
 			// It is part of an expression.
-			if prev_tok.Kind != INDENT_INC && prev_tok.Kind != SEMICOLON {
+			switch prev_tok.(type) {
+			case IndentInc, Semicolon:
+				// It is property
+			default:
 				panic("unimplemented")
 			}
 		}
 	}
 
 	// The word might be the unit of time literal
-	if t.Kind == IDENT {
+	if _, ok := t.(Ident); ok {
 		if prev_tok, ok := s.LastToken(); ok {
-			if prev_tok.Kind == INT {
+			if _, ok := prev_tok.(Int); ok {
 				switch string(word) {
 				case "ns", "us", "ms", "s":
-					idx := len(s) - 1
-					s[idx].Kind = TIME
-					s[idx].End = t.End
-					t.Kind = INVALID
-					c.idx = t.End + 1
+					t = Time{
+						start:  prev_tok.Start(),
+						end:    t.End(),
+						line:   prev_tok.Line(),
+						column: prev_tok.Column(),
+					}
+					// Remove previous Int from the list
+					// New Time token will be inserted
+					*s = (*s)[:len(*s)-1]
 				}
 			}
 		}
@@ -779,90 +834,96 @@ func parseWord(c *context, src []byte, s Stream) (Token, error) {
 	return t, nil
 }
 
-func parseKeyword(word []byte, c *context) Token {
-	t := Token{Kind: INVALID, Start: c.idx, End: c.idx + len(word) - 1}
+func parseKeyword(word []byte, c *ctx) Token {
+	s := c.i
+	e := s + len(word) - 1
+	l := c.line
+	col := c.col(c.i)
 
 	switch string(word) {
 	case "false", "true":
-		t.Kind = BOOL
+		return Bool{s, e, l, col}
 	case "block":
-		t.Kind = BLOCK
+		return Block{s, e, l, col}
 	case "bus":
-		t.Kind = BUS
+		return Bus{s, e, l, col}
 	case "config":
-		t.Kind = CONFIG
+		return Config{s, e, l, col}
 	case "const":
-		t.Kind = CONST
+		return Const{s, e, l, col}
 	case "import":
-		t.Kind = IMPORT
+		return Import{s, e, l, col}
 	case "irq":
-		t.Kind = IRQ
+		return Irq{s, e, l, col}
 	case "mask":
-		t.Kind = MASK
+		return Mask{s, e, l, col}
 	case "memory":
-		t.Kind = MEMORY
+		return Memory{s, e, l, col}
 	case "param":
-		t.Kind = PARAM
+		return Param{s, e, l, col}
 	case "proc":
-		t.Kind = PROC
+		return Proc{s, e, l, col}
 	case "return":
-		t.Kind = RETURN
+		return Return{s, e, l, col}
 	case "static":
-		t.Kind = STATIC
+		return Static{s, e, l, col}
 	case "stream":
-		t.Kind = STREAM
+		return Stream{s, e, l, col}
 	case "type":
-		t.Kind = TYPE
+		return Type{s, e, l, col}
 	}
 
-	return t
+	return None{s, e, l, col}
 }
 
-func parseProperty(word []byte, c *context) Token {
-	t := Token{Kind: INVALID, Start: c.idx, End: c.idx + len(word) - 1}
+func parseProperty(word []byte, c *ctx) Token {
+	s := c.i
+	e := s + len(word) - 1
+	l := c.line
+	col := c.col(c.i)
 
 	switch string(word) {
 	case "access":
-		t.Kind = ACCESS
+		return Access{s, e, l, col}
 	case "add-enable":
-		t.Kind = ADD_ENABLE
+		return AddEnable{s, e, l, col}
 	case "atomic":
-		t.Kind = ATOMIC
+		return Atomic{s, e, l, col}
 	case "byte-write-enable":
-		t.Kind = BYTE_WRITE_ENABLE
+		return ByteWriteEnable{s, e, l, col}
 	case "clear":
-		t.Kind = CLEAR
+		return Clear{s, e, l, col}
 	case "delay":
-		t.Kind = DELAY
+		return Delay{s, e, l, col}
 	case "enable-init-value":
-		t.Kind = ENABLE_INIT_VALUE
+		return EnableInitValue{s, e, l, col}
 	case "enable-reset-value":
-		t.Kind = ENABLE_RESET_VALUE
+		return EnableResetValue{s, e, l, col}
 	case "groups":
-		t.Kind = GROUPS
+		return Groups{s, e, l, col}
 	case "init-value":
-		t.Kind = INIT_VALUE
+		return InitValue{s, e, l, col}
 	case "in-trigger":
-		t.Kind = IN_TRIGGER
+		return InTrigger{s, e, l, col}
 	case "masters":
-		t.Kind = MASTERS
+		return Masters{s, e, l, col}
 	case "out-trigger":
-		t.Kind = OUT_TRIGGER
+		return OutTrigger{s, e, l, col}
 	case "range":
-		t.Kind = RANGE
+		return Range{s, e, l, col}
 	case "read-latency":
-		t.Kind = READ_LATENCY
+		return ReadLatency{s, e, l, col}
 	case "read-value":
-		t.Kind = READ_VALUE
+		return ReadValue{s, e, l, col}
 	case "reset":
-		t.Kind = RESET
+		return Reset{s, e, l, col}
 	case "reset-value":
-		t.Kind = RESET_VALUE
+		return ResetValue{s, e, l, col}
 	case "size":
-		t.Kind = SIZE
+		return Size{s, e, l, col}
 	case "width":
-		t.Kind = WIDTH
+		return Width{s, e, l, col}
 	}
 
-	return t
+	return None{s, e, l, col}
 }
