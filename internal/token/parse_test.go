@@ -260,6 +260,17 @@ func TestParse(t *testing.T) {
 				Token{Kind: EOF, Start: 64, End: 64, Line: 6, Column: 10},
 			},
 		},
+		{
+			18,
+			"masters = -0",
+			Stream{
+				Token{Kind: MASTERS, Start: 0, End: 6, Line: 1, Column: 1},
+				Token{Kind: ASS, Start: 8, End: 8, Line: 1, Column: 9},
+				Token{Kind: SUB, Start: 10, End: 10, Line: 1, Column: 11},
+				Token{Kind: INT, Start: 11, End: 11, Line: 1, Column: 12},
+				Token{Kind: EOF, Start: 12, End: 12, Line: 1, Column: 13},
+			},
+		},
 	}
 
 	for i, test := range tests {
