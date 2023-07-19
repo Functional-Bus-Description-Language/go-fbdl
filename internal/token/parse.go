@@ -26,6 +26,15 @@ func nextByte(src []byte, idx int) byte {
 	return src[idx+1]
 }
 
+// lastToken returns last token from the Token list.
+// If list is empty, the second return is false.
+func lastToken(toks []Token) (Token, bool) {
+	if len(toks) == 0 {
+		return nil, false
+	}
+	return toks[len(toks)-1], true
+}
+
 // getWord returns word from the source starting from index idx.
 // The function assumes byte under idx is not a whitespace character.
 // The second return is true if word contains hyphen '-' character.
@@ -84,11 +93,11 @@ func isLetter(b byte) bool {
 }
 
 // Parse parses src byte array containing the source code and returns token Stream.
-func Parse(src []byte) (TokenStream, error) {
+func Parse(src []byte) ([]Token, error) {
 	var (
 		c   ctx
 		err error
-		s   TokenStream
+		s   []Token
 		t   Token
 	)
 	c.line = 1
@@ -194,8 +203,8 @@ func Parse(src []byte) (TokenStream, error) {
 	return s, nil
 }
 
-func parseSpace(c *ctx, src []byte, s TokenStream) error {
-	if t, ok := s.LastToken(); ok {
+func parseSpace(c *ctx, src []byte, s []Token) error {
+	if t, ok := lastToken(s); ok {
 		if _, ok := t.(Newline); ok {
 			return fmt.Errorf(
 				"%d:%d: space character ' ' not allowed for indent", c.line, c.col(c.i),
@@ -216,13 +225,13 @@ func parseSpace(c *ctx, src []byte, s TokenStream) error {
 	return nil
 }
 
-func parseTab(c *ctx, src []byte, s *TokenStream) error {
+func parseTab(c *ctx, src []byte, s *[]Token) error {
 	start := c.i
 
 	errMsg := fmt.Sprintf(
 		"%d:%d: tab character '\t' not allowed for alignment", c.line, c.col(c.i),
 	)
-	if t, ok := s.LastToken(); ok {
+	if t, ok := lastToken(*s); ok {
 		if _, ok := t.(Newline); !ok {
 			return fmt.Errorf(errMsg)
 		}
@@ -268,8 +277,8 @@ func parseTab(c *ctx, src []byte, s *TokenStream) error {
 	return nil
 }
 
-func parseNewline(c *ctx, src []byte, s *TokenStream) error {
-	if t, ok := s.LastToken(); ok {
+func parseNewline(c *ctx, src []byte, s *[]Token) error {
+	if t, ok := lastToken(*s); ok {
 		if _, ok := t.(Semicolon); ok {
 			return fmt.Errorf(
 				"%d:%d: extra ';' at the end of line", t.Line(), t.Column(),
@@ -297,7 +306,7 @@ func parseNewline(c *ctx, src []byte, s *TokenStream) error {
 	return nil
 }
 
-func parseComment(c *ctx, src []byte, s TokenStream) Token {
+func parseComment(c *ctx, src []byte, s []Token) Token {
 	t := Comment{start: c.i, line: c.line, column: c.col(c.i)}
 
 	for {
@@ -309,7 +318,7 @@ func parseComment(c *ctx, src []byte, s TokenStream) Token {
 	}
 
 	// Add comment to the token stream only if it is a potential documentation comment.
-	if prev_tok, ok := s.LastToken(); ok {
+	if prev_tok, ok := lastToken(s); ok {
 		switch prev_tok.(type) {
 		case Newline, IndentInc, IndentDec:
 			return t
@@ -321,8 +330,8 @@ func parseComment(c *ctx, src []byte, s TokenStream) Token {
 	return nil
 }
 
-func parseComma(c *ctx, s TokenStream) (Token, error) {
-	if t, ok := s.LastToken(); ok {
+func parseComma(c *ctx, s []Token) (Token, error) {
+	if t, ok := lastToken(s); ok {
 		if _, ok := t.(Comma); ok {
 			return nil, fmt.Errorf(
 				"%d:%d: redundant ','", t.Line(), c.col(c.i),
@@ -335,8 +344,8 @@ func parseComma(c *ctx, s TokenStream) (Token, error) {
 	return t, nil
 }
 
-func parseSemicolon(c *ctx, s TokenStream) (Token, error) {
-	if t, ok := s.LastToken(); ok {
+func parseSemicolon(c *ctx, s []Token) (Token, error) {
+	if t, ok := lastToken(s); ok {
 		if _, ok := t.(Semicolon); ok {
 			return nil, fmt.Errorf(
 				"%d:%d: redundant ';'", t.Line(), c.col(c.i),
@@ -761,7 +770,7 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 	return t, nil
 }
 
-func parseWord(c *ctx, src []byte, s *TokenStream) (Token, error) {
+func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	var t Token
 	defer func() { c.i = t.End() + 1 }()
 	word, hasHyphen := getWord(src, c.i)
@@ -778,7 +787,7 @@ func parseWord(c *ctx, src []byte, s *TokenStream) (Token, error) {
 			} else {
 				// However, properties are properties only if they are in valid place,
 				// otherwise, these are regular identifiers.
-				if prev_tok, ok := s.LastToken(); ok {
+				if prev_tok, ok := lastToken(*s); ok {
 					switch prev_tok.(type) {
 					case Newline, Semicolon, IndentInc:
 						// Do nothing, this is property
@@ -796,7 +805,7 @@ func parseWord(c *ctx, src []byte, s *TokenStream) (Token, error) {
 			panic("unimplemented")
 		} else {
 			// It might be property, or part of an expression.
-			prev_tok, ok := s.LastToken()
+			prev_tok, ok := lastToken(*s)
 			if !ok {
 				// Safe to return, time literal units do not contain hyphen '-'.
 				return t, nil
@@ -813,7 +822,7 @@ func parseWord(c *ctx, src []byte, s *TokenStream) (Token, error) {
 
 	// The word might be the unit of time literal
 	if _, ok := t.(Ident); ok {
-		if prev_tok, ok := s.LastToken(); ok {
+		if prev_tok, ok := lastToken(*s); ok {
 			if _, ok := prev_tok.(Int); ok {
 				switch string(word) {
 				case "ns", "us", "ms", "s":
