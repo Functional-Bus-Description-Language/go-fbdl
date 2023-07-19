@@ -770,6 +770,7 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 	return t, nil
 }
 
+// TODO: Refactor, too complex, split into 2 functions.
 func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	var t Token
 	defer func() { c.i = t.End() + 1 }()
@@ -823,8 +824,12 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 		// If it is not property, then it is part of an expression.
 		if _, ok := t.(None); ok {
 			// t is last, as deferred function has to calculate new context index.
-			i1, sub, t := splitHyphenatedWord()
-			*s = append(*s, []Token{i1, sub, t}...)
+			i1, sub, i2 := splitHyphenatedWord()
+			t = i2
+			*s = append(*s, []Token{i1, sub, i2}...)
+			// Assing to t for updating context index in deferred function
+			t = i2
+			return None{}, nil
 		} else {
 			// It might be property, or part of an expression.
 			prev_tok, ok := lastToken(*s)
@@ -834,10 +839,14 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 			}
 			// It is part of an expression.
 			switch prev_tok.(type) {
-			case IndentInc, Semicolon:
+			case Newline, IndentInc, Semicolon:
 				// It is property
 			default:
-				panic("unimplemented")
+				i1, sub, i2 := splitHyphenatedWord()
+				*s = append(*s, []Token{i1, sub, i2}...)
+				// Assing to t for updating context index in deferred function
+				t = i2
+				return None{}, nil
 			}
 		}
 	}

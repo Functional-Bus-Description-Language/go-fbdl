@@ -285,6 +285,18 @@ func TestParse(t *testing.T) {
 				Eof{start: 10, end: 10, line: 1, column: 11},
 			},
 		},
+		{
+			20,
+			"size = init-value",
+			[]Token{
+				Size{start: 0, end: 3, line: 1, column: 1},
+				Ass{start: 5, end: 5, line: 1, column: 6},
+				Ident{start: 7, end: 10, line: 1, column: 8},
+				Sub{start: 11, end: 11, line: 1, column: 12},
+				Ident{start: 12, end: 16, line: 1, column: 13},
+				Eof{start: 17, end: 17, line: 1, column: 18},
+			},
+		},
 	}
 
 	for i, test := range tests {
