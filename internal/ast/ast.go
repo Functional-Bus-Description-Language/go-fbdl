@@ -6,7 +6,7 @@ import (
 )
 
 // Build builds ast based on token stream.
-func Build(s token.Stream) (File, error) {
+func Build(s []token.Token) (File, error) {
 	var (
 		err error
 		f   File
@@ -14,22 +14,22 @@ func Build(s token.Stream) (File, error) {
 	)
 
 	for {
-		if s[i].Kind == token.EOF {
+		if _, ok := s[i].(token.Eof); ok {
 			break
 		}
 
 		t := s[i]
-		switch t.Kind {
-		case token.NEWLINE:
+		switch t.(type) {
+		case token.Newline:
 			i++
-		case token.COMMENT:
+		case token.Comment:
 			i = buildComment(s, i, &f)
-		case token.CONST:
+		case token.Const:
 			i, err = buildConst(s, i, &f)
-		case token.IMPORT:
+		case token.Import:
 			i, err = buildImport(s, i, &f)
 		default:
-			panic(fmt.Sprintf("%s: unhandled token %s", t.Loc(), t.Kind))
+			panic(fmt.Sprintf("%s: unhandled token %s", token.Loc(t), t.Kind()))
 		}
 
 		if err != nil {
@@ -40,56 +40,54 @@ func Build(s token.Stream) (File, error) {
 	return f, nil
 }
 
-func buildComment(s token.Stream, i int, f *File) int {
+func buildComment(s []token.Token, i int, f *File) int {
 	c := Comment{}
-	c.Comments = append(c.Comments, s[i])
+	c.Comments = append(c.Comments, s[i].(token.Comment))
 
 	prevNewline := false
 	for {
 		i++
-		t := s[i]
-		k := t.Kind
-		if k == token.NEWLINE && prevNewline {
-			break
-		} else if k == token.NEWLINE {
-			prevNewline = true
-		} else if k == token.COMMENT {
+		switch t := s[i].(type) {
+		case token.Newline:
+			if prevNewline {
+				break
+			} else {
+				prevNewline = true
+			}
+		case token.Comment:
 			c.Comments = append(c.Comments, t)
 			prevNewline = false
-		} else {
-			break
+		default:
+			f.Comments = append(f.Comments, c)
+			return i
 		}
 	}
-
-	f.Comments = append(f.Comments, c)
-
-	return i
 }
 
-func buildConst(s token.Stream, i int, f *File) (int, error) {
-	t := s[+1]
-	switch t.Kind {
-	case token.IDENT:
+func buildConst(s []token.Token, i int, f *File) (int, error) {
+	t := s[i+1]
+	switch t.(type) {
+	case token.Ident:
 		return buildSingleConst(s, i, f)
-	case token.NEWLINE:
+	case token.Newline:
 		panic("buildMultiConst")
 	default:
 		return 0, fmt.Errorf(
 			"%s: unexpected %s, expected identifier, string or newline",
-			t.Loc(), t.Kind,
+			token.Loc(t), t.Kind(),
 		)
 	}
 }
 
-func buildSingleConst(s token.Stream, i int, f *File) (int, error) {
-	c := SingleConst{Const: s[i], Name: s[i+1]}
+func buildSingleConst(s []token.Token, i int, f *File) (int, error) {
+	c := SingleConst{Const: s[i].(token.Const), Name: s[i+1].(token.Ident)}
 
 	i += 2
-	t := s[i]
-	if t.Kind != token.ASS {
-		return 0, fmt.Errorf("%s: unexpected %s, expected =", t.Loc(), t.Kind)
+	if t, ok := s[i].(token.Ass); ok {
+		c.Ass = t
+	} else {
+		return 0, fmt.Errorf("%s: unexpected %s, expected =", token.Loc(t), t.Kind())
 	}
-	c.Ass = t
 
 	i++
 	i, expr, err := buildExpr(s, i)
@@ -103,40 +101,37 @@ func buildSingleConst(s token.Stream, i int, f *File) (int, error) {
 	return i, nil
 }
 
-func buildImport(s token.Stream, i int, f *File) (int, error) {
-	t := s[i+1]
-	switch t.Kind {
-	case token.IDENT, token.STRING:
+func buildImport(s []token.Token, i int, f *File) (int, error) {
+	switch t := s[i+1].(type) {
+	case token.Ident, token.String:
 		return buildSingleImport(s, i, f)
 	default:
 		return 0, fmt.Errorf(
 			"%s: unexpected %s, expected identifier, string or newline",
-			t.Loc(), t.Kind,
+			token.Loc(t), t.Kind(),
 		)
 	}
 }
 
-func buildSingleImport(s token.Stream, i int, f *File) (int, error) {
-	si := SingleImport{Import: s[i]}
+func buildSingleImport(s []token.Token, i int, f *File) (int, error) {
+	si := SingleImport{Import: s[i].(token.Import)}
 
 	i++
-	t := s[i]
-	switch t.Kind {
-	case token.IDENT:
-		si.Name = s[i]
+	switch t := s[i].(type) {
+	case token.Ident:
+		si.Name = t
 		i++
-		t = s[i]
-		switch t.Kind {
-		case token.STRING:
-			si.Path = s[i]
+		switch t := s[i].(type) {
+		case token.String:
+			si.Path = t
 			i++
 		default:
 			return 0, fmt.Errorf(
-				"%s: unexpected %s, expected string", t.Loc(), t.Kind,
+				"%s: unexpected %s, expected string", token.Loc(t), t.Kind(),
 			)
 		}
-	case token.STRING:
-		si.Path = s[i]
+	case token.String:
+		si.Path = t
 		i++
 	}
 

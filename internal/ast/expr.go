@@ -31,21 +31,21 @@ func (i Ident) exprNode()      {}
 func (ue UnaryExpr) exprNode() {}
 func (pe ParenExpr) exprNode() {}
 
-func buildExpr(s token.Stream, i int) (int, Expr, error) {
-	t := s[i]
-	k := t.Kind
-	if k == token.NEG || k == token.SUB || k == token.ADD {
+func buildExpr(s []token.Token, i int) (int, Expr, error) {
+	switch t := s[i].(type) {
+	case token.Neg, token.Sub, token.Add:
 		return buildUnaryExpr(s, i)
-	} else if k == token.IDENT {
+	case token.Ident:
 		return buildIdent(s, i)
+	default:
+		return 0, Ident{}, fmt.Errorf(
+			"%s: unexpected %s, expected expression",
+			token.Loc(t), t.Kind(),
+		)
 	}
-
-	return 0, Ident{}, fmt.Errorf(
-		"%s: unexpected %s, expected expression", t.Loc(), k,
-	)
 }
 
-func buildUnaryExpr(s token.Stream, i int) (int, UnaryExpr, error) {
+func buildUnaryExpr(s []token.Token, i int) (int, UnaryExpr, error) {
 	un := UnaryExpr{Op: s[i]}
 	i, x, err := buildExpr(s, i+1)
 	if err != nil {
@@ -55,7 +55,7 @@ func buildUnaryExpr(s token.Stream, i int) (int, UnaryExpr, error) {
 	return i, un, nil
 }
 
-func buildIdent(s token.Stream, i int) (int, Ident, error) {
+func buildIdent(s []token.Token, i int) (int, Ident, error) {
 	id := Ident{Name: s[i]}
 	return i, id, nil
 }

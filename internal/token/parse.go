@@ -680,7 +680,7 @@ func parseNumber(c *ctx, src []byte) (Number, error) {
 	i.end = c.i - 1
 	var n Number = i
 	if hasPoint || hasE {
-		n = Real{i.start, i.end, i.line, i.column}
+		n = Real(i)
 	}
 
 	return n, nil
