@@ -775,6 +775,26 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	defer func() { c.i = t.End() + 1 }()
 	word, hasHyphen := getWord(src, c.i)
 
+	splitHyphenatedWord := func() (Ident, Sub, Ident) {
+		i1 := Ident{start: c.i, line: c.line, column: c.col(c.i)}
+		s := Sub{line: c.line}
+		i2 := Ident{end: c.i + len(word) - 1, line: c.line}
+
+		for i := 0; i < len(word); i++ {
+			if word[i] == '-' {
+				i1.end = c.i + i - 1
+
+				s.start = c.i + i
+				s.end = c.i + i
+				s.column = c.col(c.i + i)
+
+				i2.start = c.i + i + 1
+				i2.column = c.col(c.i + i + 1)
+			}
+		}
+		return i1, s, i2
+	}
+
 	if !hasHyphen {
 		// Firstly assume word is a keyword
 		t = parseKeyword(word, c)
@@ -802,7 +822,9 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 		t = parseProperty(word, c)
 		// If it is not property, then it is part of an expression.
 		if _, ok := t.(None); ok {
-			panic("unimplemented")
+			// t is last, as deferred function has to calculate new context index.
+			i1, sub, t := splitHyphenatedWord()
+			*s = append(*s, []Token{i1, sub, t}...)
 		} else {
 			// It might be property, or part of an expression.
 			prev_tok, ok := lastToken(*s)
