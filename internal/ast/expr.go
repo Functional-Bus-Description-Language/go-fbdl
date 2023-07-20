@@ -15,6 +15,10 @@ type (
 		Name token.Token
 	}
 
+	Int struct {
+		Val token.Int
+	}
+
 	UnaryExpr struct {
 		Op token.Token
 		X  Expr
@@ -28,6 +32,7 @@ type (
 )
 
 func (i Ident) exprNode()      {}
+func (i Int) exprNode()        {}
 func (ue UnaryExpr) exprNode() {}
 func (pe ParenExpr) exprNode() {}
 
@@ -37,6 +42,8 @@ func buildExpr(s []token.Token, i int) (int, Expr, error) {
 		return buildUnaryExpr(s, i)
 	case token.Ident:
 		return buildIdent(s, i)
+	case token.Int:
+		return buildInt(s, i)
 	default:
 		return 0, Ident{}, fmt.Errorf(
 			"%s: unexpected %s, expected expression",
@@ -57,5 +64,10 @@ func buildUnaryExpr(s []token.Token, i int) (int, UnaryExpr, error) {
 
 func buildIdent(s []token.Token, i int) (int, Ident, error) {
 	id := Ident{Name: s[i]}
-	return i, id, nil
+	return i + 1, id, nil
+}
+
+func buildInt(s []token.Token, i int) (int, Int, error) {
+	int_ := Int{Val: s[i].(token.Int)}
+	return i + 1, int_, nil
 }
