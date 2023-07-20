@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestIdentExpr(t *testing.T) {
+func TestBuildIdent(t *testing.T) {
 	toks, _ := token.Parse([]byte("id"))
 	want := Ident{Name: toks[0]}
 
@@ -21,7 +21,7 @@ func TestIdentExpr(t *testing.T) {
 	}
 }
 
-func TestUnaryExpr(t *testing.T) {
+func TestBuildUnaryExpr(t *testing.T) {
 	toks, _ := token.Parse([]byte("-abc"))
 	want := UnaryExpr{
 		Op: toks[0], X: Ident{Name: toks[1]},
@@ -55,7 +55,7 @@ func TestUnaryExpr(t *testing.T) {
 	}
 }
 
-func TestCallExpr(t *testing.T) {
+func TestBuildCallExpr(t *testing.T) {
 	toks, _ := token.Parse([]byte("floor(v)"))
 	want := CallExpr{
 		Name:   toks[0].(token.Ident),
