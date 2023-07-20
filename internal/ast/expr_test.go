@@ -54,3 +54,26 @@ func TestUnaryExpr(t *testing.T) {
 		t.Fatalf("\ngot:  %+v\nwant: %+v", got, want)
 	}
 }
+
+func TestCallExpr(t *testing.T) {
+	toks, _ := token.Parse([]byte("floor(v)"))
+	want := CallExpr{
+		Name:   toks[0].(token.Ident),
+		Lparen: toks[1].(token.LeftParen),
+		Args: []Expr{
+			Ident{Name: toks[2].(token.Ident)},
+		},
+		Rparen: toks[3].(token.RightParen),
+	}
+
+	i, got, err := buildExpr(toks, 0)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	if i != 4 {
+		t.Fatalf("i = %d", i)
+	}
+	if !want.eq(got.(CallExpr)) {
+		t.Fatalf("\ngot:  %+v\nwant: %+v", got, want)
+	}
+}
