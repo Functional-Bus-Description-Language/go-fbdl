@@ -76,4 +76,26 @@ func TestBuildCallExpr(t *testing.T) {
 	if !want.eq(got.(CallExpr)) {
 		t.Fatalf("\ngot:  %+v\nwant: %+v", got, want)
 	}
+
+	toks, _ = token.Parse([]byte("foo(12.35, true)"))
+	want = CallExpr{
+		Name:   toks[0].(token.Ident),
+		Lparen: toks[1].(token.LeftParen),
+		Args: []Expr{
+			Real{Val: toks[2].(token.Real)},
+			Bool{Val: toks[4].(token.Bool)},
+		},
+		Rparen: toks[5].(token.RightParen),
+	}
+
+	i, got, err = buildExpr(toks, 0)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+	if i != 6 {
+		t.Fatalf("i = %d", i)
+	}
+	if !want.eq(got.(CallExpr)) {
+		t.Fatalf("\ngot:  %+v\nwant: %+v", got, want)
+	}
 }

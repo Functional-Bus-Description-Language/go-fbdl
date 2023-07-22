@@ -16,8 +16,12 @@ func buildExpr(s []token.Token, i int) (int, Expr, error) {
 		default:
 			return buildIdent(s, i)
 		}
+	case token.Bool:
+		return buildBool(s, i)
 	case token.Int:
 		return buildInt(s, i)
+	case token.Real:
+		return buildReal(s, i)
 	default:
 		return 0, Ident{}, fmt.Errorf(
 			"%s: unexpected %s, expected expression",
@@ -31,9 +35,19 @@ func buildIdent(s []token.Token, i int) (int, Ident, error) {
 	return i + 1, id, nil
 }
 
+func buildBool(s []token.Token, i int) (int, Bool, error) {
+	b := Bool{Val: s[i].(token.Bool)}
+	return i + 1, b, nil
+}
+
 func buildInt(s []token.Token, i int) (int, Int, error) {
 	int_ := Int{Val: s[i].(token.Int)}
 	return i + 1, int_, nil
+}
+
+func buildReal(s []token.Token, i int) (int, Real, error) {
+	r := Real{Val: s[i].(token.Real)}
+	return i + 1, r, nil
 }
 
 func buildCallExpr(s []token.Token, i int) (int, CallExpr, error) {
@@ -43,6 +57,8 @@ func buildCallExpr(s []token.Token, i int) (int, CallExpr, error) {
 	}
 	i += 2
 
+	prevExpr := false
+
 tokenLoop:
 	for {
 		switch t := s[i].(type) {
@@ -51,8 +67,16 @@ tokenLoop:
 			i++
 			break tokenLoop
 		case token.Comma:
+			prevExpr = false
 			i++
 		default:
+			if prevExpr {
+				return 0, call, fmt.Errorf(
+					"%s: unexpected %s, expected , or )",
+					token.Loc(t), t.Kind(),
+				)
+			}
+
 			var (
 				expr Expr
 				err  error
@@ -62,6 +86,7 @@ tokenLoop:
 				return 0, call, err
 			}
 			call.Args = append(call.Args, expr)
+			prevExpr = true
 		}
 	}
 

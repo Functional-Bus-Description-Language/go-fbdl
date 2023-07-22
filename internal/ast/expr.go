@@ -10,6 +10,10 @@ type Expr interface {
 
 // Expression nodes
 type (
+	Bool struct {
+		Val token.Bool
+	}
+
 	CallExpr struct {
 		Name   token.Ident
 		Lparen token.LeftParen
@@ -25,6 +29,10 @@ type (
 		Val token.Int
 	}
 
+	Real struct {
+		Val token.Real
+	}
+
 	UnaryExpr struct {
 		Op token.Token
 		X  Expr
@@ -37,9 +45,11 @@ type (
 	}
 )
 
+func (b Bool) exprNode()       {}
 func (c CallExpr) exprNode()   {}
 func (i Ident) exprNode()      {}
 func (i Int) exprNode()        {}
+func (r Real) exprNode()       {}
 func (ue UnaryExpr) exprNode() {}
 func (pe ParenExpr) exprNode() {}
 
