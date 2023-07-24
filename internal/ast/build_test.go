@@ -58,6 +58,24 @@ func TestBuildUnaryExpr(t *testing.T) {
 	}
 }
 
+func TestBuildParenExpr(t *testing.T) {
+	toks, _ := token.Parse([]byte("(a >> b)"))
+	want := ParenExpr{
+		Lparen: toks[0].(token.LeftParen),
+		X: BinaryExpr{
+			X:  Ident{Name: toks[1]},
+			Op: toks[2].(token.Operator),
+			Y:  Ident{Name: toks[3]},
+		},
+		Rparen: toks[4].(token.RightParen),
+	}
+	i, got, err := buildExpr(toks, 0, nil)
+	err = check(i, 5, got, want, err)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
 func TestBuildCallExpr(t *testing.T) {
 	toks, _ := token.Parse([]byte("floor(v)"))
 	want := CallExpr{

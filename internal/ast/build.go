@@ -28,6 +28,8 @@ func buildExpr(s []token.Token, i int, leftOp token.Operator) (int, Expr, error)
 		i, expr, err = buildInt(s, i)
 	case token.Real:
 		i, expr, err = buildReal(s, i)
+	case token.LeftParen:
+		i, expr, err = buildParenExpr(s, i)
 	default:
 		return 0, Ident{}, fmt.Errorf(
 			"%s: unexpected %s, expected expression",
@@ -80,6 +82,30 @@ func buildInt(s []token.Token, i int) (int, Int, error) {
 func buildReal(s []token.Token, i int) (int, Real, error) {
 	r := Real{Val: s[i].(token.Real)}
 	return i + 1, r, nil
+}
+
+func buildParenExpr(s []token.Token, i int) (int, ParenExpr, error) {
+	pe := ParenExpr{Lparen: s[i].(token.LeftParen)}
+	var (
+		err  error
+		expr Expr
+	)
+	i, expr, err = buildExpr(s, i+1, nil)
+	if err != nil {
+		return 0, pe, err
+	}
+	pe.X = expr
+
+	if rp, ok := s[i].(token.RightParen); ok {
+		pe.Rparen = rp
+	} else {
+		return 0, pe, fmt.Errorf(
+			"%s: unexpected %s, expected )",
+			token.Loc(s[i]), s[i].Kind(),
+		)
+	}
+
+	return i + 1, pe, nil
 }
 
 func buildCallExpr(s []token.Token, i int) (int, CallExpr, error) {
