@@ -260,13 +260,13 @@ func parseTab(c *ctx, src []byte, s *[]Token) error {
 	}
 
 	if indent == c.indent+1 {
-		t := IndentInc{start, c.i - 1, c.line, c.col(start)}
+		t := Indent{start, c.i - 1, c.line, c.col(start)}
 		*s = append(*s, t)
 	} else if indent > c.indent+1 {
 		return fmt.Errorf("%d:%d: multi indent increase", c.line, c.col(start))
 	} else if indent < c.indent {
 		// Insert proper number of INDENT_DEC tokens.
-		t := IndentDec{start, start, c.line, c.col(start)}
+		t := Dedent{start, start, c.line, c.col(start)}
 		for i := 0; indent+i < c.indent; i++ {
 			*s = append(*s, t)
 		}
@@ -292,7 +292,7 @@ func parseNewline(c *ctx, src []byte, s *[]Token) error {
 	nb := nextByte(src, c.i)
 	if nb != '\t' && nb != '\n' && c.indent != 0 {
 		// Insert proper number of INDENT_DEC tokens.
-		t := IndentDec{c.i, c.i, c.line, c.col(c.i)}
+		t := Dedent{c.i, c.i, c.line, c.col(c.i)}
 		for i := 0; i < c.indent; i++ {
 			*s = append(*s, t)
 		}
@@ -320,7 +320,7 @@ func parseComment(c *ctx, src []byte, s []Token) Token {
 	// Add comment to the token stream only if it is a potential documentation comment.
 	if prev_tok, ok := lastToken(s); ok {
 		switch prev_tok.(type) {
-		case Newline, IndentInc, IndentDec:
+		case Newline, Indent, Dedent:
 			return t
 		}
 	} else {
@@ -810,7 +810,7 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 				// otherwise, these are regular identifiers.
 				if prev_tok, ok := lastToken(*s); ok {
 					switch prev_tok.(type) {
-					case Newline, Semicolon, IndentInc:
+					case Newline, Semicolon, Indent:
 						// Do nothing, this is property
 					default:
 						t = Ident{t.Start(), t.End(), t.Line(), t.Column()}
@@ -839,7 +839,7 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 			}
 			// It is part of an expression.
 			switch prev_tok.(type) {
-			case Newline, IndentInc, Semicolon:
+			case Newline, Indent, Semicolon:
 				// It is property
 			default:
 				i1, sub, i2 := splitHyphenatedWord()

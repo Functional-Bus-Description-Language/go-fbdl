@@ -52,32 +52,32 @@ func (c Comment) Column() int  { return c.column }
 func (c Comment) Kind() string { return "comment" }
 
 // Indent increment
-type IndentInc struct {
+type Indent struct {
 	start  int
 	end    int
 	line   int
 	column int
 }
 
-func (ii IndentInc) Start() int   { return ii.start }
-func (ii IndentInc) End() int     { return ii.end }
-func (ii IndentInc) Line() int    { return ii.line }
-func (ii IndentInc) Column() int  { return ii.column }
-func (ii IndentInc) Kind() string { return "indent increment" }
+func (i Indent) Start() int   { return i.start }
+func (i Indent) End() int     { return i.end }
+func (i Indent) Line() int    { return i.line }
+func (i Indent) Column() int  { return i.column }
+func (i Indent) Kind() string { return "indent increment" }
 
 // Indent decrement
-type IndentDec struct {
+type Dedent struct {
 	start  int
 	end    int
 	line   int
 	column int
 }
 
-func (id IndentDec) Start() int   { return id.start }
-func (id IndentDec) End() int     { return id.end }
-func (id IndentDec) Line() int    { return id.line }
-func (id IndentDec) Column() int  { return id.column }
-func (id IndentDec) Kind() string { return "indent decrement" }
+func (d Dedent) Start() int   { return d.start }
+func (d Dedent) End() int     { return d.end }
+func (d Dedent) Line() int    { return d.line }
+func (d Dedent) Column() int  { return d.column }
+func (d Dedent) Kind() string { return "indent decrement" }
 
 type Newline struct {
 	start  int
