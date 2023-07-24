@@ -34,8 +34,23 @@ func TestBuildError(t *testing.T) {
 		},
 		{
 			4,
+			"const A = foo(, 1)",
+			fmt.Errorf("1:15: unexpected ,, expected expression"),
+		},
+		{
+			5,
 			"const A = (a + b c",
 			fmt.Errorf("1:18: unexpected identifier, expected )"),
+		},
+		{
+			6,
+			"const A = [1, 2, 3 4]",
+			fmt.Errorf("1:20: unexpected integer, expected , or ]"),
+		},
+		{
+			7,
+			"const A = [, 1]",
+			fmt.Errorf("1:12: unexpected ,, expected expression"),
 		},
 	}
 

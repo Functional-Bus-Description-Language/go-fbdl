@@ -27,6 +27,12 @@ type (
 		Rparen token.RightParen
 	}
 
+	ExprList struct {
+		Lbracket token.LeftBracket
+		Exprs    []Expr
+		Rbracket token.RightBracket
+	}
+
 	Ident struct {
 		Name token.Token
 	}
@@ -54,6 +60,7 @@ type (
 func (be BinaryExpr) exprNode() {}
 func (b Bool) exprNode()        {}
 func (c CallExpr) exprNode()    {}
+func (el ExprList) exprNode()   {}
 func (i Ident) exprNode()       {}
 func (i Int) exprNode()         {}
 func (r Real) exprNode()        {}

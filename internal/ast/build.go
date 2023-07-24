@@ -30,6 +30,8 @@ func buildExpr(s []token.Token, i int, leftOp token.Operator) (int, Expr, error)
 		i, expr, err = buildReal(s, i)
 	case token.LeftParen:
 		i, expr, err = buildParenExpr(s, i)
+	case token.LeftBracket:
+		i, expr, err = buildExprList(s, i)
 	default:
 		return 0, Ident{}, fmt.Errorf(
 			"%s: unexpected %s, expected expression",
@@ -108,11 +110,58 @@ func buildParenExpr(s []token.Token, i int) (int, ParenExpr, error) {
 	return i + 1, pe, nil
 }
 
+func buildExprList(s []token.Token, i int) (int, ExprList, error) {
+	el := ExprList{Lbracket: s[i].(token.LeftBracket)}
+	prevExpr := false
+	lbi := i // Left bracket token index
+	i++
+
+tokenLoop:
+	for {
+		switch t := s[i].(type) {
+		case token.RightBracket:
+			el.Rbracket = t
+			i++
+			break tokenLoop
+		case token.Comma:
+			if i == lbi+1 {
+				return 0, el, fmt.Errorf(
+					"%s: unexpected %s, expected expression",
+					token.Loc(t), t.Kind(),
+				)
+			}
+			prevExpr = false
+			i++
+		default:
+			if prevExpr {
+				return 0, el, fmt.Errorf(
+					"%s: unexpected %s, expected , or ]",
+					token.Loc(t), t.Kind(),
+				)
+			}
+
+			var (
+				expr Expr
+				err  error
+			)
+			i, expr, err = buildExpr(s, i, nil)
+			if err != nil {
+				return 0, el, err
+			}
+			el.Exprs = append(el.Exprs, expr)
+			prevExpr = true
+		}
+	}
+
+	return i, el, nil
+}
+
 func buildCallExpr(s []token.Token, i int) (int, CallExpr, error) {
 	call := CallExpr{
 		Name:   s[i].(token.Ident),
 		Lparen: s[i+1].(token.LeftParen),
 	}
+	lpi := i // Left parenthesis token index
 	i += 2
 
 	prevExpr := false
@@ -125,6 +174,12 @@ tokenLoop:
 			i++
 			break tokenLoop
 		case token.Comma:
+			if i == lpi+2 {
+				return 0, call, fmt.Errorf(
+					"%s: unexpected %s, expected expression",
+					token.Loc(t), t.Kind(),
+				)
+			}
 			prevExpr = false
 			i++
 		default:
