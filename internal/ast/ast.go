@@ -77,7 +77,7 @@ func buildConst(s []token.Token, i int, f *File) (int, error) {
 }
 
 func buildSingleConst(s []token.Token, i int, f *File) (int, error) {
-	c := SingleConst{Name: s[i+1].(token.Ident)}
+	c := Const{Name: s[i+1].(token.Ident)}
 
 	i += 2
 	if t, ok := s[i].(token.Ass); !ok {

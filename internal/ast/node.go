@@ -22,19 +22,10 @@ type (
 
 func (si SingleImport) importNode() {}
 
-type Const interface {
-	constNode()
+type Const struct {
+	Name token.Ident
+	Expr Expr
 }
-
-// Const types
-type (
-	SingleConst struct {
-		Name token.Ident
-		Expr Expr
-	}
-)
-
-func (sc SingleConst) constNode() {}
 
 type File struct {
 	Comments []Comment
