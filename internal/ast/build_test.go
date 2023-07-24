@@ -52,6 +52,21 @@ func TestBuildError(t *testing.T) {
 			"const A = [, 1]",
 			fmt.Errorf("1:12: unexpected ,, expected expression"),
 		},
+		{
+			8,
+			"const\n\tA 12",
+			fmt.Errorf("2:4: unexpected integer, expected ="),
+		},
+		{
+			9,
+			"const\n\t2.24 = A",
+			fmt.Errorf("2:2: unexpected real, expected identifier"),
+		},
+		{
+			10,
+			"const\nA = 2",
+			fmt.Errorf("2:1: unexpected identifier, expected indent or newline"),
+		},
 	}
 
 	for i, test := range tests {

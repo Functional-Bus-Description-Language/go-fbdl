@@ -87,7 +87,6 @@ func (c CallExpr) eq(c2 CallExpr) bool {
 	return true
 }
 
-
 // leftOp is the operator on the left side of the expression.
 func buildExpr(s []token.Token, i int, leftOp token.Operator) (int, Expr, error) {
 	var (
