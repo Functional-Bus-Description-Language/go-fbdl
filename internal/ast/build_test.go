@@ -199,4 +199,24 @@ func TestBuildBinaryExpr(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
+
+	toks, _ = token.Parse([]byte("A % B == D || false"))
+	want = BinaryExpr{
+		X: BinaryExpr{
+			X: BinaryExpr{
+				X:  Ident{Name: toks[0]},
+				Op: toks[1].(token.Operator),
+				Y:  Ident{Name: toks[2]},
+			},
+			Op: toks[3].(token.Operator),
+			Y:  Ident{Name: toks[4]},
+		},
+		Op: toks[5].(token.Operator),
+		Y:  Bool{Val: toks[6].(token.Bool)},
+	}
+	i, got, err = buildExpr(toks, 0, nil)
+	err = check(i, 7, got, want, err)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
 }
