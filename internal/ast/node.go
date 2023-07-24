@@ -15,9 +15,8 @@ type Import interface {
 // Import types
 type (
 	SingleImport struct {
-		Import token.Import
-		Name   token.Ident
-		Path   token.String
+		Name token.Ident
+		Path token.String
 	}
 )
 
@@ -30,10 +29,8 @@ type Const interface {
 // Const types
 type (
 	SingleConst struct {
-		Const token.Const
-		Name  token.Ident
-		Ass   token.Ass
-		Expr  Expr
+		Name token.Ident
+		Expr Expr
 	}
 )
 

@@ -77,12 +77,10 @@ func buildConst(s []token.Token, i int, f *File) (int, error) {
 }
 
 func buildSingleConst(s []token.Token, i int, f *File) (int, error) {
-	c := SingleConst{Const: s[i].(token.Const), Name: s[i+1].(token.Ident)}
+	c := SingleConst{Name: s[i+1].(token.Ident)}
 
 	i += 2
-	if t, ok := s[i].(token.Ass); ok {
-		c.Ass = t
-	} else {
+	if t, ok := s[i].(token.Ass); !ok {
 		return 0, unexpected(t, "=")
 	}
 
@@ -108,7 +106,7 @@ func buildImport(s []token.Token, i int, f *File) (int, error) {
 }
 
 func buildSingleImport(s []token.Token, i int, f *File) (int, error) {
-	si := SingleImport{Import: s[i].(token.Import)}
+	si := SingleImport{}
 
 	i++
 	switch t := s[i].(type) {
