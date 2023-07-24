@@ -32,9 +32,15 @@ type (
 		Name token.Ident
 		Expr Expr
 	}
+
+	MultiConst struct {
+		Names []token.Ident
+		Exprs []Expr
+	}
 )
 
 func (sc SingleConst) constNode() {}
+func (mc MultiConst) constNode()  {}
 
 type File struct {
 	Comments []Comment
