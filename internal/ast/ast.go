@@ -90,7 +90,7 @@ func buildSingleConst(s []token.Token, i int, f *File) (int, error) {
 	}
 
 	i++
-	i, expr, err := buildExpr(s, i)
+	i, expr, err := buildExpr(s, i, nil)
 	if err != nil {
 		return 0, err
 	}

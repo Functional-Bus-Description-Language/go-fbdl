@@ -5,28 +5,60 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-func buildExpr(s []token.Token, i int) (int, Expr, error) {
+// leftOp is the operator on the left side of the expression.
+func buildExpr(s []token.Token, i int, leftOp token.Operator) (int, Expr, error) {
+	var (
+		err  error
+		expr Expr
+	)
+
 	switch t := s[i].(type) {
 	case token.Neg, token.Sub, token.Add:
-		return buildUnaryExpr(s, i)
+		i, expr, err = buildUnaryExpr(s, i)
 	case token.Ident:
 		switch s[i+1].(type) {
 		case token.LeftParen:
-			return buildCallExpr(s, i)
+			i, expr, err = buildCallExpr(s, i)
 		default:
-			return buildIdent(s, i)
+			i, expr, err = buildIdent(s, i)
 		}
 	case token.Bool:
-		return buildBool(s, i)
+		i, expr, err = buildBool(s, i)
 	case token.Int:
-		return buildInt(s, i)
+		i, expr, err = buildInt(s, i)
 	case token.Real:
-		return buildReal(s, i)
+		i, expr, err = buildReal(s, i)
 	default:
 		return 0, Ident{}, fmt.Errorf(
 			"%s: unexpected %s, expected expression",
 			token.Loc(t), t.Kind(),
 		)
+	}
+
+	if err != nil {
+		return 0, expr, err
+	}
+
+	for {
+		var rightOp token.Operator
+		if op, ok := s[i].(token.Operator); ok {
+			rightOp = op
+		} else {
+			return i, expr, nil
+		}
+
+		if (leftOp == nil) ||
+			(leftOp != nil && (leftOp.Precedence() < rightOp.Precedence())) {
+			be := BinaryExpr{X: expr, Op: rightOp}
+			i, expr, err = buildExpr(s, i+1, rightOp)
+			if err != nil {
+				return 0, expr, err
+			}
+			be.Y = expr
+			expr = be
+		} else if leftOp.Precedence() > rightOp.Precedence() {
+			return i, expr, nil
+		}
 	}
 }
 
@@ -81,7 +113,7 @@ tokenLoop:
 				expr Expr
 				err  error
 			)
-			i, expr, err = buildExpr(s, i)
+			i, expr, err = buildExpr(s, i, nil)
 			if err != nil {
 				return 0, call, err
 			}
@@ -95,7 +127,7 @@ tokenLoop:
 
 func buildUnaryExpr(s []token.Token, i int) (int, UnaryExpr, error) {
 	un := UnaryExpr{Op: s[i]}
-	i, x, err := buildExpr(s, i+1)
+	i, x, err := buildExpr(s, i+1, nil)
 	if err != nil {
 		return 0, un, err
 	}

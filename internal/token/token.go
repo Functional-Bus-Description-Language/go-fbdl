@@ -20,6 +20,11 @@ type Number interface {
 	numberToken()
 }
 
+type Operator interface {
+	Token
+	Precedence() int
+}
+
 type None struct {
 	start  int
 	end    int
@@ -233,11 +238,12 @@ type Add struct {
 	column int
 }
 
-func (a Add) Start() int   { return a.start }
-func (a Add) End() int     { return a.end }
-func (a Add) Line() int    { return a.line }
-func (a Add) Column() int  { return a.column }
-func (a Add) Kind() string { return "+" }
+func (a Add) Start() int      { return a.start }
+func (a Add) End() int        { return a.end }
+func (a Add) Line() int       { return a.line }
+func (a Add) Column() int     { return a.column }
+func (a Add) Kind() string    { return "+" }
+func (a Add) Precedence() int { return 4 }
 
 // -
 type Sub struct {
@@ -247,11 +253,12 @@ type Sub struct {
 	column int
 }
 
-func (s Sub) Start() int   { return s.start }
-func (s Sub) End() int     { return s.end }
-func (s Sub) Line() int    { return s.line }
-func (s Sub) Column() int  { return s.column }
-func (s Sub) Kind() string { return "-" }
+func (s Sub) Start() int      { return s.start }
+func (s Sub) End() int        { return s.end }
+func (s Sub) Line() int       { return s.line }
+func (s Sub) Column() int     { return s.column }
+func (s Sub) Kind() string    { return "-" }
+func (s Sub) Precedence() int { return 4 }
 
 // *
 type Mul struct {
@@ -261,11 +268,12 @@ type Mul struct {
 	column int
 }
 
-func (m Mul) Start() int   { return m.start }
-func (m Mul) End() int     { return m.end }
-func (m Mul) Line() int    { return m.line }
-func (m Mul) Column() int  { return m.column }
-func (m Mul) Kind() string { return "*" }
+func (m Mul) Start() int      { return m.start }
+func (m Mul) End() int        { return m.end }
+func (m Mul) Line() int       { return m.line }
+func (m Mul) Column() int     { return m.column }
+func (m Mul) Kind() string    { return "*" }
+func (m Mul) Precedence() int { return 5 }
 
 // /
 type Div struct {
@@ -275,11 +283,12 @@ type Div struct {
 	column int
 }
 
-func (d Div) Start() int   { return d.start }
-func (d Div) End() int     { return d.end }
-func (d Div) Line() int    { return d.line }
-func (d Div) Column() int  { return d.column }
-func (d Div) Kind() string { return "/" }
+func (d Div) Start() int      { return d.start }
+func (d Div) End() int        { return d.end }
+func (d Div) Line() int       { return d.line }
+func (d Div) Column() int     { return d.column }
+func (d Div) Kind() string    { return "/" }
+func (d Div) Precedence() int { return 5 }
 
 // %
 type Rem struct {
@@ -289,11 +298,12 @@ type Rem struct {
 	column int
 }
 
-func (r Rem) Start() int   { return r.start }
-func (r Rem) End() int     { return r.end }
-func (r Rem) Line() int    { return r.line }
-func (r Rem) Column() int  { return r.column }
-func (r Rem) Kind() string { return "%" }
+func (r Rem) Start() int      { return r.start }
+func (r Rem) End() int        { return r.end }
+func (r Rem) Line() int       { return r.line }
+func (r Rem) Column() int     { return r.column }
+func (r Rem) Kind() string    { return "%" }
+func (r Rem) Precedence() int { return 5 }
 
 // **
 type Exp struct {
@@ -303,11 +313,12 @@ type Exp struct {
 	column int
 }
 
-func (e Exp) Start() int   { return e.start }
-func (e Exp) End() int     { return e.end }
-func (e Exp) Line() int    { return e.line }
-func (e Exp) Column() int  { return e.column }
-func (e Exp) Kind() string { return "**" }
+func (e Exp) Start() int      { return e.start }
+func (e Exp) End() int        { return e.end }
+func (e Exp) Line() int       { return e.line }
+func (e Exp) Column() int     { return e.column }
+func (e Exp) Kind() string    { return "**" }
+func (e Exp) Precedence() int { return 6 }
 
 // ==
 type Eq struct {
@@ -317,11 +328,12 @@ type Eq struct {
 	column int
 }
 
-func (e Eq) Start() int   { return e.start }
-func (e Eq) End() int     { return e.end }
-func (e Eq) Line() int    { return e.line }
-func (e Eq) Column() int  { return e.column }
-func (e Eq) Kind() string { return "==" }
+func (e Eq) Start() int      { return e.start }
+func (e Eq) End() int        { return e.end }
+func (e Eq) Line() int       { return e.line }
+func (e Eq) Column() int     { return e.column }
+func (e Eq) Kind() string    { return "==" }
+func (e Eq) Precedence() int { return 3 }
 
 // !=
 type Neq struct {
@@ -331,11 +343,12 @@ type Neq struct {
 	column int
 }
 
-func (n Neq) Start() int   { return n.start }
-func (n Neq) End() int     { return n.end }
-func (n Neq) Line() int    { return n.line }
-func (n Neq) Column() int  { return n.column }
-func (n Neq) Kind() string { return "!=" }
+func (n Neq) Start() int      { return n.start }
+func (n Neq) End() int        { return n.end }
+func (n Neq) Line() int       { return n.line }
+func (n Neq) Column() int     { return n.column }
+func (n Neq) Kind() string    { return "!=" }
+func (n Neq) Precedence() int { return 3 }
 
 // <
 type Less struct {
@@ -345,11 +358,12 @@ type Less struct {
 	column int
 }
 
-func (l Less) Start() int   { return l.start }
-func (l Less) End() int     { return l.end }
-func (l Less) Line() int    { return l.line }
-func (l Less) Column() int  { return l.column }
-func (l Less) Kind() string { return "<" }
+func (l Less) Start() int      { return l.start }
+func (l Less) End() int        { return l.end }
+func (l Less) Line() int       { return l.line }
+func (l Less) Column() int     { return l.column }
+func (l Less) Kind() string    { return "<" }
+func (l Less) Precedence() int { return 3 }
 
 // <=
 type LessEq struct {
@@ -359,11 +373,12 @@ type LessEq struct {
 	column int
 }
 
-func (le LessEq) Start() int   { return le.start }
-func (le LessEq) End() int     { return le.end }
-func (le LessEq) Line() int    { return le.line }
-func (le LessEq) Column() int  { return le.column }
-func (le LessEq) Kind() string { return "<=" }
+func (le LessEq) Start() int      { return le.start }
+func (le LessEq) End() int        { return le.end }
+func (le LessEq) Line() int       { return le.line }
+func (le LessEq) Column() int     { return le.column }
+func (le LessEq) Kind() string    { return "<=" }
+func (le LessEq) Precedence() int { return 3 }
 
 // >
 type Greater struct {
@@ -373,11 +388,12 @@ type Greater struct {
 	column int
 }
 
-func (g Greater) Start() int   { return g.start }
-func (g Greater) End() int     { return g.end }
-func (g Greater) Line() int    { return g.line }
-func (g Greater) Column() int  { return g.column }
-func (g Greater) Kind() string { return ">" }
+func (g Greater) Start() int      { return g.start }
+func (g Greater) End() int        { return g.end }
+func (g Greater) Line() int       { return g.line }
+func (g Greater) Column() int     { return g.column }
+func (g Greater) Kind() string    { return ">" }
+func (g Greater) Precedence() int { return 3 }
 
 // >=
 type GreaterEq struct {
@@ -387,11 +403,12 @@ type GreaterEq struct {
 	column int
 }
 
-func (ge GreaterEq) Start() int   { return ge.start }
-func (ge GreaterEq) End() int     { return ge.end }
-func (ge GreaterEq) Line() int    { return ge.line }
-func (ge GreaterEq) Column() int  { return ge.column }
-func (ge GreaterEq) Kind() string { return ">=" }
+func (ge GreaterEq) Start() int      { return ge.start }
+func (ge GreaterEq) End() int        { return ge.end }
+func (ge GreaterEq) Line() int       { return ge.line }
+func (ge GreaterEq) Column() int     { return ge.column }
+func (ge GreaterEq) Kind() string    { return ">=" }
+func (ge GreaterEq) Precedence() int { return 3 }
 
 // &&
 type And struct {
@@ -401,11 +418,12 @@ type And struct {
 	column int
 }
 
-func (a And) Start() int   { return a.start }
-func (a And) End() int     { return a.end }
-func (a And) Line() int    { return a.line }
-func (a And) Column() int  { return a.column }
-func (a And) Kind() string { return "&&" }
+func (a And) Start() int      { return a.start }
+func (a And) End() int        { return a.end }
+func (a And) Line() int       { return a.line }
+func (a And) Column() int     { return a.column }
+func (a And) Kind() string    { return "&&" }
+func (a And) Precedence() int { return 2 }
 
 // ||
 type Or struct {
@@ -415,11 +433,12 @@ type Or struct {
 	column int
 }
 
-func (o Or) Start() int   { return o.start }
-func (o Or) End() int     { return o.end }
-func (o Or) Line() int    { return o.line }
-func (o Or) Column() int  { return o.column }
-func (o Or) Kind() string { return "||" }
+func (o Or) Start() int      { return o.start }
+func (o Or) End() int        { return o.end }
+func (o Or) Line() int       { return o.line }
+func (o Or) Column() int     { return o.column }
+func (o Or) Kind() string    { return "||" }
+func (o Or) Precedence() int { return 1 }
 
 // <<
 type LeftShift struct {
@@ -429,11 +448,12 @@ type LeftShift struct {
 	column int
 }
 
-func (ls LeftShift) Start() int   { return ls.start }
-func (ls LeftShift) End() int     { return ls.end }
-func (ls LeftShift) Line() int    { return ls.line }
-func (ls LeftShift) Column() int  { return ls.column }
-func (ls LeftShift) Kind() string { return "<<" }
+func (ls LeftShift) Start() int      { return ls.start }
+func (ls LeftShift) End() int        { return ls.end }
+func (ls LeftShift) Line() int       { return ls.line }
+func (ls LeftShift) Column() int     { return ls.column }
+func (ls LeftShift) Kind() string    { return "<<" }
+func (ls LeftShift) Precedence() int { return 5 }
 
 // >>
 type RightShift struct {
@@ -443,11 +463,12 @@ type RightShift struct {
 	column int
 }
 
-func (rs RightShift) Start() int   { return rs.start }
-func (rs RightShift) End() int     { return rs.end }
-func (rs RightShift) Line() int    { return rs.line }
-func (rs RightShift) Column() int  { return rs.column }
-func (ls RightShift) Kind() string { return ">>" }
+func (rs RightShift) Start() int      { return rs.start }
+func (rs RightShift) End() int        { return rs.end }
+func (rs RightShift) Line() int       { return rs.line }
+func (rs RightShift) Column() int     { return rs.column }
+func (ls RightShift) Kind() string    { return ">>" }
+func (ls RightShift) Precedence() int { return 5 }
 
 // &
 type BitAnd struct {
@@ -457,11 +478,12 @@ type BitAnd struct {
 	column int
 }
 
-func (ba BitAnd) Start() int   { return ba.start }
-func (ba BitAnd) End() int     { return ba.end }
-func (ba BitAnd) Line() int    { return ba.line }
-func (ba BitAnd) Column() int  { return ba.column }
-func (ba BitAnd) Kind() string { return "&" }
+func (ba BitAnd) Start() int      { return ba.start }
+func (ba BitAnd) End() int        { return ba.end }
+func (ba BitAnd) Line() int       { return ba.line }
+func (ba BitAnd) Column() int     { return ba.column }
+func (ba BitAnd) Kind() string    { return "&" }
+func (ba BitAnd) Precedence() int { return 5 }
 
 // |
 type BitOr struct {
@@ -471,11 +493,12 @@ type BitOr struct {
 	column int
 }
 
-func (bo BitOr) Start() int   { return bo.start }
-func (bo BitOr) End() int     { return bo.end }
-func (bo BitOr) Line() int    { return bo.line }
-func (bo BitOr) Column() int  { return bo.column }
-func (bo BitOr) Kind() string { return "|" }
+func (bo BitOr) Start() int      { return bo.start }
+func (bo BitOr) End() int        { return bo.end }
+func (bo BitOr) Line() int       { return bo.line }
+func (bo BitOr) Column() int     { return bo.column }
+func (bo BitOr) Kind() string    { return "|" }
+func (bo BitOr) Precedence() int { return 4 }
 
 // ^
 type Xor struct {
@@ -485,11 +508,12 @@ type Xor struct {
 	column int
 }
 
-func (x Xor) Start() int   { return x.start }
-func (x Xor) End() int     { return x.end }
-func (x Xor) Line() int    { return x.line }
-func (x Xor) Column() int  { return x.column }
-func (x Xor) Kind() string { return "^" }
+func (x Xor) Start() int      { return x.start }
+func (x Xor) End() int        { return x.end }
+func (x Xor) Line() int       { return x.line }
+func (x Xor) Column() int     { return x.column }
+func (x Xor) Kind() string    { return "^" }
+func (x Xor) Precedence() int { return 4 }
 
 // (
 type LeftParen struct {

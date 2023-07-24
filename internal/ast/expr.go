@@ -10,6 +10,12 @@ type Expr interface {
 
 // Expression nodes
 type (
+	BinaryExpr struct {
+		X  Expr
+		Op token.Operator
+		Y  Expr
+	}
+
 	Bool struct {
 		Val token.Bool
 	}
@@ -45,13 +51,14 @@ type (
 	}
 )
 
-func (b Bool) exprNode()       {}
-func (c CallExpr) exprNode()   {}
-func (i Ident) exprNode()      {}
-func (i Int) exprNode()        {}
-func (r Real) exprNode()       {}
-func (ue UnaryExpr) exprNode() {}
-func (pe ParenExpr) exprNode() {}
+func (be BinaryExpr) exprNode() {}
+func (b Bool) exprNode()        {}
+func (c CallExpr) exprNode()    {}
+func (i Ident) exprNode()       {}
+func (i Int) exprNode()         {}
+func (r Real) exprNode()        {}
+func (ue UnaryExpr) exprNode()  {}
+func (pe ParenExpr) exprNode()  {}
 
 func (c CallExpr) eq(c2 CallExpr) bool {
 	if c.Name != c2.Name ||
