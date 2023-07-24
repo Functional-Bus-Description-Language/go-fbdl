@@ -72,10 +72,7 @@ func buildConst(s []token.Token, i int, f *File) (int, error) {
 	case token.Newline:
 		panic("buildMultiConst")
 	default:
-		return 0, fmt.Errorf(
-			"%s: unexpected %s, expected identifier, string or newline",
-			token.Loc(t), t.Kind(),
-		)
+		return 0, unexpected(t, "identifier, string or newline")
 	}
 }
 
@@ -86,7 +83,7 @@ func buildSingleConst(s []token.Token, i int, f *File) (int, error) {
 	if t, ok := s[i].(token.Ass); ok {
 		c.Ass = t
 	} else {
-		return 0, fmt.Errorf("%s: unexpected %s, expected =", token.Loc(t), t.Kind())
+		return 0, unexpected(t, "=")
 	}
 
 	i++
@@ -106,10 +103,7 @@ func buildImport(s []token.Token, i int, f *File) (int, error) {
 	case token.Ident, token.String:
 		return buildSingleImport(s, i, f)
 	default:
-		return 0, fmt.Errorf(
-			"%s: unexpected %s, expected identifier, string or newline",
-			token.Loc(t), t.Kind(),
-		)
+		return 0, unexpected(t, "identifier, string or newline")
 	}
 }
 
@@ -126,9 +120,7 @@ func buildSingleImport(s []token.Token, i int, f *File) (int, error) {
 			si.Path = t
 			i++
 		default:
-			return 0, fmt.Errorf(
-				"%s: unexpected %s, expected string", token.Loc(t), t.Kind(),
-			)
+			return 0, unexpected(t, "string")
 		}
 	case token.String:
 		si.Path = t

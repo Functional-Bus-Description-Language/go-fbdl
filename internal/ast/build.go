@@ -1,7 +1,6 @@
 package ast
 
 import (
-	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
@@ -33,10 +32,7 @@ func buildExpr(s []token.Token, i int, leftOp token.Operator) (int, Expr, error)
 	case token.LeftBracket:
 		i, expr, err = buildExprList(s, i)
 	default:
-		return 0, Ident{}, fmt.Errorf(
-			"%s: unexpected %s, expected expression",
-			token.Loc(t), t.Kind(),
-		)
+		return 0, Ident{}, unexpected(t, "expression")
 	}
 
 	if err != nil {
@@ -101,10 +97,7 @@ func buildParenExpr(s []token.Token, i int) (int, ParenExpr, error) {
 	if rp, ok := s[i].(token.RightParen); ok {
 		pe.Rparen = rp
 	} else {
-		return 0, pe, fmt.Errorf(
-			"%s: unexpected %s, expected )",
-			token.Loc(s[i]), s[i].Kind(),
-		)
+		return 0, pe, unexpected(s[i], ")")
 	}
 
 	return i + 1, pe, nil
@@ -125,19 +118,13 @@ tokenLoop:
 			break tokenLoop
 		case token.Comma:
 			if i == lbi+1 {
-				return 0, el, fmt.Errorf(
-					"%s: unexpected %s, expected expression",
-					token.Loc(t), t.Kind(),
-				)
+				return 0, el, unexpected(t, "expression")
 			}
 			prevExpr = false
 			i++
 		default:
 			if prevExpr {
-				return 0, el, fmt.Errorf(
-					"%s: unexpected %s, expected , or ]",
-					token.Loc(t), t.Kind(),
-				)
+				return 0, el, unexpected(t, ", or ]")
 			}
 
 			var (
@@ -175,19 +162,13 @@ tokenLoop:
 			break tokenLoop
 		case token.Comma:
 			if i == lpi+2 {
-				return 0, call, fmt.Errorf(
-					"%s: unexpected %s, expected expression",
-					token.Loc(t), t.Kind(),
-				)
+				return 0, call, unexpected(t, "expression")
 			}
 			prevExpr = false
 			i++
 		default:
 			if prevExpr {
-				return 0, call, fmt.Errorf(
-					"%s: unexpected %s, expected , or )",
-					token.Loc(t), t.Kind(),
-				)
+				return 0, call, unexpected(t, ", or )")
 			}
 
 			var (
