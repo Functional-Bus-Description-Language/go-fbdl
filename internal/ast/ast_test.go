@@ -32,6 +32,11 @@ func TestBuildError(t *testing.T) {
 			"const A = foo(1 true)",
 			fmt.Errorf("1:17: unexpected bool, expected , or )"),
 		},
+		{
+			4,
+			"const A = (a + b c",
+			fmt.Errorf("1:18: unexpected identifier, expected )"),
+		},
 	}
 
 	for i, test := range tests {

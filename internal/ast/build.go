@@ -58,7 +58,7 @@ func buildExpr(s []token.Token, i int, leftOp token.Operator) (int, Expr, error)
 			}
 			be.Y = expr
 			expr = be
-		} else if leftOp.Precedence() > rightOp.Precedence() {
+		} else if leftOp.Precedence() >= rightOp.Precedence() {
 			return i, expr, nil
 		}
 	}

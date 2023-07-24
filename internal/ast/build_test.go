@@ -175,4 +175,28 @@ func TestBuildBinaryExpr(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
+
+	toks, _ = token.Parse([]byte("A * (B + C) / D"))
+	want = BinaryExpr{
+		X: BinaryExpr{
+			X:  Ident{Name: toks[0]},
+			Op: toks[1].(token.Operator),
+			Y: ParenExpr{
+				Lparen: toks[2].(token.LeftParen),
+				X: BinaryExpr{
+					X:  Ident{Name: toks[3]},
+					Op: toks[4].(token.Operator),
+					Y:  Ident{Name: toks[5]},
+				},
+				Rparen: toks[6].(token.RightParen),
+			},
+		},
+		Op: toks[7].(token.Operator),
+		Y:  Ident{Name: toks[8]},
+	}
+	i, got, err = buildExpr(toks, 0, nil)
+	err = check(i, 9, got, want, err)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
 }
