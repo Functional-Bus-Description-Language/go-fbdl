@@ -11,7 +11,7 @@ type ctx struct {
 }
 
 // Build builds ast based on token stream.
-func Build(s []token.Token) (File, error) {
+func Build(toks []token.Token) (File, error) {
 	var (
 		err  error
 		f    File
@@ -22,21 +22,21 @@ func Build(s []token.Token) (File, error) {
 	)
 
 	for {
-		if _, ok := s[c.i].(token.Eof); ok {
+		if _, ok := toks[c.i].(token.Eof); ok {
 			break
 		}
 
-		switch t := s[c.i].(type) {
+		switch t := toks[c.i].(type) {
 		case token.Newline:
 			c.i++
 		case token.Comment:
-			cmnt = buildComment(s, &c)
+			cmnt = buildComment(toks, &c)
 			f.Comments = append(f.Comments, cmnt)
 		case token.Const:
-			con, err = buildConst(s, &c)
+			con, err = buildConst(toks, &c)
 			f.Consts = append(f.Consts, con)
 		case token.Import:
-			imp, err = buildImport(s, &c)
+			imp, err = buildImport(toks, &c)
 			f.Imports = append(f.Imports, imp)
 		default:
 			panic(fmt.Sprintf("%s: unhandled token %s", token.Loc(t), t.Kind()))
@@ -50,14 +50,14 @@ func Build(s []token.Token) (File, error) {
 	return f, nil
 }
 
-func buildComment(s []token.Token, c *ctx) Comment {
+func buildComment(toks []token.Token, c *ctx) Comment {
 	cmnt := Comment{}
-	cmnt.Comments = append(cmnt.Comments, s[c.i].(token.Comment))
+	cmnt.Comments = append(cmnt.Comments, toks[c.i].(token.Comment))
 
 	prevNewline := false
 	for {
 		c.i++
-		switch t := s[c.i].(type) {
+		switch t := toks[c.i].(type) {
 		case token.Newline:
 			if prevNewline {
 				break
@@ -73,27 +73,27 @@ func buildComment(s []token.Token, c *ctx) Comment {
 	}
 }
 
-func buildConst(s []token.Token, c *ctx) (Const, error) {
-	switch t := s[c.i+1].(type) {
+func buildConst(toks []token.Token, c *ctx) (Const, error) {
+	switch t := toks[c.i+1].(type) {
 	case token.Ident:
-		return buildSingleConst(s, c)
+		return buildSingleConst(toks, c)
 	case token.Newline:
-		return buildMultiConst(s, c)
+		return buildMultiConst(toks, c)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleConst(s []token.Token, c *ctx) (SingleConst, error) {
-	sc := SingleConst{Name: s[c.i+1].(token.Ident)}
+func buildSingleConst(toks []token.Token, c *ctx) (SingleConst, error) {
+	sc := SingleConst{Name: toks[c.i+1].(token.Ident)}
 
 	c.i += 2
-	if t, ok := s[c.i].(token.Ass); !ok {
+	if t, ok := toks[c.i].(token.Ass); !ok {
 		return sc, unexpected(t, "=")
 	}
 
 	c.i++
-	expr, err := buildExpr(s, c, nil)
+	expr, err := buildExpr(toks, c, nil)
 	if err != nil {
 		return sc, err
 	}
@@ -102,7 +102,7 @@ func buildSingleConst(s []token.Token, c *ctx) (SingleConst, error) {
 	return sc, nil
 }
 
-func buildMultiConst(s []token.Token, c *ctx) (MultiConst, error) {
+func buildMultiConst(toks []token.Token, c *ctx) (MultiConst, error) {
 	mc := MultiConst{}
 
 	const (
@@ -120,7 +120,7 @@ tokenLoop:
 		c.i++
 		switch state {
 		case Indent:
-			switch t := s[c.i].(type) {
+			switch t := toks[c.i].(type) {
 			case token.Newline:
 				continue
 			case token.Indent:
@@ -129,7 +129,7 @@ tokenLoop:
 				return mc, unexpected(t, "indent or newline")
 			}
 		case FirstId:
-			switch t := s[c.i].(type) {
+			switch t := toks[c.i].(type) {
 			case token.Ident:
 				mc.Names = append(mc.Names, t)
 				state = Ass
@@ -137,7 +137,7 @@ tokenLoop:
 				return mc, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := s[c.i].(type) {
+			switch t := toks[c.i].(type) {
 			case token.Ass:
 				state = Exp
 			default:
@@ -148,14 +148,14 @@ tokenLoop:
 				err  error
 				expr Expr
 			)
-			expr, err = buildExpr(s, c, nil)
+			expr, err = buildExpr(toks, c, nil)
 			if err != nil {
 				return mc, err
 			}
 			mc.Exprs = append(mc.Exprs, expr)
 			state = Id
 		case Id:
-			switch t := s[c.i].(type) {
+			switch t := toks[c.i].(type) {
 			case token.Ident:
 				mc.Names = append(mc.Names, t)
 				state = Ass
@@ -172,24 +172,24 @@ tokenLoop:
 	return mc, nil
 }
 
-func buildImport(s []token.Token, c *ctx) (Import, error) {
-	switch t := s[c.i+1].(type) {
+func buildImport(toks []token.Token, c *ctx) (Import, error) {
+	switch t := toks[c.i+1].(type) {
 	case token.Ident, token.String:
-		return buildSingleImport(s, c)
+		return buildSingleImport(toks, c)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleImport(s []token.Token, c *ctx) (SingleImport, error) {
+func buildSingleImport(toks []token.Token, c *ctx) (SingleImport, error) {
 	si := SingleImport{}
 
 	c.i++
-	switch t := s[c.i].(type) {
+	switch t := toks[c.i].(type) {
 	case token.Ident:
 		si.Name = t
 		c.i++
-		switch t := s[c.i].(type) {
+		switch t := toks[c.i].(type) {
 		case token.String:
 			si.Path = t
 			c.i++
