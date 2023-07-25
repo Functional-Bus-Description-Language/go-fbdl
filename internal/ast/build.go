@@ -5,29 +5,39 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
+// Building context
+type ctx struct {
+	i int // Current token index
+}
+
 // Build builds ast based on token stream.
 func Build(s []token.Token) (File, error) {
 	var (
-		err error
-		f   File
-		i   int // Current index in the stream
+		err  error
+		f    File
+		c    ctx
+		cmnt Comment
+		con  Const
+		imp  Import
 	)
 
 	for {
-		if _, ok := s[i].(token.Eof); ok {
+		if _, ok := s[c.i].(token.Eof); ok {
 			break
 		}
 
-		t := s[i]
-		switch t.(type) {
+		switch t := s[c.i].(type) {
 		case token.Newline:
-			i++
+			c.i++
 		case token.Comment:
-			i = buildComment(s, i, &f)
+			cmnt = buildComment(s, &c)
+			f.Comments = append(f.Comments, cmnt)
 		case token.Const:
-			i, err = buildConst(s, i, &f)
+			con, err = buildConst(s, &c)
+			f.Consts = append(f.Consts, con)
 		case token.Import:
-			i, err = buildImport(s, i, &f)
+			imp, err = buildImport(s, &c)
+			f.Imports = append(f.Imports, imp)
 		default:
 			panic(fmt.Sprintf("%s: unhandled token %s", token.Loc(t), t.Kind()))
 		}
@@ -40,14 +50,14 @@ func Build(s []token.Token) (File, error) {
 	return f, nil
 }
 
-func buildComment(s []token.Token, i int, f *File) int {
-	c := Comment{}
-	c.Comments = append(c.Comments, s[i].(token.Comment))
+func buildComment(s []token.Token, c *ctx) Comment {
+	cmnt := Comment{}
+	cmnt.Comments = append(cmnt.Comments, s[c.i].(token.Comment))
 
 	prevNewline := false
 	for {
-		i++
-		switch t := s[i].(type) {
+		c.i++
+		switch t := s[c.i].(type) {
 		case token.Newline:
 			if prevNewline {
 				break
@@ -55,49 +65,45 @@ func buildComment(s []token.Token, i int, f *File) int {
 				prevNewline = true
 			}
 		case token.Comment:
-			c.Comments = append(c.Comments, t)
+			cmnt.Comments = append(cmnt.Comments, t)
 			prevNewline = false
 		default:
-			f.Comments = append(f.Comments, c)
-			return i
+			return cmnt
 		}
 	}
 }
 
-func buildConst(s []token.Token, i int, f *File) (int, error) {
-	t := s[i+1]
-	switch t.(type) {
+func buildConst(s []token.Token, c *ctx) (Const, error) {
+	switch t := s[c.i+1].(type) {
 	case token.Ident:
-		return buildSingleConst(s, i, f)
+		return buildSingleConst(s, c)
 	case token.Newline:
-		return buildMultiConst(s, i, f)
+		return buildMultiConst(s, c)
 	default:
-		return 0, unexpected(t, "identifier, string or newline")
+		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleConst(s []token.Token, i int, f *File) (int, error) {
-	c := SingleConst{Name: s[i+1].(token.Ident)}
+func buildSingleConst(s []token.Token, c *ctx) (SingleConst, error) {
+	sc := SingleConst{Name: s[c.i+1].(token.Ident)}
 
-	i += 2
-	if t, ok := s[i].(token.Ass); !ok {
-		return 0, unexpected(t, "=")
+	c.i += 2
+	if t, ok := s[c.i].(token.Ass); !ok {
+		return sc, unexpected(t, "=")
 	}
 
-	i++
-	i, expr, err := buildExpr(s, i, nil)
+	c.i++
+	expr, err := buildExpr(s, c, nil)
 	if err != nil {
-		return 0, err
+		return sc, err
 	}
-	c.Expr = expr
+	sc.Expr = expr
 
-	f.Consts = append(f.Consts, c)
-
-	return i, nil
+	return sc, nil
 }
 
-func buildMultiConst(s []token.Token, i int, f *File) (int, error) {
-	c := MultiConst{}
+func buildMultiConst(s []token.Token, c *ctx) (MultiConst, error) {
+	mc := MultiConst{}
 
 	const (
 		Indent int = iota
@@ -108,96 +114,92 @@ func buildMultiConst(s []token.Token, i int, f *File) (int, error) {
 	)
 	state := Indent
 
-	i += 1
+	c.i += 1
 tokenLoop:
 	for {
-		i++
+		c.i++
 		switch state {
 		case Indent:
-			switch t := s[i].(type) {
+			switch t := s[c.i].(type) {
 			case token.Newline:
 				continue
 			case token.Indent:
 				state = FirstId
 			default:
-				return 0, unexpected(t, "indent or newline")
+				return mc, unexpected(t, "indent or newline")
 			}
 		case FirstId:
-			switch t := s[i].(type) {
+			switch t := s[c.i].(type) {
 			case token.Ident:
-				c.Names = append(c.Names, t)
+				mc.Names = append(mc.Names, t)
 				state = Ass
 			default:
-				return 0, unexpected(t, "identifier")
+				return mc, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := s[i].(type) {
+			switch t := s[c.i].(type) {
 			case token.Ass:
 				state = Exp
 			default:
-				return 0, unexpected(t, "=")
+				return mc, unexpected(t, "=")
 			}
 		case Exp:
 			var (
 				err  error
 				expr Expr
 			)
-			i, expr, err = buildExpr(s, i, nil)
+			expr, err = buildExpr(s, c, nil)
 			if err != nil {
-				return 0, err
+				return mc, err
 			}
-			c.Exprs = append(c.Exprs, expr)
+			mc.Exprs = append(mc.Exprs, expr)
 			state = Id
 		case Id:
-			switch t := s[i].(type) {
+			switch t := s[c.i].(type) {
 			case token.Ident:
-				c.Names = append(c.Names, t)
+				mc.Names = append(mc.Names, t)
 				state = Ass
 			case token.Newline:
 				continue
 			case token.Dedent:
 				break tokenLoop
 			default:
-				return 0, unexpected(t, "identifier or dedent")
+				return mc, unexpected(t, "identifier or dedent")
 			}
 		}
 	}
 
-	f.Consts = append(f.Consts, c)
-
-	return i, nil
+	return mc, nil
 }
 
-func buildImport(s []token.Token, i int, f *File) (int, error) {
-	switch t := s[i+1].(type) {
+func buildImport(s []token.Token, c *ctx) (Import, error) {
+	switch t := s[c.i+1].(type) {
 	case token.Ident, token.String:
-		return buildSingleImport(s, i, f)
+		return buildSingleImport(s, c)
 	default:
-		return 0, unexpected(t, "identifier, string or newline")
+		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleImport(s []token.Token, i int, f *File) (int, error) {
+func buildSingleImport(s []token.Token, c *ctx) (SingleImport, error) {
 	si := SingleImport{}
 
-	i++
-	switch t := s[i].(type) {
+	c.i++
+	switch t := s[c.i].(type) {
 	case token.Ident:
 		si.Name = t
-		i++
-		switch t := s[i].(type) {
+		c.i++
+		switch t := s[c.i].(type) {
 		case token.String:
 			si.Path = t
-			i++
+			c.i++
 		default:
-			return 0, unexpected(t, "string")
+			return si, unexpected(t, "string")
 		}
 	case token.String:
 		si.Path = t
-		i++
+		c.i++
 	}
 
-	f.Imports = append(f.Imports, si)
-
-	return i, nil
+	return si, nil
 }

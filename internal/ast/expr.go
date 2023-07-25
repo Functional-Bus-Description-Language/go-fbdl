@@ -88,194 +88,202 @@ func (c CallExpr) eq(c2 CallExpr) bool {
 }
 
 // leftOp is the operator on the left side of the expression.
-func buildExpr(s []token.Token, i int, leftOp token.Operator) (int, Expr, error) {
+func buildExpr(s []token.Token, c *ctx, leftOp token.Operator) (Expr, error) {
 	var (
 		err  error
 		expr Expr
 	)
 
-	switch t := s[i].(type) {
+	switch t := s[c.i].(type) {
 	case token.Neg, token.Sub, token.Add:
-		i, expr, err = buildUnaryExpr(s, i)
+		expr, err = buildUnaryExpr(s, c)
 	case token.Ident:
-		switch s[i+1].(type) {
+		switch s[c.i+1].(type) {
 		case token.LeftParen:
-			i, expr, err = buildCallExpr(s, i)
+			expr, err = buildCallExpr(s, c)
 		default:
-			i, expr, err = buildIdent(s, i)
+			expr, err = buildIdent(s, c)
 		}
 	case token.Bool:
-		i, expr, err = buildBool(s, i)
+		expr, err = buildBool(s, c)
 	case token.Int:
-		i, expr, err = buildInt(s, i)
+		expr, err = buildInt(s, c)
 	case token.Real:
-		i, expr, err = buildReal(s, i)
+		expr, err = buildReal(s, c)
 	case token.LeftParen:
-		i, expr, err = buildParenExpr(s, i)
+		expr, err = buildParenExpr(s, c)
 	case token.LeftBracket:
-		i, expr, err = buildExprList(s, i)
+		expr, err = buildExprList(s, c)
 	default:
-		return 0, Ident{}, unexpected(t, "expression")
+		return Ident{}, unexpected(t, "expression")
 	}
 
 	if err != nil {
-		return 0, expr, err
+		return expr, err
 	}
 
 	for {
 		var rightOp token.Operator
-		if op, ok := s[i].(token.Operator); ok {
+		if op, ok := s[c.i].(token.Operator); ok {
 			rightOp = op
 		} else {
-			return i, expr, nil
+			return expr, nil
 		}
 
 		if (leftOp == nil) ||
 			(leftOp != nil && (leftOp.Precedence() < rightOp.Precedence())) {
 			be := BinaryExpr{X: expr, Op: rightOp}
-			i, expr, err = buildExpr(s, i+1, rightOp)
+			c.i++
+			expr, err = buildExpr(s, c, rightOp)
 			if err != nil {
-				return 0, expr, err
+				return expr, err
 			}
 			be.Y = expr
 			expr = be
 		} else if leftOp.Precedence() >= rightOp.Precedence() {
-			return i, expr, nil
+			return expr, nil
 		}
 	}
 }
 
-func buildIdent(s []token.Token, i int) (int, Ident, error) {
-	id := Ident{Name: s[i]}
-	return i + 1, id, nil
+func buildIdent(s []token.Token, c *ctx) (Ident, error) {
+	id := Ident{Name: s[c.i]}
+	c.i++
+	return id, nil
 }
 
-func buildBool(s []token.Token, i int) (int, Bool, error) {
-	b := Bool{Val: s[i].(token.Bool)}
-	return i + 1, b, nil
+func buildBool(s []token.Token, c *ctx) (Bool, error) {
+	b := Bool{Val: s[c.i].(token.Bool)}
+	c.i++
+	return b, nil
 }
 
-func buildInt(s []token.Token, i int) (int, Int, error) {
-	int_ := Int{Val: s[i].(token.Int)}
-	return i + 1, int_, nil
+func buildInt(s []token.Token, c *ctx) (Int, error) {
+	int_ := Int{Val: s[c.i].(token.Int)}
+	c.i++
+	return int_, nil
 }
 
-func buildReal(s []token.Token, i int) (int, Real, error) {
-	r := Real{Val: s[i].(token.Real)}
-	return i + 1, r, nil
+func buildReal(s []token.Token, c *ctx) (Real, error) {
+	r := Real{Val: s[c.i].(token.Real)}
+	c.i++
+	return r, nil
 }
 
-func buildParenExpr(s []token.Token, i int) (int, ParenExpr, error) {
-	pe := ParenExpr{Lparen: s[i].(token.LeftParen)}
+func buildParenExpr(s []token.Token, c *ctx) (ParenExpr, error) {
+	pe := ParenExpr{Lparen: s[c.i].(token.LeftParen)}
 	var (
 		err  error
 		expr Expr
 	)
-	i, expr, err = buildExpr(s, i+1, nil)
+	c.i++
+	expr, err = buildExpr(s, c, nil)
 	if err != nil {
-		return 0, pe, err
+		return pe, err
 	}
 	pe.X = expr
 
-	if rp, ok := s[i].(token.RightParen); ok {
+	if rp, ok := s[c.i].(token.RightParen); ok {
 		pe.Rparen = rp
+		c.i++
 	} else {
-		return 0, pe, unexpected(s[i], ")")
+		return pe, unexpected(s[c.i], ")")
 	}
 
-	return i + 1, pe, nil
+	return pe, nil
 }
 
-func buildExprList(s []token.Token, i int) (int, ExprList, error) {
-	el := ExprList{Lbracket: s[i].(token.LeftBracket)}
+func buildExprList(s []token.Token, c *ctx) (ExprList, error) {
+	el := ExprList{Lbracket: s[c.i].(token.LeftBracket)}
 	prevExpr := false
-	lbi := i // Left bracket token index
-	i++
+	lbi := c.i // Left bracket token index
+	c.i++
 
 tokenLoop:
 	for {
-		switch t := s[i].(type) {
+		switch t := s[c.i].(type) {
 		case token.RightBracket:
 			el.Rbracket = t
-			i++
+			c.i++
 			break tokenLoop
 		case token.Comma:
-			if i == lbi+1 {
-				return 0, el, unexpected(t, "expression")
+			if c.i == lbi+1 {
+				return el, unexpected(t, "expression")
 			}
 			prevExpr = false
-			i++
+			c.i++
 		default:
 			if prevExpr {
-				return 0, el, unexpected(t, ", or ]")
+				return el, unexpected(t, ", or ]")
 			}
 
 			var (
 				expr Expr
 				err  error
 			)
-			i, expr, err = buildExpr(s, i, nil)
+			expr, err = buildExpr(s, c, nil)
 			if err != nil {
-				return 0, el, err
+				return el, err
 			}
 			el.Exprs = append(el.Exprs, expr)
 			prevExpr = true
 		}
 	}
 
-	return i, el, nil
+	return el, nil
 }
 
-func buildCallExpr(s []token.Token, i int) (int, CallExpr, error) {
+func buildCallExpr(s []token.Token, c *ctx) (CallExpr, error) {
 	call := CallExpr{
-		Name:   s[i].(token.Ident),
-		Lparen: s[i+1].(token.LeftParen),
+		Name:   s[c.i].(token.Ident),
+		Lparen: s[c.i+1].(token.LeftParen),
 	}
-	lpi := i // Left parenthesis token index
-	i += 2
+	lpi := c.i // Left parenthesis token index
+	c.i += 2
 
 	prevExpr := false
 
 tokenLoop:
 	for {
-		switch t := s[i].(type) {
+		switch t := s[c.i].(type) {
 		case token.RightParen:
 			call.Rparen = t
-			i++
+			c.i++
 			break tokenLoop
 		case token.Comma:
-			if i == lpi+2 {
-				return 0, call, unexpected(t, "expression")
+			if c.i == lpi+2 {
+				return call, unexpected(t, "expression")
 			}
 			prevExpr = false
-			i++
+			c.i++
 		default:
 			if prevExpr {
-				return 0, call, unexpected(t, ", or )")
+				return call, unexpected(t, ", or )")
 			}
 
 			var (
 				expr Expr
 				err  error
 			)
-			i, expr, err = buildExpr(s, i, nil)
+			expr, err = buildExpr(s, c, nil)
 			if err != nil {
-				return 0, call, err
+				return call, err
 			}
 			call.Args = append(call.Args, expr)
 			prevExpr = true
 		}
 	}
 
-	return i, call, nil
+	return call, nil
 }
 
-func buildUnaryExpr(s []token.Token, i int) (int, UnaryExpr, error) {
-	un := UnaryExpr{Op: s[i]}
-	i, x, err := buildExpr(s, i+1, nil)
+func buildUnaryExpr(s []token.Token, c *ctx) (UnaryExpr, error) {
+	un := UnaryExpr{Op: s[c.i]}
+	c.i++
+	x, err := buildExpr(s, c, nil)
 	if err != nil {
-		return 0, un, err
+		return un, err
 	}
 	un.X = x
-	return i, un, nil
+	return un, nil
 }
