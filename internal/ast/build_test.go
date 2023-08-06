@@ -13,14 +13,14 @@ func TestBuildSingleConst(t *testing.T) {
 		Expr: Int{toks[3].(token.Int)},
 	}
 	c := ctx{}
-	got, err := buildConst(toks, &c)
+	got, err := buildSingleConst(toks, &c)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
 	if c.i != 4 {
 		t.Fatalf("c.i = %d", c.i)
 	}
-	if got != want {
+	if !got.eq(want) {
 		t.Fatalf("got: %+v, want %+v", got, want)
 	}
 }
@@ -35,21 +35,27 @@ func TestBuildMultiConst(t *testing.T) {
 	D = false`),
 	)
 	want := MultiConst{
-		Names: []token.Ident{toks[3].(token.Ident), toks[7].(token.Ident), toks[14].(token.Ident), toks[19].(token.Ident)},
-		Exprs: []Expr{
-			Int{toks[5].(token.Int)}, Int{toks[9].(token.Int)}, Real{toks[16].(token.Real)}, Bool{toks[21].(token.Bool)},
+		Consts: []SingleConst{
+			SingleConst{Name: toks[3].(token.Ident), Expr: Int{toks[5].(token.Int)}},
+			SingleConst{Name: toks[7].(token.Ident), Expr: Int{toks[9].(token.Int)}},
+			SingleConst{
+				Doc:  Doc{Lines: []token.Comment{toks[11].(token.Comment)}},
+				Name: toks[13].(token.Ident),
+				Expr: Real{toks[15].(token.Real)},
+			},
+			SingleConst{Name: toks[18].(token.Ident), Expr: Bool{toks[20].(token.Bool)}},
 		},
 	}
 	c := ctx{}
-	got, err := buildConst(toks, &c)
+	got, err := buildMultiConst(toks, &c)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
 	if c.i != 21 {
 		t.Fatalf("c.i = %d", c.i)
 	}
-	if !got.(MultiConst).eq(want) {
-		t.Fatalf("got: %+v, want %+v", got, want)
+	if !got.eq(want) {
+		t.Fatalf("got:\n%+v,\nwant\n%+v", got, want)
 	}
 }
 

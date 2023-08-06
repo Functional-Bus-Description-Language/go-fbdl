@@ -13,12 +13,12 @@ type ctx struct {
 // Build builds ast based on token stream.
 func Build(toks []token.Token) (File, error) {
 	var (
-		err  error
-		f    File
-		c    ctx
-		cmnt Comment
-		con  Const
-		imp  Import
+		err error
+		f   File
+		c   ctx
+		doc Doc
+		con Const
+		imp Import
 	)
 
 	for {
@@ -30,10 +30,14 @@ func Build(toks []token.Token) (File, error) {
 		case token.Newline:
 			c.i++
 		case token.Comment:
-			cmnt = buildComment(toks, &c)
-			f.Comments = append(f.Comments, cmnt)
+			doc = buildDoc(toks, &c)
 		case token.Const:
 			con, err = buildConst(toks, &c)
+			if con, ok := con.(SingleConst); ok {
+				if doc.endLine() == con.Name.Line()+1 {
+					con.Doc = doc
+				}
+			}
 			f.Consts = append(f.Consts, con)
 		case token.Import:
 			imp, err = buildImport(toks, &c)
@@ -50,9 +54,9 @@ func Build(toks []token.Token) (File, error) {
 	return f, nil
 }
 
-func buildComment(toks []token.Token, c *ctx) Comment {
-	cmnt := Comment{}
-	cmnt.Comments = append(cmnt.Comments, toks[c.i].(token.Comment))
+func buildDoc(toks []token.Token, c *ctx) Doc {
+	doc := Doc{}
+	doc.Lines = append(doc.Lines, toks[c.i].(token.Comment))
 
 	prevNewline := false
 	for {
@@ -65,10 +69,10 @@ func buildComment(toks []token.Token, c *ctx) Comment {
 				prevNewline = true
 			}
 		case token.Comment:
-			cmnt.Comments = append(cmnt.Comments, t)
+			doc.Lines = append(doc.Lines, t)
 			prevNewline = false
 		default:
-			return cmnt
+			return doc
 		}
 	}
 }
@@ -104,6 +108,7 @@ func buildSingleConst(toks []token.Token, c *ctx) (SingleConst, error) {
 
 func buildMultiConst(toks []token.Token, c *ctx) (MultiConst, error) {
 	mc := MultiConst{}
+	sc := SingleConst{}
 
 	const (
 		Indent int = iota
@@ -131,7 +136,7 @@ tokenLoop:
 		case FirstId:
 			switch t := toks[c.i].(type) {
 			case token.Ident:
-				mc.Names = append(mc.Names, t)
+				sc.Name = t
 				state = Ass
 			default:
 				return mc, unexpected(t, "identifier")
@@ -152,16 +157,23 @@ tokenLoop:
 			if err != nil {
 				return mc, err
 			}
-			mc.Exprs = append(mc.Exprs, expr)
+			sc.Expr = expr
+			mc.Consts = append(mc.Consts, sc)
+			sc = SingleConst{}
+			c.i--
 			state = Id
 		case Id:
 			switch t := toks[c.i].(type) {
 			case token.Ident:
-				mc.Names = append(mc.Names, t)
+				sc.Name = t
 				state = Ass
+			case token.Comment:
+				doc := buildDoc(toks, c)
+				sc.Doc = doc
+				c.i--
 			case token.Newline:
 				continue
-			case token.Dedent:
+			case token.Dedent, token.Eof:
 				break tokenLoop
 			default:
 				return mc, unexpected(t, "identifier or dedent")
