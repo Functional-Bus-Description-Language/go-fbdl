@@ -6,6 +6,25 @@ import (
 	"testing"
 )
 
+func TestBuildSingleConst(t *testing.T) {
+	toks, _ := token.Parse([]byte("const A = 15"))
+	want := SingleConst{
+		Name: toks[1].(token.Ident),
+		Expr: Int{toks[3].(token.Int)},
+	}
+	c := ctx{}
+	got, err := buildConst(toks, &c)
+	if err != nil {
+		t.Fatalf("err != nil: %v", err)
+	}
+	if c.i != 4 {
+		t.Fatalf("c.i = %d", c.i)
+	}
+	if got != want {
+		t.Fatalf("got: %+v, want %+v", got, want)
+	}
+}
+
 func TestBuildError(t *testing.T) {
 	var tests = []struct {
 		idx int // Test index, useful for navigation
