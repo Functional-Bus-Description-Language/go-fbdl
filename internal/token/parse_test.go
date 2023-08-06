@@ -297,6 +297,33 @@ func TestParse(t *testing.T) {
 				Eof{start: 17, end: 17, line: 1, column: 18},
 			},
 		},
+		{
+			21,
+			`const
+	A = 1
+	B = 2 # Inline comment
+	# Doc comment
+	C = 3.14`,
+			[]Token{
+				Const{start: 0, end: 4, line: 1, column: 1},
+				Newline{start: 5, end: 5, line: 1, column: 6},
+				Indent{start: 6, end: 6, line: 2, column: 1},
+				Ident{start: 7, end: 7, line: 2, column: 2},
+				Ass{start: 9, end: 9, line: 2, column: 4},
+				Int{start: 11, end: 11, line: 2, column: 6},
+				Newline{start: 12, end: 12, line: 2, column: 7},
+				Ident{start: 14, end: 14, line: 3, column: 2},
+				Ass{start: 16, end: 16, line: 3, column: 4},
+				Int{start: 18, end: 18, line: 3, column: 6},
+				Newline{start: 36, end: 36, line: 3, column: 24},
+				Comment{start: 38, end: 50, line: 4, column: 2},
+				Newline{start: 51, end: 51, line: 4, column: 15},
+				Ident{start: 53, end: 53, line: 5, column: 2},
+				Ass{start: 55, end: 55, line: 5, column: 4},
+				Real{start: 57, end: 60, line: 5, column: 6},
+				Eof{start: 61, end: 61, line: 5, column: 10},
+			},
+		},
 	}
 
 	for i, test := range tests {

@@ -327,7 +327,7 @@ func parseComment(c *ctx, src []byte, s []Token) Token {
 		return t
 	}
 
-	return nil
+	return None{}
 }
 
 func parseComma(c *ctx, s []Token) (Token, error) {
