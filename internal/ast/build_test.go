@@ -25,6 +25,34 @@ func TestBuildSingleConst(t *testing.T) {
 	}
 }
 
+func TestBuildMultiConst(t *testing.T) {
+	toks, _ := token.Parse([]byte(`const
+	A = 1
+	B = 2 # Inline comment
+	# Doc comment
+	C = 3.14
+
+	D = false`),
+	)
+	want := MultiConst{
+		Names: []token.Ident{toks[3].(token.Ident), toks[7].(token.Ident), toks[14].(token.Ident), toks[19].(token.Ident)},
+		Exprs: []Expr{
+			Int{toks[5].(token.Int)}, Int{toks[9].(token.Int)}, Real{toks[16].(token.Real)}, Bool{toks[21].(token.Bool)},
+		},
+	}
+	c := ctx{}
+	got, err := buildConst(toks, &c)
+	if err != nil {
+		t.Fatalf("err != nil: %v", err)
+	}
+	if c.i != 21 {
+		t.Fatalf("c.i = %d", c.i)
+	}
+	if !got.(MultiConst).eq(want) {
+		t.Fatalf("got: %+v, want %+v", got, want)
+	}
+}
+
 func TestBuildError(t *testing.T) {
 	var tests = []struct {
 		idx int // Test index, useful for navigation
