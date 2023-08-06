@@ -38,24 +38,28 @@ func lastToken(toks []Token) (Token, bool) {
 // getWord returns word from the source starting from index idx.
 // The function assumes byte under idx is not a whitespace character.
 // The second return is true if word contains hyphen '-' character.
-func getWord(src []byte, idx int) ([]byte, bool) {
+// The third return is true if word contains dot '.' character.
+func getWord(src []byte, idx int) ([]byte, bool, bool) {
 	hasHyphen := false
+	hasDot := false
 	end_idx := idx
 
 	for {
 		if end_idx >= len(src) {
-			return src[idx:end_idx], hasHyphen
+			return src[idx:end_idx], hasHyphen, hasDot
 		}
 
 		b := src[end_idx]
-		if isLetter(b) || isDigit(b) || b == '_' || b == '-' {
+		if isLetter(b) || isDigit(b) || b == '_' || b == '-' || b == '.' {
 			if b == '-' {
 				hasHyphen = true
+			} else if b == '.' {
+				hasDot = true
 			}
 			end_idx++
 			continue
 		} else {
-			return src[idx:end_idx], hasHyphen
+			return src[idx:end_idx], hasHyphen, hasDot
 		}
 	}
 }
@@ -774,7 +778,13 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	var t Token
 	defer func() { c.i = t.End() + 1 }()
-	word, hasHyphen := getWord(src, c.i)
+	word, hasHyphen, hasDot := getWord(src, c.i)
+
+	// It is qualified identifier
+	if hasDot {
+		t = QualIdent{start: c.i, end: c.i + len(word) - 1, line: c.line, column: c.col(c.i)}
+		return t, nil
+	}
 
 	splitHyphenatedWord := func() (Ident, Sub, Ident) {
 		i1 := Ident{start: c.i, line: c.line, column: c.col(c.i)}

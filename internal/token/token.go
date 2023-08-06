@@ -120,6 +120,20 @@ func (i Ident) Line() int    { return i.line }
 func (i Ident) Column() int  { return i.column }
 func (i Ident) Kind() string { return "identifier" }
 
+// Qualified Identifier
+type QualIdent struct {
+	start  int
+	end    int
+	line   int
+	column int
+}
+
+func (qi QualIdent) Start() int   { return qi.start }
+func (qi QualIdent) End() int     { return qi.end }
+func (qi QualIdent) Line() int    { return qi.line }
+func (qi QualIdent) Column() int  { return qi.column }
+func (qi QualIdent) Kind() string { return "qualified identifier" }
+
 type Bool struct {
 	start  int
 	end    int

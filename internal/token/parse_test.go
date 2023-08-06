@@ -324,6 +324,14 @@ func TestParse(t *testing.T) {
 				Eof{start: 61, end: 61, line: 5, column: 10},
 			},
 		},
+		{
+			22,
+			"abc.def",
+			[]Token{
+				QualIdent{start: 0, end: 6, line: 1, column: 1},
+				Eof{start: 7, end: 7, line: 1, column: 8},
+			},
+		},
 	}
 
 	for i, test := range tests {
