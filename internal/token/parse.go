@@ -1,6 +1,7 @@
 package token
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -774,14 +775,36 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 	return t, nil
 }
 
-// TODO: Refactor, too complex, split into 2 functions.
+// TODO: Refactor, too complex, split into 2 (or more) functions.
 func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	var t Token
 	defer func() { c.i = t.End() + 1 }()
 	word, hasHyphen, hasDot := getWord(src, c.i)
 
-	// It is qualified identifier
-	if hasDot {
+	if hasHyphen && hasDot {
+		// This is for sure part of an expression
+		chunks := bytes.Split(word, []byte{'-'})
+		for i, chunk := range chunks {
+			if bytes.Contains(chunk, []byte{'.'}) {
+				t = QualIdent{
+					start: c.i, end: c.i + len(chunk) - 1, line: c.line, column: c.col(c.i),
+				}
+			} else {
+				t = Ident{
+					start: c.i, end: c.i + len(chunk) - 1, line: c.line, column: c.col(c.i),
+				}
+			}
+			if i == len(chunks)-1 {
+				return t, nil
+			}
+			*s = append(*s, t)
+			c.i += len(chunks[i])
+			t = Sub{start: c.i, end: c.i, line: c.line, column: c.col(c.i)}
+			*s = append(*s, t)
+			c.i++
+		}
+	} else if hasDot {
+		// It is qualified identifier
 		t = QualIdent{start: c.i, end: c.i + len(word) - 1, line: c.line, column: c.col(c.i)}
 		return t, nil
 	}

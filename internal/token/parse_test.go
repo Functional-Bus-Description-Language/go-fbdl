@@ -332,6 +332,18 @@ func TestParse(t *testing.T) {
 				Eof{start: 7, end: 7, line: 1, column: 8},
 			},
 		},
+		{
+			23,
+			"a-b.c-d.e",
+			[]Token{
+				Ident{start: 0, end: 0, line: 1, column: 1},
+				Sub{start: 1, end: 1, line: 1, column: 2},
+				QualIdent{start: 2, end: 4, line: 1, column: 3},
+				Sub{start: 5, end: 5, line: 1, column: 6},
+				QualIdent{start: 6, end: 8, line: 1, column: 7},
+				Eof{start: 9, end: 9, line: 1, column: 10},
+			},
+		},
 	}
 
 	for i, test := range tests {
