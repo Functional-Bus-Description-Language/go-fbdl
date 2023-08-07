@@ -45,6 +45,10 @@ type (
 		Val token.Real
 	}
 
+	String struct {
+		Val token.String
+	}
+
 	UnaryExpr struct {
 		Op token.Token
 		X  Expr
@@ -64,6 +68,7 @@ func (el ExprList) exprNode()   {}
 func (i Ident) exprNode()       {}
 func (i Int) exprNode()         {}
 func (r Real) exprNode()        {}
+func (s String) exprNode()      {}
 func (ue UnaryExpr) exprNode()  {}
 func (pe ParenExpr) exprNode()  {}
 
@@ -110,6 +115,8 @@ func buildExpr(toks []token.Token, c *ctx, leftOp token.Operator) (Expr, error) 
 		expr, err = buildInt(toks, c)
 	case token.Real:
 		expr, err = buildReal(toks, c)
+	case token.String:
+		expr, err = buildString(toks, c)
 	case token.LeftParen:
 		expr, err = buildParenExpr(toks, c)
 	case token.LeftBracket:
@@ -168,6 +175,12 @@ func buildReal(toks []token.Token, c *ctx) (Real, error) {
 	r := Real{Val: toks[c.i].(token.Real)}
 	c.i++
 	return r, nil
+}
+
+func buildString(toks []token.Token, c *ctx) (String, error) {
+	s := String{Val: toks[c.i].(token.String)}
+	c.i++
+	return s, nil
 }
 
 func buildParenExpr(toks []token.Token, c *ctx) (ParenExpr, error) {

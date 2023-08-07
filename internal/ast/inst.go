@@ -107,12 +107,25 @@ func buildInstantiation(toks []token.Token, c *ctx) (Instantiation, error) {
 	}
 	inst.Args = args
 
-	if _, ok := toks[c.i].(token.Semicolon); ok {
+	switch t := toks[c.i].(type) {
+	case token.Semicolon:
+		c.i++
 		props, err := buildPropAssignments(toks, c)
 		if err != nil {
 			return inst, err
 		}
 		inst.Body.Props = props
+	case token.Newline:
+		if _, ok := toks[c.i+1].(token.Indent); ok {
+			c.i += 2
+			body, err := buildBody(toks, c)
+			if err != nil {
+				return inst, err
+			}
+			inst.Body = body
+		}
+	default:
+		return inst, unexpected(t, "; or newline")
 	}
 
 	return inst, nil
@@ -154,6 +167,7 @@ tokenLoop:
 				if err != nil {
 					return nil, err
 				}
+				c.i--
 				a.Value = expr
 				args = append(args, a)
 				state = Comma
@@ -180,6 +194,7 @@ tokenLoop:
 			if err != nil {
 				return nil, err
 			}
+			c.i--
 			a.Value = expr
 			args = append(args, a)
 			state = Comma
@@ -201,6 +216,8 @@ func buildPropAssignments(toks []token.Token, c *ctx) ([]Property, error) {
 	)
 	state := Prop
 
+	// Decrement contex index as it is incremented at the beginnig of the for loop.
+	c.i--
 tokenLoop:
 	for {
 		c.i++
@@ -225,9 +242,9 @@ tokenLoop:
 			if err != nil {
 				return nil, err
 			}
+			c.i--
 			p.Value = expr
 			props = append(props, p)
-			c.i--
 			state = Semicolon
 		case Semicolon:
 			switch t := toks[c.i].(type) {
@@ -242,4 +259,55 @@ tokenLoop:
 	}
 
 	return props, nil
+}
+
+func buildBody(toks []token.Token, c *ctx) (Body, error) {
+	var (
+		err    error
+		body   Body
+		consts []Const
+		doc    Doc
+		ins    Instantiation
+		props  []Property
+	)
+
+	for {
+		if _, ok := toks[c.i].(token.Eof); ok {
+			break
+		}
+
+		switch t := toks[c.i].(type) {
+		case token.Newline:
+			c.i++
+		case token.Comment:
+			doc = buildDoc(toks, c)
+		case token.Const:
+			consts, err = buildConst(toks, c)
+			if len(consts) > 0 {
+				if doc.endLine() == consts[0].Name.Line()+1 {
+					consts[0].Doc = doc
+				}
+				body.Consts = append(body.Consts, consts...)
+			}
+		case token.Ident:
+			ins, err = buildInstantiation(toks, c)
+			body.Insts = append(body.Insts, ins)
+		case token.Property:
+			props, err = buildPropAssignments(toks, c)
+			if err != nil {
+				return body, err
+			}
+			if props != nil {
+				body.Props = append(body.Props, props...)
+			}
+		default:
+			panic(fmt.Sprintf("%s: unhandled token %s", token.Loc(t), t.Kind()))
+		}
+
+		if err != nil {
+			return body, err
+		}
+	}
+
+	return body, nil
 }
