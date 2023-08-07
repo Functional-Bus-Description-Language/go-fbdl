@@ -29,21 +29,25 @@ func (d Doc) eq(d2 Doc) bool {
 	return true
 }
 
-type Import interface {
-	importNode()
-}
+func buildDoc(toks []token.Token, c *ctx) Doc {
+	doc := Doc{}
+	doc.Lines = append(doc.Lines, toks[c.i].(token.Comment))
 
-// Import types
-type (
-	SingleImport struct {
-		Name token.Ident
-		Path token.String
+	prevNewline := false
+	for {
+		c.i++
+		switch t := toks[c.i].(type) {
+		case token.Newline:
+			if prevNewline {
+				break
+			} else {
+				prevNewline = true
+			}
+		case token.Comment:
+			doc.Lines = append(doc.Lines, t)
+			prevNewline = false
+		default:
+			return doc
+		}
 	}
-)
-
-func (si SingleImport) importNode() {}
-
-type File struct {
-	Imports []Import
-	Consts  []Const
 }
