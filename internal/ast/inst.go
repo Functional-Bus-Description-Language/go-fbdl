@@ -150,11 +150,7 @@ tokenLoop:
 				state = Ass
 			default:
 				a.Name = nil
-				var (
-					err  error
-					expr Expr
-				)
-				expr, err = buildExpr(toks, c, nil)
+				expr, err := buildExpr(toks, c, nil)
 				if err != nil {
 					return nil, err
 				}
@@ -180,11 +176,7 @@ tokenLoop:
 				return nil, unexpected(t, ", or )")
 			}
 		case Exp:
-			var (
-				err  error
-				expr Expr
-			)
-			expr, err = buildExpr(toks, c, nil)
+			expr, err := buildExpr(toks, c, nil)
 			if err != nil {
 				return nil, err
 			}
@@ -229,11 +221,7 @@ tokenLoop:
 				return nil, unexpected(t, "=")
 			}
 		case Exp:
-			var (
-				err  error
-				expr Expr
-			)
-			expr, err = buildExpr(toks, c, nil)
+			expr, err := buildExpr(toks, c, nil)
 			if err != nil {
 				return nil, err
 			}
