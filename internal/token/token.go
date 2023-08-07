@@ -25,6 +25,11 @@ type Operator interface {
 	Precedence() int
 }
 
+type Property interface {
+	Token
+	propertyToken()
+}
+
 type None struct {
 	start  int
 	end    int
@@ -808,6 +813,8 @@ func (a Access) Line() int    { return a.line }
 func (a Access) Column() int  { return a.column }
 func (a Access) Kind() string { return "access" }
 
+func (a Access) propertyToken() {}
+
 type AddEnable struct {
 	start  int
 	end    int
@@ -820,6 +827,8 @@ func (ae AddEnable) End() int     { return ae.end }
 func (ae AddEnable) Line() int    { return ae.line }
 func (ae AddEnable) Column() int  { return ae.column }
 func (ae AddEnable) Kind() string { return "add-enable" }
+
+func (ae AddEnable) propertyToken() {}
 
 type Atomic struct {
 	start  int
@@ -834,6 +843,8 @@ func (a Atomic) Line() int    { return a.line }
 func (a Atomic) Column() int  { return a.column }
 func (a Atomic) Kind() string { return "atomic" }
 
+func (a Atomic) propertyToken() {}
+
 type ByteWriteEnable struct {
 	start  int
 	end    int
@@ -846,6 +857,8 @@ func (bwe ByteWriteEnable) End() int     { return bwe.end }
 func (bwe ByteWriteEnable) Line() int    { return bwe.line }
 func (bwe ByteWriteEnable) Column() int  { return bwe.column }
 func (bwe ByteWriteEnable) Kind() string { return "byte-write-enable" }
+
+func (bwe ByteWriteEnable) propertyToken() {}
 
 type Clear struct {
 	start  int
@@ -860,6 +873,8 @@ func (c Clear) Line() int    { return c.line }
 func (c Clear) Column() int  { return c.column }
 func (c Clear) Kind() string { return "clear" }
 
+func (c Clear) propertyToken() {}
+
 type Delay struct {
 	start  int
 	end    int
@@ -872,6 +887,8 @@ func (d Delay) End() int     { return d.end }
 func (d Delay) Line() int    { return d.line }
 func (d Delay) Column() int  { return d.column }
 func (d Delay) Kind() string { return "delay" }
+
+func (d Delay) propertyToken() {}
 
 type EnableInitValue struct {
 	start  int
@@ -886,6 +903,8 @@ func (eiv EnableInitValue) Line() int    { return eiv.line }
 func (eiv EnableInitValue) Column() int  { return eiv.column }
 func (eiv EnableInitValue) Kind() string { return "enable-init-value" }
 
+func (eiv EnableInitValue) propertyToken() {}
+
 type EnableResetValue struct {
 	start  int
 	end    int
@@ -898,6 +917,8 @@ func (erv EnableResetValue) End() int     { return erv.end }
 func (erv EnableResetValue) Line() int    { return erv.line }
 func (erv EnableResetValue) Column() int  { return erv.column }
 func (erv EnableResetValue) Kind() string { return "enable-reset-value" }
+
+func (erv EnableResetValue) propertyToken() {}
 
 type Groups struct {
 	start  int
@@ -912,6 +933,8 @@ func (g Groups) Line() int    { return g.line }
 func (g Groups) Column() int  { return g.column }
 func (g Groups) Kind() string { return "groups" }
 
+func (g Groups) propertyToken() {}
+
 type InitValue struct {
 	start  int
 	end    int
@@ -924,6 +947,8 @@ func (iv InitValue) End() int     { return iv.end }
 func (iv InitValue) Line() int    { return iv.line }
 func (iv InitValue) Column() int  { return iv.column }
 func (iv InitValue) Kind() string { return "init-value" }
+
+func (iv InitValue) propertyToken() {}
 
 type InTrigger struct {
 	start  int
@@ -938,6 +963,8 @@ func (it InTrigger) Line() int    { return it.line }
 func (it InTrigger) Column() int  { return it.column }
 func (it InTrigger) Kind() string { return "in-trigger" }
 
+func (it InTrigger) propertyToken() {}
+
 type Masters struct {
 	start  int
 	end    int
@@ -950,6 +977,8 @@ func (m Masters) End() int     { return m.end }
 func (m Masters) Line() int    { return m.line }
 func (m Masters) Column() int  { return m.column }
 func (m Masters) Kind() string { return "masters" }
+
+func (m Masters) propertyToken() {}
 
 type OutTrigger struct {
 	start  int
@@ -964,6 +993,8 @@ func (ot OutTrigger) Line() int    { return ot.line }
 func (ot OutTrigger) Column() int  { return ot.column }
 func (ot OutTrigger) Kind() string { return "out-trigger" }
 
+func (ot OutTrigger) propertyToken() {}
+
 type Range struct {
 	start  int
 	end    int
@@ -976,6 +1007,8 @@ func (r Range) End() int     { return r.end }
 func (r Range) Line() int    { return r.line }
 func (r Range) Column() int  { return r.column }
 func (r Range) Kind() string { return "range" }
+
+func (r Range) propertyToken() {}
 
 type ReadLatency struct {
 	start  int
@@ -990,6 +1023,8 @@ func (rl ReadLatency) Line() int    { return rl.line }
 func (rl ReadLatency) Column() int  { return rl.column }
 func (rl ReadLatency) Kind() string { return "read-latency" }
 
+func (r ReadLatency) propertyToken() {}
+
 type ReadValue struct {
 	start  int
 	end    int
@@ -1002,6 +1037,8 @@ func (rv ReadValue) End() int     { return rv.end }
 func (rv ReadValue) Line() int    { return rv.line }
 func (rv ReadValue) Column() int  { return rv.column }
 func (rv ReadValue) Kind() string { return "read-value" }
+
+func (rv ReadValue) propertyToken() {}
 
 type Reset struct {
 	start  int
@@ -1016,6 +1053,8 @@ func (r Reset) Line() int    { return r.line }
 func (r Reset) Column() int  { return r.column }
 func (r Reset) Kind() string { return "reset" }
 
+func (r Reset) propertyToken() {}
+
 type ResetValue struct {
 	start  int
 	end    int
@@ -1028,6 +1067,8 @@ func (rv ResetValue) End() int     { return rv.end }
 func (rv ResetValue) Line() int    { return rv.line }
 func (rv ResetValue) Column() int  { return rv.column }
 func (rv ResetValue) Kind() string { return "reset-value" }
+
+func (rv ResetValue) propertyToken() {}
 
 type Size struct {
 	start  int
@@ -1042,6 +1083,8 @@ func (s Size) Line() int    { return s.line }
 func (s Size) Column() int  { return s.column }
 func (s Size) Kind() string { return "size" }
 
+func (s Size) propertyToken() {}
+
 type Width struct {
 	start  int
 	end    int
@@ -1054,6 +1097,8 @@ func (w Width) End() int     { return w.end }
 func (w Width) Line() int    { return w.line }
 func (w Width) Column() int  { return w.column }
 func (w Width) Kind() string { return "width" }
+
+func (w Width) propertyToken() {}
 
 // . - currently unused
 type Period struct {
