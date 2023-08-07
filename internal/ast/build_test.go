@@ -8,7 +8,7 @@ import (
 
 func TestBuildSingleConst(t *testing.T) {
 	toks, _ := token.Parse([]byte("const A = 15"))
-	want := SingleConst{
+	want := Const{
 		Name: toks[1].(token.Ident),
 		Expr: Int{toks[3].(token.Int)},
 	}
@@ -20,8 +20,8 @@ func TestBuildSingleConst(t *testing.T) {
 	if c.i != 4 {
 		t.Fatalf("c.i = %d", c.i)
 	}
-	if !got.eq(want) {
-		t.Fatalf("got: %+v, want %+v", got, want)
+	if !got[0].eq(want) {
+		t.Fatalf("got: %+v, want %+v", got[0], want)
 	}
 }
 
@@ -34,17 +34,15 @@ func TestBuildMultiConst(t *testing.T) {
 
 	D = false`),
 	)
-	want := MultiConst{
-		Consts: []SingleConst{
-			SingleConst{Name: toks[3].(token.Ident), Expr: Int{toks[5].(token.Int)}},
-			SingleConst{Name: toks[7].(token.Ident), Expr: Int{toks[9].(token.Int)}},
-			SingleConst{
-				Doc:  Doc{Lines: []token.Comment{toks[11].(token.Comment)}},
-				Name: toks[13].(token.Ident),
-				Expr: Real{toks[15].(token.Real)},
-			},
-			SingleConst{Name: toks[18].(token.Ident), Expr: Bool{toks[20].(token.Bool)}},
+	want := []Const{
+		Const{Name: toks[3].(token.Ident), Expr: Int{toks[5].(token.Int)}},
+		Const{Name: toks[7].(token.Ident), Expr: Int{toks[9].(token.Int)}},
+		Const{
+			Doc:  Doc{Lines: []token.Comment{toks[11].(token.Comment)}},
+			Name: toks[13].(token.Ident),
+			Expr: Real{toks[15].(token.Real)},
 		},
+		Const{Name: toks[18].(token.Ident), Expr: Bool{toks[20].(token.Bool)}},
 	}
 	c := ctx{}
 	got, err := buildMultiConst(toks, &c)
@@ -54,8 +52,11 @@ func TestBuildMultiConst(t *testing.T) {
 	if c.i != 21 {
 		t.Fatalf("c.i = %d", c.i)
 	}
-	if !got.eq(want) {
-		t.Fatalf("got:\n%+v,\nwant\n%+v", got, want)
+
+	for i := range want {
+		if !got[i].eq(want[i]) {
+			t.Fatalf("i: %d\ngot:\n%+v,\nwant\n%+v", i, got[i], want[i])
+		}
 	}
 }
 

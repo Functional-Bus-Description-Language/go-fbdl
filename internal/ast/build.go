@@ -13,12 +13,12 @@ type ctx struct {
 // Build builds ast based on token stream.
 func Build(toks []token.Token) (File, error) {
 	var (
-		err error
-		f   File
-		c   ctx
-		doc Doc
-		con Const
-		imp Import
+		err    error
+		f      File
+		c      ctx
+		doc    Doc
+		consts []Const
+		imp    Import
 	)
 
 	for {
@@ -32,13 +32,13 @@ func Build(toks []token.Token) (File, error) {
 		case token.Comment:
 			doc = buildDoc(toks, &c)
 		case token.Const:
-			con, err = buildConst(toks, &c)
-			if con, ok := con.(SingleConst); ok {
-				if doc.endLine() == con.Name.Line()+1 {
-					con.Doc = doc
+			consts, err = buildConst(toks, &c)
+			if len(consts) > 0 {
+				if doc.endLine() == consts[0].Name.Line()+1 {
+					consts[0].Doc = doc
 				}
+				f.Consts = append(f.Consts, consts...)
 			}
-			f.Consts = append(f.Consts, con)
 		case token.Import:
 			imp, err = buildImport(toks, &c)
 			f.Imports = append(f.Imports, imp)
