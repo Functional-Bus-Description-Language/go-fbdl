@@ -15,6 +15,11 @@ func Loc(t Token) string {
 	return fmt.Sprintf("%d:%d", t.Line(), t.Column())
 }
 
+type Functionality interface {
+	Token
+	functionalityToken()
+}
+
 type Number interface {
 	Token
 	numberToken()
@@ -670,6 +675,8 @@ func (b Block) Line() int    { return b.line }
 func (b Block) Column() int  { return b.column }
 func (b Block) Kind() string { return "block" }
 
+func (b Block) functionalityToken() {}
+
 type Bus struct {
 	start  int
 	end    int
@@ -682,6 +689,8 @@ func (b Bus) End() int     { return b.end }
 func (b Bus) Line() int    { return b.line }
 func (b Bus) Column() int  { return b.column }
 func (b Bus) Kind() string { return "bus" }
+
+func (b Bus) functionalityToken() {}
 
 type Config struct {
 	start  int
@@ -696,6 +705,8 @@ func (c Config) Line() int    { return c.line }
 func (c Config) Column() int  { return c.column }
 func (c Config) Kind() string { return "config" }
 
+func (c Config) functionalityToken() {}
+
 type Irq struct {
 	start  int
 	end    int
@@ -708,6 +719,8 @@ func (i Irq) End() int     { return i.end }
 func (i Irq) Line() int    { return i.line }
 func (i Irq) Column() int  { return i.column }
 func (i Irq) Kind() string { return "irq" }
+
+func (i Irq) functionalityToken() {}
 
 type Mask struct {
 	start  int
@@ -722,6 +735,8 @@ func (m Mask) Line() int    { return m.line }
 func (m Mask) Column() int  { return m.column }
 func (m Mask) Kind() string { return "mask" }
 
+func (m Mask) functionalityToken() {}
+
 type Memory struct {
 	start  int
 	end    int
@@ -734,6 +749,8 @@ func (m Memory) End() int     { return m.end }
 func (m Memory) Line() int    { return m.line }
 func (m Memory) Column() int  { return m.column }
 func (m Memory) Kind() string { return "memory" }
+
+func (m Memory) functionalityToken() {}
 
 type Param struct {
 	start  int
@@ -748,6 +765,8 @@ func (p Param) Line() int    { return p.line }
 func (p Param) Column() int  { return p.column }
 func (p Param) Kind() string { return "param" }
 
+func (p Param) functionalityToken() {}
+
 type Proc struct {
 	start  int
 	end    int
@@ -760,6 +779,8 @@ func (p Proc) End() int     { return p.end }
 func (p Proc) Line() int    { return p.line }
 func (p Proc) Column() int  { return p.column }
 func (p Proc) Kind() string { return "proc" }
+
+func (p Proc) functionalityToken() {}
 
 type Return struct {
 	start  int
@@ -774,6 +795,8 @@ func (r Return) Line() int    { return r.line }
 func (r Return) Column() int  { return r.column }
 func (r Return) Kind() string { return "return" }
 
+func (r Return) functionalityToken() {}
+
 type Static struct {
 	start  int
 	end    int
@@ -787,6 +810,23 @@ func (s Static) Line() int    { return s.line }
 func (s Static) Column() int  { return s.column }
 func (s Static) Kind() string { return "static" }
 
+func (s Static) functionalityToken() {}
+
+type Status struct {
+	start  int
+	end    int
+	line   int
+	column int
+}
+
+func (s Status) Start() int   { return s.start }
+func (s Status) End() int     { return s.end }
+func (s Status) Line() int    { return s.line }
+func (s Status) Column() int  { return s.column }
+func (s Status) Kind() string { return "status" }
+
+func (s Status) functionalityToken() {}
+
 type Stream struct {
 	start  int
 	end    int
@@ -799,6 +839,8 @@ func (s Stream) End() int     { return s.end }
 func (s Stream) Line() int    { return s.line }
 func (s Stream) Column() int  { return s.column }
 func (s Stream) Kind() string { return "stream" }
+
+func (s Stream) functionalityToken() {}
 
 type Access struct {
 	start  int
