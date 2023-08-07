@@ -15,8 +15,7 @@ func TestParse(t *testing.T) {
 			0,
 			"\n\n",
 			[]Token{
-				Newline{start: 0, end: 0, line: 1, column: 1},
-				Newline{start: 1, end: 1, line: 2, column: 1},
+				Newline{start: 0, end: 1, line: 1, column: 1},
 				Eof{start: 2, end: 2, line: 3, column: 1},
 			},
 		},
@@ -228,9 +227,8 @@ func TestParse(t *testing.T) {
 				Width{start: 15, end: 19, line: 2, column: 2},
 				Ass{start: 20, end: 20, line: 2, column: 7},
 				Int{start: 21, end: 21, line: 2, column: 8},
-				Newline{start: 22, end: 22, line: 2, column: 9},
-				Newline{start: 23, end: 23, line: 3, column: 1},
-				Dedent{start: 23, end: 23, line: 3, column: 1},
+				Newline{start: 22, end: 23, line: 2, column: 9},
+				Dedent{start: 24, end: 24, line: 4, column: 1},
 				Ident{start: 24, end: 27, line: 4, column: 1},
 				Bus{start: 29, end: 31, line: 4, column: 6},
 				Eof{start: 32, end: 32, line: 4, column: 9},
@@ -442,11 +440,11 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			15,
-			"\t", fmt.Errorf("1:1: tab character '\t' not allowed for alignment"),
+			"\t", fmt.Errorf("1:1: tab character '\\t' not allowed for alignment"),
 		},
 		{
 			16,
-			"Main bus\n\tc config;\twidth = 7", fmt.Errorf("2:11: tab character '\t' not allowed for alignment"),
+			"Main bus\n\tc config;\twidth = 7", fmt.Errorf("2:11: tab character '\\t' not allowed for alignment"),
 		},
 		{
 			17,

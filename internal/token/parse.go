@@ -234,7 +234,7 @@ func parseTab(c *ctx, src []byte, s *[]Token) error {
 	start := c.i
 
 	errMsg := fmt.Sprintf(
-		"%d:%d: tab character '\t' not allowed for alignment", c.line, c.col(c.i),
+		"%d:%d: tab character '\\t' not allowed for alignment", c.line, c.col(c.i),
 	)
 	if t, ok := lastToken(*s); ok {
 		if _, ok := t.(Newline); !ok {
@@ -285,28 +285,33 @@ func parseTab(c *ctx, src []byte, s *[]Token) error {
 func parseNewline(c *ctx, src []byte, s *[]Token) error {
 	if t, ok := lastToken(*s); ok {
 		if _, ok := t.(Semicolon); ok {
-			return fmt.Errorf(
-				"%d:%d: extra ';' at the end of line", t.Line(), t.Column(),
-			)
+			return fmt.Errorf("%s: extra ';' at the end of line", Loc(t))
 		}
 	}
 
 	nl := Newline{c.i, c.i, c.line, c.col(c.i)}
+
+	// Eat all newlines
+	for {
+		c.newlineIdx = c.i
+		c.line++
+		c.i++
+		if c.i == len(src) || src[c.i] != '\n' {
+			break
+		}
+		nl.end++
+	}
+
 	*s = append(*s, nl)
 
-	nb := nextByte(src, c.i)
-	if nb != '\t' && nb != '\n' && c.indent != 0 {
-		// Insert proper number of INDENT_DEC tokens.
+	if c.i < len(src) && src[c.i] != '\t' && c.indent != 0 {
+		// Insert proper number of Dedent tokens.
 		t := Dedent{c.i, c.i, c.line, c.col(c.i)}
 		for i := 0; i < c.indent; i++ {
 			*s = append(*s, t)
 		}
 		c.indent = 0
 	}
-
-	c.newlineIdx = c.i
-	c.line++
-	c.i++
 
 	return nil
 }
