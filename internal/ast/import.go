@@ -18,7 +18,6 @@ type (
 
 func (si SingleImport) importNode() {}
 
-
 func buildImport(toks []token.Token, c *ctx) (Import, error) {
 	switch t := toks[c.i+1].(type) {
 	case token.Ident, token.String:
