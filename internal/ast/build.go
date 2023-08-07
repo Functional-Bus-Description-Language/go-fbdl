@@ -19,6 +19,7 @@ func Build(toks []token.Token) (File, error) {
 		doc    Doc
 		consts []Const
 		imp    Import
+		ins    Instantiation
 	)
 
 	for {
@@ -39,6 +40,9 @@ func Build(toks []token.Token) (File, error) {
 				}
 				f.Consts = append(f.Consts, consts...)
 			}
+		case token.Ident:
+			ins, err = buildInstantiation(toks, &c)
+			f.Insts = append(f.Insts, ins)
 		case token.Import:
 			imp, err = buildImport(toks, &c)
 			f.Imports = append(f.Imports, imp)

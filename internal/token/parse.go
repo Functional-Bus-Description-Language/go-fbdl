@@ -940,6 +940,8 @@ func parseKeyword(word []byte, c *ctx) Token {
 		return Return{s, e, l, col}
 	case "static":
 		return Static{s, e, l, col}
+	case "status":
+		return Status{s, e, l, col}
 	case "stream":
 		return Stream{s, e, l, col}
 	case "type":

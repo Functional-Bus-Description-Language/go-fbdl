@@ -60,6 +60,34 @@ func TestBuildMultiConst(t *testing.T) {
 	}
 }
 
+func TestBuildInstantiationSingleLine(t *testing.T) {
+	toks, _ := token.Parse([]byte("S [5]status; atomic = false; width = 10"))
+	want := Instantiation{
+		Name:  toks[0].(token.Ident),
+		Count: Int{Val: toks[2].(token.Int)},
+		Type:  toks[4].(token.Status),
+		Body: Body{
+			Props: []Property{
+				Property{Name: toks[6].(token.Atomic), Value: Bool{Val: toks[8].(token.Bool)}},
+				Property{Name: toks[10].(token.Width), Value: Int{Val: toks[12].(token.Int)}},
+			},
+		},
+	}
+
+	c := ctx{}
+	got, err := buildInstantiation(toks, &c)
+	if err != nil {
+		t.Fatalf("err != nil: %v", err)
+	}
+	if c.i != 13 {
+		t.Fatalf("c.i = %d", c.i)
+	}
+
+	if !got.eq(want) {
+		t.Fatalf("\ngot:\n%+v,\nwant\n%+v", got, want)
+	}
+}
+
 func TestBuildError(t *testing.T) {
 	var tests = []struct {
 		idx int // Test index, useful for navigation
@@ -120,6 +148,16 @@ func TestBuildError(t *testing.T) {
 			10,
 			"const\nA = 2",
 			fmt.Errorf("2:1: unexpected identifier, expected indent or newline"),
+		},
+		{
+			11,
+			"C type_t()",
+			fmt.Errorf("1:9: empty argument list"),
+		},
+		{
+			12,
+			"C [3;config",
+			fmt.Errorf("1:5: unexpected ;, expected ]"),
 		},
 	}
 
