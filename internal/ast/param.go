@@ -54,6 +54,7 @@ tokenLoop:
 				state = Name
 			case token.RightParen:
 				params = append(params, p)
+				c.i++
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "=, ) or ,")
@@ -73,6 +74,7 @@ tokenLoop:
 			case token.Comma:
 				state = Name
 			case token.RightParen:
+				c.i++
 				break tokenLoop
 			default:
 				return nil, unexpected(t, ", or )")

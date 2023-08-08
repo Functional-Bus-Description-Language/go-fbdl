@@ -37,6 +37,7 @@ func buildInst(toks []token.Token, c *ctx) (Inst, error) {
 	inst := Inst{Name: toks[c.i].(token.Ident)}
 	c.i++
 
+	// Count
 	if _, ok := toks[c.i].(token.LeftBracket); ok {
 		c.i++
 		expr, err := buildExpr(toks, c, nil)
@@ -50,6 +51,7 @@ func buildInst(toks []token.Token, c *ctx) (Inst, error) {
 		c.i++
 	}
 
+	// Type
 	switch t := toks[c.i].(type) {
 	case token.Functionality, token.Ident, token.QualIdent:
 		inst.Type = t
@@ -58,12 +60,14 @@ func buildInst(toks []token.Token, c *ctx) (Inst, error) {
 		return inst, unexpected(t, "functionality type")
 	}
 
+	// Argument List
 	args, err := buildArgList(toks, c)
 	if err != nil {
 		return inst, err
 	}
 	inst.Args = args
 
+	// Body
 	switch t := toks[c.i].(type) {
 	case token.Semicolon:
 		c.i++
