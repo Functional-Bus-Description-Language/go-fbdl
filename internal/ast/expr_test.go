@@ -51,7 +51,7 @@ func TestBuildUnaryExpr(t *testing.T) {
 
 	toks, _ = token.Parse([]byte("+ 10"))
 	want = UnaryExpr{
-		Op: toks[0], X: Int{Val: toks[1].(token.Int)},
+		Op: toks[0], X: Int{toks[1].(token.Int)},
 	}
 	c.i = 0
 	got, err = buildExpr(toks, &c, nil)
@@ -102,8 +102,8 @@ func TestBuildCallExpr(t *testing.T) {
 		Name:   toks[0].(token.Ident),
 		Lparen: toks[1].(token.LeftParen),
 		Args: []Expr{
-			Real{Val: toks[2].(token.Real)},
-			Bool{Val: toks[4].(token.Bool)},
+			Real{toks[2].(token.Real)},
+			Bool{toks[4].(token.Bool)},
 		},
 		Rparen: toks[5].(token.RightParen),
 	}
@@ -118,7 +118,7 @@ func TestBuildCallExpr(t *testing.T) {
 func TestBuildBinaryExpr(t *testing.T) {
 	toks, _ := token.Parse([]byte("A + 1"))
 	want := BinaryExpr{
-		X: Ident{Name: toks[0]}, Op: toks[1].(token.Operator), Y: Int{Val: toks[2].(token.Int)},
+		X: Ident{Name: toks[0]}, Op: toks[1].(token.Operator), Y: Int{toks[2].(token.Int)},
 	}
 	c := ctx{}
 	got, err := buildExpr(toks, &c, nil)
@@ -220,7 +220,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 			Y:  Ident{Name: toks[4]},
 		},
 		Op: toks[5].(token.Operator),
-		Y:  Bool{Val: toks[6].(token.Bool)},
+		Y:  Bool{toks[6].(token.Bool)},
 	}
 	c.i = 0
 	got, err = buildExpr(toks, &c, nil)

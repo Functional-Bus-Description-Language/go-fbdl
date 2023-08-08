@@ -160,25 +160,25 @@ func buildIdent(toks []token.Token, c *ctx) (Ident, error) {
 }
 
 func buildBool(toks []token.Token, c *ctx) (Bool, error) {
-	b := Bool{Val: toks[c.i].(token.Bool)}
+	b := Bool{toks[c.i].(token.Bool)}
 	c.i++
 	return b, nil
 }
 
 func buildInt(toks []token.Token, c *ctx) (Int, error) {
-	int_ := Int{Val: toks[c.i].(token.Int)}
+	int_ := Int{toks[c.i].(token.Int)}
 	c.i++
 	return int_, nil
 }
 
 func buildReal(toks []token.Token, c *ctx) (Real, error) {
-	r := Real{Val: toks[c.i].(token.Real)}
+	r := Real{toks[c.i].(token.Real)}
 	c.i++
 	return r, nil
 }
 
 func buildString(toks []token.Token, c *ctx) (String, error) {
-	s := String{Val: toks[c.i].(token.String)}
+	s := String{toks[c.i].(token.String)}
 	c.i++
 	return s, nil
 }

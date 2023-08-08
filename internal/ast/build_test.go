@@ -68,8 +68,8 @@ func TestBuildInstantiationSingleLine(t *testing.T) {
 		Type:  toks[4].(token.Status),
 		Body: Body{
 			Props: []Property{
-				Property{Name: toks[6].(token.Atomic), Value: Bool{toks[8].(token.Bool)}},
-				Property{Name: toks[10].(token.Width), Value: Int{toks[12].(token.Int)}},
+				Property{toks[6].(token.Atomic), Bool{toks[8].(token.Bool)}},
+				Property{toks[10].(token.Width), Int{toks[12].(token.Int)}},
 			},
 		},
 	}
@@ -100,7 +100,7 @@ func TestBuildInstantiationMultiLine(t *testing.T) {
 		Type: toks[1].(token.QualIdent),
 		Args: []Argument{
 			Argument{Value: Int{toks[3].(token.Int)}},
-			Argument{Name: toks[5].(token.Ident), Value: Real{toks[7].(token.Real)}},
+			Argument{toks[5].(token.Ident), Real{toks[7].(token.Real)}},
 		},
 		Body: Body{
 			Consts: []Const{Const{Name: toks[20].(token.Ident), Expr: Bool{toks[22].(token.Bool)}}},
@@ -110,14 +110,14 @@ func TestBuildInstantiationMultiLine(t *testing.T) {
 					Type: toks[25].(token.Config),
 					Body: Body{
 						Props: []Property{
-							Property{Name: toks[28].(token.Range), Value: Int{toks[30].(token.Int)}},
+							Property{toks[28].(token.Range), Int{toks[30].(token.Int)}},
 						},
 					},
 				},
 			},
 			Props: []Property{
-				Property{Name: toks[11].(token.Masters), Value: Int{toks[13].(token.Int)}},
-				Property{Name: toks[15].(token.Reset), Value: String{toks[17].(token.String)}},
+				Property{toks[11].(token.Masters), Int{toks[13].(token.Int)}},
+				Property{toks[15].(token.Reset), String{toks[17].(token.String)}},
 			},
 		},
 	}
