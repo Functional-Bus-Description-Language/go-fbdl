@@ -44,7 +44,6 @@ func buildInst(toks []token.Token, c *ctx) (Inst, error) {
 			return inst, err
 		}
 		inst.Count = expr
-
 		if _, ok := toks[c.i].(token.RightBracket); !ok {
 			return inst, unexpected(toks[c.i], "]")
 		}

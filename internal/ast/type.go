@@ -32,5 +32,18 @@ func buildType(toks []token.Token, c *ctx) (Type, error) {
 	}
 	typ.Params = params
 
+	if _, ok := toks[c.i].(token.LeftBracket); ok {
+		c.i++
+		expr, err := buildExpr(toks, c, nil)
+		if err != nil {
+			return typ, err
+		}
+		typ.Count = expr
+		if _, ok := toks[c.i].(token.RightBracket); !ok {
+			return typ, unexpected(toks[c.i], "]")
+		}
+		c.i++
+	}
+
 	return typ, nil
 }

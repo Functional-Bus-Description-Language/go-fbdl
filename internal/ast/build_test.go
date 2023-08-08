@@ -102,6 +102,11 @@ func TestBuildError(t *testing.T) {
 			"type 1 status",
 			fmt.Errorf("1:6: unexpected integer, expected identifier"),
 		},
+		{
+			18,
+			"type a [1,status",
+			fmt.Errorf("1:10: unexpected ,, expected ]"),
+		},
 	}
 
 	for i, test := range tests {
