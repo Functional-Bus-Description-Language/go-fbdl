@@ -20,6 +20,7 @@ func Build(toks []token.Token) (File, error) {
 		consts []Const
 		imp    Import
 		ins    Inst
+		typ    Type
 	)
 
 	for {
@@ -46,6 +47,9 @@ func Build(toks []token.Token) (File, error) {
 		case token.Import:
 			imp, err = buildImport(toks, &c)
 			f.Imports = append(f.Imports, imp)
+		case token.Type:
+			typ, err = buildType(toks, &c)
+			f.Types = append(f.Types, typ)
 		default:
 			panic(fmt.Sprintf("%s: unhandled token %s", token.Loc(t), t.Kind()))
 		}

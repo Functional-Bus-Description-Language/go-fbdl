@@ -77,6 +77,31 @@ func TestBuildError(t *testing.T) {
 			"C [3;config",
 			fmt.Errorf("1:5: unexpected ;, expected ]"),
 		},
+		{
+			13,
+			"type type_t() config",
+			fmt.Errorf("1:12: empty parameter list"),
+		},
+		{
+			14,
+			"type t(,) config",
+			fmt.Errorf("1:8: unexpected ,, expected identifier"),
+		},
+		{
+			15,
+			"type t(a b) config",
+			fmt.Errorf("1:10: unexpected identifier, expected =, ) or ,"),
+		},
+		{
+			16,
+			"type t(a = 1;) static",
+			fmt.Errorf("1:13: unexpected ;, expected , or )"),
+		},
+		{
+			17,
+			"type 1 status",
+			fmt.Errorf("1:6: unexpected integer, expected identifier"),
+		},
 	}
 
 	for i, test := range tests {

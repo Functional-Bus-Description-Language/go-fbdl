@@ -28,7 +28,7 @@ func buildArgList(toks []token.Token, c *ctx) ([]Arg, error) {
 		Name = iota
 		Ass
 		Comma
-		Exp
+		Val
 	)
 	state := Name
 
@@ -55,7 +55,7 @@ tokenLoop:
 		case Ass:
 			switch t := toks[c.i].(type) {
 			case token.Ass:
-				state = Exp
+				state = Val
 			default:
 				return nil, unexpected(t, "=")
 			}
@@ -69,7 +69,7 @@ tokenLoop:
 			default:
 				return nil, unexpected(t, ", or )")
 			}
-		case Exp:
+		case Val:
 			expr, err := buildExpr(toks, c, nil)
 			if err != nil {
 				return nil, err

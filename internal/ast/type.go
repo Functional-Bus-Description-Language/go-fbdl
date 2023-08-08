@@ -8,9 +8,29 @@ import (
 type Type struct {
 	Doc    Doc
 	Name   token.Ident
-	Params Param
+	Params []Param
 	Count  Expr        // If Count is not nil, then the type is a list
 	Type   token.Token // Basic type, identifier or qualified identifier
 	Args   []Arg
 	Body   Body
+}
+
+func buildType(toks []token.Token, c *ctx) (Type, error) {
+	typ := Type{}
+	c.i++
+
+	if t, ok := toks[c.i].(token.Ident); ok {
+		typ.Name = t
+	} else {
+		return typ, unexpected(toks[c.i], "identifier")
+	}
+	c.i++
+
+	params, err := buildParamList(toks, c)
+	if err != nil {
+		return typ, err
+	}
+	typ.Params = params
+
+	return typ, nil
 }
