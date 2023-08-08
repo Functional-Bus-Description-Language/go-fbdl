@@ -4,13 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-// The Param struct represents type parameter node.
-type Param struct {
-	Name  token.Ident
-	Value Expr // Default value of the parameter
-}
-
-// The Type struct represents type definition node.
+// The Type struct represents type definition.
 type Type struct {
 	Doc    Doc
 	Name   token.Ident
