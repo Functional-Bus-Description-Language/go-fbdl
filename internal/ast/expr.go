@@ -28,10 +28,8 @@ type (
 		Rparen token.RightParen
 	}
 
-	ExprList struct {
-		Lbracket token.LeftBracket
-		Exprs    []Expr
-		Rbracket token.RightBracket
+	List struct {
+		Xs []Expr
 	}
 
 	Ident struct {
@@ -65,7 +63,7 @@ type (
 func (be BinaryExpr) exprNode() {}
 func (b Bool) exprNode()        {}
 func (c CallExpr) exprNode()    {}
-func (el ExprList) exprNode()   {}
+func (l List) exprNode()        {}
 func (i Ident) exprNode()       {}
 func (i Int) exprNode()         {}
 func (r Real) exprNode()        {}
@@ -121,7 +119,7 @@ func buildExpr(toks []token.Token, c *ctx, leftOp token.Operator) (Expr, error) 
 	case token.LeftParen:
 		expr, err = buildParenExpr(toks, c)
 	case token.LeftBracket:
-		expr, err = buildExprList(toks, c)
+		expr, err = buildList(toks, c)
 	default:
 		return Ident{}, unexpected(t, "expression")
 	}
@@ -207,8 +205,8 @@ func buildParenExpr(toks []token.Token, c *ctx) (ParenExpr, error) {
 	return pe, nil
 }
 
-func buildExprList(toks []token.Token, c *ctx) (ExprList, error) {
-	el := ExprList{Lbracket: toks[c.i].(token.LeftBracket)}
+func buildList(toks []token.Token, c *ctx) (List, error) {
+	l := List{}
 	prevExpr := false
 	lbi := c.i // Left bracket token index
 	c.i++
@@ -217,18 +215,17 @@ tokenLoop:
 	for {
 		switch t := toks[c.i].(type) {
 		case token.RightBracket:
-			el.Rbracket = t
 			c.i++
 			break tokenLoop
 		case token.Comma:
 			if c.i == lbi+1 {
-				return el, unexpected(t, "expression")
+				return l, unexpected(t, "expression")
 			}
 			prevExpr = false
 			c.i++
 		default:
 			if prevExpr {
-				return el, unexpected(t, ", or ]")
+				return l, unexpected(t, ", or ]")
 			}
 
 			var (
@@ -237,14 +234,14 @@ tokenLoop:
 			)
 			expr, err = buildExpr(toks, c, nil)
 			if err != nil {
-				return el, err
+				return l, err
 			}
-			el.Exprs = append(el.Exprs, expr)
+			l.Xs = append(l.Xs, expr)
 			prevExpr = true
 		}
 	}
 
-	return el, nil
+	return l, nil
 }
 
 func buildCallExpr(toks []token.Token, c *ctx) (CallExpr, error) {
