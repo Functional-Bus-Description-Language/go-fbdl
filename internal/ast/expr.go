@@ -4,6 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
+// The Expr interface represents generic expression.
 type Expr interface {
 	exprNode()
 }

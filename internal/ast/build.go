@@ -16,10 +16,10 @@ func Build(toks []token.Token) (File, error) {
 		err    error
 		f      File
 		c      ctx
-		doc    Documentation
+		doc    Doc
 		consts []Const
 		imp    Import
-		ins    Instantiation
+		ins    Inst
 	)
 
 	for {
@@ -31,7 +31,7 @@ func Build(toks []token.Token) (File, error) {
 		case token.Newline:
 			c.i++
 		case token.Comment:
-			doc = buildDocumentation(toks, &c)
+			doc = buildDoc(toks, &c)
 		case token.Const:
 			consts, err = buildConst(toks, &c)
 			if len(consts) > 0 {
@@ -41,7 +41,7 @@ func Build(toks []token.Token) (File, error) {
 				f.Consts = append(f.Consts, consts...)
 			}
 		case token.Ident:
-			ins, err = buildInstantiation(toks, &c)
+			ins, err = buildInst(toks, &c)
 			f.Insts = append(f.Insts, ins)
 		case token.Import:
 			imp, err = buildImport(toks, &c)

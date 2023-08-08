@@ -38,7 +38,7 @@ func TestBuildMultiConst(t *testing.T) {
 		Const{Name: toks[3].(token.Ident), Value: Int{toks[5].(token.Int)}},
 		Const{Name: toks[7].(token.Ident), Value: Int{toks[9].(token.Int)}},
 		Const{
-			Doc:   Documentation{Lines: []token.Comment{toks[11].(token.Comment)}},
+			Doc:   Doc{Lines: []token.Comment{toks[11].(token.Comment)}},
 			Name:  toks[13].(token.Ident),
 			Value: Real{toks[15].(token.Real)},
 		},
@@ -60,22 +60,22 @@ func TestBuildMultiConst(t *testing.T) {
 	}
 }
 
-func TestBuildInstantiationSingleLine(t *testing.T) {
+func TestBuildInstSingleLine(t *testing.T) {
 	toks, _ := token.Parse([]byte("S [5]status; atomic = false; width = 10"))
-	want := Instantiation{
+	want := Inst{
 		Name:  toks[0].(token.Ident),
 		Count: Int{toks[2].(token.Int)},
 		Type:  toks[4].(token.Status),
 		Body: Body{
-			Props: []Property{
-				Property{toks[6].(token.Atomic), Bool{toks[8].(token.Bool)}},
-				Property{toks[10].(token.Width), Int{toks[12].(token.Int)}},
+			Props: []Prop{
+				Prop{toks[6].(token.Atomic), Bool{toks[8].(token.Bool)}},
+				Prop{toks[10].(token.Width), Int{toks[12].(token.Int)}},
 			},
 		},
 	}
 
 	c := ctx{}
-	got, err := buildInstantiation(toks, &c)
+	got, err := buildInst(toks, &c)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
@@ -88,42 +88,42 @@ func TestBuildInstantiationSingleLine(t *testing.T) {
 	}
 }
 
-func TestBuildInstantiationMultiLine(t *testing.T) {
+func TestBuildInstMultiLine(t *testing.T) {
 	toks, _ := token.Parse([]byte(`B pkg.block_t(1, PI = 3.14)
 	masters = 2; reset = "Sync"
 	const FOO = true
 	C config
 		range = 8`),
 	)
-	want := Instantiation{
+	want := Inst{
 		Name: toks[0].(token.Ident),
 		Type: toks[1].(token.QualIdent),
-		Args: []Argument{
-			Argument{Value: Int{toks[3].(token.Int)}},
-			Argument{toks[5].(token.Ident), Real{toks[7].(token.Real)}},
+		Args: []Arg{
+			Arg{Value: Int{toks[3].(token.Int)}},
+			Arg{toks[5].(token.Ident), Real{toks[7].(token.Real)}},
 		},
 		Body: Body{
 			Consts: []Const{Const{Name: toks[20].(token.Ident), Value: Bool{toks[22].(token.Bool)}}},
-			Insts: []Instantiation{
-				Instantiation{
+			Insts: []Inst{
+				Inst{
 					Name: toks[24].(token.Ident),
 					Type: toks[25].(token.Config),
 					Body: Body{
-						Props: []Property{
-							Property{toks[28].(token.Range), Int{toks[30].(token.Int)}},
+						Props: []Prop{
+							Prop{toks[28].(token.Range), Int{toks[30].(token.Int)}},
 						},
 					},
 				},
 			},
-			Props: []Property{
-				Property{toks[11].(token.Masters), Int{toks[13].(token.Int)}},
-				Property{toks[15].(token.Reset), String{toks[17].(token.String)}},
+			Props: []Prop{
+				Prop{toks[11].(token.Masters), Int{toks[13].(token.Int)}},
+				Prop{toks[15].(token.Reset), String{toks[17].(token.String)}},
 			},
 		},
 	}
 
 	c := ctx{}
-	got, err := buildInstantiation(toks, &c)
+	got, err := buildInst(toks, &c)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}

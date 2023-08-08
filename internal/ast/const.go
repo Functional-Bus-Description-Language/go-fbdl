@@ -4,8 +4,9 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
+// The const struct represents constant.
 type Const struct {
-	Doc   Documentation
+	Doc   Doc
 	Name  token.Ident
 	Value Expr
 }
@@ -101,7 +102,7 @@ tokenLoop:
 				con.Name = t
 				state = Ass
 			case token.Comment:
-				doc := buildDocumentation(toks, c)
+				doc := buildDoc(toks, c)
 				con.Doc = doc
 				c.i--
 			case token.Newline:

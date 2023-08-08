@@ -5,20 +5,23 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-type Argument struct {
+// The Arg struct represents instantiation argument.
+type Arg struct {
 	Name  token.Token // token.Ident or nil
 	Value Expr
 }
 
-type Property struct {
+// The Prop struct represents functionality property.
+type Prop struct {
 	Name  token.Property
 	Value Expr
 }
 
+// The Body struct represents functionality body.
 type Body struct {
 	Consts []Const
-	Insts  []Instantiation
-	Props  []Property
+	Insts  []Inst
+	Props  []Prop
 }
 
 func (b Body) eq(b2 Body) bool {
@@ -47,16 +50,17 @@ func (b Body) eq(b2 Body) bool {
 	return true
 }
 
-type Instantiation struct {
-	Doc   Documentation
+// The Inst struct represents functionality instantiation.
+type Inst struct {
+	Doc   Doc
 	Name  token.Ident
 	Count Expr        // If not nil, then it is a list
 	Type  token.Token // Basic type, identifier or qualified identifier
-	Args  []Argument
+	Args  []Arg
 	Body  Body
 }
 
-func (i Instantiation) eq(i2 Instantiation) bool {
+func (i Inst) eq(i2 Inst) bool {
 	if !i.Doc.eq(i2.Doc) ||
 		i.Name != i2.Name ||
 		i.Count != i2.Count ||
@@ -75,8 +79,8 @@ func (i Instantiation) eq(i2 Instantiation) bool {
 	return true
 }
 
-func buildInstantiation(toks []token.Token, c *ctx) (Instantiation, error) {
-	inst := Instantiation{Name: toks[c.i].(token.Ident)}
+func buildInst(toks []token.Token, c *ctx) (Inst, error) {
+	inst := Inst{Name: toks[c.i].(token.Ident)}
 	c.i++
 
 	if _, ok := toks[c.i].(token.LeftBracket); ok {
@@ -131,7 +135,7 @@ func buildInstantiation(toks []token.Token, c *ctx) (Instantiation, error) {
 	return inst, nil
 }
 
-func buildArgList(toks []token.Token, c *ctx) ([]Argument, error) {
+func buildArgList(toks []token.Token, c *ctx) ([]Arg, error) {
 	if _, ok := toks[c.i].(token.LeftParen); !ok {
 		return nil, nil
 	}
@@ -141,8 +145,8 @@ func buildArgList(toks []token.Token, c *ctx) ([]Argument, error) {
 		)
 	}
 
-	args := []Argument{}
-	a := Argument{}
+	args := []Arg{}
+	a := Arg{}
 
 	const (
 		Name = iota
@@ -204,9 +208,9 @@ tokenLoop:
 	return args, nil
 }
 
-func buildPropAssignments(toks []token.Token, c *ctx) ([]Property, error) {
-	props := []Property{}
-	p := Property{}
+func buildPropAssignments(toks []token.Token, c *ctx) ([]Prop, error) {
+	props := []Prop{}
+	p := Prop{}
 
 	const (
 		Prop = iota
@@ -266,9 +270,9 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 		err    error
 		body   Body
 		consts []Const
-		doc    Documentation
-		ins    Instantiation
-		props  []Property
+		doc    Doc
+		ins    Inst
+		props  []Prop
 	)
 
 	for {
@@ -280,7 +284,7 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 		case token.Newline:
 			c.i++
 		case token.Comment:
-			doc = buildDocumentation(toks, c)
+			doc = buildDoc(toks, c)
 		case token.Const:
 			consts, err = buildConst(toks, c)
 			if len(consts) > 0 {
@@ -290,7 +294,7 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 				body.Consts = append(body.Consts, consts...)
 			}
 		case token.Ident:
-			ins, err = buildInstantiation(toks, c)
+			ins, err = buildInst(toks, c)
 			body.Insts = append(body.Insts, ins)
 		case token.Property:
 			props, err = buildPropAssignments(toks, c)
