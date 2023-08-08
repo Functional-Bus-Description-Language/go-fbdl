@@ -18,7 +18,7 @@ func Build(toks []token.Token) (File, error) {
 		c      ctx
 		doc    Doc
 		consts []Const
-		imp    Import
+		imps   []Import
 		ins    Inst
 		typ    Type
 	)
@@ -45,8 +45,10 @@ func Build(toks []token.Token) (File, error) {
 			ins, err = buildInst(toks, &c)
 			f.Insts = append(f.Insts, ins)
 		case token.Import:
-			imp, err = buildImport(toks, &c)
-			f.Imports = append(f.Imports, imp)
+			imps, err = buildImport(toks, &c)
+			if len(imps) > 0 {
+				f.Imports = append(f.Imports, imps...)
+			}
 		case token.Type:
 			typ, err = buildType(toks, &c)
 			f.Types = append(f.Types, typ)

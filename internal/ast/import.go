@@ -4,21 +4,13 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-type Import interface {
-	importNode()
+// The import struct represents package import.
+type Import struct {
+	Name token.Ident
+	Path token.String
 }
 
-// Import types
-type (
-	SingleImport struct {
-		Name token.Ident
-		Path token.String
-	}
-)
-
-func (si SingleImport) importNode() {}
-
-func buildImport(toks []token.Token, c *ctx) (Import, error) {
+func buildImport(toks []token.Token, c *ctx) ([]Import, error) {
 	switch t := toks[c.i+1].(type) {
 	case token.Ident, token.String:
 		return buildSingleImport(toks, c)
@@ -27,25 +19,25 @@ func buildImport(toks []token.Token, c *ctx) (Import, error) {
 	}
 }
 
-func buildSingleImport(toks []token.Token, c *ctx) (SingleImport, error) {
-	si := SingleImport{}
+func buildSingleImport(toks []token.Token, c *ctx) ([]Import, error) {
+	i := Import{}
 
 	c.i++
 	switch t := toks[c.i].(type) {
 	case token.Ident:
-		si.Name = t
+		i.Name = t
 		c.i++
 		switch t := toks[c.i].(type) {
 		case token.String:
-			si.Path = t
+			i.Path = t
 			c.i++
 		default:
-			return si, unexpected(t, "string")
+			return nil, unexpected(t, "string")
 		}
 	case token.String:
-		si.Path = t
+		i.Path = t
 		c.i++
 	}
 
-	return si, nil
+	return []Import{i}, nil
 }
