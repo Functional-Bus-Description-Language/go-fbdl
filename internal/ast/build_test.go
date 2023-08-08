@@ -107,6 +107,21 @@ func TestBuildError(t *testing.T) {
 			"type a [1,status",
 			fmt.Errorf("1:10: unexpected ,, expected ]"),
 		},
+		{
+			19,
+			"import\n1",
+			fmt.Errorf("2:1: unexpected integer, expected indent increase"),
+		},
+		{
+			20,
+			"import\n\tabc 1",
+			fmt.Errorf("2:6: unexpected integer, expected string"),
+		},
+		{
+			21,
+			"import\n\t1",
+			fmt.Errorf("2:2: unexpected integer, expected identifier or string"),
+		},
 	}
 
 	for i, test := range tests {
