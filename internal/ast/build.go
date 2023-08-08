@@ -16,7 +16,7 @@ func Build(toks []token.Token) (File, error) {
 		err    error
 		f      File
 		c      ctx
-		doc    Doc
+		doc    Documentation
 		consts []Const
 		imp    Import
 		ins    Instantiation
@@ -31,7 +31,7 @@ func Build(toks []token.Token) (File, error) {
 		case token.Newline:
 			c.i++
 		case token.Comment:
-			doc = buildDoc(toks, &c)
+			doc = buildDocumentation(toks, &c)
 		case token.Const:
 			consts, err = buildConst(toks, &c)
 			if len(consts) > 0 {

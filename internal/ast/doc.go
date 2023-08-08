@@ -4,20 +4,20 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-type Doc struct {
+type Documentation struct {
 	Lines []token.Comment
 }
 
 // endLine returns line number of the last line in the documentation comment.
 // If doc has no lines 0 is returned.
-func (d Doc) endLine() int {
+func (d Documentation) endLine() int {
 	if len(d.Lines) == 0 {
 		return 0
 	}
 	return d.Lines[len(d.Lines)-1].Line()
 }
 
-func (d Doc) eq(d2 Doc) bool {
+func (d Documentation) eq(d2 Documentation) bool {
 	if len(d.Lines) != len(d2.Lines) {
 		return false
 	}
@@ -29,8 +29,8 @@ func (d Doc) eq(d2 Doc) bool {
 	return true
 }
 
-func buildDoc(toks []token.Token, c *ctx) Doc {
-	doc := Doc{}
+func buildDocumentation(toks []token.Token, c *ctx) Documentation {
+	doc := Documentation{}
 	doc.Lines = append(doc.Lines, toks[c.i].(token.Comment))
 
 	prevNewline := false

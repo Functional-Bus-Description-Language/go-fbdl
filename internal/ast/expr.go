@@ -17,7 +17,7 @@ type (
 	}
 
 	Bool struct {
-		Val token.Bool
+		X token.Bool
 	}
 
 	CallExpr struct {
@@ -38,15 +38,15 @@ type (
 	}
 
 	Int struct {
-		Val token.Int
+		X token.Int
 	}
 
 	Real struct {
-		Val token.Real
+		X token.Real
 	}
 
 	String struct {
-		Val token.String
+		X token.String
 	}
 
 	UnaryExpr struct {

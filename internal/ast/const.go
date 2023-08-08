@@ -5,13 +5,13 @@ import (
 )
 
 type Const struct {
-	Doc  Doc
-	Name token.Ident
-	Expr Expr
+	Doc   Documentation
+	Name  token.Ident
+	Value Expr
 }
 
 func (c Const) eq(c2 Const) bool {
-	return c.Doc.eq(c2.Doc) && c.Name == c2.Name && c.Expr == c2.Expr
+	return c.Doc.eq(c2.Doc) && c.Name == c2.Name && c.Value == c2.Value
 }
 
 func buildConst(toks []token.Token, c *ctx) ([]Const, error) {
@@ -38,7 +38,7 @@ func buildSingleConst(toks []token.Token, c *ctx) ([]Const, error) {
 	if err != nil {
 		return nil, err
 	}
-	con.Expr = expr
+	con.Value = expr
 
 	return []Const{con}, nil
 }
@@ -90,7 +90,7 @@ tokenLoop:
 			if err != nil {
 				return nil, err
 			}
-			con.Expr = expr
+			con.Value = expr
 			consts = append(consts, con)
 			con = Const{}
 			c.i--
@@ -101,7 +101,7 @@ tokenLoop:
 				con.Name = t
 				state = Ass
 			case token.Comment:
-				doc := buildDoc(toks, c)
+				doc := buildDocumentation(toks, c)
 				con.Doc = doc
 				c.i--
 			case token.Newline:

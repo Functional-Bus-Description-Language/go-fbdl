@@ -48,7 +48,7 @@ func (b Body) eq(b2 Body) bool {
 }
 
 type Instantiation struct {
-	Doc   Doc
+	Doc   Documentation
 	Name  token.Ident
 	Count Expr        // If not nil, then it is a list
 	Type  token.Token // Basic type, identifier or qualified identifier
@@ -266,7 +266,7 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 		err    error
 		body   Body
 		consts []Const
-		doc    Doc
+		doc    Documentation
 		ins    Instantiation
 		props  []Property
 	)
@@ -280,7 +280,7 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 		case token.Newline:
 			c.i++
 		case token.Comment:
-			doc = buildDoc(toks, c)
+			doc = buildDocumentation(toks, c)
 		case token.Const:
 			consts, err = buildConst(toks, c)
 			if len(consts) > 0 {

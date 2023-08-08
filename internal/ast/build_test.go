@@ -9,8 +9,8 @@ import (
 func TestBuildSingleConst(t *testing.T) {
 	toks, _ := token.Parse([]byte("const A = 15"))
 	want := Const{
-		Name: toks[1].(token.Ident),
-		Expr: Int{toks[3].(token.Int)},
+		Name:  toks[1].(token.Ident),
+		Value: Int{toks[3].(token.Int)},
 	}
 	c := ctx{}
 	got, err := buildSingleConst(toks, &c)
@@ -35,14 +35,14 @@ func TestBuildMultiConst(t *testing.T) {
 	D = false`),
 	)
 	want := []Const{
-		Const{Name: toks[3].(token.Ident), Expr: Int{toks[5].(token.Int)}},
-		Const{Name: toks[7].(token.Ident), Expr: Int{toks[9].(token.Int)}},
+		Const{Name: toks[3].(token.Ident), Value: Int{toks[5].(token.Int)}},
+		Const{Name: toks[7].(token.Ident), Value: Int{toks[9].(token.Int)}},
 		Const{
-			Doc:  Doc{Lines: []token.Comment{toks[11].(token.Comment)}},
-			Name: toks[13].(token.Ident),
-			Expr: Real{toks[15].(token.Real)},
+			Doc:   Documentation{Lines: []token.Comment{toks[11].(token.Comment)}},
+			Name:  toks[13].(token.Ident),
+			Value: Real{toks[15].(token.Real)},
 		},
-		Const{Name: toks[17].(token.Ident), Expr: Bool{toks[19].(token.Bool)}},
+		Const{Name: toks[17].(token.Ident), Value: Bool{toks[19].(token.Bool)}},
 	}
 	c := ctx{}
 	got, err := buildMultiConst(toks, &c)
@@ -64,7 +64,7 @@ func TestBuildInstantiationSingleLine(t *testing.T) {
 	toks, _ := token.Parse([]byte("S [5]status; atomic = false; width = 10"))
 	want := Instantiation{
 		Name:  toks[0].(token.Ident),
-		Count: Int{Val: toks[2].(token.Int)},
+		Count: Int{toks[2].(token.Int)},
 		Type:  toks[4].(token.Status),
 		Body: Body{
 			Props: []Property{
@@ -103,7 +103,7 @@ func TestBuildInstantiationMultiLine(t *testing.T) {
 			Argument{toks[5].(token.Ident), Real{toks[7].(token.Real)}},
 		},
 		Body: Body{
-			Consts: []Const{Const{Name: toks[20].(token.Ident), Expr: Bool{toks[22].(token.Bool)}}},
+			Consts: []Const{Const{Name: toks[20].(token.Ident), Value: Bool{toks[22].(token.Bool)}}},
 			Insts: []Instantiation{
 				Instantiation{
 					Name: toks[24].(token.Ident),
