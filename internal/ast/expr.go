@@ -21,11 +21,10 @@ type (
 		X token.Bool
 	}
 
-	CallExpr struct {
-		Name   token.Ident
-		Lparen token.LeftParen
-		Args   []Expr
-		Rparen token.RightParen
+	// Function Call
+	Call struct {
+		Name token.Ident
+		Args []Expr
 	}
 
 	List struct {
@@ -54,15 +53,13 @@ type (
 	}
 
 	ParenExpr struct {
-		Lparen token.Token
-		X      Expr
-		Rparen token.Token
+		X Expr
 	}
 )
 
 func (be BinaryExpr) exprNode() {}
 func (b Bool) exprNode()        {}
-func (c CallExpr) exprNode()    {}
+func (c Call) exprNode()        {}
 func (l List) exprNode()        {}
 func (i Ident) exprNode()       {}
 func (i Int) exprNode()         {}
@@ -71,10 +68,8 @@ func (s String) exprNode()      {}
 func (ue UnaryExpr) exprNode()  {}
 func (pe ParenExpr) exprNode()  {}
 
-func (c CallExpr) eq(c2 CallExpr) bool {
-	if c.Name != c2.Name ||
-		c.Lparen != c2.Lparen ||
-		c.Rparen != c2.Rparen {
+func (c Call) eq(c2 Call) bool {
+	if c.Name != c2.Name {
 		return false
 	}
 
@@ -183,7 +178,7 @@ func buildString(toks []token.Token, c *ctx) (String, error) {
 }
 
 func buildParenExpr(toks []token.Token, c *ctx) (ParenExpr, error) {
-	pe := ParenExpr{Lparen: toks[c.i].(token.LeftParen)}
+	pe := ParenExpr{}
 	var (
 		err  error
 		expr Expr
@@ -195,8 +190,7 @@ func buildParenExpr(toks []token.Token, c *ctx) (ParenExpr, error) {
 	}
 	pe.X = expr
 
-	if rp, ok := toks[c.i].(token.RightParen); ok {
-		pe.Rparen = rp
+	if _, ok := toks[c.i].(token.RightParen); ok {
 		c.i++
 	} else {
 		return pe, unexpected(toks[c.i], ")")
@@ -244,11 +238,8 @@ tokenLoop:
 	return l, nil
 }
 
-func buildCallExpr(toks []token.Token, c *ctx) (CallExpr, error) {
-	call := CallExpr{
-		Name:   toks[c.i].(token.Ident),
-		Lparen: toks[c.i+1].(token.LeftParen),
-	}
+func buildCallExpr(toks []token.Token, c *ctx) (Call, error) {
+	call := Call{Name: toks[c.i].(token.Ident)}
 	lpi := c.i // Left parenthesis token index
 	c.i += 2
 
@@ -258,7 +249,6 @@ tokenLoop:
 	for {
 		switch t := toks[c.i].(type) {
 		case token.RightParen:
-			call.Rparen = t
 			c.i++
 			break tokenLoop
 		case token.Comma:

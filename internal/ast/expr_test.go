@@ -13,8 +13,8 @@ func checkExpr(c ctx, i int, got Expr, want Expr, err error) error {
 
 	errMsg := "ctx.i = %d, i = %d\n\ngot:  %+v\nwant: %+v"
 	switch want := want.(type) {
-	case CallExpr:
-		if !want.eq(got.(CallExpr)) {
+	case Call:
+		if !want.eq(got.(Call)) {
 			return fmt.Errorf(errMsg, c.i, i, got, want)
 		}
 	default:
@@ -64,13 +64,11 @@ func TestBuildUnaryExpr(t *testing.T) {
 func TestBuildParenExpr(t *testing.T) {
 	toks, _ := token.Parse([]byte("(a >> b)"))
 	want := ParenExpr{
-		Lparen: toks[0].(token.LeftParen),
 		X: BinaryExpr{
 			X:  Ident{Name: toks[1]},
 			Op: toks[2].(token.Operator),
 			Y:  Ident{Name: toks[3]},
 		},
-		Rparen: toks[4].(token.RightParen),
 	}
 	c := ctx{}
 	got, err := buildExpr(toks, &c, nil)
@@ -80,15 +78,13 @@ func TestBuildParenExpr(t *testing.T) {
 	}
 }
 
-func TestBuildCallExpr(t *testing.T) {
+func TestBuildCall(t *testing.T) {
 	toks, _ := token.Parse([]byte("floor(v)"))
-	want := CallExpr{
-		Name:   toks[0].(token.Ident),
-		Lparen: toks[1].(token.LeftParen),
+	want := Call{
+		Name: toks[0].(token.Ident),
 		Args: []Expr{
 			Ident{Name: toks[2].(token.Ident)},
 		},
-		Rparen: toks[3].(token.RightParen),
 	}
 	c := ctx{}
 	got, err := buildExpr(toks, &c, nil)
@@ -98,14 +94,12 @@ func TestBuildCallExpr(t *testing.T) {
 	}
 
 	toks, _ = token.Parse([]byte("foo(12.35, true)"))
-	want = CallExpr{
-		Name:   toks[0].(token.Ident),
-		Lparen: toks[1].(token.LeftParen),
+	want = Call{
+		Name: toks[0].(token.Ident),
 		Args: []Expr{
 			Real{toks[2].(token.Real)},
 			Bool{toks[4].(token.Bool)},
 		},
-		Rparen: toks[5].(token.RightParen),
 	}
 	c.i = 0
 	got, err = buildExpr(toks, &c, nil)
@@ -189,13 +183,11 @@ func TestBuildBinaryExpr(t *testing.T) {
 			X:  Ident{Name: toks[0]},
 			Op: toks[1].(token.Operator),
 			Y: ParenExpr{
-				Lparen: toks[2].(token.LeftParen),
 				X: BinaryExpr{
 					X:  Ident{Name: toks[3]},
 					Op: toks[4].(token.Operator),
 					Y:  Ident{Name: toks[5]},
 				},
-				Rparen: toks[6].(token.RightParen),
 			},
 		},
 		Op: toks[7].(token.Operator),
