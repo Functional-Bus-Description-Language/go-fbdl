@@ -12,7 +12,11 @@ type Param struct {
 
 // The Type struct represents type definition node.
 type Type struct {
+	Doc    Doc
 	Name   token.Ident
-	Count  Expr // If Count is not nil, then the type is a list
 	Params Param
+	Count  Expr        // If Count is not nil, then the type is a list
+	Type   token.Token // Basic type, identifier or qualified identifier
+	Args   []Arg
+	Body   Body
 }
