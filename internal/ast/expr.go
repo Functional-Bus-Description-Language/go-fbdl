@@ -17,6 +17,10 @@ type (
 		Y  Expr
 	}
 
+	BitString struct {
+		X token.BitString
+	}
+
 	Bool struct {
 		X token.Bool
 	}
@@ -58,6 +62,7 @@ type (
 )
 
 func (be BinaryExpr) exprNode() {}
+func (bs BitString) exprNode()  {}
 func (b Bool) exprNode()        {}
 func (c Call) exprNode()        {}
 func (l List) exprNode()        {}
@@ -111,6 +116,8 @@ func buildExpr(toks []token.Token, c *ctx, leftOp token.Operator) (Expr, error) 
 		expr, err = buildReal(toks, c)
 	case token.String:
 		expr, err = buildString(toks, c)
+	case token.BitString:
+		expr, err = buildBitString(toks, c)
 	case token.LeftParen:
 		expr, err = buildParenExpr(toks, c)
 	case token.LeftBracket:
@@ -173,6 +180,12 @@ func buildReal(toks []token.Token, c *ctx) (Real, error) {
 
 func buildString(toks []token.Token, c *ctx) (String, error) {
 	s := String{toks[c.i].(token.String)}
+	c.i++
+	return s, nil
+}
+
+func buildBitString(toks []token.Token, c *ctx) (BitString, error) {
+	s := BitString{toks[c.i].(token.BitString)}
 	c.i++
 	return s, nil
 }
