@@ -30,6 +30,28 @@ func (d Doc) eq(d2 Doc) bool {
 	return true
 }
 
+func (d Doc) Text(src []byte) string {
+	text := ""
+	for i, l := range d.Lines {
+		t := tok.Text(l, src)
+		start := 1
+		if len(t) > 1 {
+			if t[1] == ' ' {
+				start = 2
+			}
+		}
+
+		if len(t) > 2 {
+			text += t[start:len(t)]
+		}
+
+		if i < len(d.Lines)-1 {
+			text += "\n"
+		}
+	}
+	return text
+}
+
 func buildDoc(toks []tok.Token, c *ctx) Doc {
 	doc := Doc{}
 	doc.Lines = append(doc.Lines, toks[c.i].(tok.Comment))
