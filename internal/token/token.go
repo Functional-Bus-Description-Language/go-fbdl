@@ -15,6 +15,11 @@ func Loc(t Token) string {
 	return fmt.Sprintf("%d:%d", t.Line(), t.Column())
 }
 
+// Text returns token text from the source.
+func Text(t Token, src []byte) string {
+	return string(src[t.Start() : t.End()+1])
+}
+
 type Functionality interface {
 	Token
 	functionalityToken()
