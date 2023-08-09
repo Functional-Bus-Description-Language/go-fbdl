@@ -5,7 +5,8 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ts"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
@@ -13,45 +14,33 @@ type Expr interface {
 	Eval() (val.Value, error)
 }
 
-func MakeExpr(n ts.Node, s Searchable) (Expr, error) {
+func MakeExpr(astExpr ast.Expr, src []byte, s Searchable) (Expr, error) {
 	var err error = nil
 	var expr Expr
 
-	switch t := n.Type(); t {
-	case "binary_operation":
-		expr, err = MakeBinaryOperation(n, s)
-	case "bit_literal":
-		expr, err = MakeBitLiteral(n)
-	case "call":
-		expr, err = MakeCall(n, s)
-	case "declared_identifier":
-		expr = MakeDeclaredIdentifier(n, s)
-	case "decimal_literal":
-		expr, err = MakeDecimalLiteral(n)
-	case "expression_list":
-		expr, err = MakeExprList(n, s)
-	case "false":
-		expr = MakeFalse()
-	case "float_literal":
-		expr, err = MakeFloatLiteral(n)
-	case "hex_literal":
-		expr, err = MakeHexLiteral(n)
-	case "primary_expression":
-		expr, err = MakePrimaryExpression(n, s)
-	case "string_literal":
-		expr = MakeStringLiteral(n)
-	case "subscript":
-		expr, err = MakeSubscript(n, s)
-	case "time_literal":
-		expr, err = MakeTimeLiteral(n, s)
-	case "true":
-		expr = MakeTrue()
-	case "unary_operation":
-		expr, err = MakeUnaryOperation(n, s)
-	case "zero_literal":
-		expr = MakeZeroLiteral()
+	switch e := astExpr.(type) {
+	case ast.BinaryExpr:
+		expr, err = MakeBinaryExpr(e, src, s)
+	case ast.BitString:
+		expr, err = MakeBitString(e, src)
+	case ast.Call:
+		expr, err = MakeCall(e, src, s)
+	case ast.Ident:
+		expr = MakeDeclaredIdentifier(e, src, s)
+	case ast.Int:
+		expr, err = MakeInt(e, src)
+	case ast.List:
+		expr, err = MakeList(e, src, s)
+	case ast.Bool:
+		expr = MakeBool(e, src)
+	case ast.Real:
+		expr, err = MakeReal(e, src)
+	case ast.String:
+		expr = MakeString(e, src)
+	case ast.UnaryExpr:
+		expr, err = MakeUnaryExpr(e, src, s)
 	default:
-		return DecimalLiteral{}, fmt.Errorf("unsupported expression type '%s'", t)
+		panic(fmt.Sprintf("unimplemented type %T", astExpr))
 	}
 
 	return expr, err
@@ -70,44 +59,45 @@ const (
 	RightShift
 )
 
-type BinaryOperation struct {
-	left, right Expr
-	operator    BinaryOperator
+type BinaryExpr struct {
+	x  Expr
+	op BinaryOperator
+	y  Expr
 }
 
-func (bo BinaryOperation) Eval() (val.Value, error) {
-	left, err := bo.left.Eval()
+func (be BinaryExpr) Eval() (val.Value, error) {
+	x, err := be.x.Eval()
 	if err != nil {
 		return val.Int(0), fmt.Errorf("binary operation, left operand: %v", err)
 	}
-	right, err := bo.right.Eval()
+	y, err := be.y.Eval()
 	if err != nil {
 		return val.Int(0), fmt.Errorf("binary operation, right operand: %v", err)
 	}
 
-	if left, ok := left.(val.Int); ok {
-		if right, ok := right.(val.Int); ok {
-			switch bo.operator {
+	if x, ok := x.(val.Int); ok {
+		if y, ok := y.(val.Int); ok {
+			switch be.op {
 			case Add:
-				return val.Int(left + right), nil
+				return val.Int(x + y), nil
 			case Subtract:
-				return val.Int(left - right), nil
+				return val.Int(x - y), nil
 			case Multiply:
-				return val.Int(left * right), nil
+				return val.Int(x * y), nil
 			case Divide:
-				if left%right == 0 {
-					return val.Int(left / right), nil
+				if x%y == 0 {
+					return val.Int(x / y), nil
 				} else {
 					panic("not yet implement, needs float point type")
 				}
 			case Modulo:
-				return val.Int(left % right), nil
+				return val.Int(x % y), nil
 			case Power:
-				return val.Int(int64(math.Pow(float64(left), float64(right)))), nil
+				return val.Int(int64(math.Pow(float64(x), float64(y)))), nil
 			case LeftShift:
-				return val.Int(left << right), nil
+				return val.Int(x << y), nil
 			case RightShift:
-				return val.Int(left >> right), nil
+				return val.Int(x >> y), nil
 			default:
 				panic("operator not yet supported")
 			}
@@ -117,57 +107,57 @@ func (bo BinaryOperation) Eval() (val.Value, error) {
 	return val.Int(0), fmt.Errorf("binary operation, unknown operand type")
 }
 
-func MakeBinaryOperation(n ts.Node, s Searchable) (BinaryOperation, error) {
-	left, err := MakeExpr(n.Child(0), s)
+func MakeBinaryExpr(e ast.BinaryExpr, src []byte, s Searchable) (BinaryExpr, error) {
+	x, err := MakeExpr(e.X, src, s)
 	if err != nil {
-		return BinaryOperation{}, fmt.Errorf("make binary operation: left operand: %v", err)
+		return BinaryExpr{}, fmt.Errorf("make binary expression: left operand: %v", err)
 	}
 
-	right, err := MakeExpr(n.Child(2), s)
+	y, err := MakeExpr(e.Y, src, s)
 	if err != nil {
-		return BinaryOperation{}, fmt.Errorf("make binary operation: right operand: %v", err)
+		return BinaryExpr{}, fmt.Errorf("make binary expression: right operand: %v", err)
 	}
 
-	var operator BinaryOperator
-	switch op := n.Child(1).Content(); op {
+	var op BinaryOperator
+	switch text := tok.Text(e.Op, src); text {
 	case "+":
-		operator = Add
+		op = Add
 	case "-":
-		operator = Subtract
+		op = Subtract
 	case "*":
-		operator = Multiply
+		op = Multiply
 	case "/":
-		operator = Divide
+		op = Divide
 	case "%":
-		operator = Modulo
+		op = Modulo
 	case "**":
-		operator = Power
+		op = Power
 	case "<<":
-		operator = LeftShift
+		op = LeftShift
 	case ">>":
-		operator = RightShift
+		op = RightShift
 	default:
-		return BinaryOperation{}, fmt.Errorf("make binary operation: invalid operator %s", op)
+		return BinaryExpr{}, fmt.Errorf("make binary expression: invalid operator %s", op)
 	}
 
-	return BinaryOperation{left: left, right: right, operator: operator}, nil
+	return BinaryExpr{x: x, op: op, y: y}, nil
 }
 
-type BitLiteral struct {
-	v val.BitStr
+type BitString struct {
+	x val.BitStr
 }
 
-func (bl BitLiteral) Eval() (val.Value, error) {
-	return bl.v, nil
+func (bs BitString) Eval() (val.Value, error) {
+	return bs.x, nil
 }
 
-func MakeBitLiteral(n ts.Node) (BitLiteral, error) {
-	v, err := val.MakeBitStr(n.Content())
+func MakeBitString(e ast.BitString, src []byte) (BitString, error) {
+	x, err := val.MakeBitStr(tok.Text(e.X, src))
 	if err != nil {
-		return BitLiteral{}, fmt.Errorf("make bit literal: %v", err)
+		return BitString{}, fmt.Errorf("make bit string: %v", err)
 	}
 
-	return BitLiteral{v: v}, nil
+	return BitString{x: x}, nil
 }
 
 type Call struct {
@@ -192,25 +182,15 @@ func (c Call) Eval() (val.Value, error) {
 	panic("should never happen")
 }
 
-func MakeCall(n ts.Node, s Searchable) (Call, error) {
-	c := Call{funcName: n.Child(0).Content(), args: []Expr{}}
+func MakeCall(e ast.Call, src []byte, s Searchable) (Call, error) {
+	c := Call{funcName: tok.Text(e.Name, src), args: []Expr{}}
 
-	argIdx := 0
-	for i := 2; uint32(i) < n.ChildCount(); i++ {
-		nc := n.Child(i)
-		t := nc.Type()
-
-		if t == "," || t == ")" {
-			continue
-		}
-
-		e, err := MakeExpr(nc, s)
+	for i, a := range e.Args {
+		expr, err := MakeExpr(a, src, s)
 		if err != nil {
-			return c, fmt.Errorf("make call: argument %d: %v", argIdx, err)
+			return c, fmt.Errorf("make call: argument %d: %v", i, err)
 		}
-		c.args = append(c.args, e)
-
-		argIdx += 1
+		c.args = append(c.args, expr)
 	}
 
 	err := assertCall(c)
@@ -221,34 +201,34 @@ func MakeCall(n ts.Node, s Searchable) (Call, error) {
 	return c, nil
 }
 
-type DecimalLiteral struct {
-	v int64
+type Int struct {
+	x int64
 }
 
-func (dl DecimalLiteral) Eval() (val.Value, error) {
-	return val.Int(dl.v), nil
+func (i Int) Eval() (val.Value, error) {
+	return val.Int(i.x), nil
 }
 
-func MakeDecimalLiteral(n ts.Node) (DecimalLiteral, error) {
-	v, err := strconv.ParseInt(n.Content(), 10, 64)
+func MakeInt(e ast.Int, src []byte) (Int, error) {
+	x, err := strconv.ParseInt(tok.Text(e.X, src), 10, 64)
 	if err != nil {
-		return DecimalLiteral{}, fmt.Errorf("make decimal literal: %v", err)
+		return Int{}, fmt.Errorf("make int: %v", err)
 	}
 
-	return DecimalLiteral{v: v}, nil
+	return Int{x: x}, nil
 }
 
-type ExpressionList struct {
+type List struct {
 	exprs []Expr
 }
 
-func (el ExpressionList) Eval() (val.Value, error) {
+func (l List) Eval() (val.Value, error) {
 	vals := []val.Value{}
 
-	for i, expr := range el.exprs {
+	for i, expr := range l.exprs {
 		v, err := expr.Eval()
 		if err != nil {
-			return val.Int(0), fmt.Errorf("expression list evaluation, index %d: %v", i, err)
+			return val.Int(0), fmt.Errorf("list evaluation, index %d: %v", i, err)
 		}
 
 		vals = append(vals, v)
@@ -257,134 +237,90 @@ func (el ExpressionList) Eval() (val.Value, error) {
 	return val.List(vals), nil
 }
 
-func MakeExprList(n ts.Node, s Searchable) (ExpressionList, error) {
+func MakeList(el ast.List, src []byte, s Searchable) (List, error) {
 	exprs := []Expr{}
 
-	itemIdx := 0
-	for i := 1; uint32(i) < n.ChildCount(); i++ {
-		nc := n.Child(i)
-		t := nc.Type()
-
-		if t == "," || t == "]" {
-			continue
-		}
-
-		e, err := MakeExpr(nc, s)
+	for i, e := range el.Xs {
+		e, err := MakeExpr(e, src, s)
 		if err != nil {
-			return ExpressionList{}, fmt.Errorf("make expression list: item %d: %v", itemIdx, err)
+			return List{}, fmt.Errorf("make expression list: item %d: %v", i, err)
 		}
 		exprs = append(exprs, e)
-
-		itemIdx += 1
 	}
 
-	return ExpressionList{exprs: exprs}, nil
+	return List{exprs: exprs}, nil
 }
 
-type False struct{}
-
-func (f False) Eval() (val.Value, error) {
-	return val.Bool(false), nil
+type Bool struct {
+	x bool
 }
 
-func MakeFalse() False {
-	return False{}
+func (b Bool) Eval() (val.Value, error) {
+	return val.Bool(b.x), nil
 }
 
-type FloatLiteral struct {
-	v float64
+func MakeBool(e ast.Bool, src []byte) Bool {
+	text := tok.Text(e.X, src)
+	return Bool{x: text == "true"}
 }
 
-func (fl FloatLiteral) Eval() (val.Value, error) {
-	return val.Float(fl.v), nil
+type Real struct {
+	x float64
 }
 
-func MakeFloatLiteral(n ts.Node) (FloatLiteral, error) {
-	v, err := strconv.ParseFloat(n.Content(), 64)
+func (r Real) Eval() (val.Value, error) {
+	return val.Float(r.x), nil
+}
+
+func MakeReal(e ast.Real, src []byte) (Real, error) {
+	text := tok.Text(e.X, src)
+	x, err := strconv.ParseFloat(text, 64)
 	if err != nil {
-		return FloatLiteral{}, fmt.Errorf("make float literal: %v", err)
+		return Real{}, fmt.Errorf("make real: %v", err)
 	}
 
-	return FloatLiteral{v: v}, nil
+	return Real{x: x}, nil
 }
 
 type DeclaredIdentifier struct {
-	v string
+	x string
 	s Searchable
 }
 
 func (di DeclaredIdentifier) Eval() (val.Value, error) {
-	id, err := di.s.GetSymbol(di.v, ConstDef)
+	id, err := di.s.GetSymbol(di.x, ConstDef)
 	if err != nil {
-		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.v, err)
+		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.x, err)
 	}
 
 	if c, ok := id.(*Const); ok {
-		v, err := c.Value.Eval()
+		x, err := c.Value.Eval()
 		if err != nil {
-			return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.v, err)
+			return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.x, err)
 		}
-		return v, nil
+		return x, nil
 	} else {
 		panic("not yet implemented")
 	}
 }
 
-func MakeDeclaredIdentifier(n ts.Node, s Searchable) DeclaredIdentifier {
-	return DeclaredIdentifier{v: n.Content(), s: s}
+func MakeDeclaredIdentifier(e ast.Ident, src []byte, s Searchable) DeclaredIdentifier {
+	return DeclaredIdentifier{x: tok.Text(e.Name, src), s: s}
 }
 
-type HexLiteral struct {
-	v int64
+type String struct {
+	x string
 }
 
-func (hl HexLiteral) Eval() (val.Value, error) {
-	return val.Int(hl.v), nil
+func (s String) Eval() (val.Value, error) {
+	return val.Str(s.x), nil
 }
 
-func MakeHexLiteral(n ts.Node) (HexLiteral, error) {
-	v, err := strconv.ParseInt(n.Content(), 0, 64)
-	if err != nil {
-		return HexLiteral{}, fmt.Errorf("make hex literal: %v", err)
-	}
-
-	return HexLiteral{v: v}, nil
+func MakeString(e ast.String, src []byte) String {
+	return String{x: tok.Text(e.X, src)}
 }
 
-type PrimaryExpression struct {
-	v Expr
-}
-
-func (pe PrimaryExpression) Eval() (val.Value, error) {
-	v, err := pe.v.Eval()
-	if err != nil {
-		return val.Int(0), fmt.Errorf("primary expression: %v", err)
-	}
-
-	return v, nil
-}
-
-func MakePrimaryExpression(n ts.Node, s Searchable) (PrimaryExpression, error) {
-	v, err := MakeExpr(n.Child(0), s)
-	if err != nil {
-		return PrimaryExpression{}, fmt.Errorf("make primary expression: %v", err)
-	}
-
-	return PrimaryExpression{v: v}, nil
-}
-
-type StringLiteral struct {
-	v string
-}
-
-func (sl StringLiteral) Eval() (val.Value, error) {
-	return val.Str(sl.v), nil
-}
-
-func MakeStringLiteral(n ts.Node) StringLiteral {
-	return StringLiteral{v: n.Content()[1 : len(n.Content())-1]}
-}
-
+/*
 type Subscript struct {
 	name string
 	idx  Expr
@@ -435,7 +371,9 @@ func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
 
 	return Subscript{name: name, idx: idx, s: s}, nil
 }
+*/
 
+/*
 type TimeLiteral struct {
 	v    Expr
 	unit string
@@ -477,16 +415,7 @@ func (tl TimeLiteral) Eval() (val.Value, error) {
 	t.Normalize()
 	return t, nil
 }
-
-type True struct{}
-
-func (t True) Eval() (val.Value, error) {
-	return val.Bool(true), nil
-}
-
-func MakeTrue() True {
-	return True{}
-}
+*/
 
 type UnaryOperator uint8
 
@@ -495,58 +424,46 @@ const (
 	UnaryMinus
 )
 
-type UnaryOperation struct {
-	operator UnaryOperator
-	operand  Expr
+type UnaryExpr struct {
+	op UnaryOperator
+	x  Expr
 }
 
-func (uo UnaryOperation) Eval() (val.Value, error) {
-	operand, err := uo.operand.Eval()
+func (ue UnaryExpr) Eval() (val.Value, error) {
+	x, err := ue.x.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("unary operation, operand: %v", err)
+		return val.Int(0), fmt.Errorf("unary expression, operand: %v", err)
 	}
 
-	if operand, ok := operand.(val.Int); ok {
-		switch uo.operator {
+	if x, ok := x.(val.Int); ok {
+		switch ue.op {
 		case UnaryPlus:
-			return val.Int(operand), nil
+			return val.Int(x), nil
 		case UnaryMinus:
-			return val.Int(-operand), nil
+			return val.Int(-x), nil
 		default:
 			panic("operator not yet supported")
 		}
 	}
 
-	return val.Int(0), fmt.Errorf("unary operation, unknown operand type '%s'", operand.Type())
+	return val.Int(0), fmt.Errorf("unary expression, unknown operand type '%s'", x.Type())
 }
 
-func MakeUnaryOperation(n ts.Node, s Searchable) (UnaryOperation, error) {
-	var operator UnaryOperator
-	switch op := n.Child(0).Content(); op {
+func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Searchable) (UnaryExpr, error) {
+	var op UnaryOperator
+	switch text := tok.Text(e.Op, src); text {
 	case "+":
-		operator = UnaryPlus
+		op = UnaryPlus
 	case "-":
-		operator = UnaryMinus
+		op = UnaryMinus
 	default:
-		return UnaryOperation{}, fmt.Errorf("make unary operation: invalid operator %s", op)
+		return UnaryExpr{}, fmt.Errorf("make unary expression: invalid operator %s", op)
 	}
 
-	operand, err := MakeExpr(n.Child(1), s)
+	x, err := MakeExpr(e.X, src, s)
 	if err != nil {
-		return UnaryOperation{}, fmt.Errorf("make unary operation: operand: %v", err)
+		return UnaryExpr{}, fmt.Errorf("make unary expression: operand: %v", err)
 	}
 
-	return UnaryOperation{operator: operator, operand: operand}, nil
-}
-
-type ZeroLiteral struct {
-	v int64
-}
-
-func (zl ZeroLiteral) Eval() (val.Value, error) {
-	return val.Int(zl.v), nil
-}
-
-func MakeZeroLiteral() ZeroLiteral {
-	return ZeroLiteral{v: 0}
+	return UnaryExpr{op: op, x: x}, nil
 }
