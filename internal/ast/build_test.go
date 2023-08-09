@@ -2,7 +2,6 @@ package ast
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"testing"
 )
 
@@ -129,12 +128,7 @@ func TestBuildError(t *testing.T) {
 			t.Fatalf("Invalid test index %d, expected %d", test.idx, i)
 		}
 
-		stream, err := token.Parse([]byte(test.src))
-		if err != nil {
-			t.Fatalf("%d: token.Parse: %v, expected nil", i, err)
-		}
-
-		_, err = Build(stream)
+		_, err := Build([]byte(test.src))
 		if err == nil {
 			t.Fatalf("%d: err == nil, expected != nil", i)
 		}

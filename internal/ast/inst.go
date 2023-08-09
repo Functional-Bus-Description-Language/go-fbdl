@@ -1,15 +1,15 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // The Inst struct represents functionality instantiation.
 type Inst struct {
 	Doc   Doc
-	Name  token.Ident
-	Count Expr        // If not nil, then it is a list
-	Type  token.Token // Basic type, identifier or qualified identifier
+	Name  tok.Ident
+	Count Expr      // If not nil, then it is a list
+	Type  tok.Token // Basic type, identifier or qualified identifier
 	Args  []Arg
 	Body  Body
 }
@@ -33,19 +33,19 @@ func (i Inst) eq(i2 Inst) bool {
 	return true
 }
 
-func buildInst(toks []token.Token, c *ctx) (Inst, error) {
-	inst := Inst{Name: toks[c.i].(token.Ident)}
+func buildInst(toks []tok.Token, c *ctx) (Inst, error) {
+	inst := Inst{Name: toks[c.i].(tok.Ident)}
 	c.i++
 
 	// Count
-	if _, ok := toks[c.i].(token.LeftBracket); ok {
+	if _, ok := toks[c.i].(tok.LeftBracket); ok {
 		c.i++
 		expr, err := buildExpr(toks, c, nil)
 		if err != nil {
 			return inst, err
 		}
 		inst.Count = expr
-		if _, ok := toks[c.i].(token.RightBracket); !ok {
+		if _, ok := toks[c.i].(tok.RightBracket); !ok {
 			return inst, unexpected(toks[c.i], "]")
 		}
 		c.i++
@@ -53,7 +53,7 @@ func buildInst(toks []token.Token, c *ctx) (Inst, error) {
 
 	// Type
 	switch t := toks[c.i].(type) {
-	case token.Functionality, token.Ident, token.QualIdent:
+	case tok.Functionality, tok.Ident, tok.QualIdent:
 		inst.Type = t
 		c.i++
 	default:
@@ -69,15 +69,15 @@ func buildInst(toks []token.Token, c *ctx) (Inst, error) {
 
 	// Body
 	switch t := toks[c.i].(type) {
-	case token.Semicolon:
+	case tok.Semicolon:
 		c.i++
 		props, err := buildPropAssignments(toks, c)
 		if err != nil {
 			return inst, err
 		}
 		inst.Body.Props = props
-	case token.Newline:
-		if _, ok := toks[c.i+1].(token.Indent); ok {
+	case tok.Newline:
+		if _, ok := toks[c.i+1].(tok.Indent); ok {
 			c.i += 2
 			body, err := buildBody(toks, c)
 			if err != nil {

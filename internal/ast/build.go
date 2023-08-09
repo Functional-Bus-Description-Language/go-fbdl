@@ -2,7 +2,7 @@ package ast
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // Building context
@@ -10,8 +10,8 @@ type ctx struct {
 	i int // Current token index
 }
 
-// Build builds ast based on token stream.
-func Build(toks []token.Token) (File, error) {
+// Build builds ast from provided source.
+func Build(src []byte) (File, error) {
 	var (
 		err    error
 		f      File
@@ -23,17 +23,22 @@ func Build(toks []token.Token) (File, error) {
 		typ    Type
 	)
 
+	toks, err := tok.Parse([]byte(src))
+	if err != nil {
+		return File{}, err
+	}
+
 	for {
-		if _, ok := toks[c.i].(token.Eof); ok {
+		if _, ok := toks[c.i].(tok.Eof); ok {
 			break
 		}
 
 		switch t := toks[c.i].(type) {
-		case token.Newline:
+		case tok.Newline:
 			c.i++
-		case token.Comment:
+		case tok.Comment:
 			doc = buildDoc(toks, &c)
-		case token.Const:
+		case tok.Const:
 			consts, err = buildConst(toks, &c)
 			if len(consts) > 0 {
 				if doc.endLine() == consts[0].Name.Line()+1 {
@@ -41,19 +46,19 @@ func Build(toks []token.Token) (File, error) {
 				}
 				f.Consts = append(f.Consts, consts...)
 			}
-		case token.Ident:
+		case tok.Ident:
 			ins, err = buildInst(toks, &c)
 			f.Insts = append(f.Insts, ins)
-		case token.Import:
+		case tok.Import:
 			imps, err = buildImport(toks, &c)
 			if len(imps) > 0 {
 				f.Imports = append(f.Imports, imps...)
 			}
-		case token.Type:
+		case tok.Type:
 			typ, err = buildType(toks, &c)
 			f.Types = append(f.Types, typ)
 		default:
-			panic(fmt.Sprintf("%s: unhandled token %s", token.Loc(t), t.Kind()))
+			panic(fmt.Sprintf("%s: unhandled token %s", tok.Loc(t), t.Kind()))
 		}
 
 		if err != nil {

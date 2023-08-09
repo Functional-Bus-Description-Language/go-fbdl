@@ -1,15 +1,15 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"testing"
 )
 
 func TestBuildSingleConst(t *testing.T) {
-	toks, _ := token.Parse([]byte("const A = 15"))
+	toks, _ := tok.Parse([]byte("const A = 15"))
 	want := Const{
-		Name:  toks[1].(token.Ident),
-		Value: Int{toks[3].(token.Int)},
+		Name:  toks[1].(tok.Ident),
+		Value: Int{toks[3].(tok.Int)},
 	}
 	c := ctx{}
 	got, err := buildSingleConst(toks, &c)
@@ -25,7 +25,7 @@ func TestBuildSingleConst(t *testing.T) {
 }
 
 func TestBuildMultiConst(t *testing.T) {
-	toks, _ := token.Parse([]byte(`const
+	toks, _ := tok.Parse([]byte(`const
 	A = 1
 	B = 2 # Inline comment
 	# Doc comment
@@ -34,14 +34,14 @@ func TestBuildMultiConst(t *testing.T) {
 	D = false`),
 	)
 	want := []Const{
-		Const{Name: toks[3].(token.Ident), Value: Int{toks[5].(token.Int)}},
-		Const{Name: toks[7].(token.Ident), Value: Int{toks[9].(token.Int)}},
+		Const{Name: toks[3].(tok.Ident), Value: Int{toks[5].(tok.Int)}},
+		Const{Name: toks[7].(tok.Ident), Value: Int{toks[9].(tok.Int)}},
 		Const{
-			Doc:   Doc{Lines: []token.Comment{toks[11].(token.Comment)}},
-			Name:  toks[13].(token.Ident),
-			Value: Real{toks[15].(token.Real)},
+			Doc:   Doc{Lines: []tok.Comment{toks[11].(tok.Comment)}},
+			Name:  toks[13].(tok.Ident),
+			Value: Real{toks[15].(tok.Real)},
 		},
-		Const{Name: toks[17].(token.Ident), Value: Bool{toks[19].(token.Bool)}},
+		Const{Name: toks[17].(tok.Ident), Value: Bool{toks[19].(tok.Bool)}},
 	}
 	c := ctx{}
 	got, err := buildMultiConst(toks, &c)

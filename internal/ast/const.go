@@ -1,13 +1,13 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // The const struct represents constant.
 type Const struct {
 	Doc   Doc
-	Name  token.Ident
+	Name  tok.Ident
 	Value Expr
 }
 
@@ -15,22 +15,22 @@ func (c Const) eq(c2 Const) bool {
 	return c.Doc.eq(c2.Doc) && c.Name == c2.Name && c.Value == c2.Value
 }
 
-func buildConst(toks []token.Token, c *ctx) ([]Const, error) {
+func buildConst(toks []tok.Token, c *ctx) ([]Const, error) {
 	switch t := toks[c.i+1].(type) {
-	case token.Ident:
+	case tok.Ident:
 		return buildSingleConst(toks, c)
-	case token.Newline:
+	case tok.Newline:
 		return buildMultiConst(toks, c)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleConst(toks []token.Token, c *ctx) ([]Const, error) {
-	con := Const{Name: toks[c.i+1].(token.Ident)}
+func buildSingleConst(toks []tok.Token, c *ctx) ([]Const, error) {
+	con := Const{Name: toks[c.i+1].(tok.Ident)}
 
 	c.i += 2
-	if t, ok := toks[c.i].(token.Ass); !ok {
+	if t, ok := toks[c.i].(tok.Ass); !ok {
 		return nil, unexpected(t, "=")
 	}
 
@@ -44,7 +44,7 @@ func buildSingleConst(toks []token.Token, c *ctx) ([]Const, error) {
 	return []Const{con}, nil
 }
 
-func buildMultiConst(toks []token.Token, c *ctx) ([]Const, error) {
+func buildMultiConst(toks []tok.Token, c *ctx) ([]Const, error) {
 	consts := []Const{}
 	con := Const{}
 
@@ -64,16 +64,16 @@ tokenLoop:
 		switch state {
 		case Indent:
 			switch t := toks[c.i].(type) {
-			case token.Newline:
+			case tok.Newline:
 				continue
-			case token.Indent:
+			case tok.Indent:
 				state = FirstId
 			default:
 				return nil, unexpected(t, "indent or newline")
 			}
 		case FirstId:
 			switch t := toks[c.i].(type) {
-			case token.Ident:
+			case tok.Ident:
 				con.Name = t
 				state = Ass
 			default:
@@ -81,7 +81,7 @@ tokenLoop:
 			}
 		case Ass:
 			switch t := toks[c.i].(type) {
-			case token.Ass:
+			case tok.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "=")
@@ -98,16 +98,16 @@ tokenLoop:
 			state = Id
 		case Id:
 			switch t := toks[c.i].(type) {
-			case token.Ident:
+			case tok.Ident:
 				con.Name = t
 				state = Ass
-			case token.Comment:
+			case tok.Comment:
 				doc := buildDoc(toks, c)
 				con.Doc = doc
 				c.i--
-			case token.Newline:
+			case tok.Newline:
 				continue
-			case token.Dedent, token.Eof:
+			case tok.Dedent, tok.Eof:
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "identifier or dedent")

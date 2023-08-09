@@ -2,22 +2,22 @@ package ast
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // The Arg struct represents instantiation or type argument.
 type Arg struct {
-	Name  token.Token // token.Ident or nil
+	Name  tok.Token // tok.Ident or nil
 	Value Expr
 }
 
-func buildArgList(toks []token.Token, c *ctx) ([]Arg, error) {
-	if _, ok := toks[c.i].(token.LeftParen); !ok {
+func buildArgList(toks []tok.Token, c *ctx) ([]Arg, error) {
+	if _, ok := toks[c.i].(tok.LeftParen); !ok {
 		return nil, nil
 	}
-	if _, ok := toks[c.i+1].(token.RightParen); ok {
+	if _, ok := toks[c.i+1].(tok.RightParen); ok {
 		return nil, fmt.Errorf(
-			"%s: empty argument list", token.Loc(toks[c.i]),
+			"%s: empty argument list", tok.Loc(toks[c.i]),
 		)
 	}
 
@@ -38,7 +38,7 @@ tokenLoop:
 		switch state {
 		case Name:
 			switch t := toks[c.i].(type) {
-			case token.Ident:
+			case tok.Ident:
 				a.Name = t
 				state = Ass
 			default:
@@ -54,16 +54,16 @@ tokenLoop:
 			}
 		case Ass:
 			switch t := toks[c.i].(type) {
-			case token.Ass:
+			case tok.Ass:
 				state = Val
 			default:
 				return nil, unexpected(t, "=")
 			}
 		case Comma:
 			switch t := toks[c.i].(type) {
-			case token.Comma:
+			case tok.Comma:
 				state = Name
-			case token.RightParen:
+			case tok.RightParen:
 				c.i++
 				break tokenLoop
 			default:

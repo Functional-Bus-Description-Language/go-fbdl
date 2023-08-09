@@ -1,16 +1,16 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // The Prop struct represents functionality property.
 type Prop struct {
-	Name  token.Property
+	Name  tok.Property
 	Value Expr
 }
 
-func buildPropAssignments(toks []token.Token, c *ctx) ([]Prop, error) {
+func buildPropAssignments(toks []tok.Token, c *ctx) ([]Prop, error) {
 	props := []Prop{}
 	p := Prop{}
 
@@ -30,7 +30,7 @@ tokenLoop:
 		switch state {
 		case Prop:
 			switch t := toks[c.i].(type) {
-			case token.Property:
+			case tok.Property:
 				p.Name = t
 				state = Ass
 			default:
@@ -38,7 +38,7 @@ tokenLoop:
 			}
 		case Ass:
 			switch t := toks[c.i].(type) {
-			case token.Ass:
+			case tok.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "=")
@@ -54,9 +54,9 @@ tokenLoop:
 			state = Semicolon
 		case Semicolon:
 			switch t := toks[c.i].(type) {
-			case token.Newline, token.Eof:
+			case tok.Newline, tok.Eof:
 				break tokenLoop
-			case token.Semicolon:
+			case tok.Semicolon:
 				state = Prop
 			default:
 				return nil, unexpected(t, "; or newline")

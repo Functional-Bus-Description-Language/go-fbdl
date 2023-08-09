@@ -1,4 +1,4 @@
-package token
+package tok
 
 import "fmt"
 

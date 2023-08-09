@@ -2,22 +2,22 @@ package ast
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // The Param struct represents type parameter.
 type Param struct {
-	Name  token.Ident
+	Name  tok.Ident
 	Value Expr // Default value of the parameter
 }
 
-func buildParamList(toks []token.Token, c *ctx) ([]Param, error) {
-	if _, ok := toks[c.i].(token.LeftParen); !ok {
+func buildParamList(toks []tok.Token, c *ctx) ([]Param, error) {
+	if _, ok := toks[c.i].(tok.LeftParen); !ok {
 		return nil, nil
 	}
-	if _, ok := toks[c.i+1].(token.RightParen); ok {
+	if _, ok := toks[c.i+1].(tok.RightParen); ok {
 		return nil, fmt.Errorf(
-			"%s: empty parameter list", token.Loc(toks[c.i]),
+			"%s: empty parameter list", tok.Loc(toks[c.i]),
 		)
 	}
 
@@ -38,7 +38,7 @@ tokenLoop:
 		switch state {
 		case Name:
 			switch t := toks[c.i].(type) {
-			case token.Ident:
+			case tok.Ident:
 				p.Name = t
 				state = Ass
 			default:
@@ -46,13 +46,13 @@ tokenLoop:
 			}
 		case Ass:
 			switch t := toks[c.i].(type) {
-			case token.Ass:
+			case tok.Ass:
 				state = Val
-			case token.Comma:
+			case tok.Comma:
 				params = append(params, p)
 				p = Param{}
 				state = Name
-			case token.RightParen:
+			case tok.RightParen:
 				params = append(params, p)
 				c.i++
 				break tokenLoop
@@ -71,9 +71,9 @@ tokenLoop:
 			state = Comma
 		case Comma:
 			switch t := toks[c.i].(type) {
-			case token.Comma:
+			case tok.Comma:
 				state = Name
-			case token.RightParen:
+			case tok.RightParen:
 				c.i++
 				break tokenLoop
 			default:

@@ -1,19 +1,19 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"testing"
 )
 
 func TestBuildTypeSingleLine(t *testing.T) {
-	toks, _ := token.Parse([]byte("type foo_t(W=1) [8]config; width = W"))
+	toks, _ := tok.Parse([]byte("type foo_t(W=1) [8]config; width = W"))
 	want := Type{
-		Name:   toks[1].(token.Ident),
-		Params: []Param{Param{toks[3].(token.Ident), Int{toks[5].(token.Int)}}},
-		Count:  Int{toks[8].(token.Int)},
-		Type:   toks[10].(token.Config),
+		Name:   toks[1].(tok.Ident),
+		Params: []Param{Param{toks[3].(tok.Ident), Int{toks[5].(tok.Int)}}},
+		Count:  Int{toks[8].(tok.Int)},
+		Type:   toks[10].(tok.Config),
 		Body: Body{
-			Props: []Prop{Prop{toks[12].(token.Width), Ident{toks[14].(token.Ident)}}},
+			Props: []Prop{Prop{toks[12].(tok.Width), Ident{toks[14].(tok.Ident)}}},
 		},
 	}
 
@@ -32,25 +32,25 @@ func TestBuildTypeSingleLine(t *testing.T) {
 }
 
 func TestBuildTypeMultiLine(t *testing.T) {
-	toks, _ := token.Parse([]byte(`type foo_t bar(1, N = 2)
+	toks, _ := tok.Parse([]byte(`type foo_t bar(1, N = 2)
 	const A = "a"
 	init-value = A`),
 	)
 	want := Type{
-		Name: toks[1].(token.Ident),
-		Type: toks[2].(token.Ident),
+		Name: toks[1].(tok.Ident),
+		Type: toks[2].(tok.Ident),
 		Args: []Arg{
-			Arg{Value: Int{toks[4].(token.Int)}},
-			Arg{toks[6].(token.Ident), Int{toks[8].(token.Int)}},
+			Arg{Value: Int{toks[4].(tok.Int)}},
+			Arg{toks[6].(tok.Ident), Int{toks[8].(tok.Int)}},
 		},
 		Body: Body{
 			Consts: []Const{
-				Const{Name: toks[13].(token.Ident), Value: String{toks[15].(token.String)}},
+				Const{Name: toks[13].(tok.Ident), Value: String{toks[15].(tok.String)}},
 			},
 			Props: []Prop{
 				Prop{
-					Name:  toks[17].(token.InitValue),
-					Value: Ident{toks[19].(token.Ident)},
+					Name:  toks[17].(tok.InitValue),
+					Value: Ident{toks[19].(tok.Ident)},
 				},
 			},
 		},

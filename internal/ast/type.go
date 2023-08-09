@@ -1,16 +1,16 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // The Type struct represents type definition.
 type Type struct {
 	Doc    Doc
-	Name   token.Ident
+	Name   tok.Ident
 	Params []Param
-	Count  Expr        // If Count is not nil, then the type is a list
-	Type   token.Token // Basic type, identifier or qualified identifier
+	Count  Expr      // If Count is not nil, then the type is a list
+	Type   tok.Token // Basic type, identifier or qualified identifier
 	Args   []Arg
 	Body   Body
 }
@@ -41,12 +41,12 @@ func (t Type) eq(t2 Type) bool {
 	return true
 }
 
-func buildType(toks []token.Token, c *ctx) (Type, error) {
+func buildType(toks []tok.Token, c *ctx) (Type, error) {
 	typ := Type{}
 	c.i++
 
 	// Name
-	if t, ok := toks[c.i].(token.Ident); ok {
+	if t, ok := toks[c.i].(tok.Ident); ok {
 		typ.Name = t
 	} else {
 		return typ, unexpected(toks[c.i], "identifier")
@@ -61,14 +61,14 @@ func buildType(toks []token.Token, c *ctx) (Type, error) {
 	typ.Params = params
 
 	// Count
-	if _, ok := toks[c.i].(token.LeftBracket); ok {
+	if _, ok := toks[c.i].(tok.LeftBracket); ok {
 		c.i++
 		expr, err := buildExpr(toks, c, nil)
 		if err != nil {
 			return typ, err
 		}
 		typ.Count = expr
-		if _, ok := toks[c.i].(token.RightBracket); !ok {
+		if _, ok := toks[c.i].(tok.RightBracket); !ok {
 			return typ, unexpected(toks[c.i], "]")
 		}
 		c.i++
@@ -76,7 +76,7 @@ func buildType(toks []token.Token, c *ctx) (Type, error) {
 
 	// Type
 	switch t := toks[c.i].(type) {
-	case token.Functionality, token.Ident, token.QualIdent:
+	case tok.Functionality, tok.Ident, tok.QualIdent:
 		typ.Type = t
 		c.i++
 	default:
@@ -92,15 +92,15 @@ func buildType(toks []token.Token, c *ctx) (Type, error) {
 
 	// Body
 	switch t := toks[c.i].(type) {
-	case token.Semicolon:
+	case tok.Semicolon:
 		c.i++
 		props, err := buildPropAssignments(toks, c)
 		if err != nil {
 			return typ, err
 		}
 		typ.Body.Props = props
-	case token.Newline:
-		if _, ok := toks[c.i+1].(token.Indent); ok {
+	case tok.Newline:
+		if _, ok := toks[c.i+1].(tok.Indent); ok {
 			c.i += 2
 			body, err := buildBody(toks, c)
 			if err != nil {

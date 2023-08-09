@@ -1,15 +1,15 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"testing"
 )
 
 func TestBuildSingleImport(t *testing.T) {
-	toks, _ := token.Parse([]byte(`import pkg "path"`))
+	toks, _ := tok.Parse([]byte(`import pkg "path"`))
 	want := Import{
-		Name: toks[1].(token.Ident),
-		Path: toks[2].(token.String),
+		Name: toks[1].(tok.Ident),
+		Path: toks[2].(tok.String),
 	}
 	c := ctx{}
 	got, err := buildSingleImport(toks, &c)
@@ -25,16 +25,16 @@ func TestBuildSingleImport(t *testing.T) {
 }
 
 func TestBuildMultiImport(t *testing.T) {
-	toks, _ := token.Parse([]byte(`import
+	toks, _ := tok.Parse([]byte(`import
 	"path1"
 	pkg "path2"
 
 	"path3"`),
 	)
 	want := []Import{
-		Import{Path: toks[3].(token.String)},
-		Import{Name: toks[5].(token.Ident), Path: toks[6].(token.String)},
-		Import{Path: toks[8].(token.String)},
+		Import{Path: toks[3].(tok.String)},
+		Import{Name: toks[5].(tok.Ident), Path: toks[6].(tok.String)},
+		Import{Path: toks[8].(tok.String)},
 	}
 
 	c := ctx{}

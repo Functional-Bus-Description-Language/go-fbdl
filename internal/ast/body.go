@@ -2,7 +2,7 @@ package ast
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 // The Body struct represents functionality body.
@@ -38,7 +38,7 @@ func (b Body) eq(b2 Body) bool {
 	return true
 }
 
-func buildBody(toks []token.Token, c *ctx) (Body, error) {
+func buildBody(toks []tok.Token, c *ctx) (Body, error) {
 	var (
 		err    error
 		body   Body
@@ -49,16 +49,16 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 	)
 
 	for {
-		if _, ok := toks[c.i].(token.Eof); ok {
+		if _, ok := toks[c.i].(tok.Eof); ok {
 			break
 		}
 
 		switch t := toks[c.i].(type) {
-		case token.Newline:
+		case tok.Newline:
 			c.i++
-		case token.Comment:
+		case tok.Comment:
 			doc = buildDoc(toks, c)
-		case token.Const:
+		case tok.Const:
 			consts, err = buildConst(toks, c)
 			if len(consts) > 0 {
 				if doc.endLine() == consts[0].Name.Line()+1 {
@@ -66,10 +66,10 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 				}
 				body.Consts = append(body.Consts, consts...)
 			}
-		case token.Ident:
+		case tok.Ident:
 			ins, err = buildInst(toks, c)
 			body.Insts = append(body.Insts, ins)
-		case token.Property:
+		case tok.Property:
 			props, err = buildPropAssignments(toks, c)
 			if err != nil {
 				return body, err
@@ -78,7 +78,7 @@ func buildBody(toks []token.Token, c *ctx) (Body, error) {
 				body.Props = append(body.Props, props...)
 			}
 		default:
-			panic(fmt.Sprintf("%s: unhandled token %s", token.Loc(t), t.Kind()))
+			panic(fmt.Sprintf("%s: unhandled token %s", tok.Loc(t), t.Kind()))
 		}
 
 		if err != nil {
