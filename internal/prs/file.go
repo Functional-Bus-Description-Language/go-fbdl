@@ -5,12 +5,6 @@ import (
 	"strings"
 )
 
-type Import struct {
-	Path       string
-	ImportName string
-	Package    *Package
-}
-
 type File struct {
 	Path    string
 	Pkg     *Package
@@ -42,7 +36,7 @@ func (f *File) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
 		}
 
-		return pkg.Package.GetSymbol(symName, kind)
+		return pkg.Pkg.GetSymbol(symName, kind)
 	}
 
 	sym, ok := f.Symbols.Get(name, kind)

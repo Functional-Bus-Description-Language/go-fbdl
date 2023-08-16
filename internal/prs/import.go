@@ -5,6 +5,12 @@ import (
 	"log"
 )
 
+type Import struct {
+	Path       string
+	ImportName string
+	Pkg        *Package
+}
+
 func bindImports(packages Packages) {
 	for pkgName, pkgs := range packages {
 		for _, pkg := range pkgs {
@@ -34,7 +40,7 @@ func bindFileImports(file *File, packages Packages) error {
 		if len(matches) == 0 {
 			return fmt.Errorf("cannot find package %q", import_.Path)
 		} else if len(matches) == 1 {
-			import_.Package = matches[0]
+			import_.Pkg = matches[0]
 			file.Imports[importName] = import_
 		} else {
 			return fmt.Errorf("%d packages match path %q", len(matches), import_.Path)
