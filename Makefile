@@ -18,7 +18,6 @@ help:
 	@echo "  test-registerification  Run registerification tests."
 	@echo "Other targets:"
 	@echo "  help                Print help message."
-	@echo "  update-tree-sitter  Update tree-sitter source files."
 
 
 # Build targets
@@ -57,6 +56,3 @@ install:
 
 uninstall:
 	rm /usr/bin/$(PROJECT_NAME)
-
-update-tree-sitter:
-	@./scripts/update-tree-sitter.sh
