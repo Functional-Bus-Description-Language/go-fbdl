@@ -104,11 +104,26 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		Imports: make(map[string]Import),
 	}
 
+	// Handle file imports
+	imports, err := buildImports(astFile.Imports, src)
+	if err != nil {
+		log.Fatalf("%s:%v", path, err)
+	}
+	for _, i := range imports {
+		if _, exist := file.Imports[i.Name]; exist {
+			log.Fatalf(
+				"%s: line %d: at least two packages imported as '%s'",
+				path, i.LineNum, i.Name,
+			)
+		}
+		file.Imports[i.Name] = i
+	}
+
+	// Handle file and package constants
 	consts, err := buildConsts(astFile.Consts, src)
 	if err != nil {
 		log.Fatalf("%s:%v", path, err)
 	}
-
 	for _, c := range consts {
 		err = file.AddSymbol(c)
 		if err != nil {

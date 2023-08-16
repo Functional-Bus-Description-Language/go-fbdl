@@ -6,7 +6,7 @@ import (
 
 // The import struct represents package import.
 type Import struct {
-	Name tok.Ident
+	Name tok.Token // tok.Ident or nil
 	Path tok.String
 }
 

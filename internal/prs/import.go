@@ -3,12 +3,45 @@ package prs
 import (
 	"fmt"
 	"log"
+	"strings"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 type Import struct {
-	Path       string
-	ImportName string
-	Pkg        *Package
+	LineNum int
+	Name    string
+	Path    string
+	Pkg     *Package
+}
+
+// buildImports builds list of file Imports based on the list of ast.Import.
+func buildImports(astImports []ast.Import, src []byte) ([]Import, error) {
+	imports := []Import{}
+	name := ""
+	path := ""
+
+	for _, ai := range astImports {
+		if ai.Name == nil {
+			path = tok.Text(ai.Name, src)
+			path = path[1 : len(path)-1]
+			// TODO: Should it be [0] or the last element?
+			name = strings.Split(path, "/")[0]
+			if len(name) > 4 && name[0:3] == "fbd-" {
+				name = name[4:]
+			}
+		} else {
+			name = tok.Text(ai.Name, src)
+			path = tok.Text(ai.Path, src)
+			path = path[1 : len(path)-1]
+		}
+		imports = append(
+			imports, Import{ai.Path.Line(), name, path, nil},
+		)
+	}
+
+	return imports, nil
 }
 
 func bindImports(packages Packages) {
