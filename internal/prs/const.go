@@ -28,7 +28,7 @@ func (c Const) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 	return c.file.GetSymbol(name, kind)
 }
 
-// buildConst builds list of Consts based on list of ast.Const
+// buildConst builds list of Consts based on the list of ast.Const.
 func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
 	consts := make([]*Const, len(astConsts))
 	for _, ac := range astConsts {
