@@ -6,7 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
-// Inst represents element instantiation.
+// Inst struct represents functionality instantiation.
 type Inst struct {
 	base
 

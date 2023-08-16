@@ -1,6 +1,6 @@
 package prs
 
-// Prop represents element property.
+// Prop struct represents functionality property.
 type Prop struct {
 	LineNum uint32
 	Name    string

@@ -1,6 +1,6 @@
 package prs
 
-// Arg represents argument in the argument list.
+// Arg struct represents an argument in the argument list.
 type Arg struct {
 	HasName bool
 	Name    string
