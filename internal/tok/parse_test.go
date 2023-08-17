@@ -324,7 +324,7 @@ func TestParse(t *testing.T) {
 		},
 		{
 			22,
-			"abc.def",
+			"abc.Def",
 			[]Token{
 				QualIdent{start: 0, end: 6, line: 1, column: 1},
 				Eof{start: 7, end: 7, line: 1, column: 8},
@@ -332,7 +332,7 @@ func TestParse(t *testing.T) {
 		},
 		{
 			23,
-			"a-b.c-d.e",
+			"a-b.C-d.E",
 			[]Token{
 				Ident{start: 0, end: 0, line: 1, column: 1},
 				Sub{start: 1, end: 1, line: 1, column: 2},
@@ -453,6 +453,14 @@ func TestParseError(t *testing.T) {
 		{
 			18,
 			"Main bus\n\t\tc config", fmt.Errorf("2:1: multi indent increase"),
+		},
+		{
+			19,
+			"pkg.sym", fmt.Errorf("1:1: symbol name in qualified identifier must start with upper case letter"),
+		},
+		{
+			20,
+			"a-b.c", fmt.Errorf("1:3: symbol name in qualified identifier must start with upper case letter"),
 		},
 	}
 

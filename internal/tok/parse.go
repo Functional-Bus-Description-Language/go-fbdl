@@ -3,6 +3,7 @@ package tok
 import (
 	"bytes"
 	"fmt"
+	"unicode"
 )
 
 // Parsing context
@@ -780,12 +781,24 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 	return t, nil
 }
 
+// isValidQualifiedIdentifier returns false if symbol name in
+// qualified identifier does not start with upper case letter.
+func isValidQualifiedIdentifier(qi []byte) bool {
+	aux := bytes.Split(qi, []byte("."))
+	sym := aux[1]
+	if !unicode.IsUpper([]rune(string(sym))[0]) {
+		return false
+	}
+	return true
+}
+
 // TODO: Refactor, too complex, split into 2 (or more) functions.
 func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	var t Token
 	defer func() { c.i = t.End() + 1 }()
 	word, hasHyphen, hasDot := getWord(src, c.i)
 
+	qualIdentErrMsg := "%d:%d: symbol name in qualified identifier must start with upper case letter"
 	if hasHyphen && hasDot {
 		// This is for sure part of an expression
 		chunks := bytes.Split(word, []byte{'-'})
@@ -793,6 +806,9 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 			if bytes.Contains(chunk, []byte{'.'}) {
 				t = QualIdent{
 					start: c.i, end: c.i + len(chunk) - 1, line: c.line, column: c.col(c.i),
+				}
+				if !isValidQualifiedIdentifier(chunk) {
+					return t, fmt.Errorf(qualIdentErrMsg, c.line, c.col(c.i))
 				}
 			} else {
 				t = Ident{
@@ -811,6 +827,11 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	} else if hasDot {
 		// It is qualified identifier
 		t = QualIdent{start: c.i, end: c.i + len(word) - 1, line: c.line, column: c.col(c.i)}
+
+		if !isValidQualifiedIdentifier(word) {
+			return t, fmt.Errorf(qualIdentErrMsg, c.line, c.col(c.i))
+		}
+
 		return t, nil
 	}
 
