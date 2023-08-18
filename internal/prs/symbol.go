@@ -13,8 +13,10 @@ type Symbol interface {
 	Kind() SymbolKind
 	Line() int
 	Doc() string
+
 	setParent(s Searchable)
 	Parent() Searchable
+
 	setFile(f *File)
 	File() *File
 }
@@ -37,7 +39,6 @@ func (b *base) setParent(s Searchable) {
 	if b.parent != nil {
 		panic("should never happen")
 	}
-
 	b.parent = s
 }
 
@@ -45,6 +46,5 @@ func (b *base) setFile(f *File) {
 	if b.file != nil {
 		panic("should never happen")
 	}
-
 	b.file = f
 }
