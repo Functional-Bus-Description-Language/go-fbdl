@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"strings"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
@@ -37,10 +38,8 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Searchable) (Expr, error) {
 		expr, err = MakeReal(e, src)
 	case ast.String:
 		expr = MakeString(e, src)
-	/*
-		case ast.Time:
-			expr = MakeTime(e, src, s)
-	*/
+	case ast.Time:
+		expr, err = MakeTime(e, src, s)
 	case ast.UnaryExpr:
 		expr, err = MakeUnaryExpr(e, src, s)
 	case nil:
@@ -380,33 +379,28 @@ func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
 }
 */
 
-/*
 type Time struct {
-	v    Expr
+	v    Int
 	unit string
 }
 
 func MakeTime(e ast.Time, src []byte, s Searchable) (Time, error) {
 	txt := tok.Text(e.X, src)
 
-	intLiteral, err := MakeExpr(n.Child(0), s)
+	aux := strings.Fields(txt)
+	intLiteral := aux[0]
+	unit := aux[1]
+
+	x, err := strconv.ParseInt(intLiteral, 10, 64)
 	if err != nil {
 		return Time{}, fmt.Errorf("make time literal: integer literal: %v", err)
 	}
-	switch intLiteral.(type) {
-	case ZeroLiteral, DecimalLiteral, HexLiteral:
-		break
-	default:
-		return Time{}, fmt.Errorf("make time literal: invalid integer literal")
-	}
-	return Time{intLiteral, n.Child(1).Content()}, nil
+
+	return Time{Int{x}, unit}, nil
 }
 
 func (tim Time) Eval() (val.Value, error) {
-	v, err := tim.v.Eval()
-	if err != nil {
-		return val.Time{}, fmt.Errorf("time evaluation, cannot evaluate integer literal: %v", err)
-	}
+	v, _ := tim.v.Eval()
 
 	var t val.Time
 
@@ -424,7 +418,6 @@ func (tim Time) Eval() (val.Value, error) {
 	t.Normalize()
 	return t, nil
 }
-*/
 
 type UnaryOperator uint8
 
