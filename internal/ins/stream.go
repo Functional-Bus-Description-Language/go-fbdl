@@ -52,7 +52,7 @@ func applyStreamType(strm *elem.Stream, typ prs.Element) error {
 		if err != nil {
 			return fmt.Errorf(
 				"line %d: cannot instantiate element '%s': %v",
-				pe.LineNum(), elem.Name(e), err,
+				pe.Line(), elem.Name(e), err,
 			)
 		}
 	}

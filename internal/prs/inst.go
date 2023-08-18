@@ -84,7 +84,7 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	i := &Inst{}
 
-	i.lineNum = uint32(ai.Name.Line())
+	i.line = ai.Name.Line()
 	i.name = tok.Text(ai.Name, src)
 	i.doc = ai.Doc.Text(src)
 
@@ -117,7 +117,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	if util.IsBaseType(i.typ) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, i.typ); err != nil {
-				return nil, fmt.Errorf("line %d: %v", p.LineNum, err)
+				return nil, fmt.Errorf("line %d: %v", p.Line, err)
 			}
 
 			if err := checkPropConflict(i.typ, p, props[0:j]); err != nil {

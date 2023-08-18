@@ -13,7 +13,7 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 	for _, ap := range astBody.Props {
 		p := Prop{}
 
-		p.LineNum = uint32(ap.Name.Line())
+		p.Line = ap.Name.Line()
 		p.Name = tok.Text(ap.Name, src)
 		v, err := MakeExpr(ap.Value, src, parent)
 		if err != nil {

@@ -74,7 +74,7 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 func buildType(at ast.Type, src []byte) (*Type, error) {
 	t := &Type{}
 
-	t.lineNum = uint32(at.Name.Line())
+	t.line = at.Name.Line()
 	t.name = tok.Text(at.Name, src)
 	t.doc = at.Doc.Text(src)
 
@@ -113,7 +113,7 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	if util.IsBaseType(t.typ) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, t.typ); err != nil {
-				return nil, fmt.Errorf("line %d: %v", p.LineNum, err)
+				return nil, fmt.Errorf("line %d: %v", p.Line, err)
 			}
 
 			if err := checkPropConflict(t.typ, p, props[0:j]); err != nil {

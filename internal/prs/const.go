@@ -35,7 +35,7 @@ func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
 	for _, ac := range astConsts {
 		c := &Const{}
 
-		c.lineNum = uint32(ac.Name.Line())
+		c.line = ac.Name.Line()
 		c.name = tok.Text(ac.Name, src)
 		v, err := MakeExpr(ac.Value, src, c)
 		if err != nil {

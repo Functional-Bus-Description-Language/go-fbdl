@@ -45,7 +45,7 @@ func applyProcType(p *elem.Proc, typ prs.Element, diary *procDiary) error {
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.LineNum, err)
+			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
 		}
 
 		v, err := prop.Value.Eval()

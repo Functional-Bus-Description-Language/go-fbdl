@@ -9,13 +9,13 @@ func checkPropConflict(typ string, prop Prop, props PropContainer) error {
 
 	if w, ok := props.Get("width"); ok {
 		if prop.Name == "range" {
-			return fmt.Errorf(msg, prop.LineNum, "range", "width", w.LineNum)
+			return fmt.Errorf(msg, prop.Line, "range", "width", w.Line)
 		}
 	}
 
 	if r, ok := props.Get("range"); ok {
 		if prop.Name == "width" {
-			return fmt.Errorf(msg, prop.LineNum, "width", "range", r.LineNum)
+			return fmt.Errorf(msg, prop.Line, "width", "range", r.Line)
 		}
 	}
 

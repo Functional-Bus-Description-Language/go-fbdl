@@ -37,7 +37,7 @@ func setBusWidth(main prs.Symbol) error {
 	} else {
 		log.Fatalf(
 			"%s: line %d: main bus 'width' property must be of type 'integer'",
-			main.File().Path, prop.LineNum,
+			main.File().Path, prop.Line,
 		)
 	}
 
@@ -126,14 +126,14 @@ func insElement(pe prs.Element) elem.Element {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s', "+
 				"cannot start element instantiation from non base type '%s'",
-			pe.File().Path, pe.LineNum(), pe.Name(), typ,
+			pe.File().Path, pe.Line(), pe.Name(), typ,
 		)
 	}
 
 	if err != nil {
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s': %v",
-			pe.File().Path, pe.LineNum(), pe.Name(), err,
+			pe.File().Path, pe.Line(), pe.Name(), err,
 		)
 	}
 

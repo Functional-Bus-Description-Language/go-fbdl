@@ -11,7 +11,7 @@ const (
 type Symbol interface {
 	Name() string
 	Kind() SymbolKind
-	LineNum() uint32
+	Line() int
 	Doc() string
 	SetParent(s Searchable)
 	Parent() Searchable
@@ -20,15 +20,15 @@ type Symbol interface {
 }
 
 type base struct {
-	file    *File
-	lineNum uint32
-	name    string
-	doc     string
-	parent  Searchable
+	file   *File
+	line   int
+	name   string
+	doc    string
+	parent Searchable
 }
 
 func (b base) Name() string       { return b.name }
-func (b base) LineNum() uint32    { return b.lineNum }
+func (b base) Line() int          { return b.line }
 func (b base) Doc() string        { return b.doc }
 func (b base) Parent() Searchable { return b.parent }
 func (b base) File() *File        { return b.file }

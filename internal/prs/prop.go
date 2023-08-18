@@ -2,9 +2,9 @@ package prs
 
 // Prop struct represents functionality property.
 type Prop struct {
-	LineNum uint32
-	Name    string
-	Value   Expr
+	Line  int
+	Name  string
+	Value Expr
 }
 
 type PropContainer []Prop
