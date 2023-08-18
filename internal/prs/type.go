@@ -11,7 +11,7 @@ import (
 
 // Type represents type definition.
 type Type struct {
-	base
+	symbol
 
 	typ   string
 	count Expr

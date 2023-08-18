@@ -21,7 +21,7 @@ type Symbol interface {
 	File() *File
 }
 
-type base struct {
+type symbol struct {
 	file   *File
 	line   int
 	name   string
@@ -29,22 +29,22 @@ type base struct {
 	parent Searchable
 }
 
-func (b base) Name() string       { return b.name }
-func (b base) Line() int          { return b.line }
-func (b base) Doc() string        { return b.doc }
-func (b base) Parent() Searchable { return b.parent }
-func (b base) File() *File        { return b.file }
+func (s symbol) Name() string       { return s.name }
+func (s symbol) Line() int          { return s.line }
+func (s symbol) Doc() string        { return s.doc }
+func (s symbol) Parent() Searchable { return s.parent }
+func (s symbol) File() *File        { return s.file }
 
-func (b *base) setParent(s Searchable) {
-	if b.parent != nil {
+func (s *symbol) setParent(p Searchable) {
+	if s.parent != nil {
 		panic("should never happen")
 	}
-	b.parent = s
+	s.parent = p
 }
 
-func (b *base) setFile(f *File) {
-	if b.file != nil {
+func (s *symbol) setFile(f *File) {
+	if s.file != nil {
 		panic("should never happen")
 	}
-	b.file = f
+	s.file = f
 }

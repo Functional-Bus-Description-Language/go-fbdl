@@ -10,7 +10,7 @@ import (
 
 // Inst struct represents functionality instantiation.
 type Inst struct {
-	base
+	symbol
 
 	typ   string
 	count Expr

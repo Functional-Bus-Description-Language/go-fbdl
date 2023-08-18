@@ -9,7 +9,7 @@ import (
 
 // Const represents constant definition.
 type Const struct {
-	base
+	symbol
 	Value Expr
 }
 
