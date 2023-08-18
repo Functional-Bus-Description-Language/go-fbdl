@@ -34,7 +34,7 @@ func TestBuildInstSingleLine(t *testing.T) {
 }
 
 func TestBuildInstMultiLine(t *testing.T) {
-	toks, _ := tok.Parse([]byte(`B pkg.block_t(1, PI = 3.14)
+	toks, _ := tok.Parse([]byte(`B pkg.Block_t(1, PI = 3.14)
 	masters = 2; reset = "Sync"
 	const FOO = true
 	C config
@@ -44,8 +44,8 @@ func TestBuildInstMultiLine(t *testing.T) {
 		Name: toks[0].(tok.Ident),
 		Type: toks[1].(tok.QualIdent),
 		Args: []Arg{
-			Arg{Value: Int{toks[3].(tok.Int)}},
-			Arg{toks[5].(tok.Ident), Real{toks[7].(tok.Real)}},
+			Arg{nil, Int{toks[3].(tok.Int)}, toks[3].(tok.Int)},
+			Arg{toks[5].(tok.Ident), Real{toks[7].(tok.Real)}, toks[7].(tok.Real)},
 		},
 		Body: Body{
 			Consts: []Const{Const{Name: toks[20].(tok.Ident), Value: Bool{toks[22].(tok.Bool)}}},

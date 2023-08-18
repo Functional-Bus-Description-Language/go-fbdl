@@ -121,6 +121,11 @@ func TestBuildError(t *testing.T) {
 			"import\n\t1",
 			fmt.Errorf("2:2: unexpected integer, expected identifier or string"),
 		},
+		{
+			22,
+			"bus bus",
+			fmt.Errorf("1:1: unexpected bus, expected const, type, identifier, import or comment"),
+		},
 	}
 
 	for i, test := range tests {

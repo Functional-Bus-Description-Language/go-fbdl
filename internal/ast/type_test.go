@@ -40,8 +40,8 @@ func TestBuildTypeMultiLine(t *testing.T) {
 		Name: toks[1].(tok.Ident),
 		Type: toks[2].(tok.Ident),
 		Args: []Arg{
-			Arg{Value: Int{toks[4].(tok.Int)}},
-			Arg{toks[6].(tok.Ident), Int{toks[8].(tok.Int)}},
+			Arg{nil, Int{toks[4].(tok.Int)}, toks[4].(tok.Int)},
+			Arg{toks[6].(tok.Ident), Int{toks[8].(tok.Int)}, toks[8].(tok.Int)},
 		},
 		Body: Body{
 			Consts: []Const{

@@ -1,7 +1,6 @@
 package ast
 
 import (
-	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
@@ -58,7 +57,7 @@ func Build(src []byte) (File, error) {
 			typ, err = buildType(toks, &c)
 			f.Types = append(f.Types, typ)
 		default:
-			panic(fmt.Sprintf("%s: unhandled token %s", tok.Loc(t), t.Kind()))
+			return f, unexpected(t, "const, type, identifier, import or comment")
 		}
 
 		if err != nil {

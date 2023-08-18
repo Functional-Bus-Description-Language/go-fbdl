@@ -6,9 +6,11 @@ import (
 )
 
 // The Arg struct represents instantiation or type argument.
+// ValueFirstTok token might be useful to get argument location when Name is nil.
 type Arg struct {
-	Name  tok.Token // tok.Ident or nil
-	Value Expr
+	Name          tok.Token // tok.Ident or nil
+	Value         Expr
+	ValueFirstTok tok.Token
 }
 
 func buildArgList(toks []tok.Token, c *ctx) ([]Arg, error) {
@@ -43,6 +45,7 @@ tokenLoop:
 				state = Ass
 			default:
 				a.Name = nil
+				a.ValueFirstTok = toks[c.i]
 				expr, err := buildExpr(toks, c, nil)
 				if err != nil {
 					return nil, err
@@ -70,6 +73,7 @@ tokenLoop:
 				return nil, unexpected(t, ", or )")
 			}
 		case Val:
+			a.ValueFirstTok = toks[c.i]
 			expr, err := buildExpr(toks, c, nil)
 			if err != nil {
 				return nil, err
