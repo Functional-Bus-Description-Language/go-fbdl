@@ -63,7 +63,7 @@ func resolveArgs(symbol prs.Element) (map[string]prs.Expr, error) {
 	for i, p := range params {
 		if inPositionalArgs {
 			if i < len(args) {
-				argHasName = args[i].HasName
+				argHasName = args[i].Name != ""
 				argName = args[i].Name
 			} else {
 				inPositionalArgs = false

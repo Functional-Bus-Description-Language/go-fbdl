@@ -9,9 +9,8 @@ import (
 
 // Arg struct represents an argument in the argument list.
 type Arg struct {
-	HasName bool
-	Name    string
-	Value   Expr
+	Name  string
+	Value Expr
 }
 
 func buildArgList(astArgs []ast.Arg, src []byte, parent Searchable) ([]Arg, error) {
@@ -26,7 +25,6 @@ func buildArgList(astArgs []ast.Arg, src []byte, parent Searchable) ([]Arg, erro
 		a := Arg{}
 
 		if aa.Name != nil {
-			a.HasName = true
 			name := tok.Text(aa.Name, src)
 			if names[name] {
 				return nil, fmt.Errorf(
@@ -50,14 +48,14 @@ func buildArgList(astArgs []ast.Arg, src []byte, parent Searchable) ([]Arg, erro
 	// Check whether arguments without name precede arguments with name.
 	withName := false
 	for i, a := range args {
-		if withName && !a.HasName {
+		if withName && a.Name == "" {
 			return nil, fmt.Errorf(
 				"%s: arguments without name must precede the ones with name",
 				tok.Loc(astArgs[i].ValueFirstTok),
 			)
 		}
 
-		if a.HasName {
+		if a.Name != "" {
 			withName = true
 		}
 	}
