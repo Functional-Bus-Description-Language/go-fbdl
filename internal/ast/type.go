@@ -108,6 +108,8 @@ func buildType(toks []tok.Token, c *ctx) (Type, error) {
 			}
 			typ.Body = body
 		}
+	case tok.Eof:
+		// Do nothing.
 	default:
 		return typ, unexpected(t, "; or newline")
 	}

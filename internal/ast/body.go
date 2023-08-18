@@ -10,6 +10,7 @@ type Body struct {
 	Consts []Const
 	Insts  []Inst
 	Props  []Prop
+	Types  []Type
 }
 
 func (b Body) eq(b2 Body) bool {
@@ -34,6 +35,11 @@ func (b Body) eq(b2 Body) bool {
 			return false
 		}
 	}
+	for i := range b.Types {
+		if !b.Types[i].eq(b2.Types[i]) {
+			return false
+		}
+	}
 
 	return true
 }
@@ -46,6 +52,7 @@ func buildBody(toks []tok.Token, c *ctx) (Body, error) {
 		doc    Doc
 		ins    Inst
 		props  []Prop
+		typ    Type
 	)
 
 	for {
@@ -77,6 +84,9 @@ func buildBody(toks []tok.Token, c *ctx) (Body, error) {
 			if props != nil {
 				body.Props = append(body.Props, props...)
 			}
+		case tok.Type:
+			typ, err = buildType(toks, c)
+			body.Types = append(body.Types, typ)
 		default:
 			panic(fmt.Sprintf("%s: unhandled token %s", tok.Loc(t), t.Kind()))
 		}

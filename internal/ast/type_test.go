@@ -34,7 +34,8 @@ func TestBuildTypeSingleLine(t *testing.T) {
 func TestBuildTypeMultiLine(t *testing.T) {
 	toks, _ := tok.Parse([]byte(`type foo_t bar(1, N = 2)
 	const A = "a"
-	init-value = A`),
+	init-value = A
+	type cfg_t config`),
 	)
 	want := Type{
 		Name: toks[1].(tok.Ident),
@@ -53,6 +54,7 @@ func TestBuildTypeMultiLine(t *testing.T) {
 					Value: Ident{toks[19].(tok.Ident)},
 				},
 			},
+			Types: []Type{Type{Name: toks[22].(tok.Ident), Type: toks[23].(tok.Config)}},
 		},
 	}
 
@@ -61,7 +63,7 @@ func TestBuildTypeMultiLine(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 20 {
+	if c.i != 24 {
 		t.Fatalf("c.i = %d", c.i)
 	}
 
