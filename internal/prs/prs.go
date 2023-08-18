@@ -113,7 +113,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		if _, exist := file.Imports[i.Name]; exist {
 			log.Fatalf(
 				"%s: line %d: at least two packages imported as '%s'",
-				path, i.LineNum, i.Name,
+				path, i.Line, i.Name,
 			)
 		}
 		file.Imports[i.Name] = i

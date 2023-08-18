@@ -10,10 +10,10 @@ import (
 )
 
 type Import struct {
-	LineNum int
-	Name    string
-	Path    string
-	Pkg     *Package
+	Line int
+	Name string
+	Path string
+	Pkg  *Package
 }
 
 // buildImports builds list of file Imports based on the list of ast.Import.
