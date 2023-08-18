@@ -11,7 +11,6 @@ import (
 type Const struct {
 	base
 	Value Expr
-	doc   string
 }
 
 func (c Const) Kind() SymbolKind { return ConstDef }
