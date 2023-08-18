@@ -25,23 +25,25 @@ func (packages Packages) GetMatching(path string) []*Package {
 }
 
 type Package struct {
-	Name        string
-	Path        string
-	fileMutex   sync.Mutex
-	Files       []*File
-	symbolMutex sync.Mutex
-	Symbols     SymbolContainer
+	Name string
+	Path string
+
+	filesMutex sync.Mutex
+	Files      []*File
+
+	symbolsMutex sync.Mutex
+	Symbols      SymbolContainer
 }
 
 func (p *Package) AddFile(f *File) {
-	p.fileMutex.Lock()
+	p.filesMutex.Lock()
 	p.Files = append(p.Files, f)
-	p.fileMutex.Unlock()
+	p.filesMutex.Unlock()
 }
 
 func (p *Package) AddSymbol(s Symbol) error {
-	p.symbolMutex.Lock()
-	defer p.symbolMutex.Unlock()
+	p.symbolsMutex.Lock()
+	defer p.symbolsMutex.Unlock()
 
 	if !p.Symbols.Add(s) {
 		msg := `symbol '%s' defined at least twice in package '%s', first occurence line %d, second line %d`
