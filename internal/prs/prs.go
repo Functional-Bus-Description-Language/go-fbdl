@@ -94,7 +94,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	astFile, err := ast.Build(src)
 	if err != nil {
-		log.Fatalf("%s:%v", err)
+		log.Fatalf("%s:%s", path, err)
 	}
 
 	file := File{
@@ -130,6 +130,38 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 			log.Fatalf("%s:%v", path, err)
 		}
 		err = pkg.AddSymbol(c)
+		if err != nil {
+			log.Fatalf("%s:%v", path, err)
+		}
+	}
+
+	// Handle type definitions
+	types, err := buildTypes(astFile.Types, src)
+	if err != nil {
+		log.Fatalf("%s:%v", path, err)
+	}
+	for _, t := range types {
+		err = file.AddSymbol(t)
+		if err != nil {
+			log.Fatalf("%s:%v", path, err)
+		}
+		err = pkg.AddSymbol(t)
+		if err != nil {
+			log.Fatalf("%s:%v", path, err)
+		}
+	}
+
+	// Handle instantiations
+	insts, err := buildInsts(astFile.Insts, src)
+	if err != nil {
+		log.Fatalf("%s:%v", path, err)
+	}
+	for _, i := range insts {
+		err = file.AddSymbol(i)
+		if err != nil {
+			log.Fatalf("%s:%v", path, err)
+		}
+		err = pkg.AddSymbol(i)
 		if err != nil {
 			log.Fatalf("%s:%v", path, err)
 		}

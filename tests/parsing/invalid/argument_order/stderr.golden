@@ -1,1 +1,1 @@
-bus.fbd: line 4: 'Main' instantiation: arguments without name must precede the ones with name
+bus.fbd:4:18: arguments without name must precede the ones with name

@@ -384,11 +384,11 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			1,
-			";\n", fmt.Errorf("1:1: extra ';' at the end of line"),
+			";\n", fmt.Errorf("1:1: extra ';' at line end"),
 		},
 		{
 			2,
-			" ; \n", fmt.Errorf("1:2: extra ';' at the end of line"),
+			" ; \n", fmt.Errorf("1:2: extra ';' at line end"),
 		},
 		{
 			3,

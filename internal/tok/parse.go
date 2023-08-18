@@ -286,7 +286,7 @@ func parseTab(c *ctx, src []byte, s *[]Token) error {
 func parseNewline(c *ctx, src []byte, s *[]Token) error {
 	if t, ok := lastToken(*s); ok {
 		if _, ok := t.(Semicolon); ok {
-			return fmt.Errorf("%s: extra ';' at the end of line", Loc(t))
+			return fmt.Errorf("%s: extra ';' at line end", Loc(t))
 		}
 	}
 
@@ -786,10 +786,7 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 func isValidQualifiedIdentifier(qi []byte) bool {
 	aux := bytes.Split(qi, []byte("."))
 	sym := aux[1]
-	if !unicode.IsUpper([]rune(string(sym))[0]) {
-		return false
-	}
-	return true
+	return unicode.IsUpper([]rune(string(sym))[0])
 }
 
 // TODO: Refactor, too complex, split into 2 (or more) functions.

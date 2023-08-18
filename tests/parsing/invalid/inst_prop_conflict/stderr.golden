@@ -1,1 +1,1 @@
-bus.fbd: line 1: 'Main' instantiation: element body: line 2: 'Cfg' instantiation: line 4: cannot set 'range' property, because 'width' property is already set in line 3
+bus.fbd:line 4: cannot set 'range' property, because 'width' property is already set in line 3

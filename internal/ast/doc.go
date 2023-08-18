@@ -42,7 +42,7 @@ func (d Doc) Text(src []byte) string {
 		}
 
 		if len(t) > 2 {
-			text += t[start:len(t)]
+			text += t[start:]
 		}
 
 		if i < len(d.Lines)-1 {

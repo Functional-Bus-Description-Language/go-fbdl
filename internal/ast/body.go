@@ -55,6 +55,7 @@ func buildBody(toks []tok.Token, c *ctx) (Body, error) {
 		typ    Type
 	)
 
+tokenLoop:
 	for {
 		if _, ok := toks[c.i].(tok.Eof); ok {
 			break
@@ -87,6 +88,9 @@ func buildBody(toks []tok.Token, c *ctx) (Body, error) {
 		case tok.Type:
 			typ, err = buildType(toks, c)
 			body.Types = append(body.Types, typ)
+		case tok.Dedent:
+			c.i++
+			break tokenLoop
 		default:
 			panic(fmt.Sprintf("%s: unhandled token %s", tok.Loc(t), t.Kind()))
 		}

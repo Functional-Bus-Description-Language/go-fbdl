@@ -40,13 +40,16 @@ func Build(src []byte) (File, error) {
 		case tok.Const:
 			consts, err = buildConst(toks, &c)
 			if len(consts) > 0 {
-				if doc.endLine() == consts[0].Name.Line()+1 {
+				if doc.endLine() == consts[0].Name.Line()-1 {
 					consts[0].Doc = doc
 				}
 				f.Consts = append(f.Consts, consts...)
 			}
 		case tok.Ident:
 			ins, err = buildInst(toks, &c)
+			if doc.endLine() == ins.Name.Line()-1 {
+				ins.Doc = doc
+			}
 			f.Insts = append(f.Insts, ins)
 		case tok.Import:
 			imps, err = buildImport(toks, &c)

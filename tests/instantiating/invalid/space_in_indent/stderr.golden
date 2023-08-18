@@ -1,1 +1,1 @@
-bus.fbd: line 1: space character ' ' is not allowed in indent
+bus.fbd:2:1: space character ' ' not allowed for indent

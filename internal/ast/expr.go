@@ -51,6 +51,10 @@ type (
 		X tok.String
 	}
 
+	Time struct {
+		X tok.Time
+	}
+
 	UnaryExpr struct {
 		Op tok.Token
 		X  Expr
@@ -70,6 +74,7 @@ func (i Ident) exprNode()       {}
 func (i Int) exprNode()         {}
 func (r Real) exprNode()        {}
 func (s String) exprNode()      {}
+func (t Time) exprNode()        {}
 func (ue UnaryExpr) exprNode()  {}
 func (pe ParenExpr) exprNode()  {}
 
@@ -116,6 +121,8 @@ func buildExpr(toks []tok.Token, c *ctx, leftOp tok.Operator) (Expr, error) {
 		expr, err = buildReal(toks, c)
 	case tok.String:
 		expr, err = buildString(toks, c)
+	case tok.Time:
+		expr, err = buildTime(toks, c)
 	case tok.BitString:
 		expr, err = buildBitString(toks, c)
 	case tok.LeftParen:
@@ -182,6 +189,12 @@ func buildString(toks []tok.Token, c *ctx) (String, error) {
 	s := String{toks[c.i].(tok.String)}
 	c.i++
 	return s, nil
+}
+
+func buildTime(toks []tok.Token, c *ctx) (Time, error) {
+	t := Time{toks[c.i].(tok.Time)}
+	c.i++
+	return t, nil
 }
 
 func buildBitString(toks []tok.Token, c *ctx) (BitString, error) {

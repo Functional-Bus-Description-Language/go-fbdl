@@ -3,6 +3,8 @@ package prs
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
@@ -10,9 +12,8 @@ import (
 type Inst struct {
 	base
 
-	typ     string
-	isArray bool
-	count   Expr
+	typ   string
+	count Expr
 
 	props   PropContainer
 	symbols SymbolContainer
@@ -23,7 +24,7 @@ type Inst struct {
 
 func (i Inst) Kind() SymbolKind { return ElemInst }
 func (i Inst) Type() string     { return i.typ }
-func (i Inst) IsArray() bool    { return i.isArray }
+func (i Inst) IsArray() bool    { return i.count != nil }
 func (i Inst) Count() Expr      { return i.count }
 
 func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
@@ -65,27 +66,71 @@ func (i Inst) Params() []Param {
 	panic("should never happen, element definition cannot have parameters")
 }
 
-// validate checks whether given element definition is valid.
-// For example, whether given properties are valid for given element type.
-func (i Inst) validate() error {
-	if !util.IsBaseType(i.typ) {
-		return nil
-	}
+// buildInsts builds list of Insts based on the list of ast.Inst.
+func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
+	insts := make([]*Inst, 0, len(astInsts))
 
-	// Checks specific for base type only.
-	if len(i.args) != 0 {
-		return fmt.Errorf("base type '%s' does not accept arguments", i.typ)
-	}
-
-	for j, p := range i.props {
-		if err := util.IsValidProperty(p.Name, i.typ); err != nil {
-			return fmt.Errorf("line %d: %v", p.LineNum, err)
+	for _, ai := range astInsts {
+		i, err := buildInst(ai, src)
+		if err != nil {
+			return nil, err
 		}
-
-		if err := checkPropConflict(i.typ, p, i.props[0:j]); err != nil {
-			return fmt.Errorf("%v", err)
-		}
+		insts = append(insts, i)
 	}
 
-	return nil
+	return insts, nil
+}
+
+func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
+	i := &Inst{}
+
+	i.lineNum = uint32(ai.Name.Line())
+	i.name = tok.Text(ai.Name, src)
+	i.doc = ai.Doc.Text(src)
+
+	v, err := MakeExpr(ai.Count, src, i)
+	if err != nil {
+		return nil, err
+	}
+	i.count = v
+
+	i.typ = tok.Text(ai.Type, src)
+
+	args, err := buildArgList(ai.Args, src, i)
+	if err != nil {
+		return nil, err
+	}
+	i.args = args
+
+	if util.IsBaseType(i.typ) && len(i.args) > 0 {
+		return nil, fmt.Errorf(
+			"%s: base type '%s' does not accept argument list",
+			tok.Loc(ai.Type), i.typ,
+		)
+	}
+
+	props, syms, err := buildBody(ai.Body, src, i)
+	if err != nil {
+		return nil, err
+	}
+
+	if util.IsBaseType(i.typ) {
+		for j, p := range props {
+			if err := util.IsValidProperty(p.Name, i.typ); err != nil {
+				return nil, fmt.Errorf("line %d: %v", p.LineNum, err)
+			}
+
+			if err := checkPropConflict(i.typ, p, props[0:j]); err != nil {
+				return nil, fmt.Errorf("%v", err)
+			}
+		}
+	}
+	i.props = props
+
+	for _, s := range syms {
+		s.SetParent(i)
+	}
+	i.symbols = syms
+
+	return i, nil
 }

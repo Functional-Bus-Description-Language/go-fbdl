@@ -1,1 +1,1 @@
-bus.fbd: line 1: base type 'mask' does not accept argument list
+bus.fbd:1:14: base type 'mask' does not accept argument list

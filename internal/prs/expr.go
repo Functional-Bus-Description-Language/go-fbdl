@@ -37,8 +37,14 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Searchable) (Expr, error) {
 		expr, err = MakeReal(e, src)
 	case ast.String:
 		expr = MakeString(e, src)
+	/*
+		case ast.Time:
+			expr = MakeTime(e, src, s)
+	*/
 	case ast.UnaryExpr:
 		expr, err = MakeUnaryExpr(e, src, s)
+	case nil:
+		return nil, nil
 	default:
 		panic(fmt.Sprintf("unimplemented type %T", astExpr))
 	}
@@ -137,7 +143,7 @@ func MakeBinaryExpr(e ast.BinaryExpr, src []byte, s Searchable) (BinaryExpr, err
 	case ">>":
 		op = RightShift
 	default:
-		return BinaryExpr{}, fmt.Errorf("make binary expression: invalid operator %s", op)
+		return BinaryExpr{}, fmt.Errorf("make binary expression: invalid operator %s", text)
 	}
 
 	return BinaryExpr{x: x, op: op, y: y}, nil
@@ -195,7 +201,7 @@ func MakeCall(e ast.Call, src []byte, s Searchable) (Call, error) {
 
 	err := assertCall(c)
 	if err != nil {
-		return c, fmt.Errorf("make call: %v", err)
+		return c, fmt.Errorf("%s: %v", tok.Loc(e.Name), err)
 	}
 
 	return c, nil
@@ -317,7 +323,8 @@ func (s String) Eval() (val.Value, error) {
 }
 
 func MakeString(e ast.String, src []byte) String {
-	return String{x: tok.Text(e.X, src)}
+	txt := tok.Text(e.X, src)
+	return String{x: txt[1 : len(txt)-1]}
 }
 
 /*
@@ -374,34 +381,36 @@ func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
 */
 
 /*
-type TimeLiteral struct {
+type Time struct {
 	v    Expr
 	unit string
 }
 
-func MakeTimeLiteral(n ts.Node, s Searchable) (TimeLiteral, error) {
+func MakeTime(e ast.Time, src []byte, s Searchable) (Time, error) {
+	txt := tok.Text(e.X, src)
+
 	intLiteral, err := MakeExpr(n.Child(0), s)
 	if err != nil {
-		return TimeLiteral{}, fmt.Errorf("make time literal: integer literal: %v", err)
+		return Time{}, fmt.Errorf("make time literal: integer literal: %v", err)
 	}
 	switch intLiteral.(type) {
 	case ZeroLiteral, DecimalLiteral, HexLiteral:
 		break
 	default:
-		return TimeLiteral{}, fmt.Errorf("make time literal: invalid integer literal")
+		return Time{}, fmt.Errorf("make time literal: invalid integer literal")
 	}
-	return TimeLiteral{intLiteral, n.Child(1).Content()}, nil
+	return Time{intLiteral, n.Child(1).Content()}, nil
 }
 
-func (tl TimeLiteral) Eval() (val.Value, error) {
-	v, err := tl.v.Eval()
+func (tim Time) Eval() (val.Value, error) {
+	v, err := tim.v.Eval()
 	if err != nil {
 		return val.Time{}, fmt.Errorf("time evaluation, cannot evaluate integer literal: %v", err)
 	}
 
 	var t val.Time
 
-	switch tl.unit {
+	switch tim.unit {
 	case "s":
 		t = val.Time{S: int64(v.(val.Int)), Ns: 0}
 	case "ms":
@@ -457,7 +466,7 @@ func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Searchable) (UnaryExpr, error)
 	case "-":
 		op = UnaryMinus
 	default:
-		return UnaryExpr{}, fmt.Errorf("make unary expression: invalid operator %s", op)
+		return UnaryExpr{}, fmt.Errorf("make unary expression: invalid operator %s", text)
 	}
 
 	x, err := MakeExpr(e.X, src, s)

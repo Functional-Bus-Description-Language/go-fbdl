@@ -1,1 +1,1 @@
-bus.fbd: line 2: extra ';' at end of line
+bus.fbd:2:37: extra ';' at line end

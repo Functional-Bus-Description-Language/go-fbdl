@@ -30,7 +30,7 @@ func (c Const) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 
 // buildConst builds list of Consts based on the list of ast.Const.
 func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
-	consts := make([]*Const, len(astConsts))
+	consts := make([]*Const, 0, len(astConsts))
 
 	for _, ac := range astConsts {
 		c := &Const{}

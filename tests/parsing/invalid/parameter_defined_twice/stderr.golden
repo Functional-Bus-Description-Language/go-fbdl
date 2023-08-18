@@ -1,1 +1,1 @@
-bus.fbd: line 1: 'my_mask' type definition: parameter 'A' defined at least twice
+bus.fbd:1:17: redeclaration of 'A' parameter

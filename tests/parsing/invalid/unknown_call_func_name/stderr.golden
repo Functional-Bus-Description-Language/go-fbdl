@@ -1,1 +1,1 @@
-bus.fbd: line 1: 'Main' instantiation: element body: line 2: 'c' instantiation: line 2: 'width' property assignment: make primary expression: make call: unknown function 'foo'
+bus.fbd:2:20: unknown function 'foo'
