@@ -128,7 +128,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	i.props = props
 
 	for _, s := range syms {
-		s.SetParent(i)
+		s.setParent(i)
 	}
 	i.symbols = syms
 

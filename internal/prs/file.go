@@ -20,7 +20,7 @@ func (f *File) AddSymbol(s Symbol) error {
 		first, _ := f.Symbols.GetByName(name)
 		return fmt.Errorf(msg, s.Line(), name, first.Line())
 	}
-	s.SetFile(f)
+	s.setFile(f)
 
 	return nil
 }

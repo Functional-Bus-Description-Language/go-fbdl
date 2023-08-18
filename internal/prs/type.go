@@ -124,7 +124,7 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	t.props = props
 
 	for _, s := range syms {
-		s.SetParent(t)
+		s.setParent(t)
 	}
 	t.symbols = syms
 
