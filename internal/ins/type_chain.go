@@ -4,10 +4,10 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 )
 
-func typeChainIter(typeChain []prs.Element) func() (prs.Element, bool) {
+func typeChainIter(typeChain []prs.Functionality) func() (prs.Functionality, bool) {
 	tc := typeChain
 	i := 0
-	return func() (prs.Element, bool) {
+	return func() (prs.Functionality, bool) {
 		if i == len(tc) {
 			return nil, false
 		}

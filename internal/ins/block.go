@@ -13,7 +13,7 @@ import (
 	"sort"
 )
 
-func insBlock(typeChain []prs.Element) (*elem.Block, error) {
+func insBlock(typeChain []prs.Functionality) (*elem.Block, error) {
 	typeChainStr := fmt.Sprintf("debug: instantiating block, type chain: %s", typeChain[0].Name())
 	for i := 1; i < len(typeChain); i++ {
 		typeChainStr = fmt.Sprintf("%s -> %s", typeChainStr, typeChain[i].Name())
@@ -49,7 +49,7 @@ func insBlock(typeChain []prs.Element) (*elem.Block, error) {
 	return &blk, nil
 }
 
-func applyBlockType(blk *elem.Block, typ prs.Element) error {
+func applyBlockType(blk *elem.Block, typ prs.Functionality) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "bus"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -106,7 +106,7 @@ func applyBlockType(blk *elem.Block, typ prs.Element) error {
 			continue
 		}
 
-		e := insElement(s.(prs.Element))
+		e := insElement(s.(prs.Functionality))
 
 		if !util.IsValidInnerType(elem.Type(e), "block") {
 			return fmt.Errorf(

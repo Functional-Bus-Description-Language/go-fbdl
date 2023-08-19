@@ -11,7 +11,7 @@ const propAlreadySetMsg string = "cannot set property '%s', property is already 
 const invalidInnerTypeMsg string = "element '%s' of base type '%s' cannot be instantiated in element of base type '%s'"
 const elemWithNameAlreadyInstMsg string = "cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types"
 
-func makeElem(typeChain []prs.Element) (elem.Elem, error) {
+func makeElem(typeChain []prs.Functionality) (elem.Elem, error) {
 	// Instantiation is always the last one in the type chain.
 	inst := typeChain[len(typeChain)-1]
 

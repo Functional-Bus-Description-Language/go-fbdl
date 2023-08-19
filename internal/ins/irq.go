@@ -21,7 +21,7 @@ type irqDiary struct {
 	outTriggerSet     bool
 }
 
-func insIrq(typeChain []prs.Element) (*elem.Irq, error) {
+func insIrq(typeChain []prs.Functionality) (*elem.Irq, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -52,7 +52,7 @@ func insIrq(typeChain []prs.Element) (*elem.Irq, error) {
 	return &irq, nil
 }
 
-func applyIrqType(irq *elem.Irq, typ prs.Element, diary *irqDiary) error {
+func applyIrqType(irq *elem.Irq, typ prs.Functionality, diary *irqDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "irq"); err != nil {
 			return fmt.Errorf(": %v", err)

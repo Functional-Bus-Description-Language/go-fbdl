@@ -21,7 +21,7 @@ type maskDiary struct {
 	widthSet    bool
 }
 
-func insMask(typeChain []prs.Element) (*elem.Mask, error) {
+func insMask(typeChain []prs.Functionality) (*elem.Mask, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -52,7 +52,7 @@ func insMask(typeChain []prs.Element) (*elem.Mask, error) {
 	return &mask, nil
 }
 
-func applyMaskType(mask *elem.Mask, typ prs.Element, diary *maskDiary) error {
+func applyMaskType(mask *elem.Mask, typ prs.Functionality, diary *maskDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "mask"); err != nil {
 			return fmt.Errorf(": %v", err)

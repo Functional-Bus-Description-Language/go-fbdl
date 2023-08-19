@@ -8,7 +8,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
 )
 
-func insStream(typeChain []prs.Element) (*elem.Stream, error) {
+func insStream(typeChain []prs.Functionality) (*elem.Stream, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -31,7 +31,7 @@ func insStream(typeChain []prs.Element) (*elem.Stream, error) {
 	return &stream, nil
 }
 
-func applyStreamType(strm *elem.Stream, typ prs.Element) error {
+func applyStreamType(strm *elem.Stream, typ prs.Functionality) error {
 	for _, s := range typ.Symbols() {
 		pe, ok := s.(*prs.Inst)
 		if !ok {

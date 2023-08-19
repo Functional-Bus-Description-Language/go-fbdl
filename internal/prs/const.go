@@ -17,7 +17,7 @@ func (c Const) Kind() SymbolKind { return ConstDef }
 
 func (c Const) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 	if strings.Contains(name, ".") {
-		panic("To be implemented")
+		panic("unimplemented")
 	}
 
 	if c.parent != nil {

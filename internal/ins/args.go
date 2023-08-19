@@ -23,7 +23,7 @@ func resolveArgLists(packages prs.Packages) error {
 func resolveArgListsInSymbols(symbols prs.SymbolContainer) error {
 	for _, s := range symbols {
 		name := s.Name()
-		e, ok := s.(prs.Element)
+		e, ok := s.(prs.Functionality)
 		if !ok {
 			continue
 		}
@@ -45,7 +45,7 @@ func resolveArgListsInSymbols(symbols prs.SymbolContainer) error {
 	return nil
 }
 
-func resolveArgs(symbol prs.Element) (map[string]prs.Expr, error) {
+func resolveArgs(symbol prs.Functionality) (map[string]prs.Expr, error) {
 	var err error
 	args := symbol.Args()
 	resolvedArgs := make(map[string]prs.Expr)
@@ -56,7 +56,7 @@ func resolveArgs(symbol prs.Element) (map[string]prs.Expr, error) {
 		return nil, fmt.Errorf("cannot get symbol '%s' for element type: %v", symbol.Type(), err)
 	}
 
-	params := typeSymbol.(prs.Element).Params()
+	params := typeSymbol.(prs.Functionality).Params()
 
 	var argName string
 	var argHasName bool

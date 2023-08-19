@@ -69,7 +69,7 @@ func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[strin
 		for _, pkg := range pkgs {
 			for _, symbol := range pkg.Symbols {
 				name := symbol.Name()
-				prsElem, ok := symbol.(prs.Element)
+				prsElem, ok := symbol.(prs.Functionality)
 				if !ok {
 					continue
 				}
@@ -92,7 +92,7 @@ func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[strin
 	return mainBus, pkgs, nil
 }
 
-func insElement(pe prs.Element) elem.Element {
+func insElement(pe prs.Functionality) elem.Element {
 	typeChain := resolveToBaseType(pe)
 
 	var e elem.Element
@@ -140,8 +140,8 @@ func insElement(pe prs.Element) elem.Element {
 	return e
 }
 
-func resolveToBaseType(e prs.Element) []prs.Element {
-	typeChain := []prs.Element{}
+func resolveToBaseType(e prs.Functionality) []prs.Functionality {
+	typeChain := []prs.Functionality{}
 
 	if !util.IsBaseType(e.Type()) {
 		var s prs.Symbol
@@ -154,7 +154,7 @@ func resolveToBaseType(e prs.Element) []prs.Element {
 		if err != nil {
 			log.Fatalf("cannot get symbol '%s': %v", e.Type(), err)
 		}
-		type_elem := s.(prs.Element)
+		type_elem := s.(prs.Functionality)
 
 		typeChain = append(typeChain, resolveToBaseType(type_elem)...)
 	}

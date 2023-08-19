@@ -13,7 +13,7 @@ type returnDiary struct {
 	widthSet  bool
 }
 
-func insReturn(typeChain []prs.Element) (*elem.Return, error) {
+func insReturn(typeChain []prs.Functionality) (*elem.Return, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -40,7 +40,7 @@ func insReturn(typeChain []prs.Element) (*elem.Return, error) {
 	return &ret, nil
 }
 
-func applyReturnType(ret *elem.Return, typ prs.Element, diary *returnDiary) error {
+func applyReturnType(ret *elem.Return, typ prs.Functionality, diary *returnDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "return"); err != nil {
 			return fmt.Errorf(": %v", err)

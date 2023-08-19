@@ -22,7 +22,7 @@ type configDiary struct {
 	widthSet    bool
 }
 
-func insConfig(typeChain []prs.Element) (*elem.Config, error) {
+func insConfig(typeChain []prs.Functionality) (*elem.Config, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func insConfig(typeChain []prs.Element) (*elem.Config, error) {
 	return &cfg, nil
 }
 
-func applyConfigType(cfg *elem.Config, typ prs.Element, diary *configDiary) error {
+func applyConfigType(cfg *elem.Config, typ prs.Functionality, diary *configDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "config"); err != nil {
 			return fmt.Errorf(": %v", err)

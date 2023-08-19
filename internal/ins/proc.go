@@ -14,7 +14,7 @@ type procDiary struct {
 	delaySet bool
 }
 
-func insProc(typeChain []prs.Element) (*elem.Proc, error) {
+func insProc(typeChain []prs.Functionality) (*elem.Proc, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -39,7 +39,7 @@ func insProc(typeChain []prs.Element) (*elem.Proc, error) {
 	return &proc, nil
 }
 
-func applyProcType(p *elem.Proc, typ prs.Element, diary *procDiary) error {
+func applyProcType(p *elem.Proc, typ prs.Functionality, diary *procDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "proc"); err != nil {
 			return fmt.Errorf(": %v", err)

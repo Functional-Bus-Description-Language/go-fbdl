@@ -20,7 +20,7 @@ type staticDiary struct {
 	widthSet    bool
 }
 
-func insStatic(typeChain []prs.Element) (*elem.Static, error) {
+func insStatic(typeChain []prs.Functionality) (*elem.Static, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -51,7 +51,7 @@ func insStatic(typeChain []prs.Element) (*elem.Static, error) {
 	return &st, nil
 }
 
-func applyStaticType(st *elem.Static, typ prs.Element, diary *staticDiary) error {
+func applyStaticType(st *elem.Static, typ prs.Functionality, diary *staticDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "static"); err != nil {
 			return fmt.Errorf(": %v", err)

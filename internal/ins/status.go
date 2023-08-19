@@ -17,7 +17,7 @@ type statusDiary struct {
 	widthSet   bool
 }
 
-func insStatus(typeChain []prs.Element) (*elem.Status, error) {
+func insStatus(typeChain []prs.Functionality) (*elem.Status, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -52,7 +52,7 @@ func insStatus(typeChain []prs.Element) (*elem.Status, error) {
 	return &st, nil
 }
 
-func applyStatusType(st *elem.Status, typ prs.Element, diary *statusDiary) error {
+func applyStatusType(st *elem.Status, typ prs.Functionality, diary *statusDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "status"); err != nil {
 			return fmt.Errorf(": %v", err)

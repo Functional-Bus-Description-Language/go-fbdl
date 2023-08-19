@@ -16,7 +16,7 @@ type memDiary struct {
 	widthSet           bool
 }
 
-func insMemory(typeChain []prs.Element) (*elem.Memory, error) {
+func insMemory(typeChain []prs.Functionality) (*elem.Memory, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -46,7 +46,7 @@ func insMemory(typeChain []prs.Element) (*elem.Memory, error) {
 	return &mem, nil
 }
 
-func applyMemoryType(mem *elem.Memory, typ prs.Element, diary *memDiary) error {
+func applyMemoryType(mem *elem.Memory, typ prs.Functionality, diary *memDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "memory"); err != nil {
 			return fmt.Errorf(": %v", err)

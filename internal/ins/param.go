@@ -15,7 +15,7 @@ type paramDiary struct {
 	widthSet  bool
 }
 
-func insParam(typeChain []prs.Element) (*elem.Param, error) {
+func insParam(typeChain []prs.Functionality) (*elem.Param, error) {
 	e, err := makeElem(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -42,7 +42,7 @@ func insParam(typeChain []prs.Element) (*elem.Param, error) {
 	return &param, nil
 }
 
-func applyParamType(param *elem.Param, typ prs.Element, diary *paramDiary) error {
+func applyParamType(param *elem.Param, typ prs.Functionality, diary *paramDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "param"); err != nil {
 			return fmt.Errorf(": %v", err)
