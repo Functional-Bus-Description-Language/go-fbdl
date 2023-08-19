@@ -4,21 +4,21 @@ package reg
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 type GroupStatusArraySameSizesSingle struct {
 	name     string
-	statuses []*elem.Status
+	statuses []*fnStatus
 }
 
 func (g *GroupStatusArraySameSizesSingle) Name() string             { return g.name }
-func (g *GroupStatusArraySameSizesSingle) Statuses() []*elem.Status { return g.statuses }
+func (g *GroupStatusArraySameSizesSingle) Statuses() []*fnStatus { return g.statuses }
 
-func makeGroupStatusArraySameSizesSingle(insGrp *ins.Group, addr int64) (elem.Group, int64) {
+func makeGroupStatusArraySameSizesSingle(insGrp *ins.Group, addr int64) (fnGroup, int64) {
 	grp := GroupStatusArraySameSizesSingle{
 		name:     insGrp.Name,
-		statuses: []*elem.Status{},
+		statuses: []*fnStatus{},
 	}
 
 	startBit := int64(0)
@@ -32,7 +32,7 @@ func makeGroupStatusArraySameSizesSingle(insGrp *ins.Group, addr int64) (elem.Gr
 	return &grp, addr
 }
 
-func regGroupStatusArray(blk *elem.Block, insGrp *ins.Group, addr int64) (elem.Group, int64) {
+func regGroupStatusArray(blk *fnBlock, insGrp *ins.Group, addr int64) (fnGroup, int64) {
 	sameSizes := true
 	for _, e := range insGrp.Elems {
 		if e.Count != insGrp.Elems[0].Count {
@@ -41,7 +41,7 @@ func regGroupStatusArray(blk *elem.Block, insGrp *ins.Group, addr int64) (elem.G
 		}
 	}
 
-	var grp elem.Group
+	var grp fnGroup
 	if sameSizes {
 		grp, addr = regGroupStatusArraySameSizes(blk, insGrp, addr)
 	} else {
@@ -51,7 +51,7 @@ func regGroupStatusArray(blk *elem.Block, insGrp *ins.Group, addr int64) (elem.G
 	return grp, addr
 }
 
-func regGroupStatusArraySameSizes(blk *elem.Block, insGrp *ins.Group, addr int64) (elem.Group, int64) {
+func regGroupStatusArraySameSizes(blk *fnBlock, insGrp *ins.Group, addr int64) (fnGroup, int64) {
 	widths := []int64{}
 	singleIndexWidth := int64(0)
 
@@ -61,7 +61,7 @@ func regGroupStatusArraySameSizes(blk *elem.Block, insGrp *ins.Group, addr int64
 		singleIndexWidth += w
 	}
 
-	var grp elem.Group
+	var grp fnGroup
 	if busWidth/2 < singleIndexWidth && singleIndexWidth <= busWidth {
 		grp, addr = makeGroupStatusArraySameSizesSingle(insGrp, addr)
 	}

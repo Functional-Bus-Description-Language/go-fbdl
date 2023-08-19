@@ -1,7 +1,7 @@
-package elem
+package fn
 
 type Groupable interface {
-	Element
+	Functionality
 	GroupNames() []string
 }
 

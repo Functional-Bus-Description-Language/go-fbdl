@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashStatic(s *elem.Static) uint32 {
+func hashStatic(s *fn.Static) uint32 {
 	buf := bytes.Buffer{}
 
-	// Elem
-	write(&buf, Hash(&s.Elem))
+	// Func
+	write(&buf, Hash(&s.Func))
 
 	// InitValue
 	buf.Write([]byte(s.InitValue))

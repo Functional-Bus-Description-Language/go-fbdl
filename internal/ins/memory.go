@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 type memDiary struct {
@@ -16,13 +16,13 @@ type memDiary struct {
 	widthSet           bool
 }
 
-func insMemory(typeChain []prs.Functionality) (*elem.Memory, error) {
-	e, err := makeElem(typeChain)
+func insMemory(typeChain []prs.Functionality) (*fn.Memory, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	mem := elem.Memory{}
-	mem.Elem = e
+	mem := fn.Memory{}
+	mem.Func = f
 
 	diary := memDiary{}
 
@@ -46,7 +46,7 @@ func insMemory(typeChain []prs.Functionality) (*elem.Memory, error) {
 	return &mem, nil
 }
 
-func applyMemoryType(mem *elem.Memory, typ prs.Functionality, diary *memDiary) error {
+func applyMemoryType(mem *fn.Memory, typ prs.Functionality, diary *memDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "memory"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -99,7 +99,7 @@ func applyMemoryType(mem *elem.Memory, typ prs.Functionality, diary *memDiary) e
 	return nil
 }
 
-func fillMemoryProps(mem *elem.Memory, diary memDiary) error {
+func fillMemoryProps(mem *fn.Memory, diary memDiary) error {
 	if !diary.accessSet {
 		mem.Access = "Read Write"
 	}

@@ -1,18 +1,19 @@
-package elem
+package fn
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
-type Static struct {
-	Elem
+type Status struct {
+	Func
 
-	Groups     []string
-	InitValue  val.BitStr
-	ReadValue  val.BitStr
-	ResetValue val.BitStr
-	Width      int64
+	Atomic    bool
+	Groups    []string
+	ReadValue val.BitStr
+	Width     int64
 
 	Access access.Access
 }
+
+func (s *Status) GroupNames() []string { return s.Groups }

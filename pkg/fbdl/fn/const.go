@@ -1,4 +1,4 @@
-package elem
+package fn
 
 type ConstContainer struct {
 	BoolConsts     map[string]bool

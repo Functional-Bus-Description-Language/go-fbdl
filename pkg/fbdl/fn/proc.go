@@ -1,4 +1,4 @@
-package elem
+package fn
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 type Proc struct {
-	Elem
+	Func
 
 	Delay *val.Time
 

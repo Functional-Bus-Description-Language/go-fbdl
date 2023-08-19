@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashParam(p *elem.Param) uint32 {
+func hashParam(p *fn.Param) uint32 {
 	buf := bytes.Buffer{}
 
-	// Elem
-	write(&buf, Hash(&p.Elem))
+	// Func
+	write(&buf, Hash(&p.Func))
 
 	// Groups
 	for _, g := range p.Groups {

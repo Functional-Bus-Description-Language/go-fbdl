@@ -2,11 +2,11 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 // regStream registerifies a Stream element.
-func regStream(s *elem.Stream, addr int64) int64 {
+func regStream(s *fn.Stream, addr int64) int64 {
 	if len(s.Params) == 0 && len(s.Returns) == 0 {
 		return regEmptyStream(s, addr)
 	} else if len(s.Returns) > 0 {
@@ -18,12 +18,12 @@ func regStream(s *elem.Stream, addr int64) int64 {
 
 // regEmptyStream registerifies empty stream.
 // Empty stream is treated as downstream.
-func regEmptyStream(s *elem.Stream, addr int64) int64 {
+func regEmptyStream(s *fn.Stream, addr int64) int64 {
 	s.StbAddr = addr
 	return addr + 1
 }
 
-func regUpstream(s *elem.Stream, addr int64) int64 {
+func regUpstream(s *fn.Stream, addr int64) int64 {
 	var a access.Access
 
 	returns := s.Returns

@@ -3,11 +3,11 @@ package reg
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 // regStatic registerifies Static element.
-func regStatic(st *elem.Static, addr int64, gp *gap.Pool) int64 {
+func regStatic(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regStaticArray(st, addr, gp)
 	} else {
@@ -15,7 +15,7 @@ func regStatic(st *elem.Static, addr int64, gp *gap.Pool) int64 {
 	}
 }
 
-func regStaticSingle(st *elem.Static, addr int64, gp *gap.Pool) int64 {
+func regStaticSingle(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	/*
 		var a access.Access
 		if g, ok := gp.GetSingle(st.Width, false); ok {
@@ -41,7 +41,7 @@ func regStaticSingle(st *elem.Static, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-func regStaticArray(st *elem.Static, addr int64, gp *gap.Pool) int64 {
+func regStaticArray(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	var a access.Access
 
 	if busWidth/2 < st.Width && st.Width <= busWidth {

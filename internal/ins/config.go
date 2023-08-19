@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -22,13 +22,13 @@ type configDiary struct {
 	widthSet    bool
 }
 
-func insConfig(typeChain []prs.Functionality) (*elem.Config, error) {
-	e, err := makeElem(typeChain)
+func insConfig(typeChain []prs.Functionality) (*fn.Config, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, err
 	}
-	cfg := elem.Config{}
-	cfg.Elem = e
+	cfg := fn.Config{}
+	cfg.Func = f
 
 	diary := configDiary{}
 
@@ -53,7 +53,7 @@ func insConfig(typeChain []prs.Functionality) (*elem.Config, error) {
 	return &cfg, nil
 }
 
-func applyConfigType(cfg *elem.Config, typ prs.Functionality, diary *configDiary) error {
+func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "config"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -127,7 +127,7 @@ func applyConfigType(cfg *elem.Config, typ prs.Functionality, diary *configDiary
 	return nil
 }
 
-func fillConfigProps(cfg *elem.Config, diary configDiary) {
+func fillConfigProps(cfg *fn.Config, diary configDiary) {
 	if !diary.atomicSet {
 		cfg.Atomic = true
 	}
@@ -140,7 +140,7 @@ func fillConfigProps(cfg *elem.Config, diary configDiary) {
 	}
 }
 
-func fillConfigValues(cfg *elem.Config, diary configDiary) error {
+func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 	if diary.initValSet {
 		val, err := processValue(diary.initVal, cfg.Width)
 		if err != nil {

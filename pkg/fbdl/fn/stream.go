@@ -1,7 +1,7 @@
-package elem
+package fn
 
 type Stream struct {
-	Elem
+	Func
 
 	Params  []*Param
 	Returns []*Return

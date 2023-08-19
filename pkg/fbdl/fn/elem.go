@@ -1,55 +1,55 @@
-package elem
+package fn
 
 import (
 	"fmt"
 )
 
-type Element interface {
-	isElement() bool
+type Functionality interface {
+	isFunctionality()
 }
 
-type Elem struct {
+type Func struct {
 	Name    string
 	Doc     string
 	IsArray bool
 	Count   int64
 }
 
-func (e Elem) isElement() bool { return true }
+func (f Func) isFunctionality() {}
 
-func Name(e Element) string {
-	switch e := e.(type) {
+func Name(f Functionality) string {
+	switch f := f.(type) {
 	case *Block:
-		return e.Name
+		return f.Name
 	case *Config:
-		return e.Name
+		return f.Name
 	case *Irq:
-		return e.Name
+		return f.Name
 	case *Mask:
-		return e.Name
+		return f.Name
 	case *Memory:
-		return e.Name
+		return f.Name
 	case *Param:
-		return e.Name
+		return f.Name
 	case *Proc:
-		return e.Name
+		return f.Name
 	case *Return:
-		return e.Name
+		return f.Name
 	case *Static:
-		return e.Name
+		return f.Name
 	case *Status:
-		return e.Name
+		return f.Name
 	case *Stream:
-		return e.Name
+		return f.Name
 	default:
 		panic(
-			fmt.Sprintf("%T is not an element", e),
+			fmt.Sprintf("%T is not an element", f),
 		)
 	}
 }
 
-func Type(e Element) string {
-	switch e.(type) {
+func Type(f Functionality) string {
+	switch f.(type) {
 	case *Block:
 		return "block"
 	case *Config:
@@ -74,7 +74,7 @@ func Type(e Element) string {
 		return "stream"
 	default:
 		panic(
-			fmt.Sprintf("%T is not an element", e),
+			fmt.Sprintf("%T is not functionality", f),
 		)
 	}
 }

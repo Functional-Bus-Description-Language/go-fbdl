@@ -5,13 +5,13 @@ import (
 	"time"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
-func timestamp() *elem.Static {
-	ts := elem.Static{}
+func timestamp() *fn.Static {
+	ts := fn.Static{}
 
 	ts.Name = "TIMESTAMP"
 	ts.Doc = "Bus generation timestamp."
@@ -39,8 +39,8 @@ func timestamp() *elem.Static {
 }
 
 // Value generation is not yet supported.
-func id() *elem.Static {
-	id := elem.Static{}
+func id() *fn.Static {
+	id := fn.Static{}
 
 	id.Name = "ID"
 	id.Doc = "Bus identifier."

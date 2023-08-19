@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashBlock(b *elem.Block) uint32 {
+func hashBlock(b *fn.Block) uint32 {
 	buf := bytes.Buffer{}
 
-	// Elem
-	write(&buf, Hash(&b.Elem))
+	// Func
+	write(&buf, Hash(&b.Func))
 
 	// Masters
 	write(&buf, b.Masters)

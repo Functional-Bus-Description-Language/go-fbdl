@@ -175,13 +175,13 @@ TODO: Implement it somewhere.
 func checkPropConflict(elem *Element, prop string) error {
 	msg := `cannot set '%s' property, because '%s' property is already set in one of ancestor types`
 
-	if _, ok := elem.Props["width"]; ok {
+	if _, ok := fnProps["width"]; ok {
 		if prop == "range" {
 			return fmt.Errorf(msg, "range", "width")
 		}
 	}
 
-	if _, ok := elem.Props["range"]; ok {
+	if _, ok := fnProps["range"]; ok {
 		if prop == "width" {
 			return fmt.Errorf(msg, "width", "range")
 		}

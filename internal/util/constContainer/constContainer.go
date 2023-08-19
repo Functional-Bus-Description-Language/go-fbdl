@@ -2,11 +2,11 @@ package constContainer
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 // HasConst returns true if container already has constant with given name.
-func HasConst(c elem.ConstContainer, name string) bool {
+func HasConst(c fn.ConstContainer, name string) bool {
 	if _, ok := c.BoolConsts[name]; ok {
 		return true
 	}
@@ -26,7 +26,7 @@ func HasConst(c elem.ConstContainer, name string) bool {
 	return false
 }
 
-func AddConst(c *elem.ConstContainer, name string, v val.Value) {
+func AddConst(c *fn.ConstContainer, name string, v val.Value) {
 	switch v.(type) {
 	case val.BitStr:
 		panic("not yet implemented")
@@ -56,7 +56,7 @@ func AddConst(c *elem.ConstContainer, name string, v val.Value) {
 	}
 }
 
-func addBoolConst(c *elem.ConstContainer, name string, v val.Value) {
+func addBoolConst(c *fn.ConstContainer, name string, v val.Value) {
 	b := bool(v.(val.Bool))
 	if c.BoolConsts == nil {
 		c.BoolConsts = map[string]bool{name: b}
@@ -64,7 +64,7 @@ func addBoolConst(c *elem.ConstContainer, name string, v val.Value) {
 	c.BoolConsts[name] = b
 }
 
-func addFloatConst(c *elem.ConstContainer, name string, v val.Value) {
+func addFloatConst(c *fn.ConstContainer, name string, v val.Value) {
 	f := float64(v.(val.Float))
 	if c.FloatConsts == nil {
 		c.FloatConsts = map[string]float64{name: f}
@@ -72,7 +72,7 @@ func addFloatConst(c *elem.ConstContainer, name string, v val.Value) {
 	c.FloatConsts[name] = f
 }
 
-func addBoolListConst(c *elem.ConstContainer, name string, v val.Value) {
+func addBoolListConst(c *fn.ConstContainer, name string, v val.Value) {
 	l := constifyBoolList(v.(val.List))
 	if l == nil {
 		return
@@ -84,7 +84,7 @@ func addBoolListConst(c *elem.ConstContainer, name string, v val.Value) {
 	c.BoolListConsts[name] = l
 }
 
-func addIntConst(c *elem.ConstContainer, name string, v val.Value) {
+func addIntConst(c *fn.ConstContainer, name string, v val.Value) {
 	i := int64(v.(val.Int))
 	if c.IntConsts == nil {
 		c.IntConsts = map[string]int64{name: i}
@@ -92,7 +92,7 @@ func addIntConst(c *elem.ConstContainer, name string, v val.Value) {
 	c.IntConsts[name] = i
 }
 
-func addIntListConst(c *elem.ConstContainer, name string, v val.Value) {
+func addIntListConst(c *fn.ConstContainer, name string, v val.Value) {
 	l := constifyIntList(v.(val.List))
 	if l == nil {
 		return
@@ -104,7 +104,7 @@ func addIntListConst(c *elem.ConstContainer, name string, v val.Value) {
 	c.IntListConsts[name] = l
 }
 
-func addStrConst(c *elem.ConstContainer, name string, v val.Value) {
+func addStrConst(c *fn.ConstContainer, name string, v val.Value) {
 	s := string(v.(val.Str))
 	if c.StrConsts == nil {
 		c.StrConsts = map[string]string{name: s}

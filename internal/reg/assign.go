@@ -2,19 +2,19 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/addrSpace"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"sort"
 	"strings"
 )
 
-func assignGlobalAccessAddresses(bus *elem.Block, baseAddr int64) {
+func assignGlobalAccessAddresses(bus *fn.Block, baseAddr int64) {
 	// Currently there is only Block Align strategy.
 	// In the future there may also be Compact and Full Align.
 
 	assignGlobalAccessAddressesBlockAlign(bus, baseAddr)
 }
 
-func assignGlobalAccessAddressesBlockAlign(blk *elem.Block, baseAddr int64) {
+func assignGlobalAccessAddressesBlockAlign(blk *fn.Block, baseAddr int64) {
 	if blk.IsArray {
 		blk.AddrSpace = addrSpace.Array{
 			Start: baseAddr, Count: int64(blk.Count), BlockSize: blk.Sizes.BlockAligned,

@@ -1,10 +1,10 @@
 package stream
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func HasElement(s *elem.Stream, name string) bool {
+func HasElement(s *fn.Stream, name string) bool {
 	for i := range s.Params {
 		if s.Params[i].Name == name {
 			return true

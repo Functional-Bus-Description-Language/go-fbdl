@@ -1,11 +1,11 @@
-package elem
+package fn
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 )
 
 type Return struct {
-	Elem
+	Func
 
 	Groups []string
 	Width  int64

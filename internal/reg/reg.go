@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 	"log"
 	"sort"
@@ -15,7 +15,7 @@ import (
 
 var busWidth int64
 
-func Registerify(bus *elem.Block, addTimestamp bool) {
+func Registerify(bus *fn.Block, addTimestamp bool) {
 	busWidth = bus.Width
 	access.Init(busWidth)
 
@@ -72,7 +72,7 @@ func Registerify(bus *elem.Block, addTimestamp bool) {
 	}
 }
 
-func regFunctionalities(blk *elem.Block, addr int64) int64 {
+func regFunctionalities(blk *fn.Block, addr int64) int64 {
 	gp := gap.Pool{}
 
 	addr = regProcs(blk, addr)
@@ -87,8 +87,8 @@ func regFunctionalities(blk *elem.Block, addr int64) int64 {
 }
 
 /*
-func regGroups(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
-	var grp elem.Group
+func regGroups(blk *fn.Block, insBlk *ins.Element, addr int64) int64 {
+	var grp fn.Group
 	for _, g := range insBlk.Grps {
 		if g.IsStatus() && g.IsArray() {
 			grp, addr = regGroupStatusArray(blk, g, addr)
@@ -106,7 +106,7 @@ func regGroups(blk *elem.Block, insBlk *ins.Element, addr int64) int64 {
 }
 */
 
-func regProcs(blk *elem.Block, addr int64) int64 {
+func regProcs(blk *fn.Block, addr int64) int64 {
 	for _, fun := range blk.Procs {
 		addr = regProc(fun, addr)
 	}
@@ -114,7 +114,7 @@ func regProcs(blk *elem.Block, addr int64) int64 {
 	return addr
 }
 
-func regStreams(blk *elem.Block, addr int64) int64 {
+func regStreams(blk *fn.Block, addr int64) int64 {
 	for _, stream := range blk.Streams {
 		addr = regStream(stream, addr)
 	}
@@ -122,7 +122,7 @@ func regStreams(blk *elem.Block, addr int64) int64 {
 	return addr
 }
 
-func regMasks(blk *elem.Block, addr int64) int64 {
+func regMasks(blk *fn.Block, addr int64) int64 {
 	for _, mask := range blk.Masks {
 		addr = regMask(mask, addr)
 	}
@@ -130,8 +130,8 @@ func regMasks(blk *elem.Block, addr int64) int64 {
 	return addr
 }
 
-func regStatics(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
-	statics := []*elem.Static{}
+func regStatics(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
+	statics := []*fn.Static{}
 
 	for _, st := range blk.Statics {
 		// Omit elements that have been already registerified as group members.
@@ -141,7 +141,7 @@ func regStatics(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 		statics = append(statics, st)
 	}
 
-	sortFunc := func(sts []*elem.Static) func(int, int) bool {
+	sortFunc := func(sts []*fn.Static) func(int, int) bool {
 		return func(i, j int) bool {
 			if sts[i].IsArray && !sts[j].IsArray {
 				return true
@@ -165,9 +165,9 @@ func regStatics(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
-	atomicSts := []*elem.Status{}
-	nonAtomicSts := []*elem.Status{}
+func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
+	atomicSts := []*fn.Status{}
+	nonAtomicSts := []*fn.Status{}
 
 	for _, st := range blk.Statuses {
 		// Omit elements that have been already registerified as group members.
@@ -182,7 +182,7 @@ func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 		}
 	}
 
-	sortFunc := func(sts []*elem.Status) func(int, int) bool {
+	sortFunc := func(sts []*fn.Status) func(int, int) bool {
 		return func(i, j int) bool {
 			if sts[i].IsArray && !sts[j].IsArray {
 				return true
@@ -210,7 +210,7 @@ func regStatuses(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-func regConfigs(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
+func regConfigs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	for _, cfg := range blk.Configs {
 		// Omit elements that have been already registerified as group members.
 		if cfg.Access != nil {
@@ -223,7 +223,7 @@ func regConfigs(blk *elem.Block, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-func regBlock(blk *elem.Block) access.Sizes {
+func regBlock(blk *fn.Block) access.Sizes {
 	addr := int64(0)
 
 	addr = regFunctionalities(blk, addr)

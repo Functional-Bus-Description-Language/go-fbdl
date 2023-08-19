@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -21,13 +21,13 @@ type irqDiary struct {
 	outTriggerSet     bool
 }
 
-func insIrq(typeChain []prs.Functionality) (*elem.Irq, error) {
-	e, err := makeElem(typeChain)
+func insIrq(typeChain []prs.Functionality) (*fn.Irq, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	irq := elem.Irq{}
-	irq.Elem = e
+	irq := fn.Irq{}
+	irq.Func = f
 
 	diary := irqDiary{}
 
@@ -52,7 +52,7 @@ func insIrq(typeChain []prs.Functionality) (*elem.Irq, error) {
 	return &irq, nil
 }
 
-func applyIrqType(irq *elem.Irq, typ prs.Functionality, diary *irqDiary) error {
+func applyIrqType(irq *fn.Irq, typ prs.Functionality, diary *irqDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "irq"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -117,7 +117,7 @@ func applyIrqType(irq *elem.Irq, typ prs.Functionality, diary *irqDiary) error {
 	return nil
 }
 
-func fillIrqProps(irq *elem.Irq, diary irqDiary) {
+func fillIrqProps(irq *fn.Irq, diary irqDiary) {
 	if !diary.clearSet {
 		irq.Clear = "Explicit"
 	}
@@ -131,7 +131,7 @@ func fillIrqProps(irq *elem.Irq, diary irqDiary) {
 	}
 }
 
-func fillIrqValues(irq *elem.Irq, diary irqDiary) error {
+func fillIrqValues(irq *fn.Irq, diary irqDiary) error {
 	if diary.enableInitValSet {
 		if !irq.AddEnable {
 			return fmt.Errorf("'enable-init-value' set but 'add-enable' is false")

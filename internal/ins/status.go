@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -17,13 +17,13 @@ type statusDiary struct {
 	widthSet   bool
 }
 
-func insStatus(typeChain []prs.Functionality) (*elem.Status, error) {
-	e, err := makeElem(typeChain)
+func insStatus(typeChain []prs.Functionality) (*fn.Status, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	st := elem.Status{}
-	st.Elem = e
+	st := fn.Status{}
+	st.Func = f
 
 	diary := statusDiary{}
 
@@ -52,7 +52,7 @@ func insStatus(typeChain []prs.Functionality) (*elem.Status, error) {
 	return &st, nil
 }
 
-func applyStatusType(st *elem.Status, typ prs.Functionality, diary *statusDiary) error {
+func applyStatusType(st *fn.Status, typ prs.Functionality, diary *statusDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "status"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -99,7 +99,7 @@ func applyStatusType(st *elem.Status, typ prs.Functionality, diary *statusDiary)
 	return nil
 }
 
-func fillStatusProps(st *elem.Status, diary statusDiary) {
+func fillStatusProps(st *fn.Status, diary statusDiary) {
 	if !diary.atomicSet {
 		st.Atomic = true
 	}

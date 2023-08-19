@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashConfig(c *elem.Config) uint32 {
+func hashConfig(c *fn.Config) uint32 {
 	buf := bytes.Buffer{}
 
-	// Elem
-	write(&buf, Hash(&c.Elem))
+	// Func
+	write(&buf, Hash(&c.Func))
 
 	// Atomic
 	write(&buf, c.Atomic)

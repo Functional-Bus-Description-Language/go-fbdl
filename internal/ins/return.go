@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 type returnDiary struct {
@@ -13,13 +13,13 @@ type returnDiary struct {
 	widthSet  bool
 }
 
-func insReturn(typeChain []prs.Functionality) (*elem.Return, error) {
-	e, err := makeElem(typeChain)
+func insReturn(typeChain []prs.Functionality) (*fn.Return, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	ret := elem.Return{}
-	ret.Elem = e
+	ret := fn.Return{}
+	ret.Func = f
 
 	diary := returnDiary{}
 
@@ -40,7 +40,7 @@ func insReturn(typeChain []prs.Functionality) (*elem.Return, error) {
 	return &ret, nil
 }
 
-func applyReturnType(ret *elem.Return, typ prs.Functionality, diary *returnDiary) error {
+func applyReturnType(ret *fn.Return, typ prs.Functionality, diary *returnDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "return"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -75,7 +75,7 @@ func applyReturnType(ret *elem.Return, typ prs.Functionality, diary *returnDiary
 	return nil
 }
 
-func fillReturnProps(ret *elem.Return, diary returnDiary) {
+func fillReturnProps(ret *fn.Return, diary returnDiary) {
 	if !diary.widthSet {
 		ret.Width = busWidth
 	}

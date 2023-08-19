@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashIrq(i *elem.Irq) uint32 {
+func hashIrq(i *fn.Irq) uint32 {
 	buf := bytes.Buffer{}
 
-	// Elem
-	write(&buf, Hash(&i.Elem))
+	// Func
+	write(&buf, Hash(&i.Func))
 
 	// AddEnable
 	write(&buf, i.AddEnable)

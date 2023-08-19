@@ -6,7 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/proc"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -14,13 +14,13 @@ type procDiary struct {
 	delaySet bool
 }
 
-func insProc(typeChain []prs.Functionality) (*elem.Proc, error) {
-	e, err := makeElem(typeChain)
+func insProc(typeChain []prs.Functionality) (*fn.Proc, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	proc := elem.Proc{}
-	proc.Elem = e
+	proc := fn.Proc{}
+	proc.Func = f
 
 	diary := procDiary{}
 
@@ -39,7 +39,7 @@ func insProc(typeChain []prs.Functionality) (*elem.Proc, error) {
 	return &proc, nil
 }
 
-func applyProcType(p *elem.Proc, typ prs.Functionality, diary *procDiary) error {
+func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "proc"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -77,12 +77,12 @@ func applyProcType(p *elem.Proc, typ prs.Functionality, diary *procDiary) error 
 
 		e := insElement(pe)
 
-		if !util.IsValidInnerType(elem.Type(e), "proc") {
-			return fmt.Errorf(invalidInnerTypeMsg, elem.Name(e), elem.Type(e), "proc")
+		if !util.IsValidInnerType(fn.Type(e), "proc") {
+			return fmt.Errorf(invalidInnerTypeMsg, fn.Name(e), fn.Type(e), "proc")
 		}
 
-		if proc.HasElement(p, elem.Name(e)) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, elem.Name(e))
+		if proc.HasElement(p, fn.Name(e)) {
+			return fmt.Errorf(elemWithNameAlreadyInstMsg, fn.Name(e))
 		}
 		addProcInnerElement(p, e)
 	}
@@ -90,11 +90,11 @@ func applyProcType(p *elem.Proc, typ prs.Functionality, diary *procDiary) error 
 	return nil
 }
 
-func addProcInnerElement(p *elem.Proc, e elem.Element) {
+func addProcInnerElement(p *fn.Proc, e fn.Functionality) {
 	switch e := e.(type) {
-	case (*elem.Param):
+	case (*fn.Param):
 		p.Params = append(p.Params, e)
-	case (*elem.Return):
+	case (*fn.Return):
 		p.Returns = append(p.Returns, e)
 	default:
 		panic("should never happen")

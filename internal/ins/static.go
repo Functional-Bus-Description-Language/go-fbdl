@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -20,13 +20,13 @@ type staticDiary struct {
 	widthSet    bool
 }
 
-func insStatic(typeChain []prs.Functionality) (*elem.Static, error) {
-	e, err := makeElem(typeChain)
+func insStatic(typeChain []prs.Functionality) (*fn.Static, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	st := elem.Static{}
-	st.Elem = e
+	st := fn.Static{}
+	st.Func = f
 
 	diary := staticDiary{}
 
@@ -51,7 +51,7 @@ func insStatic(typeChain []prs.Functionality) (*elem.Static, error) {
 	return &st, nil
 }
 
-func applyStaticType(st *elem.Static, typ prs.Functionality, diary *staticDiary) error {
+func applyStaticType(st *fn.Static, typ prs.Functionality, diary *staticDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "static"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -104,13 +104,13 @@ func applyStaticType(st *elem.Static, typ prs.Functionality, diary *staticDiary)
 	return nil
 }
 
-func fillStaticProps(st *elem.Static, diary staticDiary) {
+func fillStaticProps(st *fn.Static, diary staticDiary) {
 	if !diary.widthSet {
 		st.Width = busWidth
 	}
 }
 
-func fillStaticValues(st *elem.Static, diary staticDiary) error {
+func fillStaticValues(st *fn.Static, diary staticDiary) error {
 	if diary.initValSet {
 		val, err := processValue(diary.initVal, st.Width)
 		if err != nil {

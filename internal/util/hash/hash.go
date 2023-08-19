@@ -9,7 +9,7 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/addrSpace"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 func write(buf io.Writer, data any) {
@@ -27,31 +27,31 @@ func Hash(data any) uint32 {
 		return hashAccessSizes(d)
 	case access.Access:
 		return hashAccessAccess(d)
-	case *elem.Elem:
-		return hashElem(d)
-	case *elem.Block:
+	case *fn.Func:
+		return hashFunc(d)
+	case *fn.Block:
 		return hashBlock(d)
-	case *elem.Config:
+	case *fn.Config:
 		return hashConfig(d)
-	case *elem.ConstContainer:
+	case *fn.ConstContainer:
 		return hashConstContainer(d)
-	case *elem.Irq:
+	case *fn.Irq:
 		return hashIrq(d)
-	case *elem.Mask:
+	case *fn.Mask:
 		return hashMask(d)
-	case *elem.Memory:
+	case *fn.Memory:
 		return hashMemory(d)
-	case *elem.Proc:
+	case *fn.Proc:
 		return hashProc(d)
-	case *elem.Param:
+	case *fn.Param:
 		return hashParam(d)
-	case *elem.Return:
+	case *fn.Return:
 		return hashReturn(d)
-	case *elem.Static:
+	case *fn.Static:
 		return hashStatic(d)
-	case *elem.Status:
+	case *fn.Status:
 		return hashStatus(d)
-	case *elem.Stream:
+	case *fn.Stream:
 		return hashStream(d)
 	default:
 		panic(

@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -15,13 +15,13 @@ type paramDiary struct {
 	widthSet  bool
 }
 
-func insParam(typeChain []prs.Functionality) (*elem.Param, error) {
-	e, err := makeElem(typeChain)
+func insParam(typeChain []prs.Functionality) (*fn.Param, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	param := elem.Param{}
-	param.Elem = e
+	param := fn.Param{}
+	param.Func = f
 
 	diary := paramDiary{}
 
@@ -42,7 +42,7 @@ func insParam(typeChain []prs.Functionality) (*elem.Param, error) {
 	return &param, nil
 }
 
-func applyParamType(param *elem.Param, typ prs.Functionality, diary *paramDiary) error {
+func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "param"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -92,7 +92,7 @@ func applyParamType(param *elem.Param, typ prs.Functionality, diary *paramDiary)
 	return nil
 }
 
-func fillParamProps(param *elem.Param, diary paramDiary) {
+func fillParamProps(param *fn.Param, diary paramDiary) {
 	if !diary.widthSet {
 		if !diary.rangeSet {
 			param.Width = busWidth

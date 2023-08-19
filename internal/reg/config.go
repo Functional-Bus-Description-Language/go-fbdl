@@ -3,11 +3,11 @@ package reg
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 // regConfig registerifies a Config element.
-func regConfig(cfg *elem.Config, addr int64, gp *gap.Pool) int64 {
+func regConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	if cfg.IsArray {
 		panic("not yet implemented")
 		/* Should it be implemented the same way as for Status?

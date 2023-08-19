@@ -1,4 +1,4 @@
-package elem
+package fn
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
@@ -6,7 +6,7 @@ import (
 )
 
 type Mask struct {
-	Elem
+	Func
 
 	Atomic     bool
 	Groups     []string

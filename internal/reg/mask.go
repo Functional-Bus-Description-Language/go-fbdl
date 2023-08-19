@@ -2,11 +2,11 @@ package reg
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 // regMask registerifies a Mask element.
-func regMask(mask *elem.Mask, addr int64) int64 {
+func regMask(mask *fn.Mask, addr int64) int64 {
 	var a access.Access
 
 	if mask.IsArray {

@@ -3,11 +3,11 @@ package reg
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 // regAtomicStatus registerifies an Atomic Status element.
-func regAtomicStatus(st *elem.Status, addr int64, gp *gap.Pool) int64 {
+func regAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regAtomicStatusArray(st, addr, gp)
 	} else {
@@ -15,7 +15,7 @@ func regAtomicStatus(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	}
 }
 
-func regAtomicStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
+func regAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	var a access.Access
 
 	if st.Width > busWidth {
@@ -45,7 +45,7 @@ func regAtomicStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-func regAtomicStatusArray(st *elem.Status, addr int64, gp *gap.Pool) int64 {
+func regAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	var a access.Access
 
 	if busWidth/2 < st.Width && st.Width <= busWidth {
@@ -65,7 +65,7 @@ func regAtomicStatusArray(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 }
 
 // regNonAtomicStatus registerifies a Non-Atomic Status element.
-func regNonAtomicStatus(st *elem.Status, addr int64, gp *gap.Pool) int64 {
+func regNonAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regNonAtomicStatusArray(st, addr, gp)
 	} else {
@@ -73,7 +73,7 @@ func regNonAtomicStatus(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	}
 }
 
-func regNonAtomicStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
+func regNonAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	/*
 		var a access.Access
 		if g, ok := gp.GetSingle(st.Width, false); ok {
@@ -98,7 +98,7 @@ func regNonAtomicStatusSingle(st *elem.Status, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-func regNonAtomicStatusArray(st *elem.Status, addr int64, gp *gap.Pool) int64 {
+func regNonAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	var a access.Access
 
 	if busWidth/2 < st.Width && st.Width <= busWidth {

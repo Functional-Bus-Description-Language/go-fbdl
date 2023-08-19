@@ -3,11 +3,11 @@ package ins
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func constifyPackages(packages prs.Packages) map[string]*elem.Package {
-	cPkgs := map[string]*elem.Package{}
+func constifyPackages(packages prs.Packages) map[string]*fn.Package {
+	cPkgs := map[string]*fn.Package{}
 
 	// TODO: Resolve name conflicts.
 	for name, pkgs := range packages {
@@ -22,8 +22,8 @@ func constifyPackages(packages prs.Packages) map[string]*elem.Package {
 	return cPkgs
 }
 
-func constifyPkg(pkg *prs.Package) *elem.Package {
-	p := elem.Package{}
+func constifyPkg(pkg *prs.Package) *fn.Package {
+	p := fn.Package{}
 
 	for _, s := range pkg.Symbols {
 		if c, ok := s.(*prs.Const); ok {

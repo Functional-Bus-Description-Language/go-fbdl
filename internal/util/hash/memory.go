@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashMemory(m *elem.Memory) uint32 {
+func hashMemory(m *fn.Memory) uint32 {
 	buf := bytes.Buffer{}
 
-	// Elem
-	write(&buf, Hash(&m.Elem))
+	// Func
+	write(&buf, Hash(&m.Func))
 
 	// Access
 	buf.Write([]byte(m.Access))

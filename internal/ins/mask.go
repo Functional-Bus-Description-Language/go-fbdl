@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
 
@@ -21,13 +21,13 @@ type maskDiary struct {
 	widthSet    bool
 }
 
-func insMask(typeChain []prs.Functionality) (*elem.Mask, error) {
-	e, err := makeElem(typeChain)
+func insMask(typeChain []prs.Functionality) (*fn.Mask, error) {
+	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
 	}
-	mask := elem.Mask{}
-	mask.Elem = e
+	mask := fn.Mask{}
+	mask.Func = f
 
 	diary := maskDiary{}
 
@@ -52,7 +52,7 @@ func insMask(typeChain []prs.Functionality) (*elem.Mask, error) {
 	return &mask, nil
 }
 
-func applyMaskType(mask *elem.Mask, typ prs.Functionality, diary *maskDiary) error {
+func applyMaskType(mask *fn.Mask, typ prs.Functionality, diary *maskDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "mask"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -111,7 +111,7 @@ func applyMaskType(mask *elem.Mask, typ prs.Functionality, diary *maskDiary) err
 	return nil
 }
 
-func fillMaskProps(mask *elem.Mask, diary maskDiary) {
+func fillMaskProps(mask *fn.Mask, diary maskDiary) {
 	if !diary.atomicSet {
 		mask.Atomic = true
 	}
@@ -120,7 +120,7 @@ func fillMaskProps(mask *elem.Mask, diary maskDiary) {
 	}
 }
 
-func fillMaskValues(mask *elem.Mask, diary maskDiary) error {
+func fillMaskValues(mask *fn.Mask, diary maskDiary) error {
 	if diary.initValSet {
 		val, err := processValue(diary.initVal, mask.Width)
 		if err != nil {

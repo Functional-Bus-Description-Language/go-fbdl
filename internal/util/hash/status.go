@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashStatus(s *elem.Status) uint32 {
+func hashStatus(s *fn.Status) uint32 {
 	buf := bytes.Buffer{}
 
-	// Elem
-	write(&buf, Hash(&s.Elem))
+	// Func
+	write(&buf, Hash(&s.Func))
 
 	// Atomic
 	write(&buf, s.Atomic)

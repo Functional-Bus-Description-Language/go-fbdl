@@ -1,7 +1,7 @@
-package elem
+package fn
 
 type Memory struct {
-	Elem
+	Func
 
 	Access          string
 	ByteWriteEnable bool

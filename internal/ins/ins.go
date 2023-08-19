@@ -8,7 +8,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 const dfltBusWidth int64 = 32
@@ -46,7 +46,7 @@ func setBusWidth(main prs.Symbol) error {
 
 // Instantiate main bus within given packages scope.
 // MainName is the name of the main bus.
-func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[string]*elem.Package, error) {
+func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]*fn.Package, error) {
 	main, ok := packages["main"][0].Symbols.Get(mainName, prs.FuncInst)
 	if !ok {
 		return nil, nil, fmt.Errorf("'%s' bus not found", mainName)
@@ -63,7 +63,7 @@ func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[strin
 		log.Fatalf("instantiation: %v", err)
 	}
 
-	var mainBus *elem.Block
+	var mainBus *fn.Block
 
 	for pkgName, pkgs := range packages {
 		for _, pkg := range pkgs {
@@ -81,7 +81,7 @@ func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[strin
 				e := insElement(prsElem)
 
 				if pkgName == "main" && name == mainName {
-					mainBus = e.(*elem.Block)
+					mainBus = e.(*fn.Block)
 				}
 			}
 		}
@@ -92,10 +92,10 @@ func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[strin
 	return mainBus, pkgs, nil
 }
 
-func insElement(pe prs.Functionality) elem.Element {
+func insElement(pe prs.Functionality) fn.Functionality {
 	typeChain := resolveToBaseType(pe)
 
-	var e elem.Element
+	var e fn.Functionality
 	var err error
 
 	typ := typeChain[0].Type()

@@ -5,11 +5,11 @@ import (
 	"hash/adler32"
 	"sort"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"golang.org/x/exp/maps"
 )
 
-func hashConstContainer(c *elem.ConstContainer) uint32 {
+func hashConstContainer(c *fn.ConstContainer) uint32 {
 	buf := bytes.Buffer{}
 
 	// BoolConsts

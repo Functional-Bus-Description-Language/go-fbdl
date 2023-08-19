@@ -5,10 +5,10 @@ import (
 	"encoding/binary"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/elem"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func hashElem(e *elem.Elem) uint32 {
+func hashFunc(e *fn.Func) uint32 {
 	buf := bytes.Buffer{}
 
 	// Name
