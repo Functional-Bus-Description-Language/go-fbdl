@@ -1,7 +1,6 @@
 package tok
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -376,91 +375,112 @@ func TestParseError(t *testing.T) {
 	var tests = []struct {
 		idx int // Test index, useful for navigation
 		src string
-		err error
+		err string
 	}{
 		{
 			0,
-			"\n ", fmt.Errorf("2:1: space character ' ' not allowed for indent"),
+			"\n ",
+			"2:1: space character ' ' not allowed for indent",
 		},
 		{
 			1,
-			";\n", fmt.Errorf("1:1: extra ';' at line end"),
+			";\n",
+			"1:1: extra ';' at line end",
 		},
 		{
 			2,
-			" ; \n", fmt.Errorf("1:2: extra ';' at line end"),
+			" ; \n",
+			"1:2: extra ';' at line end",
 		},
 		{
 			3,
-			";;", fmt.Errorf("1:2: redundant ';'"),
+			";;",
+			"1:2: redundant ';'",
 		},
 		{
 			4,
-			"b\"01-uUwWxXzZ3\"", fmt.Errorf("1:14: invalid character '3' in binary bit string literal"),
+			"b\"01-uUwWxXzZ3\"",
+			"1:14: invalid character '3' in binary bit string literal",
 		},
 		{
 			5,
-			"B\"0", fmt.Errorf("1:1: unterminated binary bit string literal"),
+			"B\"0",
+			"1:1: unterminated binary bit string literal",
 		},
 		{
 			6,
-			"o\"01234567-uUwWxXzZ8\"", fmt.Errorf("1:20: invalid character '8' in octal bit string literal"),
+			"o\"01234567-uUwWxXzZ8\"",
+			"1:20: invalid character '8' in octal bit string literal",
 		},
 		{
 			7,
-			"O\"0", fmt.Errorf("1:1: unterminated octal bit string literal"),
+			"O\"0",
+			"1:1: unterminated octal bit string literal",
 		},
 		{
 			8,
-			"x\"0123456789aAbBcCdDeEfF-uUwWxXzZ8g\"", fmt.Errorf("1:35: invalid character 'g' in hex bit string literal"),
+			"x\"0123456789aAbBcCdDeEfF-uUwWxXzZ8g\"",
+			"1:35: invalid character 'g' in hex bit string literal",
 		},
 		{
 			9,
-			"X\"0", fmt.Errorf("1:1: unterminated hex bit string literal"),
+			"X\"0",
+			"1:1: unterminated hex bit string literal",
 		},
 		{
 			10,
-			",,", fmt.Errorf("1:2: redundant ','"),
+			",,",
+			"1:2: redundant ','",
 		},
 		{
 			11,
-			"1.2.3", fmt.Errorf("1:4: second point character '.' in number literal"),
+			"1.2.3",
+			"1:4: second point character '.' in number literal",
 		},
 		{
 			12,
-			"1e2.", fmt.Errorf("1:4: point character '.' after exponent in number literal"),
+			"1e2.",
+			"1:4: point character '.' after exponent in number literal",
 		},
 		{
 			13,
-			"1e2d", fmt.Errorf("1:4: invalid character 'd' in number literal"),
+			"1e2d",
+			"1:4: invalid character 'd' in number literal",
 		},
 		{
 			14,
-			"\n\"str", fmt.Errorf("2:1: unterminated string literal"),
+			"\n\"str",
+			"2:1: unterminated string literal",
 		},
 		{
 			15,
-			"\t", fmt.Errorf("1:1: tab character '\\t' not allowed for alignment"),
+			"\t",
+			"1:1: tab character '\\t' not allowed for alignment",
 		},
 		{
 			16,
-			"Main bus\n\tc config;\twidth = 7", fmt.Errorf("2:11: tab character '\\t' not allowed for alignment"),
+			"Main bus\n\tc config;\twidth = 7",
+			"2:11: tab character '\\t' not allowed for alignment",
 		},
 		{
 			17,
-			"Main bus\n\t c config", fmt.Errorf("2:2: space character ' ' right after tab character '\\t'"),
+			"Main bus\n\t c config",
+			"2:2: space character ' ' right after tab character '\\t'",
 		},
 		{
 			18,
-			"Main bus\n\t\tc config", fmt.Errorf("2:1: multi indent increase"),
+			"Main bus\n\t\tc config",
+			"2:1: multi indent increase",
 		},
 		{
 			19,
-			"pkg.sym", fmt.Errorf("1:1: symbol name in qualified identifier must start with upper case letter"),
+			"pkg.sym",
+			"1:1: symbol name in qualified identifier must start with upper case letter",
 		},
 		{
 			20,
-			"a-b.c", fmt.Errorf("1:3: symbol name in qualified identifier must start with upper case letter"),
+			"a-b.c",
+			"1:3: symbol name in qualified identifier must start with upper case letter",
 		},
 	}
 
@@ -474,7 +494,7 @@ func TestParseError(t *testing.T) {
 			t.Fatalf("%d: err == nil, expected != nil", i)
 		}
 
-		if err.Error() != test.err.Error() {
+		if err.Error() != test.err {
 			t.Fatalf("%d:\n got: %v\nwant: %v", i, err, test.err)
 		}
 	}
