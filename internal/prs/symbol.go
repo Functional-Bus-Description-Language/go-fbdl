@@ -3,9 +3,9 @@ package prs
 type SymbolKind uint8
 
 const (
-	ConstDef SymbolKind = iota
-	TypeDef
-	ElemInst
+	ConstDef SymbolKind = iota // Constant Definition
+	TypeDef                    // Type Definition
+	FuncInst                   // Functionality Instantiation
 )
 
 type Symbol interface {

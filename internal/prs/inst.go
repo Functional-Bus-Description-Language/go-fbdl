@@ -22,7 +22,7 @@ type Inst struct {
 	resolvedArgs map[string]Expr
 }
 
-func (i Inst) Kind() SymbolKind { return ElemInst }
+func (i Inst) Kind() SymbolKind { return FuncInst }
 func (i Inst) Type() string     { return i.typ }
 func (i Inst) IsArray() bool    { return i.count != nil }
 func (i Inst) Count() Expr      { return i.count }

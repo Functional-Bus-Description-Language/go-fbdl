@@ -47,7 +47,7 @@ func setBusWidth(main prs.Symbol) error {
 // Instantiate main bus within given packages scope.
 // MainName is the name of the main bus.
 func Instantiate(packages prs.Packages, mainName string) (*elem.Block, map[string]*elem.Package, error) {
-	main, ok := packages["main"][0].Symbols.Get(mainName, prs.ElemInst)
+	main, ok := packages["main"][0].Symbols.Get(mainName, prs.FuncInst)
 	if !ok {
 		return nil, nil, fmt.Errorf("'%s' bus not found", mainName)
 	}
