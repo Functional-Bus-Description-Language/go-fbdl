@@ -521,7 +521,7 @@ func parseString(c *ctx, src []byte) (String, error) {
 	for {
 		c.i++
 		if c.i >= len(src) {
-			return t, Error{t, "unterminated string literal"}
+			return t, Error{t, "unterminated string, probably missing '\"'"}
 		}
 		b := src[c.i]
 		if b != '\n' {
@@ -542,40 +542,26 @@ func parseBinaryBitString(c *ctx, src []byte) (Token, error) {
 	c.i += 2
 	for {
 		if c.i >= len(src) {
-			return t, Error{
-				t,
-				"unterminated binary bit string literal",
-			}
+			return t, Error{t, "unterminated binary bit string, probably missing '\"'"}
 		}
 
-		b := src[c.i]
-
-		if b != '\n' {
+		switch b := src[c.i]; b {
+		case '"':
 			t.end++
-		}
-
-		if b == '"' {
 			c.i++
 			return t, nil
-		}
-
-		switch b {
 		case '0', '1',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			t.end++
 			c.i++
 		default:
-			if b == '\n' {
-				return t, Error{
-					t,
-					"unterminated binary bit string literal",
-				}
-			} else {
+			switch b {
+			case ' ', '\n', ';', ',':
+				return t, Error{t, "unterminated binary bit string, probably missing '\"'"}
+			default:
 				return t, Error{
 					BitString{c.i, c.i, c.line, c.col(c.i)},
-					fmt.Sprintf(
-						"invalid character '%c' in binary bit string literal",
-						b,
-					),
+					fmt.Sprintf("invalid character '%c' in binary bit string", b),
 				}
 			}
 		}
@@ -589,34 +575,26 @@ func parseOctalBitString(c *ctx, src []byte) (Token, error) {
 	c.i += 2
 	for {
 		if c.i >= len(src) {
-			return t, Error{t, "unterminated octal bit string literal"}
+			return t, Error{t, "unterminated octal bit string, probably missing '\"'"}
 		}
 
-		b := src[c.i]
-
-		if b != '\n' {
+		switch b := src[c.i]; b {
+		case '"':
 			t.end++
-		}
-
-		if b == '"' {
 			c.i++
 			return t, nil
-		}
-
-		switch b {
 		case '0', '1', '2', '3', '4', '5', '6', '7',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			t.end++
 			c.i++
 		default:
-			if b == '\n' {
-				return t, Error{t, "unterminated octal bit string literal"}
-			} else {
+			switch b {
+			case ' ', '\n', ';', ',':
+				return t, Error{t, "unterminated octal bit string, probably missing '\"'"}
+			default:
 				return t, Error{
 					BitString{c.i, c.i, c.line, c.col(c.i)},
-					fmt.Sprintf(
-						"invalid character '%c' in octal bit string literal",
-						b,
-					),
+					fmt.Sprintf("invalid character '%c' in octal bit string", b),
 				}
 			}
 		}
@@ -630,37 +608,25 @@ func parseHexBitString(c *ctx, src []byte) (Token, error) {
 	c.i += 2
 	for {
 		if c.i >= len(src) {
-			return t, Error{t, "unterminated hex bit string literal"}
+			return t, Error{t, "unterminated hex bit string, probably missing '\"'"}
 		}
 
-		b := src[c.i]
-
-		if b != '\n' {
+		switch b := src[c.i]; b {
+		case '"':
 			t.end++
-		}
-
-		if b == '"' {
-			t.end = c.i
 			c.i++
 			return t, nil
-		}
-
-		switch b {
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			t.end++
 			c.i++
+		case ' ', '\n', ';', ',':
+			return t, Error{t, "unterminated hex bit string, probably missing '\"'"}
 		default:
-			if b == '\n' {
-				return t, Error{t, "unterminated hex bit string literal"}
-			} else {
-				return t, Error{
-					BitString{c.i, c.i, c.line, c.col(c.i)},
-					fmt.Sprintf(
-						"invalid character '%c' in hex bit string literal",
-						b,
-					),
-				}
+			return t, Error{
+				BitString{c.i, c.i, c.line, c.col(c.i)},
+				fmt.Sprintf("invalid character '%c' in hex bit string", b),
 			}
 		}
 	}
@@ -697,13 +663,13 @@ func parseNumber(c *ctx, src []byte) (Number, error) {
 			if hasPoint {
 				return nil, Error{
 					Real{c.i, c.i, c.line, c.col(c.i)},
-					"second point character '.' in number literal",
+					"second point character '.' in number",
 				}
 			} else {
 				if hasE {
 					return nil, Error{
 						Real{c.i, c.i, c.line, c.col(c.i)},
-						"point character '.' after exponent in number literal",
+						"point character '.' after exponent in number",
 					}
 				}
 				hasPoint = true
@@ -712,7 +678,7 @@ func parseNumber(c *ctx, src []byte) (Number, error) {
 			if hasE {
 				return nil, Error{
 					Real{c.i, c.i, c.line, c.col(c.i)},
-					"second exponent in number literal",
+					"second exponent in number",
 				}
 			} else {
 				hasE = true
@@ -722,7 +688,7 @@ func parseNumber(c *ctx, src []byte) (Number, error) {
 		} else {
 			return nil, Error{
 				Int{c.i, c.i, c.line, c.col(c.i)},
-				fmt.Sprintf("invalid character '%c' in number literal", b),
+				fmt.Sprintf("invalid character '%c' in number", b),
 			}
 		}
 	}
@@ -753,7 +719,7 @@ func parseBinaryInt(c *ctx, src []byte) (Int, error) {
 		} else {
 			return t, Error{
 				Int{c.i, c.i, c.line, c.col(c.i)},
-				fmt.Sprintf("invalid character '%c' in binary literal", b),
+				fmt.Sprintf("invalid character '%c' in binary", b),
 			}
 		}
 	}
@@ -778,7 +744,7 @@ func parseOctalInt(c *ctx, src []byte) (Int, error) {
 		} else {
 			return t, Error{
 				Int{c.i, c.i, c.line, c.col(c.i)},
-				fmt.Sprintf("invalid character '%c' in octal literal", b),
+				fmt.Sprintf("invalid character '%c' in octal", b),
 			}
 		}
 	}
@@ -803,7 +769,7 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 		} else {
 			return t, Error{
 				Int{c.i, c.i, c.line, c.col(c.i)},
-				fmt.Sprintf("invalid character '%c' in hex literal", b),
+				fmt.Sprintf("invalid character '%c' in hex", b),
 			}
 		}
 	}

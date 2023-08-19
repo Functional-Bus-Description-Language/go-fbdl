@@ -400,32 +400,32 @@ func TestParseError(t *testing.T) {
 		{
 			4,
 			"b\"01-uUwWxXzZ3\"",
-			"1:14: invalid character '3' in binary bit string literal",
+			"1:14: invalid character '3' in binary bit string",
 		},
 		{
 			5,
 			"B\"0",
-			"1:1: unterminated binary bit string literal",
+			"1:1: unterminated binary bit string, probably missing '\"'",
 		},
 		{
 			6,
 			"o\"01234567-uUwWxXzZ8\"",
-			"1:20: invalid character '8' in octal bit string literal",
+			"1:20: invalid character '8' in octal bit string",
 		},
 		{
 			7,
 			"O\"0",
-			"1:1: unterminated octal bit string literal",
+			"1:1: unterminated octal bit string, probably missing '\"'",
 		},
 		{
 			8,
 			"x\"0123456789aAbBcCdDeEfF-uUwWxXzZ8g\"",
-			"1:35: invalid character 'g' in hex bit string literal",
+			"1:35: invalid character 'g' in hex bit string",
 		},
 		{
 			9,
 			"X\"0",
-			"1:1: unterminated hex bit string literal",
+			"1:1: unterminated hex bit string, probably missing '\"'",
 		},
 		{
 			10,
@@ -435,22 +435,22 @@ func TestParseError(t *testing.T) {
 		{
 			11,
 			"1.2.3",
-			"1:4: second point character '.' in number literal",
+			"1:4: second point character '.' in number",
 		},
 		{
 			12,
 			"1e2.",
-			"1:4: point character '.' after exponent in number literal",
+			"1:4: point character '.' after exponent in number",
 		},
 		{
 			13,
 			"1e2d",
-			"1:4: invalid character 'd' in number literal",
+			"1:4: invalid character 'd' in number",
 		},
 		{
 			14,
 			"\n\"str",
-			"2:1: unterminated string literal",
+			"2:1: unterminated string, probably missing '\"'",
 		},
 		{
 			15,
