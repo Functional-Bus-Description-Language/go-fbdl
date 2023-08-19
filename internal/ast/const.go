@@ -30,8 +30,8 @@ func buildSingleConst(toks []tok.Token, c *ctx) ([]Const, error) {
 	con := Const{Name: toks[c.i+1].(tok.Ident)}
 
 	c.i += 2
-	if t, ok := toks[c.i].(tok.Ass); !ok {
-		return nil, unexpected(t, "=")
+	if _, ok := toks[c.i].(tok.Ass); !ok {
+		return nil, unexpected(toks[c.i], "=")
 	}
 
 	c.i++

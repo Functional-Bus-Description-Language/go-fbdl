@@ -1,1 +1,4 @@
 bus.fbd:2:6: unexpected ], expected expression
+   |
+ 2 | 	st []status
+   | 	    ^

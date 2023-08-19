@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
@@ -94,7 +95,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 
 	astFile, err := ast.Build(src)
 	if err != nil {
-		log.Fatalf("%s:%s", path, err)
+		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
 	}
 
 	file := File{

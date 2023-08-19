@@ -1,1 +1,4 @@
 bus.fbd:2:37: extra ';' at line end
+   |
+ 2 | 	st status width = 10; atomic = true;
+   | 	                                   ^

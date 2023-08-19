@@ -212,9 +212,10 @@ func Parse(src []byte) ([]Token, error) {
 func parseSpace(c *ctx, src []byte, s []Token) error {
 	if t, ok := lastToken(s); ok {
 		if _, ok := t.(Newline); ok {
-			return fmt.Errorf(
-				"%d:%d: space character ' ' not allowed for indent", c.line, c.col(c.i),
-			)
+			return Error{
+				Indent{c.i, c.i, c.line, c.col(c.i)},
+				"space character ' ' not allowed for indent",
+			}
 		}
 	}
 
@@ -234,15 +235,14 @@ func parseSpace(c *ctx, src []byte, s []Token) error {
 func parseTab(c *ctx, src []byte, s *[]Token) error {
 	start := c.i
 
-	errMsg := fmt.Sprintf(
-		"%d:%d: tab character '\\t' not allowed for alignment", c.line, c.col(c.i),
-	)
+	tab := Indent{start, start, c.line, c.col(c.i)}
+	errMsg := "tab character '\\t' not allowed for alignment"
 	if t, ok := lastToken(*s); ok {
 		if _, ok := t.(Newline); !ok {
-			return fmt.Errorf(errMsg)
+			return Error{tab, errMsg}
 		}
 	} else {
-		return fmt.Errorf(errMsg)
+		return Error{tab, errMsg}
 	}
 
 	indent := 1
@@ -256,10 +256,10 @@ func parseTab(c *ctx, src []byte, s *[]Token) error {
 		if b == '\t' {
 			indent++
 		} else if b == ' ' {
-			return fmt.Errorf(
-				"%d:%d: space character ' ' right after tab character '\t'",
-				c.line, c.col(c.i),
-			)
+			return Error{
+				Indent{c.i, c.i, c.line, c.col(c.i)},
+				"space character ' ' right after tab character '\\t'",
+			}
 		} else {
 			break
 		}
@@ -269,7 +269,9 @@ func parseTab(c *ctx, src []byte, s *[]Token) error {
 		t := Indent{start, c.i - 1, c.line, c.col(start)}
 		*s = append(*s, t)
 	} else if indent > c.indent+1 {
-		return fmt.Errorf("%d:%d: multi indent increase", c.line, c.col(start))
+		return Error{
+			Indent{start, start, c.line, c.col(start)}, "multi indent increase",
+		}
 	} else if indent < c.indent {
 		// Insert proper number of INDENT_DEC tokens.
 		t := Dedent{start, start, c.line, c.col(start)}
@@ -286,7 +288,7 @@ func parseTab(c *ctx, src []byte, s *[]Token) error {
 func parseNewline(c *ctx, src []byte, s *[]Token) error {
 	if t, ok := lastToken(*s); ok {
 		if _, ok := t.(Semicolon); ok {
-			return fmt.Errorf("%s: extra ';' at line end", Loc(t))
+			return Error{t, "extra ';' at line end"}
 		}
 	}
 
@@ -344,9 +346,9 @@ func parseComment(c *ctx, src []byte, s []Token) Token {
 func parseComma(c *ctx, s []Token) (Token, error) {
 	if t, ok := lastToken(s); ok {
 		if _, ok := t.(Comma); ok {
-			return nil, fmt.Errorf(
-				"%d:%d: redundant ','", t.Line(), c.col(c.i),
-			)
+			return nil, Error{
+				Comma{c.i, c.i, c.line, c.col(c.i)}, "redundant ','",
+			}
 		}
 	}
 
@@ -358,9 +360,9 @@ func parseComma(c *ctx, s []Token) (Token, error) {
 func parseSemicolon(c *ctx, s []Token) (Token, error) {
 	if t, ok := lastToken(s); ok {
 		if _, ok := t.(Semicolon); ok {
-			return nil, fmt.Errorf(
-				"%d:%d: redundant ';'", t.Line(), c.col(c.i),
-			)
+			return nil, Error{
+				Semicolon{c.i, c.i, c.line, c.col(c.i)}, "redundant ';'",
+			}
 		}
 	}
 
@@ -514,42 +516,45 @@ func parseBitOr(c *ctx) BitOr {
 }
 
 func parseString(c *ctx, src []byte) (String, error) {
-	t := String{start: c.i, line: c.line, column: c.col(c.i)}
+	t := String{c.i, c.i, c.line, c.col(c.i)}
 
 	for {
 		c.i++
 		if c.i >= len(src) {
-			return t, fmt.Errorf(
-				"%d:%d: unterminated string literal", c.line, c.col(t.start),
-			)
+			return t, Error{t, "unterminated string literal"}
 		}
 		b := src[c.i]
+		if b != '\n' {
+			t.end++
+		}
 		if b == '"' {
 			break
 		}
 	}
-	t.end = c.i
 	c.i++
 	return t, nil
 }
 
 func parseBinaryBitString(c *ctx, src []byte) (Token, error) {
-	t := BitString{start: c.i, line: c.line, column: c.col(c.i)}
+	t := BitString{c.i, c.i + 1, c.line, c.col(c.i)}
 
 	// Skip b"
 	c.i += 2
 	for {
 		if c.i >= len(src) {
-			return t, fmt.Errorf(
-				"%d:%d: missing terminating '\"' in binary bit string literal",
-				c.line, c.col(t.start),
-			)
+			return t, Error{
+				t,
+				"unterminated binary bit string literal",
+			}
 		}
 
 		b := src[c.i]
 
+		if b != '\n' {
+			t.end++
+		}
+
 		if b == '"' {
-			t.end = c.i
 			c.i++
 			return t, nil
 		}
@@ -559,31 +564,41 @@ func parseBinaryBitString(c *ctx, src []byte) (Token, error) {
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			c.i++
 		default:
-			return t, fmt.Errorf(
-				"%d:%d: invalid character '%c' in binary bit string literal",
-				c.line, c.col(c.i), b,
-			)
+			if b == '\n' {
+				return t, Error{
+					t,
+					"unterminated binary bit string literal",
+				}
+			} else {
+				return t, Error{
+					BitString{c.i, c.i, c.line, c.col(c.i)},
+					fmt.Sprintf(
+						"invalid character '%c' in binary bit string literal",
+						b,
+					),
+				}
+			}
 		}
 	}
 }
 
 func parseOctalBitString(c *ctx, src []byte) (Token, error) {
-	t := BitString{start: c.i, line: c.line, column: c.col(c.i)}
+	t := BitString{c.i, c.i + 1, c.line, c.col(c.i)}
 
 	// Skip o"
 	c.i += 2
 	for {
 		if c.i >= len(src) {
-			return t, fmt.Errorf(
-				"%d:%d: missing terminating '\"' in octal bit string literal",
-				c.line, c.col(t.start),
-			)
+			return t, Error{t, "unterminated octal bit string literal"}
 		}
 
 		b := src[c.i]
 
+		if b != '\n' {
+			t.end++
+		}
+
 		if b == '"' {
-			t.end = c.i
 			c.i++
 			return t, nil
 		}
@@ -593,28 +608,36 @@ func parseOctalBitString(c *ctx, src []byte) (Token, error) {
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			c.i++
 		default:
-			return t, fmt.Errorf(
-				"%d:%d: invalid character '%c' in octal bit string literal",
-				c.line, c.col(c.i), b,
-			)
+			if b == '\n' {
+				return t, Error{t, "unterminated octal bit string literal"}
+			} else {
+				return t, Error{
+					BitString{c.i, c.i, c.line, c.col(c.i)},
+					fmt.Sprintf(
+						"invalid character '%c' in octal bit string literal",
+						b,
+					),
+				}
+			}
 		}
 	}
 }
 
 func parseHexBitString(c *ctx, src []byte) (Token, error) {
-	t := BitString{start: c.i, line: c.line, column: c.col(c.i)}
+	t := BitString{c.i, c.i + 1, c.line, c.col(c.i)}
 
 	// Skip x"
 	c.i += 2
 	for {
 		if c.i >= len(src) {
-			return t, fmt.Errorf(
-				"%d:%d: missing terminating '\"' in hex bit string literal",
-				c.line, c.col(t.start),
-			)
+			return t, Error{t, "unterminated hex bit string literal"}
 		}
 
 		b := src[c.i]
+
+		if b != '\n' {
+			t.end++
+		}
 
 		if b == '"' {
 			t.end = c.i
@@ -628,10 +651,17 @@ func parseHexBitString(c *ctx, src []byte) (Token, error) {
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			c.i++
 		default:
-			return t, fmt.Errorf(
-				"%d:%d: invalid character '%c' in hex bit string literal",
-				c.line, c.col(c.i), b,
-			)
+			if b == '\n' {
+				return t, Error{t, "unterminated hex bit string literal"}
+			} else {
+				return t, Error{
+					BitString{c.i, c.i, c.line, c.col(c.i)},
+					fmt.Sprintf(
+						"invalid character '%c' in hex bit string literal",
+						b,
+					),
+				}
+			}
 		}
 	}
 }
@@ -665,35 +695,35 @@ func parseNumber(c *ctx, src []byte) (Number, error) {
 
 		if b == '.' {
 			if hasPoint {
-				return nil, fmt.Errorf(
-					"%d:%d: second point character '.' in number literal",
-					c.line, c.col(c.i),
-				)
+				return nil, Error{
+					Real{c.i, c.i, c.line, c.col(c.i)},
+					"second point character '.' in number literal",
+				}
 			} else {
 				if hasE {
-					return nil, fmt.Errorf(
-						"%d:%d: point character '.' after exponent in number literal",
-						c.line, c.col(c.i),
-					)
+					return nil, Error{
+						Real{c.i, c.i, c.line, c.col(c.i)},
+						"point character '.' after exponent in number literal",
+					}
 				}
 				hasPoint = true
 			}
 		} else if b == 'e' || b == 'E' {
 			if hasE {
-				return nil, fmt.Errorf(
-					"%d:%d: second exponent in number literal",
-					c.line, c.col(c.i),
-				)
+				return nil, Error{
+					Real{c.i, c.i, c.line, c.col(c.i)},
+					"second exponent in number literal",
+				}
 			} else {
 				hasE = true
 			}
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return nil, fmt.Errorf(
-				"%d:%d: invalid character '%c' in number literal",
-				c.line, c.col(c.i), b,
-			)
+			return nil, Error{
+				Int{c.i, c.i, c.line, c.col(c.i)},
+				fmt.Sprintf("invalid character '%c' in number literal", b),
+			}
 		}
 	}
 
@@ -721,10 +751,10 @@ func parseBinaryInt(c *ctx, src []byte) (Int, error) {
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return t, fmt.Errorf(
-				"%d:%d: invalid character '%c' in binary literal",
-				c.line, c.col(c.i), b,
-			)
+			return t, Error{
+				Int{c.i, c.i, c.line, c.col(c.i)},
+				fmt.Sprintf("invalid character '%c' in binary literal", b),
+			}
 		}
 	}
 	t.end = c.i - 1
@@ -746,10 +776,10 @@ func parseOctalInt(c *ctx, src []byte) (Int, error) {
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return t, fmt.Errorf(
-				"%d:%d: invalid character '%c' in octal literal",
-				c.line, c.col(c.i), b,
-			)
+			return t, Error{
+				Int{c.i, c.i, c.line, c.col(c.i)},
+				fmt.Sprintf("invalid character '%c' in octal literal", b),
+			}
 		}
 	}
 	t.end = c.i - 1
@@ -771,10 +801,10 @@ func parseHexInt(c *ctx, src []byte) (Int, error) {
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return t, fmt.Errorf(
-				"%d:%d: invalid character '%c' in hex literal",
-				c.line, c.col(c.i), b,
-			)
+			return t, Error{
+				Int{c.i, c.i, c.line, c.col(c.i)},
+				fmt.Sprintf("invalid character '%c' in hex literal", b),
+			}
 		}
 	}
 	t.end = c.i - 1
@@ -795,7 +825,7 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 	defer func() { c.i = t.End() + 1 }()
 	word, hasHyphen, hasDot := getWord(src, c.i)
 
-	qualIdentErrMsg := "%d:%d: symbol name in qualified identifier must start with upper case letter"
+	qualIdentErrMsg := "symbol name in qualified identifier must start with upper case letter"
 	if hasHyphen && hasDot {
 		// This is for sure part of an expression
 		chunks := bytes.Split(word, []byte{'-'})
@@ -805,7 +835,7 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 					start: c.i, end: c.i + len(chunk) - 1, line: c.line, column: c.col(c.i),
 				}
 				if !isValidQualifiedIdentifier(chunk) {
-					return t, fmt.Errorf(qualIdentErrMsg, c.line, c.col(c.i))
+					return t, Error{t, qualIdentErrMsg}
 				}
 			} else {
 				t = Ident{
@@ -826,7 +856,7 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 		t = QualIdent{start: c.i, end: c.i + len(word) - 1, line: c.line, column: c.col(c.i)}
 
 		if !isValidQualifiedIdentifier(word) {
-			return t, fmt.Errorf(qualIdentErrMsg, c.line, c.col(c.i))
+			return t, Error{t, qualIdentErrMsg}
 		}
 
 		return t, nil

@@ -400,7 +400,7 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			5,
-			"B\"0", fmt.Errorf("1:1: missing terminating '\"' in binary bit string literal"),
+			"B\"0", fmt.Errorf("1:1: unterminated binary bit string literal"),
 		},
 		{
 			6,
@@ -408,7 +408,7 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			7,
-			"O\"0", fmt.Errorf("1:1: missing terminating '\"' in octal bit string literal"),
+			"O\"0", fmt.Errorf("1:1: unterminated octal bit string literal"),
 		},
 		{
 			8,
@@ -416,7 +416,7 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			9,
-			"X\"0", fmt.Errorf("1:1: missing terminating '\"' in hex bit string literal"),
+			"X\"0", fmt.Errorf("1:1: unterminated hex bit string literal"),
 		},
 		{
 			10,
@@ -448,7 +448,7 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			17,
-			"Main bus\n\t c config", fmt.Errorf("2:2: space character ' ' right after tab character '\t'"),
+			"Main bus\n\t c config", fmt.Errorf("2:2: space character ' ' right after tab character '\\t'"),
 		},
 		{
 			18,
