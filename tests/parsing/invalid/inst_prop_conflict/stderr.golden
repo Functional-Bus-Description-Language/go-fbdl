@@ -1,1 +1,4 @@
-bus.fbd:line 4: cannot set 'range' property, because 'width' property is already set in line 3
+bus.fbd:4:3: cannot set 'range' property, because 'width' property is already set in line 3
+   |
+ 4 | 		range = [0, 10]
+   | 		^^^^^

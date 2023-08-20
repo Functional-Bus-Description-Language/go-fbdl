@@ -99,10 +99,10 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	t.args = args
 
 	if util.IsBaseType(t.typ) && len(t.args) > 0 {
-		return nil, fmt.Errorf(
-			"%s: base type '%s' does not accept argument list",
-			tok.Loc(at.Type), t.typ,
-		)
+		return nil, tok.Error{
+			Tok: at.Type,
+			Msg: fmt.Sprintf("base type '%s' does not accept argument list", t.typ),
+		}
 	}
 
 	props, syms, err := buildBody(at.Body, src, t)
@@ -113,11 +113,17 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	if util.IsBaseType(t.typ) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, t.typ); err != nil {
-				return nil, fmt.Errorf("line %d: %v", p.Line, err)
+				return nil, tok.Error{
+					Tok: at.Body.Props[j].Name,
+					Msg: err.Error(),
+				}
 			}
 
 			if err := checkPropConflict(t.typ, p, props[0:j]); err != nil {
-				return nil, fmt.Errorf("%v", err)
+				return nil, tok.Error{
+					Tok: at.Body.Props[j].Name,
+					Msg: err.Error(),
+				}
 			}
 		}
 	}

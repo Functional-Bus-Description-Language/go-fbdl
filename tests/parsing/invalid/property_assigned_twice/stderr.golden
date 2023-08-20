@@ -1,1 +1,4 @@
 bus.fbd:3:2: reassignment to 'width' property
+   |
+ 3 | 	width = 2
+   | 	^^^^^

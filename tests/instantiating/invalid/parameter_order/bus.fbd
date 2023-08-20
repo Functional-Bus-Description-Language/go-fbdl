@@ -1,2 +1,0 @@
-type my_config(width=10, foo) config
-	width = width

@@ -103,10 +103,10 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	i.args = args
 
 	if util.IsBaseType(i.typ) && len(i.args) > 0 {
-		return nil, fmt.Errorf(
-			"%s: base type '%s' does not accept argument list",
-			tok.Loc(ai.Type), i.typ,
-		)
+		return nil, tok.Error{
+			Tok: ai.Type,
+			Msg: fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
+		}
 	}
 
 	props, syms, err := buildBody(ai.Body, src, i)
@@ -117,11 +117,17 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	if util.IsBaseType(i.typ) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, i.typ); err != nil {
-				return nil, fmt.Errorf("line %d: %v", p.Line, err)
+				return nil, tok.Error{
+					Tok: ai.Body.Props[j].Name,
+					Msg: err.Error(),
+				}
 			}
 
 			if err := checkPropConflict(i.typ, p, props[0:j]); err != nil {
-				return nil, fmt.Errorf("%v", err)
+				return nil, tok.Error{
+					Tok: ai.Body.Props[j].Name,
+					Msg: err.Error(),
+				}
 			}
 		}
 	}

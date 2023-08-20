@@ -1,1 +1,4 @@
 bus.fbd:4:7: redefinition of symbol 'a'
+   |
+ 4 | 	type a mask
+   | 	     ^

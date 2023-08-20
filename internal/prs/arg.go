@@ -27,10 +27,10 @@ func buildArgList(astArgs []ast.Arg, src []byte, parent Searchable) ([]Arg, erro
 		if aa.Name != nil {
 			name := tok.Text(aa.Name, src)
 			if names[name] {
-				return nil, fmt.Errorf(
-					"%s: reassignment to '%s' argument",
-					tok.Loc(aa.Name), name,
-				)
+				return nil, tok.Error{
+					Tok: aa.Name,
+					Msg: fmt.Sprintf("reassignment to '%s' argument", name),
+				}
 			}
 			names[name] = true
 			a.Name = name
@@ -49,10 +49,10 @@ func buildArgList(astArgs []ast.Arg, src []byte, parent Searchable) ([]Arg, erro
 	withName := false
 	for i, a := range args {
 		if withName && a.Name == "" {
-			return nil, fmt.Errorf(
-				"%s: arguments without name must precede the ones with name",
-				tok.Loc(astArgs[i].ValueFirstTok),
-			)
+			return nil, tok.Error{
+				Tok: astArgs[i].ValueFirstTok,
+				Msg: "positional argument follows keyword argument",
+			}
 		}
 
 		if a.Name != "" {

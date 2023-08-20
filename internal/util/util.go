@@ -46,12 +46,12 @@ func IsValidProperty(p string, t string) error {
 		panic(fmt.Sprintf("invalid base type '%s'", t))
 	}
 
-	msg := "invalid property '%[1]s' for element of type '%[2]s', "
+	msg := "invalid property '%[1]s' for %[2]s functionality"
 
 	if len(validProps[t]) == 0 {
 		msg += "type '%[2]s' has no properties"
 	} else {
-		msg += "valid properties for element of type '%[2]s' are:"
+		msg += "\nvalid properties for %[2]s are:"
 		list := validProps[t]
 		for i := range list {
 			msg = msg + " '" + list[i] + "',"

@@ -25,7 +25,7 @@ func assertCall(c Call) error {
 	count := validArgCount[c.funcName]
 	if len(c.args) != count {
 		return fmt.Errorf(
-			"function '%s' takes %d arguments, but %d were given",
+			"function '%s' takes %d arguments, but %d were provided",
 			c.funcName, count, len(c.args),
 		)
 	}

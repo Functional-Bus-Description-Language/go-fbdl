@@ -1,1 +1,4 @@
-bus.fbd:2:20: function 'log2' takes 1 arguments, but 0 were given
+bus.fbd:2:20: function 'log2' takes 1 arguments, but 0 were provided
+   |
+ 2 | 	s status; width = log2()
+   | 	                  ^^^^

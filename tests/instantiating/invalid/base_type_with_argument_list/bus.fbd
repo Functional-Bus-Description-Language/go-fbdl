@@ -1,2 +1,0 @@
-type my_mask mask(A=2)
-	width = 10

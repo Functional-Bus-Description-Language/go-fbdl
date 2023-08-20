@@ -200,7 +200,7 @@ func MakeCall(e ast.Call, src []byte, s Searchable) (Call, error) {
 
 	err := assertCall(c)
 	if err != nil {
-		return c, fmt.Errorf("%s: %v", tok.Loc(e.Name), err)
+		return c, tok.Error{Tok: e.Name, Msg: err.Error()}
 	}
 
 	return c, nil

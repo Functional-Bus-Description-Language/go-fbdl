@@ -1,1 +1,4 @@
 bus.fbd:1:17: redeclaration of 'A' parameter
+   |
+ 1 | type my_mask(A, A) mask
+   |                 ^

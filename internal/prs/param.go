@@ -27,10 +27,10 @@ func buildParamList(astParams []ast.Param, src []byte, parent Searchable) ([]Par
 
 		name := tok.Text(ap.Name, src)
 		if names[name] {
-			return nil, fmt.Errorf(
-				"%s: redeclaration of '%s' parameter",
-				tok.Loc(ap.Name), name,
-			)
+			return nil, tok.Error{
+				Tok: ap.Name,
+				Msg: fmt.Sprintf("redeclaration of '%s' parameter", name),
+			}
 		}
 		names[name] = true
 		p.Name = name
@@ -50,10 +50,10 @@ func buildParamList(astParams []ast.Param, src []byte, parent Searchable) ([]Par
 	withDflt := false
 	for i, p := range params {
 		if withDflt && p.DfltValue == nil {
-			return nil, fmt.Errorf(
-				"%s: parameters without default value must precede the ones with default value",
-				tok.Loc(astParams[i].Name),
-			)
+			return nil, tok.Error{
+				Tok: astParams[i].Name,
+				Msg: "parameters without default value must precede the ones with default value",
+			}
 		}
 
 		if p.DfltValue != nil {

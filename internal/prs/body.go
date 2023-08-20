@@ -21,10 +21,10 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 		}
 		p.Value = v
 		if ok := pc.Add(p); !ok {
-			return nil, nil, fmt.Errorf(
-				"%s: reassignment to '%s' property",
-				tok.Loc(ap.Name), p.Name,
-			)
+			return nil, nil, tok.Error{
+				Tok: ap.Name,
+				Msg: fmt.Sprintf("reassignment to '%s' property", p.Name),
+			}
 		}
 	}
 
@@ -37,10 +37,10 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 	}
 	for i, c := range consts {
 		if ok := sc.Add(c); !ok {
-			return nil, nil, fmt.Errorf(
-				"%s: redefinition of symbol '%s'",
-				tok.Loc(astBody.Consts[i].Name), c.Name(),
-			)
+			return nil, nil, tok.Error{
+				Tok: astBody.Consts[i].Name,
+				Msg: fmt.Sprintf("redefinition of symbol '%s'", c.Name()),
+			}
 		}
 	}
 
@@ -51,10 +51,10 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 	}
 	for i, t := range types {
 		if ok := sc.Add(t); !ok {
-			return nil, nil, fmt.Errorf(
-				"%s: redefinition of symbol '%s'",
-				tok.Loc(astBody.Types[i].Name), t.Name(),
-			)
+			return nil, nil, tok.Error{
+				Tok: astBody.Types[i].Name,
+				Msg: fmt.Sprintf("redefinition of symbol '%s'", t.Name()),
+			}
 		}
 	}
 
@@ -65,10 +65,10 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 	}
 	for i, ins := range insts {
 		if ok := sc.Add(ins); !ok {
-			return nil, nil, fmt.Errorf(
-				"%s: redefinition of symbol '%s'",
-				tok.Loc(astBody.Insts[i].Name), ins.Name(),
-			)
+			return nil, nil, tok.Error{
+				Tok: astBody.Insts[i].Name,
+				Msg: fmt.Sprintf("redefinition of symbol '%s'", ins.Name()),
+			}
 		}
 	}
 

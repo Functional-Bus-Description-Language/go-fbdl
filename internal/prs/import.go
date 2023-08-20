@@ -17,7 +17,7 @@ type Import struct {
 }
 
 // buildImports builds list of file Imports based on the list of ast.Import.
-func buildImports(astImports []ast.Import, src []byte) ([]Import, error) {
+func buildImports(astImports []ast.Import, src []byte) []Import {
 	imports := []Import{}
 	name := ""
 	path := ""
@@ -41,7 +41,7 @@ func buildImports(astImports []ast.Import, src []byte) ([]Import, error) {
 		)
 	}
 
-	return imports, nil
+	return imports
 }
 
 func bindImports(packages Packages) {

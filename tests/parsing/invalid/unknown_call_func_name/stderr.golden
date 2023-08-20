@@ -1,1 +1,4 @@
 bus.fbd:2:20: unknown function 'foo'
+   |
+ 2 | 	c config; width = foo()
+   | 	                  ^^^
