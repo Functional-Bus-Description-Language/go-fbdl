@@ -43,29 +43,29 @@ func insParam(typeChain []prs.Functionality) (*fn.Param, error) {
 }
 
 func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "param"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "param"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: %v", p.Loc(), err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "groups":
 			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, "groups")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
 			}
 			param.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "range":
 			if diary.rangeSet {
-				return fmt.Errorf(propAlreadySetMsg, "range")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "range")
 			}
 			var rang fbdlVal.Range
 			switch r := v.(type) {
@@ -80,7 +80,7 @@ func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) e
 			diary.rangeSet = true
 		case "width":
 			if diary.widthSet {
-				return fmt.Errorf(propAlreadySetMsg, "width")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
 			param.Width = int64(v.(val.Int))
 			diary.widthSet = true

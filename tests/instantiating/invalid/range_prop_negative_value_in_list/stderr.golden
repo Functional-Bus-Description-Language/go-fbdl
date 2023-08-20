@@ -1,1 +1,1 @@
-bus.fbd: line 3: instantiating element 'PI': bus.fbd: line 3: 'range' property value must be natural, value with index 1 is negative (-127)
+bus.fbd:3:13: 'range' property value must be natural, value with index 1 is negative -127

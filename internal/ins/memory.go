@@ -40,59 +40,60 @@ func insMemory(typeChain []prs.Functionality) (*fn.Memory, error) {
 
 	err = fillMemoryProps(&mem, diary)
 	if err != nil {
-		return nil, err
+		last := typeChain[len(typeChain)-1]
+		return nil, fmt.Errorf("%d:%d: %v", last.Line(), last.Col(), err)
 	}
 
 	return &mem, nil
 }
 
 func applyMemoryType(mem *fn.Memory, typ prs.Functionality, diary *memDiary) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "memory"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "memory"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line, err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "access":
 			if diary.accessSet {
-				return fmt.Errorf(propAlreadySetMsg, "access")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "access")
 			}
 			mem.Access = (string(v.(val.Str)))
 			diary.accessSet = true
 		case "byte-write-enable":
 			if diary.byteWriteEnableSet {
-				return fmt.Errorf(propAlreadySetMsg, "byte-write-enable")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "byte-write-enable")
 			}
 			mem.ByteWriteEnable = (bool(v.(val.Bool)))
 			diary.byteWriteEnableSet = true
 		case "read-latency":
 			if diary.readLatencySet {
-				return fmt.Errorf(propAlreadySetMsg, "read-latency")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-latency")
 			}
 			mem.ReadLatency = int64(v.(val.Int))
 			diary.readLatencySet = true
 		case "size":
 			if diary.sizeSet {
-				return fmt.Errorf(propAlreadySetMsg, "size")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "size")
 			}
 			mem.Size = int64(v.(val.Int))
 			diary.sizeSet = true
 		case "width":
 			if diary.widthSet {
-				return fmt.Errorf(propAlreadySetMsg, "width")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
 			mem.Width = int64(v.(val.Int))
 			diary.widthSet = true
 		default:
-			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
+			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
 		}
 	}
 

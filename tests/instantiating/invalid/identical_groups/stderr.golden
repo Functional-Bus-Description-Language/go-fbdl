@@ -1,1 +1,1 @@
-bus.fbd: line 1: instantiating element 'Main': groups "a" and "b" are identical
+bus.fbd:1:1: groups "a" and "b" of 'Main' functionality are identical

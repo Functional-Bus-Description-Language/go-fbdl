@@ -43,44 +43,45 @@ func insBlock(typeChain []prs.Functionality) (*fn.Block, error) {
 
 	err = checkBlockGroups(&blk)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		last := typeChain[len(typeChain)-1]
+		return nil, fmt.Errorf("%d:%d: %v", last.Line(), last.Col(), err)
 	}
 
 	return &blk, nil
 }
 
 func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "bus"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "bus"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: %v", p.Loc(), err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "masters":
 			if blk.Masters != 0 {
-				return fmt.Errorf(propAlreadySetMsg, "masters")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "masters")
 			}
 			blk.Masters = int64(v.(val.Int))
 		case "reset":
 			if blk.Reset != "" {
-				return fmt.Errorf(propAlreadySetMsg, "reset")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "reset")
 			}
 			blk.Reset = string(v.(val.Str))
 		case "width":
 			if blk.Width != 0 {
-				return fmt.Errorf(propAlreadySetMsg, "width")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
 			blk.Width = int64(v.(val.Int))
 		default:
-			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
+			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
 		}
 	}
 
@@ -255,7 +256,10 @@ func checkBlockGroups(blk *fn.Block) error {
 				}
 			}
 			if identical {
-				return fmt.Errorf("groups %q and %q are identical", grpName1, grpName2)
+				return fmt.Errorf(
+					"groups %q and %q of '%s' functionality are identical",
+					grpName1, grpName2, blk.Name,
+				)
 			}
 		}
 	}

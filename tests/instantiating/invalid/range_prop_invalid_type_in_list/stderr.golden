@@ -1,1 +1,1 @@
-bus.fbd: line 2: instantiating element 'C': bus.fbd: line 2: all values in 'range' property list must be of type 'integer', value with index 1 is of type 'string'
+bus.fbd:2:12: all values in 'range' property list must be of type 'integer', value with index 1 is of type 'string'

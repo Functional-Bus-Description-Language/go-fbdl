@@ -1,0 +1,1 @@
+bus.fbd:3:3: 'out-trigger' property must be "Edge" or "Level", current value "abc"

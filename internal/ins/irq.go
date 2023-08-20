@@ -53,64 +53,64 @@ func insIrq(typeChain []prs.Functionality) (*fn.Irq, error) {
 }
 
 func applyIrqType(irq *fn.Irq, typ prs.Functionality, diary *irqDiary) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "irq"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "irq"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: %v", p.Loc(), err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "add-enable":
 			if diary.addEnableSet {
-				return fmt.Errorf(propAlreadySetMsg, "add-enable")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "add-enable")
 			}
 			irq.AddEnable = (bool(v.(val.Bool)))
 			diary.addEnableSet = true
 		case "clear":
 			if diary.clearSet {
-				return fmt.Errorf(propAlreadySetMsg, "clear")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "clear")
 			}
 			irq.Clear = (string(v.(val.Str)))
 			diary.clearSet = true
 		case "enable-init-value":
 			if diary.enableInitValSet {
-				return fmt.Errorf(propAlreadySetMsg, "enable-init-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "enable-init-value")
 			}
 			diary.enableInitVal = v
 			diary.enableInitValSet = true
 		case "enable-reset-value":
 			if diary.enableResetValSet {
-				return fmt.Errorf(propAlreadySetMsg, "enable-reset-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "enable-reset-value")
 			}
 			diary.enableResetVal = v
 			diary.enableResetValSet = true
 		case "groups":
 			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, "groups")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
 			}
 			irq.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "in-trigger":
 			if diary.inTriggerSet {
-				return fmt.Errorf(propAlreadySetMsg, "in-trigger")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "in-trigger")
 			}
 			irq.InTrigger = (string(v.(val.Str)))
 			diary.inTriggerSet = true
 		case "out-trigger":
 			if diary.outTriggerSet {
-				return fmt.Errorf(propAlreadySetMsg, "out-trigger")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "out-trigger")
 			}
 			irq.OutTrigger = (string(v.(val.Str)))
 			diary.outTriggerSet = true
 		default:
-			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
+			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
 		}
 	}
 

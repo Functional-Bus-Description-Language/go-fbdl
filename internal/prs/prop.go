@@ -1,10 +1,17 @@
 package prs
 
+import "fmt"
+
 // Prop struct represents functionality property.
 type Prop struct {
 	Line  int
+	Col   int
 	Name  string
 	Value Expr
+}
+
+func (p Prop) Loc() string {
+	return fmt.Sprintf("%d:%d", p.Line, p.Col)
 }
 
 type PropContainer []Prop

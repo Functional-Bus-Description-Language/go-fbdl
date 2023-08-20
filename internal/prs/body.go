@@ -14,6 +14,7 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 		p := Prop{}
 
 		p.Line = ap.Name.Line()
+		p.Col = ap.Name.Column()
 		p.Name = tok.Text(ap.Name, src)
 		v, err := MakeExpr(ap.Value, src, parent)
 		if err != nil {

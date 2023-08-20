@@ -1,0 +1,1 @@
+bus.fbd:2:2: 'static' element must have 'init-value' property set

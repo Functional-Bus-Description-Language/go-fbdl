@@ -89,7 +89,7 @@ func checkProp(prop prs.Prop) error {
 		}
 		if v != "Edge" && v != "Level" {
 			return fmt.Errorf(
-				"'%s' property must be \"Edge\" or \"Level\", current value (%q)",
+				"'%s' property must be \"Edge\" or \"Level\", current value %q",
 				name, v,
 			)
 		}
@@ -109,7 +109,7 @@ func checkProp(prop prs.Prop) error {
 			}
 		case val.List:
 			if len(v) == 0 {
-				return fmt.Errorf("'range' property value list must not be empty")
+				return fmt.Errorf("empty 'range' property value list")
 			}
 			if len(v)%2 != 0 {
 				return fmt.Errorf("length of 'range' property value list must be even, current length %d", len(v))
@@ -126,7 +126,7 @@ func checkProp(prop prs.Prop) error {
 				}
 				if bound_val < 0 {
 					return fmt.Errorf(
-						"'range' property value must be natural, value with index %d is negative (%d)", i, bound_val,
+						"'range' property value must be natural, value with index %d is negative %d", i, bound_val,
 					)
 				}
 				if lower {
@@ -153,7 +153,7 @@ func checkProp(prop prs.Prop) error {
 		}
 		reset := string(v)
 		if reset != "Sync" && reset != "Async" {
-			return fmt.Errorf("'reset' property must be \"Sync\" or \"Async\", current value (%q)", reset)
+			return fmt.Errorf("'reset' property must be \"Sync\" or \"Async\", current value %q", reset)
 		}
 	case "read-latency", "size", "width":
 		v, ok := pv.(val.Int)

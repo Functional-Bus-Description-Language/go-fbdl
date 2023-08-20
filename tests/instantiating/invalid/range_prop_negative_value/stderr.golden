@@ -1,1 +1,1 @@
-bus.fbd: line 2: instantiating element 'C': bus.fbd: line 2: 'range' property value must be natural, value -127 is negative
+bus.fbd:2:12: 'range' property value must be natural, value -127 is negative

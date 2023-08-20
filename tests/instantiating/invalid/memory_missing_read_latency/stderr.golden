@@ -1,0 +1,1 @@
+bus.fbd:2:2: 'memory' must have 'read-latency' property set when its access equals "Read Write"

@@ -1,1 +1,0 @@
-bus.fbd: line 2: instantiating element 'i': bus.fbd: line 3: 'out-trigger' property must be "Edge" or "Level", current value ("abc")

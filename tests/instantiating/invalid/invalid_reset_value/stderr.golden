@@ -1,1 +1,1 @@
-bus.fbd: line 1: instantiating element 'Main': bus.fbd: line 2: 'reset' property must be "Sync" or "Async", current value ("Abc")
+bus.fbd:2:2: 'reset' property must be "Sync" or "Async", current value "Abc"

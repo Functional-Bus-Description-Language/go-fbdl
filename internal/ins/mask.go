@@ -53,53 +53,53 @@ func insMask(typeChain []prs.Functionality) (*fn.Mask, error) {
 }
 
 func applyMaskType(mask *fn.Mask, typ prs.Functionality, diary *maskDiary) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "mask"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "mask"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line, err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "atomic":
 			if diary.atomicSet {
-				return fmt.Errorf(propAlreadySetMsg, "atomic")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "atomic")
 			}
 			mask.Atomic = bool(v.(val.Bool))
 			diary.atomicSet = true
 		case "groups":
 			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, "groups")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
 			}
 			mask.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "init-value":
 			if diary.initValSet {
-				return fmt.Errorf(propAlreadySetMsg, "init-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "init-value")
 			}
 			diary.initVal = v
 			diary.initValSet = true
 		case "read-value":
 			if diary.readValSet {
-				return fmt.Errorf(propAlreadySetMsg, "read-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-value")
 			}
 			diary.readVal = v
 			diary.readValSet = true
 		case "reset-value":
 			if diary.resetValSet {
-				return fmt.Errorf(propAlreadySetMsg, "reset-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "reset-value")
 			}
 			diary.resetVal = v
 			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
-				return fmt.Errorf(propAlreadySetMsg, "width")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
 			mask.Width = int64(v.(val.Int))
 			diary.widthSet = true

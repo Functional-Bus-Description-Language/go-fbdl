@@ -54,35 +54,35 @@ func insConfig(typeChain []prs.Functionality) (*fn.Config, error) {
 }
 
 func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "config"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "config"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: %v", p.Loc(), err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "atomic":
 			if diary.atomicSet {
-				return fmt.Errorf(propAlreadySetMsg, "atomic")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "atomic")
 			}
 			cfg.Atomic = (bool(v.(val.Bool)))
 			diary.atomicSet = true
 		case "init-value":
 			if diary.initValSet {
-				return fmt.Errorf(propAlreadySetMsg, "init-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "init-value")
 			}
 			diary.initVal = v
 			diary.initValSet = true
 		case "range":
 			if diary.rangeSet {
-				return fmt.Errorf(propAlreadySetMsg, "range")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "range")
 			}
 			var rang fbdlVal.Range
 			switch r := v.(type) {
@@ -97,30 +97,30 @@ func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) 
 			diary.rangeSet = true
 		case "groups":
 			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, "groups")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
 			}
 			cfg.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "read-value":
 			if diary.readValSet {
-				return fmt.Errorf(propAlreadySetMsg, "read-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-value")
 			}
 			diary.readVal = v
 			diary.readValSet = true
 		case "reset-value":
 			if diary.resetValSet {
-				return fmt.Errorf(propAlreadySetMsg, "reset-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "reset-value")
 			}
 			diary.resetVal = v
 			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
-				return fmt.Errorf(propAlreadySetMsg, "width")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
 			cfg.Width = int64(v.(val.Int))
 			diary.widthSet = true
 		default:
-			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
+			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
 		}
 	}
 

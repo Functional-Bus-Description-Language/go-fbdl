@@ -53,41 +53,41 @@ func insStatus(typeChain []prs.Functionality) (*fn.Status, error) {
 }
 
 func applyStatusType(st *fn.Status, typ prs.Functionality, diary *statusDiary) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "status"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "status"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line, err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "atomic":
 			if diary.atomicSet {
-				return fmt.Errorf(propAlreadySetMsg, "atomic")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "atomic")
 			}
 			st.Atomic = bool(v.(val.Bool))
 			diary.atomicSet = true
 		case "groups":
 			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, "groups")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
 			}
 			st.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "read-value":
 			if diary.readValSet {
-				return fmt.Errorf(propAlreadySetMsg, "read-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-value")
 			}
 			diary.readVal = v
 			diary.readValSet = true
 		case "width":
 			if diary.widthSet {
-				return fmt.Errorf(propAlreadySetMsg, "width")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
 			st.Width = int64(v.(val.Int))
 			diary.widthSet = true

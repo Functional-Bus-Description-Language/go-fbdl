@@ -45,7 +45,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+			return fmt.Errorf("%s: %v", prop.Loc(), err)
 		}
 
 		v, err := prop.Value.Eval()
@@ -56,7 +56,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 		switch prop.Name {
 		case "delay":
 			if diary.delaySet {
-				return fmt.Errorf(propAlreadySetMsg, "delay")
+				return fmt.Errorf(propAlreadySetMsg, prop.Loc(), "delay")
 			}
 			t := v.(val.Time)
 			delay := fbdlVal.Time{S: t.S, Ns: t.Ns}

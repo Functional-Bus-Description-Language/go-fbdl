@@ -51,8 +51,8 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
 		err := addStreamInnerElement(strm, e)
 		if err != nil {
 			return fmt.Errorf(
-				"line %d: cannot instantiate element '%s': %v",
-				pe.Line(), fn.Name(e), err,
+				"%d:%d: cannot instantiate '%s' functionality: %v",
+				pe.Line(), pe.Col(), fn.Name(e), err,
 			)
 		}
 	}

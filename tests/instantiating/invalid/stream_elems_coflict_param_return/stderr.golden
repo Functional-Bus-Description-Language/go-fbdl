@@ -1,1 +1,0 @@
-bus.fbd: line 4: instantiating element 'My_Stream': line 6: cannot instantiate element 'R': all 'stream' inner elements must be of the same base type and must be 'param' or 'return', 'R' base type is 'return'

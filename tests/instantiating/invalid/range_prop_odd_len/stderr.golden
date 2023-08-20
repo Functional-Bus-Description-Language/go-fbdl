@@ -1,1 +1,1 @@
-bus.fbd: line 2: instantiating element 'C': bus.fbd: line 2: length of 'range' property value list must be even, current length 3
+bus.fbd:2:12: length of 'range' property value list must be even, current length 3

@@ -45,54 +45,55 @@ func insStatic(typeChain []prs.Functionality) (*fn.Static, error) {
 	fillStaticProps(&st, diary)
 	err = fillStaticValues(&st, diary)
 	if err != nil {
-		return nil, err
+		last := typeChain[len(typeChain)-1]
+		return nil, fmt.Errorf("%d:%d: %v", last.Line(), last.Col(), err)
 	}
 
 	return &st, nil
 }
 
 func applyStaticType(st *fn.Static, typ prs.Functionality, diary *staticDiary) error {
-	for _, prop := range typ.Props() {
-		if err := util.IsValidProperty(prop.Name, "static"); err != nil {
+	for _, p := range typ.Props() {
+		if err := util.IsValidProperty(p.Name, "static"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, prop.Line, err)
+		if err := checkProp(p); err != nil {
+			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line, err)
 		}
 
-		v, err := prop.Value.Eval()
+		v, err := p.Value.Eval()
 		if err != nil {
 			return fmt.Errorf("cannot evaluate expression")
 		}
 
-		switch prop.Name {
+		switch p.Name {
 		case "groups":
 			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, "groups")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
 			}
 			st.Groups = makeGroupList(v)
 			diary.groupsSet = true
 		case "init-value":
 			if diary.initValSet {
-				return fmt.Errorf(propAlreadySetMsg, "init-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "init-value")
 			}
 			diary.initVal = v
 			diary.initValSet = true
 		case "read-value":
 			if diary.readValSet {
-				return fmt.Errorf(propAlreadySetMsg, "read-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-value")
 			}
 			diary.readVal = v
 			diary.readValSet = true
 		case "reset-value":
 			if diary.resetValSet {
-				return fmt.Errorf(propAlreadySetMsg, "reset-value")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "reset-value")
 			}
 			diary.resetVal = v
 			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
-				return fmt.Errorf(propAlreadySetMsg, "width")
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
 			st.Width = int64(v.(val.Int))
 			diary.widthSet = true

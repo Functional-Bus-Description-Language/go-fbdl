@@ -92,52 +92,49 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 	return mainBus, pkgs, nil
 }
 
-func insElement(pe prs.Functionality) fn.Functionality {
-	typeChain := resolveToBaseType(pe)
+func insElement(pf prs.Functionality) fn.Functionality {
+	typeChain := resolveToBaseType(pf)
 
-	var e fn.Functionality
+	var f fn.Functionality
 	var err error
 
 	typ := typeChain[0].Type()
 	switch typ {
 	case "block", "bus":
-		e, err = insBlock(typeChain)
+		f, err = insBlock(typeChain)
 	case "config":
-		e, err = insConfig(typeChain)
+		f, err = insConfig(typeChain)
 	case "irq":
-		e, err = insIrq(typeChain)
+		f, err = insIrq(typeChain)
 	case "mask":
-		e, err = insMask(typeChain)
+		f, err = insMask(typeChain)
 	case "memory":
-		e, err = insMemory(typeChain)
+		f, err = insMemory(typeChain)
 	case "param":
-		e, err = insParam(typeChain)
+		f, err = insParam(typeChain)
 	case "proc":
-		e, err = insProc(typeChain)
+		f, err = insProc(typeChain)
 	case "return":
-		e, err = insReturn(typeChain)
+		f, err = insReturn(typeChain)
 	case "static":
-		e, err = insStatic(typeChain)
+		f, err = insStatic(typeChain)
 	case "status":
-		e, err = insStatus(typeChain)
+		f, err = insStatus(typeChain)
 	case "stream":
-		e, err = insStream(typeChain)
+		f, err = insStream(typeChain)
 	default:
 		log.Fatalf(
 			"%s: line %d: instantiating element '%s', "+
 				"cannot start element instantiation from non base type '%s'",
-			pe.File().Path, pe.Line(), pe.Name(), typ,
+			pf.File().Path, pf.Line(), pf.Name(), typ,
 		)
 	}
 
 	if err != nil {
-		log.Fatalf(
-			"%s: line %d: instantiating element '%s': %v",
-			pe.File().Path, pe.Line(), pe.Name(), err,
-		)
+		log.Fatalf("%s:%v", pf.File().Path, err)
 	}
 
-	return e
+	return f
 }
 
 func resolveToBaseType(e prs.Functionality) []prs.Functionality {
