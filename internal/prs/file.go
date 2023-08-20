@@ -16,9 +16,9 @@ func (f *File) AddSymbol(s Symbol) error {
 	name := s.Name()
 
 	if !f.Symbols.Add(s) {
-		msg := `line %d: symbol '%s' defined at least twice in file, first occurence line %d`
+		msg := `%d:%d: redefinition of symbol '%s', first definition line %d column %d`
 		first, _ := f.Symbols.GetByName(name)
-		return fmt.Errorf(msg, s.Line(), name, first.Line())
+		return fmt.Errorf(msg, s.Line(), s.Col(), name, first.Line(), first.Col())
 	}
 	s.setFile(f)
 

@@ -35,6 +35,7 @@ func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
 		c := &Const{}
 
 		c.line = ac.Name.Line()
+		c.col = ac.Name.Column()
 		c.name = tok.Text(ac.Name, src)
 		v, err := MakeExpr(ac.Value, src, c)
 		if err != nil {

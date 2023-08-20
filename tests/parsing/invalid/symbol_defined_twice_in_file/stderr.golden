@@ -1,1 +1,1 @@
-bus.fbd:line 3: symbol 'A' defined at least twice in file, first occurence line 1
+bus.fbd:3:7: redefinition of symbol 'A', first definition line 1 column 7

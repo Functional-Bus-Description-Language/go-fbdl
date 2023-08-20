@@ -12,6 +12,7 @@ type Symbol interface {
 	Name() string
 	Kind() SymbolKind
 	Line() int
+	Col() int
 	Doc() string
 
 	setParent(s Searchable)
@@ -24,6 +25,7 @@ type Symbol interface {
 type symbol struct {
 	file   *File
 	line   int
+	col    int // Column of first character
 	name   string
 	doc    string
 	parent Searchable
@@ -31,6 +33,7 @@ type symbol struct {
 
 func (s symbol) Name() string       { return s.name }
 func (s symbol) Line() int          { return s.line }
+func (s symbol) Col() int           { return s.col }
 func (s symbol) Doc() string        { return s.doc }
 func (s symbol) Parent() Searchable { return s.parent }
 func (s symbol) File() *File        { return s.file }

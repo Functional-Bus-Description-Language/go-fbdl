@@ -85,6 +85,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	i := &Inst{}
 
 	i.line = ai.Name.Line()
+	i.col = ai.Name.Column()
 	i.name = tok.Text(ai.Name, src)
 	i.doc = ai.Doc.Text(src)
 
