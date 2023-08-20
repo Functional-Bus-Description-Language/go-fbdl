@@ -46,9 +46,15 @@ func (p *Package) AddSymbol(s Symbol) error {
 	defer p.symbolsMutex.Unlock()
 
 	if !p.Symbols.Add(s) {
-		msg := `symbol '%s' defined at least twice in package '%s', first occurence line %d, second line %d`
+		msg := `redefinition of symbol '%s' in package '%s'
+  %s:%d:%d
+  %s:%d:%d`
 		first, _ := p.Symbols.Get(s.Name(), s.Kind())
-		return fmt.Errorf(msg, s.Name(), p.Name, first.Line(), s.Line())
+		return fmt.Errorf(
+			msg, s.Name(), p.Name,
+			first.File().Path, first.Line(), first.Col(),
+			s.File().Path, s.Line(), s.Col(),
+		)
 	}
 
 	return nil

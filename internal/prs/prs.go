@@ -129,7 +129,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		}
 		err = pkg.AddSymbol(c)
 		if err != nil {
-			log.Fatalf("%s:%v", path, err)
+			log.Fatalf("%v", err)
 		}
 	}
 
@@ -145,7 +145,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		}
 		err = pkg.AddSymbol(t)
 		if err != nil {
-			log.Fatalf("%s:%v", path, err)
+			log.Fatalf("%v", err)
 		}
 	}
 
@@ -161,7 +161,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		}
 		err = pkg.AddSymbol(i)
 		if err != nil {
-			log.Fatalf("%s:%v", path, err)
+			log.Fatalf("%v", err)
 		}
 	}
 
