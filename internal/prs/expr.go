@@ -215,7 +215,7 @@ func (i Int) Eval() (val.Value, error) {
 }
 
 func MakeInt(e ast.Int, src []byte) (Int, error) {
-	x, err := strconv.ParseInt(tok.Text(e.X, src), 10, 64)
+	x, err := strconv.ParseInt(tok.Text(e.X, src), 0, 64)
 	if err != nil {
 		return Int{}, fmt.Errorf("make int: %v", err)
 	}

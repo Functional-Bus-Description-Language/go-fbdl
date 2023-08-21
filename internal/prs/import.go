@@ -24,7 +24,7 @@ func buildImports(astImports []ast.Import, src []byte) []Import {
 
 	for _, ai := range astImports {
 		if ai.Name == nil {
-			path = tok.Text(ai.Name, src)
+			path = tok.Text(ai.Path, src)
 			path = path[1 : len(path)-1]
 			// TODO: Should it be [0] or the last element?
 			name = strings.Split(path, "/")[0]
