@@ -19,11 +19,7 @@ func (e Error) Error() string {
 
 // ErrorLoc returns error token location.
 func ErrorLoc(err error, src []byte) string {
-	e, ok := err.(Error)
-	// TODO: Remove when all functions return Error type.
-	if !ok {
-		return ""
-	}
+	e := err.(Error)
 
 	b := strings.Builder{}
 
