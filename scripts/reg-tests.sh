@@ -32,7 +32,7 @@ fi
 
 cd tests/registerification/
 
-echo -e "Running registerification tests\n"
+echo -e "\nRunning registerification tests\n"
 
 for dir in $(find . -maxdepth 3 -mindepth 3 -type d);
 do
