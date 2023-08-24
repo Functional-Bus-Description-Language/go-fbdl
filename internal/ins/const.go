@@ -31,7 +31,7 @@ func constifyPkg(pkg *prs.Package) *fn.Package {
 			if err != nil {
 				panic("not yet implemented")
 			}
-			constContainer.AddConst(&p.ConstContainer, c.Name(), v)
+			constContainer.AddConst(&p.Consts, c.Name(), v)
 		}
 	}
 

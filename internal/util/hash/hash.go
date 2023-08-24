@@ -9,6 +9,7 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/addrSpace"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/cnst"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
@@ -33,7 +34,7 @@ func Hash(data any) uint32 {
 		return hashBlock(d)
 	case *fn.Config:
 		return hashConfig(d)
-	case *fn.ConstContainer:
+	case *cnst.Container:
 		return hashConstContainer(d)
 	case *fn.Irq:
 		return hashIrq(d)

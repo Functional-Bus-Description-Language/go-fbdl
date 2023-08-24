@@ -15,12 +15,14 @@
 		"Start": 0,
 		"End": 3
 	},
-	"BoolConsts": null,
-	"BoolListConsts": null,
-	"FloatConsts": null,
-	"IntConsts": null,
-	"IntListConsts": null,
-	"StrConsts": null,
+	"Consts": {
+		"Bools": null,
+		"BoolLists": null,
+		"Floats": null,
+		"Ints": null,
+		"IntLists": null,
+		"Strings": null
+	},
 	"Configs": [
 		{
 			"Name": "C",

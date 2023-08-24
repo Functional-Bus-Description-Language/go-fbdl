@@ -2,31 +2,31 @@ package constContainer
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/cnst"
 )
 
 // HasConst returns true if container already has constant with given name.
-func HasConst(c fn.ConstContainer, name string) bool {
-	if _, ok := c.BoolConsts[name]; ok {
+func HasConst(c cnst.Container, name string) bool {
+	if _, ok := c.Bools[name]; ok {
 		return true
 	}
-	if _, ok := c.BoolListConsts[name]; ok {
+	if _, ok := c.BoolLists[name]; ok {
 		return true
 	}
-	if _, ok := c.IntConsts[name]; ok {
+	if _, ok := c.Ints[name]; ok {
 		return true
 	}
-	if _, ok := c.IntListConsts[name]; ok {
+	if _, ok := c.IntLists[name]; ok {
 		return true
 	}
-	if _, ok := c.StrConsts[name]; ok {
+	if _, ok := c.Strings[name]; ok {
 		return true
 	}
 
 	return false
 }
 
-func AddConst(c *fn.ConstContainer, name string, v val.Value) {
+func AddConst(c *cnst.Container, name string, v val.Value) {
 	switch v.(type) {
 	case val.BitStr:
 		panic("not yet implemented")
@@ -56,60 +56,60 @@ func AddConst(c *fn.ConstContainer, name string, v val.Value) {
 	}
 }
 
-func addBoolConst(c *fn.ConstContainer, name string, v val.Value) {
+func addBoolConst(c *cnst.Container, name string, v val.Value) {
 	b := bool(v.(val.Bool))
-	if c.BoolConsts == nil {
-		c.BoolConsts = map[string]bool{name: b}
+	if c.Bools == nil {
+		c.Bools = map[string]bool{name: b}
 	}
-	c.BoolConsts[name] = b
+	c.Bools[name] = b
 }
 
-func addFloatConst(c *fn.ConstContainer, name string, v val.Value) {
+func addFloatConst(c *cnst.Container, name string, v val.Value) {
 	f := float64(v.(val.Float))
-	if c.FloatConsts == nil {
-		c.FloatConsts = map[string]float64{name: f}
+	if c.Floats == nil {
+		c.Floats = map[string]float64{name: f}
 	}
-	c.FloatConsts[name] = f
+	c.Floats[name] = f
 }
 
-func addBoolListConst(c *fn.ConstContainer, name string, v val.Value) {
+func addBoolListConst(c *cnst.Container, name string, v val.Value) {
 	l := constifyBoolList(v.(val.List))
 	if l == nil {
 		return
 	}
 
-	if c.BoolListConsts == nil {
-		c.BoolListConsts = map[string][]bool{name: l}
+	if c.BoolLists == nil {
+		c.BoolLists = map[string][]bool{name: l}
 	}
-	c.BoolListConsts[name] = l
+	c.BoolLists[name] = l
 }
 
-func addIntConst(c *fn.ConstContainer, name string, v val.Value) {
+func addIntConst(c *cnst.Container, name string, v val.Value) {
 	i := int64(v.(val.Int))
-	if c.IntConsts == nil {
-		c.IntConsts = map[string]int64{name: i}
+	if c.Ints == nil {
+		c.Ints = map[string]int64{name: i}
 	}
-	c.IntConsts[name] = i
+	c.Ints[name] = i
 }
 
-func addIntListConst(c *fn.ConstContainer, name string, v val.Value) {
+func addIntListConst(c *cnst.Container, name string, v val.Value) {
 	l := constifyIntList(v.(val.List))
 	if l == nil {
 		return
 	}
 
-	if c.IntListConsts == nil {
-		c.IntListConsts = map[string][]int64{name: l}
+	if c.IntLists == nil {
+		c.IntLists = map[string][]int64{name: l}
 	}
-	c.IntListConsts[name] = l
+	c.IntLists[name] = l
 }
 
-func addStrConst(c *fn.ConstContainer, name string, v val.Value) {
+func addStrConst(c *cnst.Container, name string, v val.Value) {
 	s := string(v.(val.Str))
-	if c.StrConsts == nil {
-		c.StrConsts = map[string]string{name: s}
+	if c.Strings == nil {
+		c.Strings = map[string]string{name: s}
 	}
-	c.StrConsts[name] = s
+	c.Strings[name] = s
 }
 
 // constifyBoolList tries to constify list as an bool list.

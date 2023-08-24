@@ -19,8 +19,8 @@ func hashBlock(b *fn.Block) uint32 {
 	// Width
 	write(&buf, b.Width)
 
-	// ConstContainer
-	write(&buf, Hash(&b.ConstContainer))
+	// cnst.Container
+	write(&buf, Hash(&b.Consts))
 
 	// Configs
 	for _, c := range b.Configs {

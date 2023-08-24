@@ -87,7 +87,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 
 	for _, s := range typ.Symbols() {
 		if c, ok := s.(*prs.Const); ok {
-			if constContainer.HasConst(blk.ConstContainer, c.Name()) {
+			if constContainer.HasConst(blk.Consts, c.Name()) {
 				return fmt.Errorf(
 					"const '%s' is already defined in one of ancestor types", c.Name(),
 				)
@@ -99,7 +99,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 					"cannot evaluate expression for const '%s': %v", c.Name(), err,
 				)
 			}
-			constContainer.AddConst(&blk.ConstContainer, c.Name(), val)
+			constContainer.AddConst(&blk.Consts, c.Name(), val)
 		}
 
 		_, ok := s.(*prs.Inst)
