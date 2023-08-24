@@ -1,4 +1,4 @@
-package fn
+package pkg
 
 import "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/cnst"
 

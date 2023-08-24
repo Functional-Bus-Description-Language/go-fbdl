@@ -9,6 +9,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/pkg"
 )
 
 const dfltBusWidth int64 = 32
@@ -46,7 +47,7 @@ func setBusWidth(main prs.Symbol) error {
 
 // Instantiate main bus within given packages scope.
 // MainName is the name of the main bus.
-func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]*fn.Package, error) {
+func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]*pkg.Package, error) {
 	main, ok := packages["main"][0].Symbols.Get(mainName, prs.FuncInst)
 	if !ok {
 		return nil, nil, fmt.Errorf("'%s' bus not found", mainName)

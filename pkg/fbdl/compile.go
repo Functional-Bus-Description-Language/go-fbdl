@@ -6,11 +6,12 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/pkg"
 )
 
 // Compile compiles functional bus description for a main bus named mainName located in the file which path is provided as mainPath.
 // If noTimestamp is true, then the bus timestamp is not generated.
-func Compile(mainPath, mainName string, addTimestamp bool) (*fn.Block, map[string]*fn.Package, error) {
+func Compile(mainPath, mainName string, addTimestamp bool) (*fn.Block, map[string]*pkg.Package, error) {
 	packages := prs.DiscoverPackages(mainPath)
 	prs.ParsePackages(packages)
 
@@ -21,7 +22,7 @@ func Compile(mainPath, mainName string, addTimestamp bool) (*fn.Block, map[strin
 
 	// Below loop is needed, as map of concrete type cannot be by default treated
 	// as map of interfaces, even if the concrete type meets the interface requirements.
-	pkgs := map[string]*fn.Package{}
+	pkgs := map[string]*pkg.Package{}
 	for k, v := range insPkgs {
 		pkgs[k] = v
 	}
