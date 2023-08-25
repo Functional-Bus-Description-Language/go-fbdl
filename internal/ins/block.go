@@ -109,14 +109,14 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 
 		e := insElement(s.(prs.Functionality))
 
-		if !util.IsValidInnerType(fn.Type(e), "block") {
+		if !util.IsValidInnerType(e.Type(), "block") {
 			return fmt.Errorf(
-				invalidInnerTypeMsg, fn.Name(e), fn.Type(e), "block",
+				invalidInnerTypeMsg, e.GetName(), e.Type(), "block",
 			)
 		}
 
-		if block.HasElement(blk, fn.Name(e)) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, fn.Name(e))
+		if block.HasElement(blk, e.GetName()) {
+			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.GetName())
 		}
 		addBlockInnerElement(blk, e)
 	}
@@ -187,7 +187,7 @@ func checkBlockGroups(blk *fn.Block) error {
 	// Check for groups with single element.
 	for name, g := range groups {
 		if len(g) == 1 {
-			return fmt.Errorf("group %q has only one element '%s'", name, fn.Name(g[0]))
+			return fmt.Errorf("group %q has only one element '%s'", name, g[0].GetName())
 		}
 	}
 
@@ -212,7 +212,7 @@ func checkBlockGroups(blk *fn.Block) error {
 						"conflicting order of groups, "+
 							"group %q is after group %q in element '%s', "+
 							"but before group %q in element '%s'",
-						grps2[id], grps2[id+1], fn.Name(e1), grps2[id+1], fn.Name(e2),
+						grps2[id], grps2[id+1], e1.GetName(), grps2[id+1], e2.GetName(),
 					)
 				}
 				prevId = id
@@ -227,7 +227,7 @@ func checkBlockGroups(blk *fn.Block) error {
 		g1 := groups[grpName1]
 		elemNames1 := make([]string, 0, len(g1))
 		for _, e := range g1 {
-			elemNames1 = append(elemNames1, fn.Name(e))
+			elemNames1 = append(elemNames1, e.GetName())
 		}
 		for _, grpName2 := range grpNames {
 			g2 := groups[grpName2]
@@ -236,7 +236,7 @@ func checkBlockGroups(blk *fn.Block) error {
 			}
 			elemNames2 := make([]string, 0, len(g2))
 			for _, e := range g2 {
-				elemNames2 = append(elemNames2, fn.Name(e))
+				elemNames2 = append(elemNames2, e.GetName())
 			}
 			if len(elemNames1) != len(elemNames2) {
 				continue

@@ -9,6 +9,8 @@ type Stream struct {
 	StbAddr int64
 }
 
+func (s Stream) Type() string { return "stream" }
+
 // IsDownstream returns true if Stream has only params or Stream has not params and no returns.
 // Empty stream is treated as a downstream.
 func (s *Stream) IsDownstream() bool {

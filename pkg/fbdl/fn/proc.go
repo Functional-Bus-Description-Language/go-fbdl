@@ -17,6 +17,8 @@ type Proc struct {
 	ExitAddr *int64
 }
 
+func (p Proc) Type() string { return "proc" }
+
 func (p *Proc) ParamsBufSize() int64 {
 	params := p.Params
 	l := len(params)

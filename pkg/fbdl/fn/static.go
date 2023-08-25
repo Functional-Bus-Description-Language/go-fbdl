@@ -16,3 +16,5 @@ type Static struct {
 
 	Access access.Access
 }
+
+func (s Static) Type() string { return "static" }

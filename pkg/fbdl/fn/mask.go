@@ -18,4 +18,6 @@ type Mask struct {
 	Access access.Access
 }
 
+func (m Mask) Type() string { return "mask" }
+
 func (m *Mask) GroupNames() []string { return m.Groups }

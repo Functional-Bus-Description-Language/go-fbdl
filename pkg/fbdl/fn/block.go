@@ -29,6 +29,8 @@ type Block struct {
 	Subblocks []*Block
 }
 
+func (b Block) Type() string { return "block" }
+
 func (b *Block) GroupedElems() []Groupable {
 	elemsWithGrps := []Groupable{}
 

@@ -9,3 +9,5 @@ type Memory struct {
 	Size            int64
 	Width           int64
 }
+
+func (m Memory) Type() string { return "memory" }

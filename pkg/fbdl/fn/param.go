@@ -15,4 +15,6 @@ type Param struct {
 	Access access.Access
 }
 
+func (p Param) Type() string { return "param" }
+
 func (p *Param) GroupNames() []string { return p.Groups }

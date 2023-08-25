@@ -40,19 +40,19 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
 
 		e := insElement(pe)
 
-		if !util.IsValidInnerType(fn.Type(e), "stream") {
-			return fmt.Errorf(invalidInnerTypeMsg, fn.Name(e), fn.Type(e), "stream")
+		if !util.IsValidInnerType(e.Type(), "stream") {
+			return fmt.Errorf(invalidInnerTypeMsg, e.GetName(), e.Type(), "stream")
 		}
 
-		if stream.HasElement(strm, fn.Name(e)) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, fn.Name(e))
+		if stream.HasElement(strm, e.GetName()) {
+			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.GetName())
 		}
 
 		err := addStreamInnerElement(strm, e)
 		if err != nil {
 			return fmt.Errorf(
 				"%d:%d: cannot instantiate '%s' functionality: %v",
-				pe.Line(), pe.Col(), fn.Name(e), err,
+				pe.Line(), pe.Col(), e.GetName(), err,
 			)
 		}
 	}
@@ -61,11 +61,11 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
 }
 
 func addStreamInnerElement(s *fn.Stream, e fn.Functionality) error {
-	if (fn.Type(e) == "return" && len(s.Params) > 0) ||
-		(fn.Type(e) == "param" && len(s.Returns) > 0) {
+	if (e.Type() == "return" && len(s.Params) > 0) ||
+		(e.Type() == "param" && len(s.Returns) > 0) {
 		return fmt.Errorf(
 			"all 'stream' inner elements must be of the same base type and must be 'param' or 'return', "+
-				"'%s' base type is '%s'", fn.Name(e), fn.Type(e),
+				"'%s' base type is '%s'", e.GetName(), e.Type(),
 		)
 	}
 

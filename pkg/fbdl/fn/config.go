@@ -19,4 +19,6 @@ type Config struct {
 	Access access.Access
 }
 
+func (c Config) Type() string { return "config" }
+
 func (c *Config) GroupNames() []string { return c.Groups }

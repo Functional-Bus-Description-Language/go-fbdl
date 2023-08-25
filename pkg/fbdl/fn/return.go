@@ -13,4 +13,6 @@ type Return struct {
 	Access access.Access
 }
 
+func (r Return) Type() string { return "return" }
+
 func (r *Return) GroupNames() []string { return r.Groups }

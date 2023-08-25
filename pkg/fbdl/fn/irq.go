@@ -19,4 +19,6 @@ type Irq struct {
 	Access access.Access
 }
 
+func (i Irq) Type() string { return "irq" }
+
 func (i *Irq) GroupNames() []string { return i.Groups }
