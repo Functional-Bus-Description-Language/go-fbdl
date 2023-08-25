@@ -43,7 +43,7 @@ func Name(f Functionality) string {
 		return f.Name
 	default:
 		panic(
-			fmt.Sprintf("%T is not an element", f),
+			fmt.Sprintf("%T is not a functionality", f),
 		)
 	}
 }
@@ -74,7 +74,7 @@ func Type(f Functionality) string {
 		return "stream"
 	default:
 		panic(
-			fmt.Sprintf("%T is not functionality", f),
+			fmt.Sprintf("%T is not a functionality", f),
 		)
 	}
 }
