@@ -2,11 +2,9 @@
 package prs
 
 import (
-	_ "fmt"
 	"log"
 	"os"
 	"path"
-	_ "strings"
 	"sync"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
