@@ -871,7 +871,7 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 			}
 		}
 
-		// Allow keywords to be instantiation names
+		// Allow functionality keywords to be instantiation names
 		if _, ok := t.(Functionality); ok {
 			if prevTok, ok := lastToken(*s); ok {
 				switch prevTok.(type) {
