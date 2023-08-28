@@ -331,8 +331,8 @@ func parseComment(c *ctx, src []byte, s []Token) Token {
 	}
 
 	// Add comment to the token stream only if it is a potential documentation comment.
-	if prev_tok, ok := lastToken(s); ok {
-		switch prev_tok.(type) {
+	if prevTok, ok := lastToken(s); ok {
+		switch prevTok.(type) {
 		case Newline, Indent, Dedent:
 			return t
 		}
@@ -860,13 +860,23 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 			} else {
 				// However, properties are properties only if they are in valid place,
 				// otherwise, these are regular identifiers.
-				if prev_tok, ok := lastToken(*s); ok {
-					switch prev_tok.(type) {
+				if prevTok, ok := lastToken(*s); ok {
+					switch prevTok.(type) {
 					case Newline, Semicolon, Indent:
 						// Do nothing, this is property
 					default:
 						t = Ident{t.Start(), t.End(), t.Line(), t.Column()}
 					}
+				}
+			}
+		}
+
+		// Allow keywords to be instantiation names
+		if _, ok := t.(Functionality); ok {
+			if prevTok, ok := lastToken(*s); ok {
+				switch prevTok.(type) {
+				case Newline, Indent, Dedent:
+					t = Ident{t.Start(), t.End(), t.Line(), t.Column()}
 				}
 			}
 		}
@@ -884,13 +894,13 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 			return None{}, nil
 		} else {
 			// It might be property, or part of an expression.
-			prev_tok, ok := lastToken(*s)
+			prevTok, ok := lastToken(*s)
 			if !ok {
 				// Safe to return, time literal units do not contain hyphen '-'.
 				return t, nil
 			}
 			// It is part of an expression.
-			switch prev_tok.(type) {
+			switch prevTok.(type) {
 			case Newline, Indent, Semicolon:
 				// It is property
 			default:
@@ -905,15 +915,15 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 
 	// The word might be the unit of time literal
 	if _, ok := t.(Ident); ok {
-		if prev_tok, ok := lastToken(*s); ok {
-			if _, ok := prev_tok.(Int); ok {
+		if prevTok, ok := lastToken(*s); ok {
+			if _, ok := prevTok.(Int); ok {
 				switch string(word) {
 				case "ns", "us", "ms", "s":
 					t = Time{
-						start:  prev_tok.Start(),
+						start:  prevTok.Start(),
 						end:    t.End(),
-						line:   prev_tok.Line(),
-						column: prev_tok.Column(),
+						line:   prevTok.Line(),
+						column: prevTok.Column(),
 					}
 					// Remove previous Int from the list
 					// New Time token will be inserted
