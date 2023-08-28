@@ -1,7 +1,6 @@
 package ast
 
 import (
-	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
@@ -92,7 +91,7 @@ tokenLoop:
 			c.i++
 			break tokenLoop
 		default:
-			panic(fmt.Sprintf("%s: unhandled token %s", tok.Loc(t), t.Kind()))
+			return body, unexpected(t, "const, type, identifier, or comment")
 		}
 
 		if err != nil {
