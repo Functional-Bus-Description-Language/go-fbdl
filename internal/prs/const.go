@@ -1,6 +1,7 @@
 package prs
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
@@ -27,9 +28,10 @@ func (c Const) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 	return c.file.GetSymbol(name, kind)
 }
 
-// buildConst builds list of Consts based on the list of ast.Const.
+// buildConsts builds list of Consts defined in the same scope based on the list of ast.Const.
 func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
 	consts := make([]*Const, 0, len(astConsts))
+	cache := make(map[string]*Const)
 
 	for _, ac := range astConsts {
 		c := &Const{}
@@ -43,6 +45,18 @@ func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
 		}
 		c.Value = v
 		c.doc = ac.Doc.Text(src)
+
+		if first, ok := cache[c.name]; ok {
+			return nil, tok.Error{
+				Tok: ac.Name,
+				Msg: fmt.Sprintf(
+					"redefinition of constant '%s', first definition line %d column %d",
+					c.name, first.Line(), first.Col(),
+				),
+			}
+		}
+
+		cache[c.name] = c
 		consts = append(consts, c)
 	}
 
