@@ -41,7 +41,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 		sizes.BlockAligned += sb.Count * sbSizes.BlockAligned
 	}
 
-	sizes.BlockAligned = util.AlignToPowerOf2(sizes.BlockAligned + sizes.Own)
+	sizes.BlockAligned = util.AlignToPowerOf2(sizes.BlockAligned + util.AlignToPowerOf2(sizes.Own))
 
 	bus.Sizes = sizes
 
@@ -235,7 +235,7 @@ func regBlock(blk *fn.Block) access.Sizes {
 		sizes.BlockAligned += sb.Count * b.BlockAligned
 	}
 
-	sizes.BlockAligned = util.AlignToPowerOf2(addr + sizes.BlockAligned)
+	sizes.BlockAligned = util.AlignToPowerOf2(util.AlignToPowerOf2(addr) + sizes.BlockAligned)
 
 	blk.Sizes = sizes
 
