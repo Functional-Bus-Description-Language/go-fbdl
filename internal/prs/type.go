@@ -59,12 +59,25 @@ func (t Type) Count() Expr                         { return t.count }
 // buildTypes builds list of Types based on the list of ast.Type.
 func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 	types := make([]*Type, 0, len(astTypes))
+	cache := make(map[string]*Type)
 
 	for _, at := range astTypes {
 		t, err := buildType(at, src)
 		if err != nil {
 			return nil, err
 		}
+
+		if first, ok := cache[t.name]; ok {
+			return nil, tok.Error{
+				Tok: at.Name,
+				Msg: fmt.Sprintf(
+					"redefinition of type '%s', first definition line %d column %d",
+					t.name, first.Line(), first.Col(),
+				),
+			}
+		}
+
+		cache[t.name] = t
 		types = append(types, t)
 	}
 
