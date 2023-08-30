@@ -69,12 +69,25 @@ func (i Inst) Params() []Param {
 // buildInsts builds list of Insts based on the list of ast.Inst.
 func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 	insts := make([]*Inst, 0, len(astInsts))
+	cache := make(map[string]*Inst)
 
 	for _, ai := range astInsts {
 		i, err := buildInst(ai, src)
 		if err != nil {
 			return nil, err
 		}
+
+		if first, ok := cache[i.name]; ok {
+			return nil, tok.Error{
+				Tok: ai.Name,
+				Msg: fmt.Sprintf(
+					"reinstantiation of '%s', first instantiation line %d column %d",
+					i.name, first.Line(), first.Col(),
+				),
+			}
+		}
+
+		cache[i.name] = i
 		insts = append(insts, i)
 	}
 
