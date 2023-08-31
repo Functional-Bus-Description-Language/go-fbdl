@@ -39,10 +39,5 @@ func (f *File) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 		return pkg.Pkg.GetSymbol(symName, kind)
 	}
 
-	sym, ok := f.Symbols.Get(name, kind)
-	if ok {
-		return sym, nil
-	}
-
 	return f.Pkg.GetSymbol(name, kind)
 }
