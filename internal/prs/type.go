@@ -15,16 +15,16 @@ type Type struct {
 	typ   string
 	count Expr
 
-	props   PropContainer
-	symbols SymbolContainer
-
 	params       []Param
 	args         []Arg
 	resolvedArgs map[string]Expr
+
+	props PropContainer
+	symbolContainer
 }
 
 func (t *Type) GetConst(name string) (*Const, error) {
-	sym, ok := t.symbols.GetConst(name)
+	sym, ok := t.symbolContainer.GetConst(name)
 	if ok {
 		return sym, nil
 	}
@@ -37,7 +37,7 @@ func (t *Type) GetConst(name string) (*Const, error) {
 }
 
 func (t *Type) GetInst(name string) (*Inst, error) {
-	sym, ok := t.symbols.GetInst(name)
+	sym, ok := t.symbolContainer.GetInst(name)
 	if ok {
 		return sym, nil
 	}
@@ -46,7 +46,7 @@ func (t *Type) GetInst(name string) (*Inst, error) {
 }
 
 func (t *Type) GetType(name string) (*Type, error) {
-	sym, ok := t.symbols.GetType(name)
+	sym, ok := t.symbolContainer.GetType(name)
 	if ok {
 		return sym, nil
 	}
@@ -61,7 +61,7 @@ func (t Type) Params() []Param                     { return t.params }
 func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
 func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
 func (t Type) Props() PropContainer                { return t.props }
-func (t Type) Symbols() SymbolContainer            { return t.symbols }
+func (t Type) Symbols() []Symbol                   { return t.symbolContainer.Symbols() }
 func (t Type) IsArray() bool                       { return false }
 func (t Type) Count() Expr                         { return t.count }
 
@@ -161,7 +161,7 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	for _, s := range syms.Types {
 		s.setScope(t)
 	}
-	t.symbols = syms
+	t.symbolContainer = syms
 
 	return t, nil
 }

@@ -25,7 +25,7 @@ func constifyPackages(packages prs.Packages) map[string]*pkg.Package {
 func constifyPkg(pp *prs.Package) *pkg.Package {
 	p := pkg.Package{}
 
-	for _, s := range pp.Symbols.Symbols() {
+	for _, s := range pp.Symbols() {
 		if c, ok := s.(*prs.Const); ok {
 			v, err := c.Value.Eval()
 			if err != nil {

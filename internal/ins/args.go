@@ -10,7 +10,7 @@ import (
 func resolveArgLists(packages prs.Packages) error {
 	for name, pkgs := range packages {
 		for _, pkg := range pkgs {
-			err := resolveArgListsInSymbols(pkg.Symbols)
+			err := resolveArgListsInSymbols(pkg.Symbols())
 			if err != nil {
 				return fmt.Errorf("package '%s': %v", name, err)
 			}
@@ -20,8 +20,8 @@ func resolveArgLists(packages prs.Packages) error {
 	return nil
 }
 
-func resolveArgListsInSymbols(sc prs.SymbolContainer) error {
-	for _, s := range sc.Symbols() {
+func resolveArgListsInSymbols(syms []prs.Symbol) error {
+	for _, s := range syms {
 		name := s.Name()
 		e, ok := s.(prs.Functionality)
 		if !ok {
@@ -37,7 +37,7 @@ func resolveArgListsInSymbols(sc prs.SymbolContainer) error {
 			e.SetResolvedArgs(resolvedArgs)
 		}
 
-		if len(e.Symbols().Symbols()) > 0 {
+		if len(e.Symbols()) > 0 {
 			return resolveArgListsInSymbols(e.Symbols())
 		}
 	}

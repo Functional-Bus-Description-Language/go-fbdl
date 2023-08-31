@@ -7,9 +7,9 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, SymbolContainer, error) {
+func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbolContainer, error) {
 	pc := PropContainer{}
-	sc := SymbolContainer{}
+	sc := symbolContainer{}
 
 	for _, ap := range astBody.Props {
 		p := Prop{}

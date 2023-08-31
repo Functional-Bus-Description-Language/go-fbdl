@@ -62,7 +62,7 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 
 func checkInstantiations(pkg *Package) {
 	for _, f := range pkg.Files {
-		for _, ins := range f.Symbols.Insts {
+		for _, ins := range f.Insts {
 			if ins.typ != "bus" && util.IsBaseType(ins.typ) {
 				log.Fatalf(
 					"%s: line %d: element of type '%s' cannot be instantiated at package level",
@@ -97,7 +97,6 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	file := File{
 		Path:    path,
 		Pkg:     pkg,
-		Symbols: SymbolContainer{},
 		Imports: make(map[string]Import),
 	}
 
@@ -118,7 +117,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatalf("%s:%v", path, err)
 	}
-	file.Symbols.Consts = consts
+	file.Consts = consts
 	for _, c := range consts {
 		c.setFile(&file)
 		c.setScope(&file)
@@ -133,7 +132,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
 	}
-	file.Symbols.Types = types
+	file.Types = types
 	for _, t := range types {
 		t.setFile(&file)
 		t.setScope(&file)
@@ -148,7 +147,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
 	}
-	file.Symbols.Insts = insts
+	file.Insts = insts
 	for _, i := range insts {
 		i.setFile(&file)
 		i.setScope(&file)

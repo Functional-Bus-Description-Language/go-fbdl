@@ -15,11 +15,11 @@ type Inst struct {
 	typ   string
 	count Expr
 
-	props   PropContainer
-	symbols SymbolContainer
-
 	args         []Arg
 	resolvedArgs map[string]Expr
+
+	props PropContainer
+	symbolContainer
 }
 
 func (i Inst) Kind() SymbolKind { return FuncInst }
@@ -28,7 +28,7 @@ func (i Inst) IsArray() bool    { return i.count != nil }
 func (i Inst) Count() Expr      { return i.count }
 
 func (i *Inst) GetConst(name string) (*Const, error) {
-	sym, ok := i.symbols.GetConst(name)
+	sym, ok := i.symbolContainer.GetConst(name)
 	if ok {
 		return sym, nil
 	}
@@ -41,7 +41,7 @@ func (i *Inst) GetConst(name string) (*Const, error) {
 }
 
 func (i *Inst) GetInst(name string) (*Inst, error) {
-	sym, ok := i.symbols.GetInst(name)
+	sym, ok := i.symbolContainer.GetInst(name)
 	if ok {
 		return sym, nil
 	}
@@ -50,7 +50,7 @@ func (i *Inst) GetInst(name string) (*Inst, error) {
 }
 
 func (i *Inst) GetType(name string) (*Type, error) {
-	sym, ok := i.symbols.GetType(name)
+	sym, ok := i.symbolContainer.GetType(name)
 	if ok {
 		return sym, nil
 	}
@@ -62,7 +62,7 @@ func (i Inst) Args() []Arg                         { return i.args }
 func (i *Inst) SetResolvedArgs(ra map[string]Expr) { i.resolvedArgs = ra }
 func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
 func (i Inst) Props() PropContainer                { return i.props }
-func (i Inst) Symbols() SymbolContainer            { return i.symbols }
+func (i Inst) Symbols() []Symbol                   { return i.symbolContainer.Symbols() }
 
 func (i Inst) File() *File {
 	if i.file != nil {
@@ -170,7 +170,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	for _, s := range syms.Types {
 		s.setScope(i)
 	}
-	i.symbols = syms
+	i.symbolContainer = syms
 
 	return i, nil
 }

@@ -8,8 +8,8 @@ import (
 type File struct {
 	Path    string
 	Pkg     *Package
-	Symbols SymbolContainer
 	Imports map[string]Import
+	symbolContainer
 }
 
 func (f *File) GetConst(name string) (*Const, error) {

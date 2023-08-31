@@ -1,0 +1,4 @@
+bus.fbd:3:8: redefinition of constant 'a', first definition line 2 column 8
+   |
+ 3 | 	const a = 2
+   | 	      ^

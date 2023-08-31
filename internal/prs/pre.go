@@ -74,7 +74,7 @@ func DiscoverPackages(main string) Packages {
 				}
 				fileName := ic.Name()
 				if strings.HasSuffix(fileName, ".fbd") {
-					pkg := Package{Name: pkgName, Path: pkgPath, Symbols: SymbolContainer{}}
+					pkg := Package{Name: pkgName, Path: pkgPath}
 					packages[pkgName] = append(packages[pkgName], &pkg)
 					break
 				}
@@ -84,7 +84,7 @@ func DiscoverPackages(main string) Packages {
 
 	// Add main file.
 	var tmp []*Package
-	tmp = append(tmp, &Package{Name: "main", Path: main, Symbols: SymbolContainer{}})
+	tmp = append(tmp, &Package{Name: "main", Path: main})
 	packages["main"] = tmp
 
 	pkgsCount := 0

@@ -1,12 +1,12 @@
 package prs
 
-type SymbolContainer struct {
+type symbolContainer struct {
 	Consts []*Const
 	Insts  []*Inst
 	Types  []*Type
 }
 
-func (sc *SymbolContainer) addConst(cnst *Const) bool {
+func (sc *symbolContainer) addConst(cnst *Const) bool {
 	for _, c := range sc.Consts {
 		if c.name == cnst.name {
 			return false
@@ -16,7 +16,7 @@ func (sc *SymbolContainer) addConst(cnst *Const) bool {
 	return true
 }
 
-func (sc *SymbolContainer) addInst(ins *Inst) bool {
+func (sc *symbolContainer) addInst(ins *Inst) bool {
 	for _, i := range sc.Insts {
 		if i.name == ins.name {
 			return false
@@ -26,7 +26,7 @@ func (sc *SymbolContainer) addInst(ins *Inst) bool {
 	return true
 }
 
-func (sc *SymbolContainer) addType(typ *Type) bool {
+func (sc *symbolContainer) addType(typ *Type) bool {
 	for _, t := range sc.Types {
 		if t.name == typ.name {
 			return false
@@ -36,7 +36,7 @@ func (sc *SymbolContainer) addType(typ *Type) bool {
 	return true
 }
 
-func (sc SymbolContainer) GetConst(name string) (*Const, bool) {
+func (sc symbolContainer) GetConst(name string) (*Const, bool) {
 	for _, c := range sc.Consts {
 		if c.name == name {
 			return c, true
@@ -46,7 +46,7 @@ func (sc SymbolContainer) GetConst(name string) (*Const, bool) {
 	return nil, false
 }
 
-func (sc SymbolContainer) GetInst(name string) (*Inst, bool) {
+func (sc symbolContainer) GetInst(name string) (*Inst, bool) {
 	for _, i := range sc.Insts {
 		if i.Name() == name {
 			return i, true
@@ -56,7 +56,7 @@ func (sc SymbolContainer) GetInst(name string) (*Inst, bool) {
 	return nil, false
 }
 
-func (sc SymbolContainer) GetType(name string) (*Type, bool) {
+func (sc symbolContainer) GetType(name string) (*Type, bool) {
 	for _, t := range sc.Types {
 		if t.name == name {
 			return t, true
@@ -66,7 +66,7 @@ func (sc SymbolContainer) GetType(name string) (*Type, bool) {
 	return nil, false
 }
 
-func (sc SymbolContainer) Symbols() []Symbol {
+func (sc symbolContainer) Symbols() []Symbol {
 	syms := []Symbol{}
 
 	for _, s := range sc.Consts {

@@ -32,7 +32,7 @@ type Package struct {
 	Files      []*File
 
 	symbolsMutex sync.Mutex
-	Symbols      SymbolContainer
+	symbolContainer
 }
 
 func (p *Package) AddFile(f *File) {
@@ -45,11 +45,11 @@ func (p *Package) addConst(c *Const) error {
 	p.symbolsMutex.Lock()
 	defer p.symbolsMutex.Unlock()
 
-	if !p.Symbols.addConst(c) {
+	if !p.symbolContainer.addConst(c) {
 		msg := `redefinition of constant '%s' in package '%s'
   %s:%d:%d
   %s:%d:%d`
-		first, _ := p.Symbols.GetConst(c.name)
+		first, _ := p.symbolContainer.GetConst(c.name)
 		return fmt.Errorf(
 			msg, c.name, p.Name,
 			first.File().Path, first.line, first.col,
@@ -64,11 +64,11 @@ func (p *Package) addInst(i *Inst) error {
 	p.symbolsMutex.Lock()
 	defer p.symbolsMutex.Unlock()
 
-	if !p.Symbols.addInst(i) {
+	if !p.symbolContainer.addInst(i) {
 		msg := `reinstantiation of '%s' in package '%s'
   %s:%d:%d
   %s:%d:%d`
-		first, _ := p.Symbols.GetConst(i.name)
+		first, _ := p.symbolContainer.GetConst(i.name)
 		return fmt.Errorf(
 			msg, i.name, p.Name,
 			first.File().Path, first.line, first.col,
@@ -83,11 +83,11 @@ func (p *Package) addType(t *Type) error {
 	p.symbolsMutex.Lock()
 	defer p.symbolsMutex.Unlock()
 
-	if !p.Symbols.addType(t) {
+	if !p.symbolContainer.addType(t) {
 		msg := `redefinition of type '%s' in package '%s'
   %s:%d:%d
   %s:%d:%d`
-		first, _ := p.Symbols.GetConst(t.name)
+		first, _ := p.symbolContainer.GetConst(t.name)
 		return fmt.Errorf(
 			msg, t.name, p.Name,
 			first.File().Path, first.line, first.col,
@@ -99,7 +99,7 @@ func (p *Package) addType(t *Type) error {
 }
 
 func (p *Package) GetConst(name string) (*Const, error) {
-	sym, ok := p.Symbols.GetConst(name)
+	sym, ok := p.symbolContainer.GetConst(name)
 	if ok {
 		return sym, nil
 	}
@@ -107,7 +107,7 @@ func (p *Package) GetConst(name string) (*Const, error) {
 }
 
 func (p *Package) GetInst(name string) (*Inst, error) {
-	sym, ok := p.Symbols.GetInst(name)
+	sym, ok := p.symbolContainer.GetInst(name)
 	if ok {
 		return sym, nil
 	}
@@ -115,7 +115,7 @@ func (p *Package) GetInst(name string) (*Inst, error) {
 }
 
 func (p *Package) GetType(name string) (*Type, error) {
-	sym, ok := p.Symbols.GetType(name)
+	sym, ok := p.symbolContainer.GetType(name)
 	if ok {
 		return sym, nil
 	}

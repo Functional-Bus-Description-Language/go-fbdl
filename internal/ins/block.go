@@ -85,7 +85,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 		}
 	}
 
-	for _, s := range typ.Symbols().Symbols() {
+	for _, s := range typ.Symbols() {
 		if c, ok := s.(*prs.Const); ok {
 			if constContainer.HasConst(blk.Consts, c.Name()) {
 				return fmt.Errorf(

@@ -13,5 +13,5 @@ type Functionality interface {
 	SetResolvedArgs(args map[string]Expr)
 	ResolvedArgs() map[string]Expr
 	Props() PropContainer
-	Symbols() SymbolContainer
+	Symbols() []Symbol
 }
