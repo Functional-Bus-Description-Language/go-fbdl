@@ -1,58 +1,83 @@
 package prs
 
-type SymbolContainer []Symbol
+type SymbolContainer struct {
+	Consts []*Const
+	Insts  []*Inst
+	Types  []*Type
+}
 
-// Add adds symbol to SymbolContainer.
-// If symbol with given name already exists it returns false.
-// If the operation is successful it returns true.
-func (sc *SymbolContainer) Add(sym Symbol) bool {
-	for _, s := range *sc {
-		if s.Name() == sym.Name() {
+func (sc *SymbolContainer) addConst(cnst *Const) bool {
+	for _, c := range sc.Consts {
+		if c.name == cnst.name {
 			return false
 		}
 	}
-
-	*sc = append(*sc, sym)
-
+	sc.Consts = append(sc.Consts, cnst)
 	return true
 }
 
-func (sc *SymbolContainer) GetConst(name string) (*Const, bool) {
-	for _, s := range *sc {
-		if s.Name() == name && s.Kind() == ConstDef {
-			return s.(*Const), true
+func (sc *SymbolContainer) addInst(ins *Inst) bool {
+	for _, i := range sc.Insts {
+		if i.name == ins.name {
+			return false
+		}
+	}
+	sc.Insts = append(sc.Insts, ins)
+	return true
+}
+
+func (sc *SymbolContainer) addType(typ *Type) bool {
+	for _, t := range sc.Types {
+		if t.name == typ.name {
+			return false
+		}
+	}
+	sc.Types = append(sc.Types, typ)
+	return true
+}
+
+func (sc SymbolContainer) GetConst(name string) (*Const, bool) {
+	for _, c := range sc.Consts {
+		if c.name == name {
+			return c, true
 		}
 	}
 
 	return nil, false
 }
 
-func (sc *SymbolContainer) GetInst(name string) (*Inst, bool) {
-	for _, s := range *sc {
-		if s.Name() == name && s.Kind() == FuncInst {
-			return s.(*Inst), true
+func (sc SymbolContainer) GetInst(name string) (*Inst, bool) {
+	for _, i := range sc.Insts {
+		if i.Name() == name {
+			return i, true
 		}
 	}
 
 	return nil, false
 }
 
-func (sc *SymbolContainer) GetType(name string) (*Type, bool) {
-	for _, s := range *sc {
-		if s.Name() == name && s.Kind() == TypeDef {
-			return s.(*Type), true
+func (sc SymbolContainer) GetType(name string) (*Type, bool) {
+	for _, t := range sc.Types {
+		if t.name == name {
+			return t, true
 		}
 	}
 
 	return nil, false
 }
 
-func (sc *SymbolContainer) GetByName(name string) (Symbol, bool) {
-	for _, s := range *sc {
-		if s.Name() == name {
-			return s, true
-		}
+func (sc SymbolContainer) Symbols() []Symbol {
+	syms := []Symbol{}
+
+	for _, s := range sc.Consts {
+		syms = append(syms, s)
+	}
+	for _, s := range sc.Insts {
+		syms = append(syms, s)
+	}
+	for _, s := range sc.Types {
+		syms = append(syms, s)
 	}
 
-	return nil, false
+	return syms
 }

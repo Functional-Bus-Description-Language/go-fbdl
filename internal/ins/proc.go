@@ -69,7 +69,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 
 	}
 
-	for _, s := range typ.Symbols() {
+	for _, s := range typ.Symbols().Symbols() {
 		pe, ok := s.(*prs.Inst)
 		if !ok {
 			continue

@@ -32,7 +32,7 @@ func insStream(typeChain []prs.Functionality) (*fn.Stream, error) {
 }
 
 func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
-	for _, s := range typ.Symbols() {
+	for _, s := range typ.Symbols().Symbols() {
 		pe, ok := s.(*prs.Inst)
 		if !ok {
 			continue

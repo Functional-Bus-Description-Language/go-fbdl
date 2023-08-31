@@ -62,20 +62,18 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 
 func checkInstantiations(pkg *Package) {
 	for _, f := range pkg.Files {
-		for _, symbol := range f.Symbols {
-			if e, ok := symbol.(*Inst); ok {
-				if e.typ != "bus" && util.IsBaseType(e.typ) {
+		for _, ins := range f.Symbols.Insts {
+			if ins.typ != "bus" && util.IsBaseType(ins.typ) {
+				log.Fatalf(
+					"%s: line %d: element of type '%s' cannot be instantiated at package level",
+					f.Path, ins.line, ins.typ,
+				)
+			} else if ins.typ == "bus" {
+				if pkg.Name != "main" {
 					log.Fatalf(
-						"%s: line %d: element of type '%s' cannot be instantiated at package level",
-						f.Path, e.Line(), e.Type(),
+						"%s: line %d: bus instantiation must be placed within 'main' package",
+						f.Path, ins.line,
 					)
-				} else if e.typ == "bus" {
-					if pkg.Name != "main" {
-						log.Fatalf(
-							"%s: line %d: bus instantiation must be placed within 'main' package",
-							f.Path, e.Line(),
-						)
-					}
 				}
 			}
 		}
@@ -120,12 +118,11 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatalf("%s:%v", path, err)
 	}
+	file.Symbols.Consts = consts
 	for _, c := range consts {
-		err = file.AddSymbol(c)
-		if err != nil {
-			log.Fatalf("%s:%v", path, err)
-		}
-		err = pkg.AddSymbol(c)
+		c.setFile(&file)
+		c.setScope(&file)
+		err = pkg.addConst(c)
 		if err != nil {
 			log.Fatalf("%v", err)
 		}
@@ -136,12 +133,11 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
 	}
+	file.Symbols.Types = types
 	for _, t := range types {
-		err = file.AddSymbol(t)
-		if err != nil {
-			log.Fatalf("%s:%v", path, err)
-		}
-		err = pkg.AddSymbol(t)
+		t.setFile(&file)
+		t.setScope(&file)
+		err = pkg.addType(t)
 		if err != nil {
 			log.Fatalf("%v", err)
 		}
@@ -152,12 +148,11 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
 	}
+	file.Symbols.Insts = insts
 	for _, i := range insts {
-		err = file.AddSymbol(i)
-		if err != nil {
-			log.Fatalf("%s:%v", path, err)
-		}
-		err = pkg.AddSymbol(i)
+		i.setFile(&file)
+		i.setScope(&file)
+		err = pkg.addInst(i)
 		if err != nil {
 			log.Fatalf("%v", err)
 		}

@@ -152,7 +152,13 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	}
 	t.props = props
 
-	for _, s := range syms {
+	for _, s := range syms.Consts {
+		s.setScope(t)
+	}
+	for _, s := range syms.Insts {
+		s.setScope(t)
+	}
+	for _, s := range syms.Types {
 		s.setScope(t)
 	}
 	t.symbols = syms

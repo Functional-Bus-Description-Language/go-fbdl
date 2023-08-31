@@ -20,8 +20,8 @@ func resolveArgLists(packages prs.Packages) error {
 	return nil
 }
 
-func resolveArgListsInSymbols(symbols prs.SymbolContainer) error {
-	for _, s := range symbols {
+func resolveArgListsInSymbols(sc prs.SymbolContainer) error {
+	for _, s := range sc.Symbols() {
 		name := s.Name()
 		e, ok := s.(prs.Functionality)
 		if !ok {
@@ -37,7 +37,7 @@ func resolveArgListsInSymbols(symbols prs.SymbolContainer) error {
 			e.SetResolvedArgs(resolvedArgs)
 		}
 
-		if len(e.Symbols()) > 0 {
+		if len(e.Symbols().Symbols()) > 0 {
 			return resolveArgListsInSymbols(e.Symbols())
 		}
 	}

@@ -41,19 +41,57 @@ func (p *Package) AddFile(f *File) {
 	p.filesMutex.Unlock()
 }
 
-func (p *Package) AddSymbol(s Symbol) error {
+func (p *Package) addConst(c *Const) error {
 	p.symbolsMutex.Lock()
 	defer p.symbolsMutex.Unlock()
 
-	if !p.Symbols.Add(s) {
-		msg := `redefinition of symbol '%s' in package '%s'
+	if !p.Symbols.addConst(c) {
+		msg := `redefinition of constant '%s' in package '%s'
   %s:%d:%d
   %s:%d:%d`
-		first, _ := p.Symbols.GetByName(s.Name())
+		first, _ := p.Symbols.GetConst(c.name)
 		return fmt.Errorf(
-			msg, s.Name(), p.Name,
-			first.File().Path, first.Line(), first.Col(),
-			s.File().Path, s.Line(), s.Col(),
+			msg, c.name, p.Name,
+			first.File().Path, first.line, first.col,
+			c.File().Path, c.line, c.col,
+		)
+	}
+
+	return nil
+}
+
+func (p *Package) addInst(i *Inst) error {
+	p.symbolsMutex.Lock()
+	defer p.symbolsMutex.Unlock()
+
+	if !p.Symbols.addInst(i) {
+		msg := `reinstantiation of '%s' in package '%s'
+  %s:%d:%d
+  %s:%d:%d`
+		first, _ := p.Symbols.GetConst(i.name)
+		return fmt.Errorf(
+			msg, i.name, p.Name,
+			first.File().Path, first.line, first.col,
+			i.File().Path, i.line, i.col,
+		)
+	}
+
+	return nil
+}
+
+func (p *Package) addType(t *Type) error {
+	p.symbolsMutex.Lock()
+	defer p.symbolsMutex.Unlock()
+
+	if !p.Symbols.addType(t) {
+		msg := `redefinition of type '%s' in package '%s'
+  %s:%d:%d
+  %s:%d:%d`
+		first, _ := p.Symbols.GetConst(t.name)
+		return fmt.Errorf(
+			msg, t.name, p.Name,
+			first.File().Path, first.line, first.col,
+			t.File().Path, t.line, t.col,
 		)
 	}
 

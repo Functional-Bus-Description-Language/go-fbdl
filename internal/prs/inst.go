@@ -161,7 +161,13 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	}
 	i.props = props
 
-	for _, s := range syms {
+	for _, s := range syms.Consts {
+		s.setScope(i)
+	}
+	for _, s := range syms.Insts {
+		s.setScope(i)
+	}
+	for _, s := range syms.Types {
 		s.setScope(i)
 	}
 	i.symbols = syms

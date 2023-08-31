@@ -68,7 +68,7 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 
 	for pkgName, pkgs := range packages {
 		for _, pkg := range pkgs {
-			for _, symbol := range pkg.Symbols {
+			for _, symbol := range pkg.Symbols.Symbols() {
 				name := symbol.Name()
 				prsElem, ok := symbol.(prs.Functionality)
 				if !ok {

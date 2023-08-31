@@ -9,6 +9,7 @@ import (
 
 func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, SymbolContainer, error) {
 	pc := PropContainer{}
+	sc := SymbolContainer{}
 
 	for _, ap := range astBody.Props {
 		p := Prop{}
@@ -18,27 +19,25 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, Symbol
 		p.Name = tok.Text(ap.Name, src)
 		v, err := MakeExpr(ap.Value, src, scope)
 		if err != nil {
-			return nil, nil, err
+			return nil, sc, err
 		}
 		p.Value = v
 		if ok := pc.Add(p); !ok {
-			return nil, nil, tok.Error{
+			return nil, sc, tok.Error{
 				Tok: ap.Name,
 				Msg: fmt.Sprintf("reassignment to '%s' property", p.Name),
 			}
 		}
 	}
 
-	sc := SymbolContainer{}
-
 	// Handle constants
 	consts, err := buildConsts(astBody.Consts, src, scope)
 	if err != nil {
-		return nil, nil, err
+		return nil, sc, err
 	}
 	for i, c := range consts {
-		if ok := sc.Add(c); !ok {
-			return nil, nil, tok.Error{
+		if ok := sc.addConst(c); !ok {
+			return nil, sc, tok.Error{
 				Tok: astBody.Consts[i].Name,
 				Msg: fmt.Sprintf("redefinition of symbol '%s'", c.Name()),
 			}
@@ -48,11 +47,11 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, Symbol
 	// Handle types
 	types, err := buildTypes(astBody.Types, src)
 	if err != nil {
-		return nil, nil, err
+		return nil, sc, err
 	}
 	for i, t := range types {
-		if ok := sc.Add(t); !ok {
-			return nil, nil, tok.Error{
+		if ok := sc.addType(t); !ok {
+			return nil, sc, tok.Error{
 				Tok: astBody.Types[i].Name,
 				Msg: fmt.Sprintf("redefinition of symbol '%s'", t.Name()),
 			}
@@ -62,11 +61,11 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, Symbol
 	// Handle instantiations
 	insts, err := buildInsts(astBody.Insts, src)
 	if err != nil {
-		return nil, nil, err
+		return nil, sc, err
 	}
 	for i, ins := range insts {
-		if ok := sc.Add(ins); !ok {
-			return nil, nil, tok.Error{
+		if ok := sc.addInst(ins); !ok {
+			return nil, sc, tok.Error{
 				Tok: astBody.Insts[i].Name,
 				Msg: fmt.Sprintf("redefinition of symbol '%s'", ins.Name()),
 			}
