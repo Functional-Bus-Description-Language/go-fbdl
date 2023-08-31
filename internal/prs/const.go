@@ -15,12 +15,8 @@ type Const struct {
 
 func (c Const) Kind() SymbolKind { return ConstDef }
 
-func (c Const) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
-	return c.file.GetSymbol(name, kind)
-}
-
 // buildConsts builds list of Consts defined in the same scope based on the list of ast.Const.
-func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
+func buildConsts(astConsts []ast.Const, src []byte, scope Scope) ([]*Const, error) {
 	consts := make([]*Const, 0, len(astConsts))
 	cache := make(map[string]*Const)
 
@@ -30,7 +26,7 @@ func buildConsts(astConsts []ast.Const, src []byte) ([]*Const, error) {
 		c.line = ac.Name.Line()
 		c.col = ac.Name.Column()
 		c.name = tok.Text(ac.Name, src)
-		v, err := MakeExpr(ac.Value, src, c)
+		v, err := MakeExpr(ac.Value, src, scope)
 		if err != nil {
 			return nil, err
 		}

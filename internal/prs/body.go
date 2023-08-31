@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, SymbolContainer, error) {
+func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, SymbolContainer, error) {
 	pc := PropContainer{}
 
 	for _, ap := range astBody.Props {
@@ -16,7 +16,7 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 		p.Line = ap.Name.Line()
 		p.Col = ap.Name.Column()
 		p.Name = tok.Text(ap.Name, src)
-		v, err := MakeExpr(ap.Value, src, parent)
+		v, err := MakeExpr(ap.Value, src, scope)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -32,7 +32,7 @@ func buildBody(astBody ast.Body, src []byte, parent Searchable) (PropContainer, 
 	sc := SymbolContainer{}
 
 	// Handle constants
-	consts, err := buildConsts(astBody.Consts, src)
+	consts, err := buildConsts(astBody.Consts, src, scope)
 	if err != nil {
 		return nil, nil, err
 	}

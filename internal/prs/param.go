@@ -14,7 +14,7 @@ type Param struct {
 	DfltValue Expr
 }
 
-func buildParamList(astParams []ast.Param, src []byte, parent Searchable) ([]Param, error) {
+func buildParamList(astParams []ast.Param, src []byte, scope Scope) ([]Param, error) {
 	if len(astParams) == 0 {
 		return nil, nil
 	}
@@ -36,7 +36,7 @@ func buildParamList(astParams []ast.Param, src []byte, parent Searchable) ([]Par
 		p.Name = name
 
 		if ap.Value != nil {
-			v, err := MakeExpr(ap.Value, src, parent)
+			v, err := MakeExpr(ap.Value, src, scope)
 			if err != nil {
 				return nil, err
 			}

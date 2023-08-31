@@ -116,7 +116,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	}
 
 	// Handle file and package constants
-	consts, err := buildConsts(astFile.Consts, src)
+	consts, err := buildConsts(astFile.Consts, src, &file)
 	if err != nil {
 		log.Fatalf("%s:%v", path, err)
 	}

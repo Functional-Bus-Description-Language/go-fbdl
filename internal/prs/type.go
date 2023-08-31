@@ -33,7 +33,7 @@ func (t *Type) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 		return &Const{Value: v}, nil
 	}
 
-	return t.parent.GetSymbol(name, kind)
+	return t.scope.GetSymbol(name, kind)
 }
 
 func (t Type) Kind() SymbolKind                    { return TypeDef }
@@ -135,7 +135,7 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	t.props = props
 
 	for _, s := range syms {
-		s.setParent(t)
+		s.setScope(t)
 	}
 	t.symbols = syms
 

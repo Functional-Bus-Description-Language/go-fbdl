@@ -1,5 +1,5 @@
 package prs
 
-type Searchable interface {
+type Scope interface {
 	GetSymbol(name string, kind SymbolKind) (Symbol, error)
 }

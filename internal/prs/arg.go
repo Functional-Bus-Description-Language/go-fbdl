@@ -13,7 +13,7 @@ type Arg struct {
 	Value Expr
 }
 
-func buildArgList(astArgs []ast.Arg, src []byte, parent Searchable) ([]Arg, error) {
+func buildArgList(astArgs []ast.Arg, src []byte, scope Scope) ([]Arg, error) {
 	if len(astArgs) == 0 {
 		return nil, nil
 	}
@@ -36,7 +36,7 @@ func buildArgList(astArgs []ast.Arg, src []byte, parent Searchable) ([]Arg, erro
 			a.Name = name
 		}
 
-		v, err := MakeExpr(aa.Value, src, parent)
+		v, err := MakeExpr(aa.Value, src, scope)
 		if err != nil {
 			return nil, err
 		}

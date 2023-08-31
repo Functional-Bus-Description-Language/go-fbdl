@@ -15,7 +15,7 @@ type Expr interface {
 	Eval() (val.Value, error)
 }
 
-func MakeExpr(astExpr ast.Expr, src []byte, s Searchable) (Expr, error) {
+func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
 	var err error = nil
 	var expr Expr
 
@@ -112,7 +112,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	return val.Int(0), fmt.Errorf("binary operation, unknown operand type")
 }
 
-func MakeBinaryExpr(e ast.BinaryExpr, src []byte, s Searchable) (BinaryExpr, error) {
+func MakeBinaryExpr(e ast.BinaryExpr, src []byte, s Scope) (BinaryExpr, error) {
 	x, err := MakeExpr(e.X, src, s)
 	if err != nil {
 		return BinaryExpr{}, fmt.Errorf("make binary expression: left operand: %v", err)
@@ -187,7 +187,7 @@ func (c Call) Eval() (val.Value, error) {
 	panic("should never happen")
 }
 
-func MakeCall(e ast.Call, src []byte, s Searchable) (Call, error) {
+func MakeCall(e ast.Call, src []byte, s Scope) (Call, error) {
 	c := Call{funcName: tok.Text(e.Name, src), args: []Expr{}}
 
 	for i, a := range e.Args {
@@ -242,7 +242,7 @@ func (l List) Eval() (val.Value, error) {
 	return val.List(vals), nil
 }
 
-func MakeList(el ast.List, src []byte, s Searchable) (List, error) {
+func MakeList(el ast.List, src []byte, s Scope) (List, error) {
 	exprs := []Expr{}
 
 	for i, e := range el.Xs {
@@ -289,7 +289,7 @@ func MakeReal(e ast.Real, src []byte) (Real, error) {
 
 type DeclaredIdentifier struct {
 	x string
-	s Searchable
+	s Scope
 }
 
 func (di DeclaredIdentifier) Eval() (val.Value, error) {
@@ -309,7 +309,7 @@ func (di DeclaredIdentifier) Eval() (val.Value, error) {
 	}
 }
 
-func MakeDeclaredIdentifier(e ast.Ident, src []byte, s Searchable) DeclaredIdentifier {
+func MakeDeclaredIdentifier(e ast.Ident, src []byte, s Scope) DeclaredIdentifier {
 	return DeclaredIdentifier{x: tok.Text(e.Name, src), s: s}
 }
 
@@ -330,7 +330,7 @@ func MakeString(e ast.String, src []byte) String {
 type Subscript struct {
 	name string
 	idx  Expr
-	s    Searchable
+	s    Scope
 }
 
 func (s Subscript) Eval() (val.Value, error) {
@@ -367,7 +367,7 @@ func (s Subscript) Eval() (val.Value, error) {
 	return exprList.exprs[i].Eval()
 }
 
-func MakeSubscript(n ts.Node, s Searchable) (Subscript, error) {
+func MakeSubscript(n ts.Node, s Scope) (Subscript, error) {
 	name := n.Child(0).Content()
 
 	idx, err := MakeExpr(n.Child(2), s)
@@ -384,7 +384,7 @@ type Time struct {
 	unit string
 }
 
-func MakeTime(e ast.Time, src []byte, s Searchable) (Time, error) {
+func MakeTime(e ast.Time, src []byte, s Scope) (Time, error) {
 	txt := tok.Text(e.X, src)
 
 	aux := strings.Fields(txt)
@@ -451,7 +451,7 @@ func (ue UnaryExpr) Eval() (val.Value, error) {
 	return val.Int(0), fmt.Errorf("unary expression, unknown operand type '%s'", x.Type())
 }
 
-func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Searchable) (UnaryExpr, error) {
+func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Scope) (UnaryExpr, error) {
 	var op UnaryOperator
 	switch text := tok.Text(e.Op, src); text {
 	case "+":

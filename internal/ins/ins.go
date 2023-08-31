@@ -144,8 +144,8 @@ func resolveToBaseType(e prs.Functionality) []prs.Functionality {
 	if !util.IsBaseType(e.Type()) {
 		var s prs.Symbol
 		var err error
-		if e.Parent() != nil {
-			s, err = e.Parent().GetSymbol(e.Type(), prs.TypeDef)
+		if e.Scope() != nil {
+			s, err = e.Scope().GetSymbol(e.Type(), prs.TypeDef)
 		} else {
 			s, err = e.File().GetSymbol(e.Type(), prs.TypeDef)
 		}

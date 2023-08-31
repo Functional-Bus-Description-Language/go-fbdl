@@ -37,7 +37,7 @@ func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 		return &Const{Value: v}, nil
 	}
 
-	return i.parent.GetSymbol(name, kind)
+	return i.scope.GetSymbol(name, kind)
 }
 
 func (i Inst) Args() []Arg                         { return i.args }
@@ -51,7 +51,7 @@ func (i Inst) File() *File {
 		return i.file
 	}
 
-	if s, ok := i.parent.(Symbol); ok {
+	if s, ok := i.scope.(Symbol); ok {
 		return s.File()
 	}
 
@@ -144,7 +144,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	i.props = props
 
 	for _, s := range syms {
-		s.setParent(i)
+		s.setScope(i)
 	}
 	i.symbols = syms
 

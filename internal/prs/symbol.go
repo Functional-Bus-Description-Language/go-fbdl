@@ -1,5 +1,7 @@
 package prs
 
+import "fmt"
+
 type SymbolKind uint8
 
 const (
@@ -15,39 +17,39 @@ type Symbol interface {
 	Col() int
 	Doc() string
 
-	setParent(s Searchable)
-	Parent() Searchable
+	setScope(s Scope)
+	Scope() Scope
 
 	setFile(f *File)
 	File() *File
 }
 
 type symbol struct {
-	file   *File
-	line   int
-	col    int // Column of first character
-	name   string
-	doc    string
-	parent Searchable
+	file  *File
+	line  int
+	col   int // Column of first character
+	name  string
+	doc   string
+	scope Scope
 }
 
-func (s symbol) Name() string       { return s.name }
-func (s symbol) Line() int          { return s.line }
-func (s symbol) Col() int           { return s.col }
-func (s symbol) Doc() string        { return s.doc }
-func (s symbol) Parent() Searchable { return s.parent }
-func (s symbol) File() *File        { return s.file }
+func (s symbol) Name() string { return s.name }
+func (s symbol) Line() int    { return s.line }
+func (s symbol) Col() int     { return s.col }
+func (s symbol) Doc() string  { return s.doc }
+func (s symbol) Scope() Scope { return s.scope }
+func (s symbol) File() *File  { return s.file }
 
-func (s *symbol) setParent(p Searchable) {
-	if s.parent != nil {
-		panic("should never happen")
+func (sym *symbol) setScope(s Scope) {
+	if sym.scope != nil {
+		panic(fmt.Sprintf("resetting scope for symbol '%s'", sym.name))
 	}
-	s.parent = p
+	sym.scope = s
 }
 
 func (s *symbol) setFile(f *File) {
 	if s.file != nil {
-		panic("should never happen")
+		panic(fmt.Sprintf("resetting file for symbol '%s'", s.name))
 	}
 	s.file = f
 }
