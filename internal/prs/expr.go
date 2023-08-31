@@ -293,20 +293,16 @@ type DeclaredIdentifier struct {
 }
 
 func (di DeclaredIdentifier) Eval() (val.Value, error) {
-	id, err := di.s.GetSymbol(di.x, ConstDef)
+	c, err := di.s.GetConst(di.x)
 	if err != nil {
 		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.x, err)
 	}
 
-	if c, ok := id.(*Const); ok {
-		x, err := c.Value.Eval()
-		if err != nil {
-			return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.x, err)
-		}
-		return x, nil
-	} else {
-		panic("not yet implemented")
+	x, err := c.Value.Eval()
+	if err != nil {
+		return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.x, err)
 	}
+	return x, nil
 }
 
 func MakeDeclaredIdentifier(e ast.Ident, src []byte, s Scope) DeclaredIdentifier {

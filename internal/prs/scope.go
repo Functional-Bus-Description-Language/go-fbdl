@@ -1,5 +1,7 @@
 package prs
 
 type Scope interface {
-	GetSymbol(name string, kind SymbolKind) (Symbol, error)
+	GetConst(name string) (*Const, error)
+	GetInst(name string) (*Inst, error)
+	GetType(name string) (*Type, error)
 }

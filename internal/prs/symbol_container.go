@@ -17,10 +17,30 @@ func (sc *SymbolContainer) Add(sym Symbol) bool {
 	return true
 }
 
-func (sc *SymbolContainer) Get(name string, kind SymbolKind) (Symbol, bool) {
+func (sc *SymbolContainer) GetConst(name string) (*Const, bool) {
 	for _, s := range *sc {
-		if s.Name() == name && s.Kind() == kind {
-			return s, true
+		if s.Name() == name && s.Kind() == ConstDef {
+			return s.(*Const), true
+		}
+	}
+
+	return nil, false
+}
+
+func (sc *SymbolContainer) GetInst(name string) (*Inst, bool) {
+	for _, s := range *sc {
+		if s.Name() == name && s.Kind() == FuncInst {
+			return s.(*Inst), true
+		}
+	}
+
+	return nil, false
+}
+
+func (sc *SymbolContainer) GetType(name string) (*Type, bool) {
+	for _, s := range *sc {
+		if s.Name() == name && s.Kind() == TypeDef {
+			return s.(*Type), true
 		}
 	}
 

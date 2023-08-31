@@ -49,7 +49,7 @@ func (p *Package) AddSymbol(s Symbol) error {
 		msg := `redefinition of symbol '%s' in package '%s'
   %s:%d:%d
   %s:%d:%d`
-		first, _ := p.Symbols.Get(s.Name(), s.Kind())
+		first, _ := p.Symbols.GetByName(s.Name())
 		return fmt.Errorf(
 			msg, s.Name(), p.Name,
 			first.File().Path, first.Line(), first.Col(),
@@ -60,13 +60,28 @@ func (p *Package) AddSymbol(s Symbol) error {
 	return nil
 }
 
-func (p *Package) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
-	sym, ok := p.Symbols.Get(name, kind)
+func (p *Package) GetConst(name string) (*Const, error) {
+	sym, ok := p.Symbols.GetConst(name)
 	if ok {
 		return sym, nil
 	}
+	return nil, fmt.Errorf("constant '%s' not found in package '%s'", name, p.Name)
+}
 
-	return nil, fmt.Errorf("symbol '%s' not found in package '%s'", name, p.Name)
+func (p *Package) GetInst(name string) (*Inst, error) {
+	sym, ok := p.Symbols.GetInst(name)
+	if ok {
+		return sym, nil
+	}
+	return nil, fmt.Errorf("instantiation '%s' not found in package '%s'", name, p.Name)
+}
+
+func (p *Package) GetType(name string) (*Type, error) {
+	sym, ok := p.Symbols.GetType(name)
+	if ok {
+		return sym, nil
+	}
+	return nil, fmt.Errorf("type '%s' not found in package '%s'", name, p.Name)
 }
 
 func GetName(path_ string) string {

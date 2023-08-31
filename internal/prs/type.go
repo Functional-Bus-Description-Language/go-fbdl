@@ -23,8 +23,8 @@ type Type struct {
 	resolvedArgs map[string]Expr
 }
 
-func (t *Type) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
-	sym, ok := t.symbols.Get(name, kind)
+func (t *Type) GetConst(name string) (*Const, error) {
+	sym, ok := t.symbols.GetConst(name)
 	if ok {
 		return sym, nil
 	}
@@ -33,7 +33,25 @@ func (t *Type) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 		return &Const{Value: v}, nil
 	}
 
-	return t.scope.GetSymbol(name, kind)
+	return t.scope.GetConst(name)
+}
+
+func (t *Type) GetInst(name string) (*Inst, error) {
+	sym, ok := t.symbols.GetInst(name)
+	if ok {
+		return sym, nil
+	}
+
+	return t.scope.GetInst(name)
+}
+
+func (t *Type) GetType(name string) (*Type, error) {
+	sym, ok := t.symbols.GetType(name)
+	if ok {
+		return sym, nil
+	}
+
+	return t.scope.GetType(name)
 }
 
 func (t Type) Kind() SymbolKind                    { return TypeDef }

@@ -27,8 +27,8 @@ func (i Inst) Type() string     { return i.typ }
 func (i Inst) IsArray() bool    { return i.count != nil }
 func (i Inst) Count() Expr      { return i.count }
 
-func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
-	sym, ok := i.symbols.Get(name, kind)
+func (i *Inst) GetConst(name string) (*Const, error) {
+	sym, ok := i.symbols.GetConst(name)
 	if ok {
 		return sym, nil
 	}
@@ -37,7 +37,25 @@ func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 		return &Const{Value: v}, nil
 	}
 
-	return i.scope.GetSymbol(name, kind)
+	return i.scope.GetConst(name)
+}
+
+func (i *Inst) GetInst(name string) (*Inst, error) {
+	sym, ok := i.symbols.GetInst(name)
+	if ok {
+		return sym, nil
+	}
+
+	return i.scope.GetInst(name)
+}
+
+func (i *Inst) GetType(name string) (*Type, error) {
+	sym, ok := i.symbols.GetType(name)
+	if ok {
+		return sym, nil
+	}
+
+	return i.scope.GetType(name)
 }
 
 func (i Inst) Args() []Arg                         { return i.args }
