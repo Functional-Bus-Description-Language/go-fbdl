@@ -12,7 +12,7 @@ func regStream(s *fn.Stream, addr int64) int64 {
 	} else if len(s.Returns) > 0 {
 		return regUpstream(s, addr)
 	} else {
-		panic("not yet supported")
+		panic("downstream registerification not yet implemented")
 	}
 }
 

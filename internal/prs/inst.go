@@ -37,11 +37,7 @@ func (i *Inst) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 		return &Const{Value: v}, nil
 	}
 
-	if i.parent != nil {
-		return i.parent.GetSymbol(name, kind)
-	}
-
-	return i.file.GetSymbol(name, kind)
+	return i.parent.GetSymbol(name, kind)
 }
 
 func (i Inst) Args() []Arg                         { return i.args }

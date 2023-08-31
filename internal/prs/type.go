@@ -2,7 +2,6 @@ package prs
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
@@ -25,10 +24,6 @@ type Type struct {
 }
 
 func (t *Type) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
-	if strings.Contains(name, ".") {
-		panic("To be implemented")
-	}
-
 	sym, ok := t.symbols.Get(name, kind)
 	if ok {
 		return sym, nil
@@ -38,11 +33,7 @@ func (t *Type) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
 		return &Const{Value: v}, nil
 	}
 
-	if t.parent != nil {
-		return t.parent.GetSymbol(name, kind)
-	}
-
-	return t.file.GetSymbol(name, kind)
+	return t.parent.GetSymbol(name, kind)
 }
 
 func (t Type) Kind() SymbolKind                    { return TypeDef }

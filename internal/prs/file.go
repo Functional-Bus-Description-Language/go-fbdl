@@ -21,6 +21,7 @@ func (f *File) AddSymbol(s Symbol) error {
 		return fmt.Errorf(msg, s.Line(), s.Col(), name, first.Line(), first.Col())
 	}
 	s.setFile(f)
+	s.setParent(f)
 
 	return nil
 }
