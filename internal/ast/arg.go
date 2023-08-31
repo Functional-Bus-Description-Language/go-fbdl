@@ -41,8 +41,22 @@ tokenLoop:
 		case Name:
 			switch t := toks[c.i].(type) {
 			case tok.Ident:
-				a.Name = t
-				state = Ass
+				switch toks[c.i+1].(type) {
+				case tok.Ass:
+					a.Name = t
+					state = Ass
+				default:
+					a.Name = nil
+					a.ValueFirstTok = t
+					expr, err := buildExpr(toks, c, nil)
+					if err != nil {
+						return nil, err
+					}
+					c.i--
+					a.Value = expr
+					args = append(args, a)
+					state = Comma
+				}
 			default:
 				a.Name = nil
 				a.ValueFirstTok = toks[c.i]
