@@ -2,7 +2,6 @@ package prs
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
@@ -17,10 +16,6 @@ type Const struct {
 func (c Const) Kind() SymbolKind { return ConstDef }
 
 func (c Const) GetSymbol(name string, kind SymbolKind) (Symbol, error) {
-	if strings.Contains(name, ".") {
-		panic("unimplemented")
-	}
-
 	if c.parent != nil {
 		return c.parent.GetSymbol(name, kind)
 	}
