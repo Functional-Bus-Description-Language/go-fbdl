@@ -2,6 +2,7 @@ package ins
 
 import (
 	"fmt"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
@@ -38,21 +39,21 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
 			continue
 		}
 
-		e := insFunctionality(pe)
+		f := insFunctionality(pe)
 
-		if !util.IsValidInnerType(e.Type(), "stream") {
-			return fmt.Errorf(invalidInnerTypeMsg, e.GetName(), e.Type(), "stream")
+		if !util.IsValidInnerType(f.Type(), "stream") {
+			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "stream")
 		}
 
-		if stream.HasElement(strm, e.GetName()) {
-			return fmt.Errorf(funcWithNameAlreadyInstMsg, e.GetName())
+		if stream.HasElement(strm, f.GetName()) {
+			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
 
-		err := addStreamInnerElement(strm, e)
+		err := addStreamInnerFunctionality(strm, f)
 		if err != nil {
 			return fmt.Errorf(
 				"%d:%d: cannot instantiate '%s' functionality: %v",
-				pe.Line(), pe.Col(), e.GetName(), err,
+				pe.Line(), pe.Col(), f.GetName(), err,
 			)
 		}
 	}
@@ -60,20 +61,20 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
 	return nil
 }
 
-func addStreamInnerElement(s *fn.Stream, e fn.Functionality) error {
-	if (e.Type() == "return" && len(s.Params) > 0) ||
-		(e.Type() == "param" && len(s.Returns) > 0) {
+func addStreamInnerFunctionality(s *fn.Stream, f fn.Functionality) error {
+	if (f.Type() == "return" && len(s.Params) > 0) ||
+		(f.Type() == "param" && len(s.Returns) > 0) {
 		return fmt.Errorf(
 			"all 'stream' inner functionalities must be of the same base type and must be 'param' or 'return', "+
-				"'%s' base type is '%s'", e.GetName(), e.Type(),
+				"'%s' base type is '%s'", f.GetName(), f.Type(),
 		)
 	}
 
-	switch e := e.(type) {
+	switch f := f.(type) {
 	case (*fn.Param):
-		s.Params = append(s.Params, e)
+		s.Params = append(s.Params, f)
 	case (*fn.Return):
-		s.Returns = append(s.Returns, e)
+		s.Returns = append(s.Returns, f)
 	default:
 		panic("should never happen")
 	}

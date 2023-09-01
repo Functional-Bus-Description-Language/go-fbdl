@@ -2,15 +2,17 @@ package ins
 
 import (
 	"fmt"
+	"log"
+	"sort"
+
+	"golang.org/x/exp/maps"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	"golang.org/x/exp/maps"
-	"log"
-	"sort"
 )
 
 func insBlock(typeChain []prs.Functionality) (*fn.Block, error) {

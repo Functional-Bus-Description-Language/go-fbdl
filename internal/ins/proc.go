@@ -2,6 +2,7 @@ package ins
 
 import (
 	"fmt"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/proc"
@@ -75,27 +76,27 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 			continue
 		}
 
-		e := insFunctionality(pe)
+		f := insFunctionality(pe)
 
-		if !util.IsValidInnerType(e.Type(), "proc") {
-			return fmt.Errorf(invalidInnerTypeMsg, e.GetName(), e.Type(), "proc")
+		if !util.IsValidInnerType(f.Type(), "proc") {
+			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "proc")
 		}
 
-		if proc.HasElement(p, e.GetName()) {
-			return fmt.Errorf(funcWithNameAlreadyInstMsg, e.GetName())
+		if proc.HasElement(p, f.GetName()) {
+			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
-		addProcInnerElement(p, e)
+		addProcInnerFunctionality(p, f)
 	}
 
 	return nil
 }
 
-func addProcInnerElement(p *fn.Proc, e fn.Functionality) {
-	switch e := e.(type) {
+func addProcInnerFunctionality(p *fn.Proc, f fn.Functionality) {
+	switch f := f.(type) {
 	case (*fn.Param):
-		p.Params = append(p.Params, e)
+		p.Params = append(p.Params, f)
 	case (*fn.Return):
-		p.Returns = append(p.Returns, e)
+		p.Returns = append(p.Returns, f)
 	default:
 		panic("should never happen")
 	}

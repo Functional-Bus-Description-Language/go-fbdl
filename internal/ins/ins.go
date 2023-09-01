@@ -68,16 +68,16 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 		for _, pkg := range pkgs {
 			for _, symbol := range pkg.Symbols() {
 				name := symbol.Name()
-				prsElem, ok := symbol.(prs.Functionality)
+				prsFn, ok := symbol.(prs.Functionality)
 				if !ok {
 					continue
 				}
 
-				if name != mainName && util.IsBaseType(prsElem.Type()) {
+				if name != mainName && util.IsBaseType(prsFn.Type()) {
 					continue
 				}
 
-				e := insFunctionality(prsElem)
+				e := insFunctionality(prsFn)
 
 				if pkgName == "main" && name == mainName {
 					mainBus = e.(*fn.Block)
@@ -149,9 +149,9 @@ func resolveToBaseType(e prs.Functionality) []prs.Functionality {
 				e.File().Path, e.Line(), e.Col(), err,
 			)
 		}
-		type_elem := s.(prs.Functionality)
+		typeFn := s.(prs.Functionality)
 
-		typeChain = append(typeChain, resolveToBaseType(type_elem)...)
+		typeChain = append(typeChain, resolveToBaseType(typeFn)...)
 	}
 
 	typeChain = append(typeChain, e)
