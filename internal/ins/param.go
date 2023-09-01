@@ -67,6 +67,9 @@ func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) e
 			if diary.rangeSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "range")
 			}
+			if diary.widthSet {
+				return fmt.Errorf(propConflictMsg, p.Loc(), "range", "width")
+			}
 			var rang fbdlVal.Range
 			switch r := v.(type) {
 			case val.Int:
@@ -81,6 +84,9 @@ func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) e
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
+			}
+			if diary.rangeSet {
+				return fmt.Errorf(propConflictMsg, p.Loc(), "width", "range")
 			}
 			param.Width = int64(v.(val.Int))
 			diary.widthSet = true
