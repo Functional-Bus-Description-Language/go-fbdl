@@ -6,7 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regAtomicStatus registerifies an Atomic Status element.
+// regAtomicStatus registerifies an Atomic Status functionality.
 func regAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regAtomicStatusArray(st, addr, gp)
@@ -64,7 +64,7 @@ func regAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-// regNonAtomicStatus registerifies a Non-Atomic Status element.
+// regNonAtomicStatus registerifies a Non-Atomic Status functionality.
 func regNonAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regNonAtomicStatusArray(st, addr, gp)

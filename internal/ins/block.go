@@ -169,13 +169,13 @@ func checkBlockGroups(blk *fn.Block) error {
 
 	groups := make(map[string][]fn.Groupable)
 
-	for _, e := range instsWithGrps {
-		grps := e.GroupNames()
+	for _, i := range instsWithGrps {
+		grps := i.GroupNames()
 		for _, g := range grps {
 			if _, ok := groups[g]; !ok {
 				groups[g] = []fn.Groupable{}
 			}
-			groups[g] = append(groups[g], e)
+			groups[g] = append(groups[g], i)
 		}
 	}
 
@@ -228,8 +228,8 @@ func checkBlockGroups(blk *fn.Block) error {
 	for _, grpName1 := range grpNames {
 		g1 := groups[grpName1]
 		instNames1 := make([]string, 0, len(g1))
-		for _, e := range g1 {
-			instNames1 = append(instNames1, e.GetName())
+		for _, i := range g1 {
+			instNames1 = append(instNames1, i.GetName())
 		}
 		for _, grpName2 := range grpNames {
 			g2 := groups[grpName2]
@@ -237,8 +237,8 @@ func checkBlockGroups(blk *fn.Block) error {
 				continue
 			}
 			instNames2 := make([]string, 0, len(g2))
-			for _, e := range g2 {
-				instNames2 = append(instNames2, e.GetName())
+			for _, i := range g2 {
+				instNames2 = append(instNames2, i.GetName())
 			}
 			if len(instNames1) != len(instNames2) {
 				continue

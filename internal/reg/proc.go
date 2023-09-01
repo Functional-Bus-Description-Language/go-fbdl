@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regProc registerifies a Proc element.
+// regProc registerifies a Proc functionality.
 func regProc(proc *fn.Proc, addr int64) int64 {
 	var a access.Access
 

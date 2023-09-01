@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regMask registerifies a Mask element.
+// regMask registerifies a Mask functionality.
 func regMask(mask *fn.Mask, addr int64) int64 {
 	var a access.Access
 

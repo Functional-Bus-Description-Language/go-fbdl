@@ -6,7 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regStatic registerifies Static element.
+// regStatic registerifies Static functionality.
 func regStatic(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regStaticArray(st, addr, gp)

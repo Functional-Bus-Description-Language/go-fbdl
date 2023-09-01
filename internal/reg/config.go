@@ -6,7 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regConfig registerifies a Config element.
+// regConfig registerifies a Config functionality.
 func regConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	if cfg.IsArray {
 		panic("not yet implemented")

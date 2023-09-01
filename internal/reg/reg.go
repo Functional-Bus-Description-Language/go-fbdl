@@ -49,7 +49,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	assignGlobalAccessAddresses(bus, 0)
 
 	if block.HasFunctionality(bus, "ID") {
-		log.Fatalf("'ID' is reserved element name in main bus")
+		log.Fatalf("'ID' is reserved functionality name in main bus")
 	}
 	id := id()
 	id.Access = access.MakeSingle(0, 0, id.Width)
@@ -64,7 +64,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 
 	if addTimestamp {
 		if block.HasFunctionality(bus, "TIMESTAMP") {
-			log.Fatalf("'TIMESTAMP' is reserved element name in main bus")
+			log.Fatalf("'TIMESTAMP' is reserved functionality name in main bus")
 		}
 		ts := timestamp()
 		ts.Access = access.MakeSingle(timestampAddr, 0, busWidth)
@@ -134,7 +134,7 @@ func regStatics(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	statics := []*fn.Static{}
 
 	for _, st := range blk.Statics {
-		// Omit elements that have been already registerified as group members.
+		// Omit functionalities that have been already registerified as group members.
 		if st.Access != nil {
 			continue
 		}
@@ -170,7 +170,7 @@ func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	nonAtomicSts := []*fn.Status{}
 
 	for _, st := range blk.Statuses {
-		// Omit elements that have been already registerified as group members.
+		// Omit functionalities that have been already registerified as group members.
 		if st.Access != nil {
 			continue
 		}
@@ -212,7 +212,7 @@ func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 
 func regConfigs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	for _, cfg := range blk.Configs {
-		// Omit elements that have been already registerified as group members.
+		// Omit functionalities that have been already registerified as group members.
 		if cfg.Access != nil {
 			continue
 		}

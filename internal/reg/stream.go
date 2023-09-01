@@ -5,7 +5,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regStream registerifies a Stream element.
+// regStream registerifies a Stream functionality.
 func regStream(s *fn.Stream, addr int64) int64 {
 	if len(s.Params) == 0 && len(s.Returns) == 0 {
 		return regEmptyStream(s, addr)
