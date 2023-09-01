@@ -2,7 +2,6 @@ package prs
 
 import (
 	"fmt"
-	"path"
 	"strings"
 	"sync"
 )
@@ -120,14 +119,4 @@ func (p *Package) GetType(name string) (*Type, error) {
 		return sym, nil
 	}
 	return nil, fmt.Errorf("type '%s' not found in package '%s'", name, p.Name)
-}
-
-func GetName(path_ string) string {
-	name := path.Base(path_)
-
-	if name[:3] == "fbd-" {
-		name = name[4:]
-	}
-
-	return name
 }
