@@ -115,7 +115,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	// Handle file and package constants
 	consts, err := buildConsts(astFile.Consts, src, &file)
 	if err != nil {
-		log.Fatalf("%s:%v", path, err)
+		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
 	}
 	file.Consts = consts
 	for _, c := range consts {

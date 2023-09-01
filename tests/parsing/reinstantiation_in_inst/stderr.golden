@@ -1,0 +1,4 @@
+bus.fbd:3:2: reinstantiation of 's', first instantiation line 2 column 2
+   |
+ 3 | 	s static
+   | 	^

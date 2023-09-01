@@ -1,0 +1,4 @@
+bus.fbd:2:1: reinstantiation of 'Main', first instantiation line 1 column 1
+   |
+ 2 | Main bus
+   | ^^^^

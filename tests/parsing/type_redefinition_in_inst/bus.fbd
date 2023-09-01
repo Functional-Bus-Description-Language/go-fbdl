@@ -1,0 +1,3 @@
+Main bus
+	type t config
+	type t static

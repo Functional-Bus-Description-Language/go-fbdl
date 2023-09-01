@@ -1,0 +1,4 @@
+bus.fbd:3:7: redefinition of type 'b', first definition line 2 column 7
+   |
+ 3 | 	type b config
+   | 	     ^

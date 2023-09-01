@@ -34,7 +34,7 @@ cd tests/registerification/
 
 echo -e "\nRunning registerification tests\n"
 
-for dir in $(find . -maxdepth 3 -mindepth 3 -type d);
+for dir in $(find . -maxdepth 3 -mindepth 3 -type d | sort);
 do
 	testname=`basename $dir`
 	# Ignore tests starting with '_' character.

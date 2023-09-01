@@ -9,7 +9,7 @@ cd tests/parsing/
 
 echo -e "\nRunning parsing tests\n"
 
-for dir in $(find . -maxdepth 1 -mindepth 1 -type d);
+for dir in $(find . -maxdepth 1 -mindepth 1 -type d | sort);
 do
 	echo "    $dir"
 	cd $dir
