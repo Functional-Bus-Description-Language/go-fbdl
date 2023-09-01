@@ -7,10 +7,10 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-const propAlreadySetMsg string = "%s: cannot set property '%s', property is already set in one of ancestor types"
-const propConflictMsg string = "%s: cannot set property '%s', because property '%s' is already set in one of ancestor types"
-const invalidInnerTypeMsg string = "element '%s' of base type '%s' cannot be instantiated in element of base type '%s'"
-const elemWithNameAlreadyInstMsg string = "cannot instantiate element '%s', element with such name is already instantiated in one of ancestor types"
+const propAlreadySetMsg string = "%s: cannot set '%s' property as it is already set in one of ancestor types"
+const propConflictMsg string = "%s: cannot set '%s' property because '%s' property is already set in one of ancestor types"
+const invalidInnerTypeMsg string = "'%s' of base type '%s' cannot be instantiated in functionality of base type '%s'"
+const elemWithNameAlreadyInstMsg string = "cannot instantiate '%s', functionality with such name is already instantiated in one of ancestor types"
 
 func makeFunctionality(typeChain []prs.Functionality) (fn.Func, error) {
 	// Instantiation is always the last one in the type chain.
