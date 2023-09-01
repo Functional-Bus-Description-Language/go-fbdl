@@ -31,26 +31,26 @@ type Block struct {
 
 func (b Block) Type() string { return "block" }
 
-func (b *Block) GroupedElems() []Groupable {
-	elemsWithGrps := []Groupable{}
+func (b *Block) GroupedInsts() []Groupable {
+	instsWithGrps := []Groupable{}
 
 	for _, c := range b.Configs {
 		if len(c.Groups) > 0 {
-			elemsWithGrps = append(elemsWithGrps, c)
+			instsWithGrps = append(instsWithGrps, c)
 		}
 	}
 	for _, m := range b.Masks {
 		if len(m.Groups) > 0 {
-			elemsWithGrps = append(elemsWithGrps, m)
+			instsWithGrps = append(instsWithGrps, m)
 		}
 	}
 	for _, s := range b.Statuses {
 		if len(s.Groups) > 0 {
-			elemsWithGrps = append(elemsWithGrps, s)
+			instsWithGrps = append(instsWithGrps, s)
 		}
 	}
 
-	return elemsWithGrps
+	return instsWithGrps
 }
 
 // StartAddr returns block start address.

@@ -1,1 +1,0 @@
-bus.fbd:6:3: cannot instantiate 'R' functionality: all 'stream' inner elements must be of the same base type and must be 'param' or 'return', 'R' base type is 'return'

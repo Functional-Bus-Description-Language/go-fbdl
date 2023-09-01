@@ -6,5 +6,5 @@ type Groupable interface {
 }
 
 type GroupHolder interface {
-	GroupedElems() []Groupable
+	GroupedInsts() []Groupable
 }

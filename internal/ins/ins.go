@@ -77,10 +77,10 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 					continue
 				}
 
-				e := insFunctionality(prsFn)
+				f := insFunctionality(prsFn)
 
 				if pkgName == "main" && name == mainName {
-					mainBus = e.(*fn.Block)
+					mainBus = f.(*fn.Block)
 				}
 			}
 		}
@@ -132,21 +132,21 @@ func insFunctionality(pf prs.Functionality) fn.Functionality {
 	return f
 }
 
-func resolveToBaseType(e prs.Functionality) []prs.Functionality {
+func resolveToBaseType(f prs.Functionality) []prs.Functionality {
 	typeChain := []prs.Functionality{}
 
-	if !util.IsBaseType(e.Type()) {
+	if !util.IsBaseType(f.Type()) {
 		var s prs.Symbol
 		var err error
-		if e.Scope() != nil {
-			s, err = e.Scope().GetType(e.Type())
+		if f.Scope() != nil {
+			s, err = f.Scope().GetType(f.Type())
 		} else {
-			s, err = e.File().GetType(e.Type())
+			s, err = f.File().GetType(f.Type())
 		}
 		if err != nil {
 			log.Fatalf(
 				"%s:%d:%d: %v",
-				e.File().Path, e.Line(), e.Col(), err,
+				f.File().Path, f.Line(), f.Col(), err,
 			)
 		}
 		typeFn := s.(prs.Functionality)
@@ -154,6 +154,6 @@ func resolveToBaseType(e prs.Functionality) []prs.Functionality {
 		typeChain = append(typeChain, resolveToBaseType(typeFn)...)
 	}
 
-	typeChain = append(typeChain, e)
+	typeChain = append(typeChain, f)
 	return typeChain
 }

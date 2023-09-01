@@ -82,7 +82,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "proc")
 		}
 
-		if proc.HasElement(p, f.GetName()) {
+		if proc.HasFunctionality(p, f.GetName()) {
 			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
 		addProcInnerFunctionality(p, f)

@@ -14,7 +14,7 @@ func AddStatus(b *fn.Block, s *fn.Status)  { b.Statuses = append(b.Statuses, s) 
 func AddStream(b *fn.Block, s *fn.Stream)  { b.Streams = append(b.Streams, s) }
 func AddSubblock(b *fn.Block, s *fn.Block) { b.Subblocks = append(b.Subblocks, s) }
 
-func HasElement(blk *fn.Block, name string) bool {
+func HasFunctionality(blk *fn.Block, name string) bool {
 	for i := range blk.Configs {
 		if blk.Configs[i].Name == name {
 			return true

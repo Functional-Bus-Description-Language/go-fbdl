@@ -45,7 +45,7 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
 			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "stream")
 		}
 
-		if stream.HasElement(strm, f.GetName()) {
+		if stream.HasFunctionality(strm, f.GetName()) {
 			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
 

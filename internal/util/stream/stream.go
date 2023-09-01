@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func HasElement(s *fn.Stream, name string) bool {
+func HasFunctionality(s *fn.Stream, name string) bool {
 	for i := range s.Params {
 		if s.Params[i].Name == name {
 			return true

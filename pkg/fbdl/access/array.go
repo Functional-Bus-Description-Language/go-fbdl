@@ -6,7 +6,8 @@ import (
 	"math"
 )
 
-// ArraySingle describes an access to an array of elements with single element placed within single register.
+// ArraySingle describes an access to an array of functionalities
+// with single functionality placed within single register.
 type ArraySingle struct {
 	regCount int64
 
@@ -60,7 +61,8 @@ func MakeArraySingle(itemCount, addr, startBit, width int64) ArraySingle {
 	}
 }
 
-// ArrayContinuous describes an access to an array of elements with single element placed within multiple continuous registers.
+// ArrayContinuous describes an access to an array of functionalities
+// with single functionality placed within multiple continuous registers.
 type ArrayContinuous struct {
 	regCount int64
 
@@ -122,7 +124,8 @@ func MakeArrayContinuous(itemCount, startAddr, startBit, width int64) Access {
 	return ac
 }
 
-// ArrayMultiple describes an access to an array of elements with multiple elements placed within single register.
+// ArrayMultiple describes an access to an array of functionalities
+// with multiple functionalities placed within single register.
 type ArrayMultiple struct {
 	regCount int64
 

@@ -22,13 +22,13 @@ func resolveArgLists(packages prs.Packages) error {
 
 func resolveArgListsInSymbols(syms []prs.Symbol) error {
 	for _, s := range syms {
-		e, ok := s.(prs.Functionality)
+		f, ok := s.(prs.Functionality)
 		if !ok {
 			continue
 		}
 
-		if !util.IsBaseType(e.Type()) {
-			resolvedArgs, err := resolveArgs(e)
+		if !util.IsBaseType(f.Type()) {
+			resolvedArgs, err := resolveArgs(f)
 			if err != nil {
 				return fmt.Errorf(
 					"%s:%d:%d: %v",
@@ -36,11 +36,11 @@ func resolveArgListsInSymbols(syms []prs.Symbol) error {
 				)
 			}
 
-			e.SetResolvedArgs(resolvedArgs)
+			f.SetResolvedArgs(resolvedArgs)
 		}
 
-		if len(e.Symbols()) > 0 {
-			return resolveArgListsInSymbols(e.Symbols())
+		if len(f.Symbols()) > 0 {
+			return resolveArgListsInSymbols(f.Symbols())
 		}
 	}
 

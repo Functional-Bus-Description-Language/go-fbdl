@@ -109,18 +109,18 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 			continue
 		}
 
-		e := insFunctionality(s.(prs.Functionality))
+		f := insFunctionality(s.(prs.Functionality))
 
-		if !util.IsValidInnerType(e.Type(), "block") {
+		if !util.IsValidInnerType(f.Type(), "block") {
 			return fmt.Errorf(
-				invalidInnerTypeMsg, e.GetName(), e.Type(), "block",
+				invalidInnerTypeMsg, f.GetName(), f.Type(), "block",
 			)
 		}
 
-		if block.HasElement(blk, e.GetName()) {
-			return fmt.Errorf(funcWithNameAlreadyInstMsg, e.GetName())
+		if block.HasFunctionality(blk, f.GetName()) {
+			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
-		addBlockInnerElement(blk, e)
+		addBlockInnerElement(blk, f)
 	}
 
 	return nil
@@ -135,41 +135,41 @@ func fillBlockProps(blk *fn.Block) {
 	}
 }
 
-func addBlockInnerElement(blk *fn.Block, e any) {
-	switch e := e.(type) {
+func addBlockInnerElement(blk *fn.Block, f any) {
+	switch f := f.(type) {
 	case (*fn.Config):
-		block.AddConfig(blk, e)
+		block.AddConfig(blk, f)
 	case (*fn.Irq):
-		block.AddIrq(blk, e)
+		block.AddIrq(blk, f)
 	case (*fn.Mask):
-		block.AddMask(blk, e)
+		block.AddMask(blk, f)
 	case (*fn.Memory):
-		block.AddMemory(blk, e)
+		block.AddMemory(blk, f)
 	case (*fn.Proc):
-		block.AddProc(blk, e)
+		block.AddProc(blk, f)
 	case (*fn.Static):
-		block.AddStatic(blk, e)
+		block.AddStatic(blk, f)
 	case (*fn.Status):
-		block.AddStatus(blk, e)
+		block.AddStatus(blk, f)
 	case (*fn.Stream):
-		block.AddStream(blk, e)
+		block.AddStream(blk, f)
 	case (*fn.Block):
-		block.AddSubblock(blk, e)
+		block.AddSubblock(blk, f)
 	default:
 		panic("should never happen")
 	}
 }
 
 func checkBlockGroups(blk *fn.Block) error {
-	elemsWithGrps := blk.GroupedElems()
+	instsWithGrps := blk.GroupedInsts()
 
-	if len(elemsWithGrps) == 0 {
+	if len(instsWithGrps) == 0 {
 		return nil
 	}
 
 	groups := make(map[string][]fn.Groupable)
 
-	for _, e := range elemsWithGrps {
+	for _, e := range instsWithGrps {
 		grps := e.GroupNames()
 		for _, g := range grps {
 			if _, ok := groups[g]; !ok {
@@ -181,7 +181,7 @@ func checkBlockGroups(blk *fn.Block) error {
 
 	// Check for functionality and group names conflict.
 	for grpName := range groups {
-		if block.HasElement(blk, grpName) {
+		if block.HasFunctionality(blk, grpName) {
 			return fmt.Errorf("invalid group name %q, there is inner functionality with the same name", grpName)
 		}
 	}
@@ -194,9 +194,9 @@ func checkBlockGroups(blk *fn.Block) error {
 	}
 
 	// Check groups order.
-	for i, e1 := range elemsWithGrps[:len(elemsWithGrps)-1] {
+	for i, e1 := range instsWithGrps[:len(instsWithGrps)-1] {
 		grps1 := e1.GroupNames()
-		for _, e2 := range elemsWithGrps[i+1:] {
+		for _, e2 := range instsWithGrps[i+1:] {
 			grps2 := e2.GroupNames()
 			indexes := []int{}
 			for _, g1 := range grps1 {
@@ -227,26 +227,26 @@ func checkBlockGroups(blk *fn.Block) error {
 	sort.Strings(grpNames)
 	for _, grpName1 := range grpNames {
 		g1 := groups[grpName1]
-		elemNames1 := make([]string, 0, len(g1))
+		instNames1 := make([]string, 0, len(g1))
 		for _, e := range g1 {
-			elemNames1 = append(elemNames1, e.GetName())
+			instNames1 = append(instNames1, e.GetName())
 		}
 		for _, grpName2 := range grpNames {
 			g2 := groups[grpName2]
 			if grpName1 == grpName2 {
 				continue
 			}
-			elemNames2 := make([]string, 0, len(g2))
+			instNames2 := make([]string, 0, len(g2))
 			for _, e := range g2 {
-				elemNames2 = append(elemNames2, e.GetName())
+				instNames2 = append(instNames2, e.GetName())
 			}
-			if len(elemNames1) != len(elemNames2) {
+			if len(instNames1) != len(instNames2) {
 				continue
 			}
 			identical := true
-			for _, name1 := range elemNames1 {
+			for _, name1 := range instNames1 {
 				found := false
-				for _, name2 := range elemNames2 {
+				for _, name2 := range instNames2 {
 					if name1 == name2 {
 						found = true
 						break

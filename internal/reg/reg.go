@@ -48,7 +48,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(bus, 0)
 
-	if block.HasElement(bus, "ID") {
+	if block.HasFunctionality(bus, "ID") {
 		log.Fatalf("'ID' is reserved element name in main bus")
 	}
 	id := id()
@@ -63,7 +63,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	bus.Statics = append(bus.Statics, id)
 
 	if addTimestamp {
-		if block.HasElement(bus, "TIMESTAMP") {
+		if block.HasFunctionality(bus, "TIMESTAMP") {
 			log.Fatalf("'TIMESTAMP' is reserved element name in main bus")
 		}
 		ts := timestamp()

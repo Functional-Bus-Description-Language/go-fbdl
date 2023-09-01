@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// SingleSingle describes an access to a single element placed within single register.
+// SingleSingle describes an access to a single functionality placed within single register.
 type SingleSingle struct {
 	Addr     int64
 	startBit int64
@@ -54,7 +54,7 @@ func MakeSingleSingle(addr, startBit, width int64) Access {
 	}
 }
 
-// SingleContinuous describes an access to a single element placed within multiple continuous registers.
+// SingleContinuous describes an access to a single functionality placed within multiple continuous registers.
 type SingleContinuous struct {
 	regCount int64
 
