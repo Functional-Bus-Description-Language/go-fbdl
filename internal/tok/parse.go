@@ -879,6 +879,9 @@ func parseWord(c *ctx, src []byte, s *[]Token) (Token, error) {
 					t = Ident{t.Start(), t.End(), t.Line(), t.Column()}
 				}
 			}
+			if len(*s) == 0 {
+				t = Ident{t.Start(), t.End(), t.Line(), t.Column()}
+			}
 		}
 	} else {
 		// Firstly assume word is a property

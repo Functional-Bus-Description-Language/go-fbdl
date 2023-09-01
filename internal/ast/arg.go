@@ -74,7 +74,7 @@ tokenLoop:
 			case tok.Ass:
 				state = Val
 			default:
-				return nil, unexpected(t, "=")
+				return nil, unexpected(t, "'='")
 			}
 		case Comma:
 			switch t := toks[c.i].(type) {
@@ -84,7 +84,7 @@ tokenLoop:
 				c.i++
 				break tokenLoop
 			default:
-				return nil, unexpected(t, ", or )")
+				return nil, unexpected(t, "',' or ')'")
 			}
 		case Val:
 			a.ValueFirstTok = toks[c.i]

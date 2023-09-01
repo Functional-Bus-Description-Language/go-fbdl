@@ -14,47 +14,47 @@ func TestBuildError(t *testing.T) {
 		{
 			0,
 			"import *",
-			fmt.Errorf("1:8: unexpected *, expected identifier, string or newline"),
+			fmt.Errorf("1:8: unexpected '*', expected identifier, string or newline"),
 		},
 		{
 			1,
 			"import name +",
-			fmt.Errorf("1:13: unexpected +, expected string"),
+			fmt.Errorf("1:13: unexpected '+', expected string"),
 		},
 		{
 			2,
 			"const A = ]",
-			fmt.Errorf("1:11: unexpected ], expected expression"),
+			fmt.Errorf("1:11: unexpected ']', expected expression"),
 		},
 		{
 			3,
 			"const A = foo(1 true)",
-			fmt.Errorf("1:17: unexpected bool, expected , or )"),
+			fmt.Errorf("1:17: unexpected bool, expected ',' or ')'"),
 		},
 		{
 			4,
 			"const A = foo(, 1)",
-			fmt.Errorf("1:15: unexpected ,, expected expression"),
+			fmt.Errorf("1:15: unexpected ',', expected expression"),
 		},
 		{
 			5,
 			"const A = (a + b c",
-			fmt.Errorf("1:18: unexpected identifier, expected )"),
+			fmt.Errorf("1:18: unexpected identifier, expected ')'"),
 		},
 		{
 			6,
 			"const A = [1, 2, 3 4]",
-			fmt.Errorf("1:20: unexpected integer, expected , or ]"),
+			fmt.Errorf("1:20: unexpected integer, expected ',' or ']'"),
 		},
 		{
 			7,
 			"const A = [, 1]",
-			fmt.Errorf("1:12: unexpected ,, expected expression"),
+			fmt.Errorf("1:12: unexpected ',', expected expression"),
 		},
 		{
 			8,
 			"const\n\tA 12",
-			fmt.Errorf("2:4: unexpected integer, expected ="),
+			fmt.Errorf("2:4: unexpected integer, expected '='"),
 		},
 		{
 			9,
@@ -74,7 +74,7 @@ func TestBuildError(t *testing.T) {
 		{
 			12,
 			"C [3;config",
-			fmt.Errorf("1:5: unexpected ;, expected ]"),
+			fmt.Errorf("1:5: unexpected ';', expected ']'"),
 		},
 		{
 			13,
@@ -84,17 +84,17 @@ func TestBuildError(t *testing.T) {
 		{
 			14,
 			"type t(,) config",
-			fmt.Errorf("1:8: unexpected ,, expected identifier"),
+			fmt.Errorf("1:8: unexpected ',', expected identifier"),
 		},
 		{
 			15,
 			"type t(a b) config",
-			fmt.Errorf("1:10: unexpected identifier, expected =, ) or ,"),
+			fmt.Errorf("1:10: unexpected identifier, expected '=', ')' or ','"),
 		},
 		{
 			16,
 			"type t(a = 1;) static",
-			fmt.Errorf("1:13: unexpected ;, expected , or )"),
+			fmt.Errorf("1:13: unexpected ';', expected ',' or ')'"),
 		},
 		{
 			17,
@@ -104,7 +104,7 @@ func TestBuildError(t *testing.T) {
 		{
 			18,
 			"type a [1,status",
-			fmt.Errorf("1:10: unexpected ,, expected ]"),
+			fmt.Errorf("1:10: unexpected ',', expected ']'"),
 		},
 		{
 			19,
@@ -120,11 +120,6 @@ func TestBuildError(t *testing.T) {
 			21,
 			"import\n\t1",
 			fmt.Errorf("2:2: unexpected integer, expected identifier or string"),
-		},
-		{
-			22,
-			"bus bus",
-			fmt.Errorf("1:1: unexpected bus, expected const, type, identifier, import or comment"),
 		},
 	}
 

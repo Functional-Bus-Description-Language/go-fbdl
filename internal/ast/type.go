@@ -69,7 +69,7 @@ func buildType(toks []tok.Token, c *ctx) (Type, error) {
 		}
 		typ.Count = expr
 		if _, ok := toks[c.i].(tok.RightBracket); !ok {
-			return typ, unexpected(toks[c.i], "]")
+			return typ, unexpected(toks[c.i], "']'")
 		}
 		c.i++
 	}
@@ -111,7 +111,7 @@ func buildType(toks []tok.Token, c *ctx) (Type, error) {
 	case tok.Eof:
 		// Do nothing.
 	default:
-		return typ, unexpected(t, "; or newline")
+		return typ, unexpected(t, "';' or newline")
 	}
 
 	return typ, nil

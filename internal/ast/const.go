@@ -31,7 +31,7 @@ func buildSingleConst(toks []tok.Token, c *ctx) ([]Const, error) {
 
 	c.i += 2
 	if _, ok := toks[c.i].(tok.Ass); !ok {
-		return nil, unexpected(toks[c.i], "=")
+		return nil, unexpected(toks[c.i], "'='")
 	}
 
 	c.i++
@@ -84,7 +84,7 @@ tokenLoop:
 			case tok.Ass:
 				state = Exp
 			default:
-				return nil, unexpected(t, "=")
+				return nil, unexpected(t, "'='")
 			}
 		case Exp:
 			expr, err := buildExpr(toks, c, nil)

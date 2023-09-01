@@ -46,7 +46,7 @@ func buildInst(toks []tok.Token, c *ctx) (Inst, error) {
 		}
 		inst.Count = expr
 		if _, ok := toks[c.i].(tok.RightBracket); !ok {
-			return inst, unexpected(toks[c.i], "]")
+			return inst, unexpected(toks[c.i], "']'")
 		}
 		c.i++
 	}
@@ -85,8 +85,10 @@ func buildInst(toks []tok.Token, c *ctx) (Inst, error) {
 			}
 			inst.Body = body
 		}
+	case tok.Eof:
+		break
 	default:
-		return inst, unexpected(t, "; or newline")
+		return inst, unexpected(t, "';' or newline")
 	}
 
 	return inst, nil

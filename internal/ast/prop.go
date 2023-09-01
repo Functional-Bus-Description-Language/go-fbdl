@@ -41,7 +41,7 @@ tokenLoop:
 			case tok.Ass:
 				state = Exp
 			default:
-				return nil, unexpected(t, "=")
+				return nil, unexpected(t, "'='")
 			}
 		case Exp:
 			expr, err := buildExpr(toks, c, nil)
@@ -59,7 +59,7 @@ tokenLoop:
 			case tok.Semicolon:
 				state = Prop
 			default:
-				return nil, unexpected(t, "; or newline")
+				return nil, unexpected(t, "';' or newline")
 			}
 		}
 	}

@@ -219,7 +219,7 @@ func buildParenExpr(toks []tok.Token, c *ctx) (ParenExpr, error) {
 	if _, ok := toks[c.i].(tok.RightParen); ok {
 		c.i++
 	} else {
-		return pe, unexpected(toks[c.i], ")")
+		return pe, unexpected(toks[c.i], "')'")
 	}
 
 	return pe, nil
@@ -245,7 +245,7 @@ tokenLoop:
 			c.i++
 		default:
 			if prevExpr {
-				return l, unexpected(t, ", or ]")
+				return l, unexpected(t, "',' or ']'")
 			}
 
 			var (
@@ -285,7 +285,7 @@ tokenLoop:
 			c.i++
 		default:
 			if prevExpr {
-				return call, unexpected(t, ", or )")
+				return call, unexpected(t, "',' or ')'")
 			}
 
 			var (

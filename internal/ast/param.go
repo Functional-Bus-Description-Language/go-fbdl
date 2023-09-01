@@ -57,7 +57,7 @@ tokenLoop:
 				c.i++
 				break tokenLoop
 			default:
-				return nil, unexpected(t, "=, ) or ,")
+				return nil, unexpected(t, "'=', ')' or ','")
 			}
 		case Val:
 			expr, err := buildExpr(toks, c, nil)
@@ -77,7 +77,7 @@ tokenLoop:
 				c.i++
 				break tokenLoop
 			default:
-				return nil, unexpected(t, ", or )")
+				return nil, unexpected(t, "',' or ')'")
 			}
 		}
 	}
