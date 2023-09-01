@@ -119,11 +119,7 @@ func insElement(pf prs.Functionality) fn.Functionality {
 	case "stream":
 		f, err = insStream(typeChain)
 	default:
-		log.Fatalf(
-			"%s: line %d: instantiating element '%s', "+
-				"cannot start element instantiation from non base type '%s'",
-			pf.File().Path, pf.Line(), pf.Name(), typ,
-		)
+		panic("should never happen")
 	}
 
 	if err != nil {
