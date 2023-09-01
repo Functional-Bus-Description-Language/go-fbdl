@@ -1,7 +1,6 @@
 package fbdl
 
 import (
-	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
@@ -17,7 +16,7 @@ func Compile(mainPath, mainName string, addTimestamp bool) (*fn.Block, map[strin
 
 	bus, insPkgs, err := ins.Instantiate(packages, mainName)
 	if err != nil {
-		return nil, nil, fmt.Errorf("instantiation: %v", err)
+		return nil, nil, err
 	}
 
 	// Below loop is needed, as map of concrete type cannot be by default treated

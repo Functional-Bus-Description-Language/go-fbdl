@@ -67,7 +67,7 @@ func main() {
 	}
 	bus, pkgsConsts, err := ins.Instantiate(packages, mainName)
 	if err != nil {
-		log.Fatalf("instantiation: %v", err)
+		log.Fatalf("%v", err)
 	}
 
 	if args.DumpIns != "" {
