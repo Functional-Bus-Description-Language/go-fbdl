@@ -25,7 +25,10 @@ func setBusWidth(main *prs.Inst) error {
 
 	v, err := prop.Value.Eval()
 	if err != nil {
-		return fmt.Errorf("cannot evaluate main bus 'width' property")
+		return fmt.Errorf(
+			"%s:%d:%d: cannot evaluate main bus 'width' property",
+			main.File().Path, prop.Line, prop.Col,
+		)
 	}
 
 	if vi, ok := v.(val.Int); ok {
@@ -141,7 +144,10 @@ func resolveToBaseType(e prs.Functionality) []prs.Functionality {
 			s, err = e.File().GetType(e.Type())
 		}
 		if err != nil {
-			log.Fatalf("cannot get symbol '%s': %v", e.Type(), err)
+			log.Fatalf(
+				"%s:%d:%d: %v",
+				e.File().Path, e.Line(), e.Col(), err,
+			)
 		}
 		type_elem := s.(prs.Functionality)
 
