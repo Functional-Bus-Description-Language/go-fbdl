@@ -16,13 +16,8 @@ const dfltBusWidth int64 = 32
 
 var busWidth int64
 
-func setBusWidth(main prs.Symbol) error {
-	e, ok := main.(*prs.Inst)
-	if !ok {
-		panic("FIX ME")
-	}
-
-	prop, ok := e.Props().Get("width")
+func setBusWidth(main *prs.Inst) error {
+	prop, ok := main.Props().Get("width")
 	if !ok {
 		busWidth = dfltBusWidth
 		return nil
