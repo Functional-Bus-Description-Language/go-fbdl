@@ -26,8 +26,8 @@ func setBusWidth(main *prs.Inst) error {
 	v, err := prop.Value.Eval()
 	if err != nil {
 		return fmt.Errorf(
-			"%s:%d:%d: cannot evaluate main bus 'width' property",
-			main.File().Path, prop.Line, prop.Col,
+			"%s:%s: cannot evaluate main bus 'width' property",
+			main.File().Path, prop.Loc(),
 		)
 	}
 
@@ -35,8 +35,8 @@ func setBusWidth(main *prs.Inst) error {
 		busWidth = int64(vi)
 	} else {
 		return fmt.Errorf(
-			"%s:%d:%d: main bus 'width' property must be of integer type, current type %s",
-			main.File().Path, prop.Line, prop.Col, v.Type(),
+			"%s:%s: main bus 'width' property must be of integer type, current type %s",
+			main.File().Path, prop.Loc(), v.Type(),
 		)
 	}
 
