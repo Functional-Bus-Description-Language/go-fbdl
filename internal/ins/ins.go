@@ -28,12 +28,12 @@ func setBusWidth(main *prs.Inst) error {
 		return fmt.Errorf("cannot evaluate main bus 'width' property")
 	}
 
-	if v, ok := v.(val.Int); ok {
-		busWidth = int64(v)
+	if vi, ok := v.(val.Int); ok {
+		busWidth = int64(vi)
 	} else {
 		log.Fatalf(
-			"%s: line %d: main bus 'width' property must be of type 'integer'",
-			main.File().Path, prop.Line,
+			"%s:%d:%d: main bus 'width' property must be of integer type, current type %s",
+			main.File().Path, prop.Line, prop.Col, v.Type(),
 		)
 	}
 

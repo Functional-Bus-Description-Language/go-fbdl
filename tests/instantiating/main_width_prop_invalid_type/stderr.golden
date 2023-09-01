@@ -1,0 +1,1 @@
+bus.fbd:2:2: main bus 'width' property must be of integer type, current type string
