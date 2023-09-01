@@ -31,7 +31,7 @@ func setBusWidth(main *prs.Inst) error {
 	if vi, ok := v.(val.Int); ok {
 		busWidth = int64(vi)
 	} else {
-		log.Fatalf(
+		return fmt.Errorf(
 			"%s:%d:%d: main bus 'width' property must be of integer type, current type %s",
 			main.File().Path, prop.Line, prop.Col, v.Type(),
 		)
@@ -51,12 +51,12 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 
 	err = setBusWidth(main)
 	if err != nil {
-		log.Fatalf("instantiation: %v", err)
+		log.Fatalf("%v", err)
 	}
 
 	err = resolveArgLists(packages)
 	if err != nil {
-		log.Fatalf("instantiation: %v", err)
+		log.Fatalf("%v", err)
 	}
 
 	var mainBus *fn.Block

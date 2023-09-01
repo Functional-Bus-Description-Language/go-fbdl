@@ -8,11 +8,11 @@ import (
 )
 
 func resolveArgLists(packages prs.Packages) error {
-	for name, pkgs := range packages {
+	for _, pkgs := range packages {
 		for _, pkg := range pkgs {
 			err := resolveArgListsInSymbols(pkg.Symbols())
 			if err != nil {
-				return fmt.Errorf("package '%s': %v", name, err)
+				return err
 			}
 		}
 	}
@@ -22,7 +22,6 @@ func resolveArgLists(packages prs.Packages) error {
 
 func resolveArgListsInSymbols(syms []prs.Symbol) error {
 	for _, s := range syms {
-		name := s.Name()
 		e, ok := s.(prs.Functionality)
 		if !ok {
 			continue
@@ -31,7 +30,10 @@ func resolveArgListsInSymbols(syms []prs.Symbol) error {
 		if !util.IsBaseType(e.Type()) {
 			resolvedArgs, err := resolveArgs(e)
 			if err != nil {
-				return fmt.Errorf("cannot resolve argument list for symbol '%s': %v", name, err)
+				return fmt.Errorf(
+					"%s:%d:%d: %v",
+					s.File().Path, s.Line(), s.Col(), err,
+				)
 			}
 
 			e.SetResolvedArgs(resolvedArgs)
@@ -53,7 +55,7 @@ func resolveArgs(symbol prs.Functionality) (map[string]prs.Expr, error) {
 
 	typeSymbol, err := symbol.GetType(symbol.Type())
 	if err != nil {
-		return nil, fmt.Errorf("cannot get symbol '%s' for element type: %v", symbol.Type(), err)
+		return nil, err
 	}
 
 	params := typeSymbol.Params()
