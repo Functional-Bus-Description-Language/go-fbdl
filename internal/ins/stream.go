@@ -38,14 +38,14 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
 			continue
 		}
 
-		e := insElement(pe)
+		e := insFunctionality(pe)
 
 		if !util.IsValidInnerType(e.Type(), "stream") {
 			return fmt.Errorf(invalidInnerTypeMsg, e.GetName(), e.Type(), "stream")
 		}
 
 		if stream.HasElement(strm, e.GetName()) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.GetName())
+			return fmt.Errorf(funcWithNameAlreadyInstMsg, e.GetName())
 		}
 
 		err := addStreamInnerElement(strm, e)
@@ -64,7 +64,7 @@ func addStreamInnerElement(s *fn.Stream, e fn.Functionality) error {
 	if (e.Type() == "return" && len(s.Params) > 0) ||
 		(e.Type() == "param" && len(s.Returns) > 0) {
 		return fmt.Errorf(
-			"all 'stream' inner elements must be of the same base type and must be 'param' or 'return', "+
+			"all 'stream' inner functionalities must be of the same base type and must be 'param' or 'return', "+
 				"'%s' base type is '%s'", e.GetName(), e.Type(),
 		)
 	}

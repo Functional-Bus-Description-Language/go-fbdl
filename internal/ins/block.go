@@ -107,7 +107,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 			continue
 		}
 
-		e := insElement(s.(prs.Functionality))
+		e := insFunctionality(s.(prs.Functionality))
 
 		if !util.IsValidInnerType(e.Type(), "block") {
 			return fmt.Errorf(
@@ -116,7 +116,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 		}
 
 		if block.HasElement(blk, e.GetName()) {
-			return fmt.Errorf(elemWithNameAlreadyInstMsg, e.GetName())
+			return fmt.Errorf(funcWithNameAlreadyInstMsg, e.GetName())
 		}
 		addBlockInnerElement(blk, e)
 	}
@@ -177,17 +177,17 @@ func checkBlockGroups(blk *fn.Block) error {
 		}
 	}
 
-	// Check for element and group names conflict.
+	// Check for functionality and group names conflict.
 	for grpName := range groups {
 		if block.HasElement(blk, grpName) {
-			return fmt.Errorf("invalid group name %q, there is inner element with the same name", grpName)
+			return fmt.Errorf("invalid group name %q, there is inner functionality with the same name", grpName)
 		}
 	}
 
-	// Check for groups with single element.
+	// Check for groups with single functionality.
 	for name, g := range groups {
 		if len(g) == 1 {
-			return fmt.Errorf("group %q has only one element '%s'", name, g[0].GetName())
+			return fmt.Errorf("group %q has only one functionality '%s'", name, g[0].GetName())
 		}
 	}
 
@@ -210,8 +210,8 @@ func checkBlockGroups(blk *fn.Block) error {
 				if id <= prevId {
 					return fmt.Errorf(
 						"conflicting order of groups, "+
-							"group %q is after group %q in element '%s', "+
-							"but before group %q in element '%s'",
+							"group %q is after group %q in functionality '%s', "+
+							"but before group %q in functionality '%s'",
 						grps2[id], grps2[id+1], e1.GetName(), grps2[id+1], e2.GetName(),
 					)
 				}

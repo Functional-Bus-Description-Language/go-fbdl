@@ -77,7 +77,7 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 					continue
 				}
 
-				e := insElement(prsElem)
+				e := insFunctionality(prsElem)
 
 				if pkgName == "main" && name == mainName {
 					mainBus = e.(*fn.Block)
@@ -91,7 +91,7 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 	return mainBus, pkgs, nil
 }
 
-func insElement(pf prs.Functionality) fn.Functionality {
+func insFunctionality(pf prs.Functionality) fn.Functionality {
 	typeChain := resolveToBaseType(pf)
 
 	var f fn.Functionality

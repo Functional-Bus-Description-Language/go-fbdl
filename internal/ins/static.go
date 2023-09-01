@@ -119,7 +119,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		}
 		st.InitValue = fbdlVal.MakeBitStr(val)
 	} else {
-		return fmt.Errorf("'static' element must have 'init-value' property set")
+		return fmt.Errorf("'static' functionality must have 'init-value' property set")
 	}
 
 	if diary.resetValSet {

@@ -10,7 +10,7 @@ import (
 const propAlreadySetMsg string = "%s: cannot set '%s' property as it is already set in one of ancestor types"
 const propConflictMsg string = "%s: cannot set '%s' property because '%s' property is already set in one of ancestor types"
 const invalidInnerTypeMsg string = "'%s' of base type '%s' cannot be instantiated in functionality of base type '%s'"
-const elemWithNameAlreadyInstMsg string = "cannot instantiate '%s', functionality with such name is already instantiated in one of ancestor types"
+const funcWithNameAlreadyInstMsg string = "cannot instantiate '%s', functionality with such name is already instantiated in one of ancestor types"
 
 func makeFunctionality(typeChain []prs.Functionality) (fn.Func, error) {
 	// Instantiation is always the last one in the type chain.
@@ -41,14 +41,12 @@ func makeFunctionality(typeChain []prs.Functionality) (fn.Func, error) {
 		}
 	}
 
-	e := fn.Func{
+	return fn.Func{
 		Name:    name,
 		Doc:     doc,
 		IsArray: isArray,
 		Count:   count,
-	}
-
-	return e, nil
+	}, nil
 }
 
 func makeGroupList(propVal val.Value) []string {

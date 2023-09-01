@@ -12,7 +12,7 @@ type Group struct {
 	Elems []*Element
 }
 
-// IsStatus returns true if group contains only status elements.
+// IsStatus returns true if group contains only status functionalities.
 func (g *Group) IsStatus() bool {
 	for _, e := range g.Elems {
 		if e.Type != "status" {
@@ -22,7 +22,7 @@ func (g *Group) IsStatus() bool {
 	return true
 }
 
-// IsConfig returns true if group contains only config elements.
+// IsConfig returns true if group contains only config functionalities.
 func (g *Group) IsConfig() bool {
 	for _, e := range g.Elems {
 		if e.Type != "config" {
@@ -32,7 +32,7 @@ func (g *Group) IsConfig() bool {
 	return true
 }
 
-// IsArray returns true if group contains only array elements.
+// IsArray returns true if group contains only array functionalities.
 func (g *Group) IsArray() bool {
 	for _, e := range g.Elems {
 		if !e.IsArray {
