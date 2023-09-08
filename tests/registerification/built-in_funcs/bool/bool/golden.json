@@ -38,7 +38,7 @@
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 1,
+				"Addr": 3,
 				"StartBit": 0,
 				"EndBit": 31
 			}
@@ -57,7 +57,7 @@
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 2,
+				"Addr": 1,
 				"StartBit": 0,
 				"EndBit": 31
 			}
@@ -76,7 +76,7 @@
 			"Width": 32,
 			"Access": {
 				"Strategy": "Single",
-				"Addr": 3,
+				"Addr": 2,
 				"StartBit": 0,
 				"EndBit": 31
 			}
@@ -93,7 +93,7 @@
 			"IsArray": false,
 			"Count": 1,
 			"Groups": null,
-			"InitValue": "x\"75c806e0\"",
+			"InitValue": "x\"6c3105e1\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
