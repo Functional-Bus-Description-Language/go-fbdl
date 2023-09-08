@@ -51,7 +51,7 @@ func regStaticArray(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 		a = access.MakeArrayMultiplePacked(st.Count, addr, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else {
-		panic("not yet implemented")
+		panic("unimplemented")
 	}
 	addr += a.RegCount()
 

@@ -45,7 +45,7 @@ func regGroupStatusArray(blk *fnBlock, insGrp *ins.Group, addr int64) (fnGroup, 
 	if sameSizes {
 		grp, addr = regGroupStatusArraySameSizes(blk, insGrp, addr)
 	} else {
-		panic("not yet implemented")
+		panic("unimplemented")
 	}
 
 	return grp, addr

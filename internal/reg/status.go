@@ -6,41 +6,29 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regAtomicStatus registerifies an Atomic Status functionality.
+// regAtomicStatus registerifies an atomic Status functionality.
 func regAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regAtomicStatusArray(st, addr, gp)
-	} else {
-		return regAtomicStatusSingle(st, addr, gp)
 	}
+	return regAtomicStatusSingle(st, addr, gp)
 }
 
 func regAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
-	var a access.Access
+	acs := access.MakeSingle(addr, 0, st.Width)
+	addr += acs.RegCount()
 
-	if st.Width > busWidth {
-		a = access.MakeSingleContinuous(addr, 0, st.Width)
-		addr += a.RegCount()
-		/*
-			} else if g, ok := gp.GetSingle(st.Width, false); ok {
-				a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
-		*/
-	} else {
-		a = access.MakeSingleSingle(addr, 0, st.Width)
-		addr += a.RegCount()
-	}
-
-	if a.EndBit() < busWidth-1 {
+	if acs.EndBit() < busWidth-1 {
 		gp.Add(gap.Gap{
-			StartAddr: a.EndAddr(),
-			EndAddr:   a.EndAddr(),
-			StartBit:  a.EndBit() + 1,
+			StartAddr: acs.EndAddr(),
+			EndAddr:   acs.EndAddr(),
+			StartBit:  acs.EndBit() + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
 		})
 	}
 
-	st.Access = a
+	st.Access = acs
 
 	return addr
 }
@@ -55,7 +43,7 @@ func regAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 		a = access.MakeArrayMultiplePacked(st.Count, addr, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else {
-		panic("not yet implemented")
+		panic("unimplemented")
 	}
 	addr += a.RegCount()
 
@@ -68,32 +56,26 @@ func regAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 func regNonAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
 		return regNonAtomicStatusArray(st, addr, gp)
-	} else {
-		return regNonAtomicStatusSingle(st, addr, gp)
 	}
+	return regNonAtomicStatusSingle(st, addr, gp)
 }
 
 func regNonAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
-	/*
-		var a access.Access
-		if g, ok := gp.GetSingle(st.Width, false); ok {
-			a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
-		} else {
-	*/
-	a := access.MakeSingle(addr, 0, st.Width)
-	addr += a.RegCount()
+	// TODO: Check if there is gap at the end that can be utilized.
+	acs := access.MakeSingle(addr, 0, st.Width)
+	addr += acs.RegCount()
 
-	if a.EndBit() < busWidth-1 {
+	if acs.EndBit() < busWidth-1 {
 		gp.Add(gap.Gap{
-			StartAddr: a.EndAddr(),
-			EndAddr:   a.EndAddr(),
-			StartBit:  a.EndBit() + 1,
+			StartAddr: acs.EndAddr(),
+			EndAddr:   acs.EndAddr(),
+			StartBit:  acs.EndBit() + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
 		})
 	}
 
-	st.Access = a
+	st.Access = acs
 
 	return addr
 }
@@ -108,7 +90,7 @@ func regNonAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 		a = access.MakeArrayMultiplePacked(st.Count, addr, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else {
-		panic("not yet implemented")
+		panic("unimplemented")
 	}
 	addr += a.RegCount()
 

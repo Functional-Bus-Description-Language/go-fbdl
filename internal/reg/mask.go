@@ -10,7 +10,7 @@ func regMask(mask *fn.Mask, addr int64) int64 {
 	var a access.Access
 
 	if mask.IsArray {
-		panic("not yet implemented")
+		panic("unimplemented")
 		/* Should it be implemented the same way as for Status?
 		if width == busWidth {
 
@@ -18,7 +18,7 @@ func regMask(mask *fn.Mask, addr int64) int64 {
 			mask.Access = access.MakeArrayMultiple(mask.Count, addr, width)
 			// TODO: This is a place for adding a potential Gap.
 		} else {
-			panic("not yet implemented")
+			panic("unimplemented")
 		}
 		*/
 	} else {

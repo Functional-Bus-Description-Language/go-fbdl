@@ -93,7 +93,7 @@ func regGroups(blk *fn.Block, insBlk *ins.Element, addr int64) int64 {
 		if g.IsStatus() && g.IsArray() {
 			grp, addr = regGroupStatusArray(blk, g, addr)
 		} else {
-			panic("not yet implemented")
+			panic("unimplemented")
 		}
 
 		blkAddGroup(blk, grp)
@@ -211,13 +211,45 @@ func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 }
 
 func regConfigs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
+	atomicCfgs := []*fn.Config{}
+	nonAtomicCfgs := []*fn.Config{}
+
 	for _, cfg := range blk.Configs {
 		// Omit functionalities that have been already registerified as group members.
 		if cfg.Access != nil {
 			continue
 		}
 
-		addr = regConfig(cfg, addr, gp)
+		if cfg.Atomic {
+			atomicCfgs = append(atomicCfgs, cfg)
+		} else {
+			nonAtomicCfgs = append(nonAtomicCfgs, cfg)
+		}
+	}
+
+	sortFunc := func(cfgs []*fn.Config) func(int, int) bool {
+		return func(i, j int) bool {
+			if cfgs[i].IsArray && !cfgs[j].IsArray {
+				return true
+			} else if !cfgs[i].IsArray && cfgs[j].IsArray {
+				return false
+			}
+
+			if cfgs[i].Width > cfgs[j].Width {
+				return true
+			}
+			return false
+		}
+	}
+
+	sort.SliceStable(atomicCfgs, sortFunc(atomicCfgs))
+	sort.SliceStable(nonAtomicCfgs, sortFunc(nonAtomicCfgs))
+
+	for _, cfg := range atomicCfgs {
+		addr = regAtomicConfig(cfg, addr, gp)
+	}
+	for _, cfg := range nonAtomicCfgs {
+		addr = regNonAtomicConfig(cfg, addr, gp)
 	}
 
 	return addr

@@ -6,10 +6,10 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-// regConfig registerifies a Config functionality.
-func regConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
+// regAtomicConfig registerifies an atomic Config functionality.
+func regAtomicConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	if cfg.IsArray {
-		panic("not yet implemented")
+		panic("unimplemented")
 		/* Should it be implemented the same way as for Status?
 		if width == busWidth {
 
@@ -20,19 +20,50 @@ func regConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 			panic("not yet implemented")
 		}
 		*/
-	} else {
-		cfg.Access = access.MakeSingle(addr, 0, cfg.Width)
-		if cfg.Access.EndBit() < busWidth-1 {
-			gp.Add(gap.Gap{
-				StartAddr: cfg.Access.EndAddr(),
-				EndAddr:   cfg.Access.EndAddr(),
-				StartBit:  cfg.Access.EndBit() + 1,
-				EndBit:    busWidth - 1,
-				WriteSafe: false,
-			})
-		}
 	}
-	addr += cfg.Access.RegCount()
+	return regAtomicConfigSingle(cfg, addr, gp)
+}
+
+func regAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
+	acs := access.MakeSingle(addr, 0, cfg.Width)
+	if acs.EndBit() < busWidth-1 {
+		gp.Add(gap.Gap{
+			StartAddr: acs.EndAddr(),
+			EndAddr:   acs.EndAddr(),
+			StartBit:  acs.EndBit() + 1,
+			EndBit:    busWidth - 1,
+			WriteSafe: false,
+		})
+	}
+	addr += acs.RegCount()
+
+	cfg.Access = acs
+
+	return addr
+}
+
+func regNonAtomicConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
+	if cfg.IsArray {
+		panic("unimplemented")
+	}
+	return regNonAtomicConfigSingle(cfg, addr, gp)
+}
+
+func regNonAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
+	// TODO: Check if there is write-safe gap at the end that can be utilized.
+	acs := access.MakeSingle(addr, 0, cfg.Width)
+	if acs.EndBit() < busWidth-1 {
+		gp.Add(gap.Gap{
+			StartAddr: acs.EndAddr(),
+			EndAddr:   acs.EndAddr(),
+			StartBit:  acs.EndBit() + 1,
+			EndBit:    busWidth - 1,
+			WriteSafe: false,
+		})
+	}
+	addr += acs.RegCount()
+
+	cfg.Access = acs
 
 	return addr
 }
