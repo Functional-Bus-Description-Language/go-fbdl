@@ -129,30 +129,30 @@ func MakeArrayContinuous(itemCount, startAddr, startBit, width int64) Access {
 type ArrayMultiple struct {
 	regCount int64
 
-	ItemCount      int64
-	ItemWidth      int64
-	ItemsPerAccess int64
-	startAddr      int64
-	startBit       int64
+	ItemCount   int64
+	ItemWidth   int64
+	ItemsPerReg int64
+	startAddr   int64
+	startBit    int64
 }
 
 func (am ArrayMultiple) MarshalJSON() ([]byte, error) {
 	j, err := json.Marshal(struct {
-		Strategy       string
-		RegCount       int64
-		ItemCount      int64
-		ItemWidth      int64
-		ItemsPerAccess int64
-		StartAddr      int64
-		StartBit       int64
+		Strategy    string
+		RegCount    int64
+		ItemCount   int64
+		ItemWidth   int64
+		ItemsPerReg int64
+		StartAddr   int64
+		StartBit    int64
 	}{
-		Strategy:       "Multiple",
-		RegCount:       am.regCount,
-		ItemCount:      am.ItemCount,
-		ItemWidth:      am.ItemWidth,
-		ItemsPerAccess: am.ItemsPerAccess,
-		StartAddr:      am.startAddr,
-		StartBit:       am.startBit,
+		Strategy:    "Multiple",
+		RegCount:    am.regCount,
+		ItemCount:   am.ItemCount,
+		ItemWidth:   am.ItemWidth,
+		ItemsPerReg: am.ItemsPerReg,
+		StartAddr:   am.startAddr,
+		StartBit:    am.startBit,
 	})
 
 	if err != nil {
@@ -167,39 +167,39 @@ func (am ArrayMultiple) StartAddr() int64     { return am.startAddr }
 func (am ArrayMultiple) EndAddr() int64       { return am.startAddr + am.regCount - 1 }
 func (am ArrayMultiple) Width() int64         { return am.ItemWidth }
 func (am ArrayMultiple) StartBit() int64      { return am.startBit }
-func (am ArrayMultiple) StartRegWidth() int64 { return am.ItemsPerAccess * am.ItemWidth }
+func (am ArrayMultiple) StartRegWidth() int64 { return am.ItemsPerReg * am.ItemWidth }
 func (am ArrayMultiple) EndRegWidth() int64   { return am.StartRegWidth() }
 
 func (am ArrayMultiple) EndBit() int64 {
 	if am.regCount == 1 {
 		return am.startBit + am.ItemCount*am.ItemWidth - 1
-	} else if am.ItemCount%am.ItemsPerAccess == 0 {
-		return am.startBit + am.ItemsPerAccess*am.ItemWidth - 1
+	} else if am.ItemCount%am.ItemsPerReg == 0 {
+		return am.startBit + am.ItemsPerReg*am.ItemWidth - 1
 	} else {
-		itemsInLast := am.ItemCount % am.ItemsPerAccess
+		itemsInLast := am.ItemCount % am.ItemsPerReg
 		return am.startBit + itemsInLast*am.ItemWidth - 1
 	}
 }
 
 func (am ArrayMultiple) ItemsInLastReg() int64 {
-	return am.ItemCount % am.ItemsPerAccess
+	return am.ItemCount % am.ItemsPerReg
 }
 
 // MakeArrayMultiplePacked makes ArrayMultiple starting from bit 0,
 // and placing as many items within single register as possible.
 func MakeArrayMultiplePacked(itemCount, startAddr, width int64) Access {
 	am := ArrayMultiple{
-		ItemCount:      itemCount,
-		ItemWidth:      width,
-		ItemsPerAccess: busWidth / width,
-		startAddr:      startAddr,
-		startBit:       0,
+		ItemCount:   itemCount,
+		ItemWidth:   width,
+		ItemsPerReg: busWidth / width,
+		startAddr:   startAddr,
+		startBit:    0,
 	}
 
-	if itemCount <= am.ItemsPerAccess {
+	if itemCount <= am.ItemsPerReg {
 		am.regCount = 1
 	} else {
-		am.regCount = int64(math.Ceil(float64(itemCount) / float64(am.ItemsPerAccess)))
+		am.regCount = int64(math.Ceil(float64(itemCount) / float64(am.ItemsPerReg)))
 	}
 
 	return am
