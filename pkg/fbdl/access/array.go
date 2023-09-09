@@ -162,13 +162,26 @@ func (am ArrayMultiple) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (am ArrayMultiple) RegCount() int64      { return am.regCount }
-func (am ArrayMultiple) StartAddr() int64     { return am.startAddr }
-func (am ArrayMultiple) EndAddr() int64       { return am.startAddr + am.regCount - 1 }
-func (am ArrayMultiple) Width() int64         { return am.ItemWidth }
-func (am ArrayMultiple) StartBit() int64      { return am.startBit }
-func (am ArrayMultiple) StartRegWidth() int64 { return am.ItemsPerReg * am.ItemWidth }
-func (am ArrayMultiple) EndRegWidth() int64   { return am.StartRegWidth() }
+func (am ArrayMultiple) RegCount() int64  { return am.regCount }
+func (am ArrayMultiple) StartAddr() int64 { return am.startAddr }
+func (am ArrayMultiple) EndAddr() int64   { return am.startAddr + am.regCount - 1 }
+func (am ArrayMultiple) Width() int64     { return am.ItemWidth }
+func (am ArrayMultiple) StartBit() int64  { return am.startBit }
+
+func (am ArrayMultiple) StartRegWidth() int64 {
+	if am.ItemCount < am.ItemsPerReg {
+		return am.ItemCount * am.ItemWidth
+	}
+	return am.ItemsPerReg * am.ItemWidth
+}
+
+func (am ArrayMultiple) EndRegWidth() int64 {
+	itemsInEndReg := am.ItemCount % am.ItemsPerReg
+	if itemsInEndReg == 0 {
+		itemsInEndReg = am.ItemsPerReg
+	}
+	return itemsInEndReg * am.ItemWidth
+}
 
 func (am ArrayMultiple) EndBit() int64 {
 	if am.regCount == 1 {
