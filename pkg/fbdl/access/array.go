@@ -7,7 +7,16 @@ import (
 )
 
 // ArraySingle describes an access to an array of functionalities
-// with single functionality placed within single register.
+// with single item placed within single register.
+//
+//	Example:
+//
+//	c [3]config; width = 25
+//
+//	         Reg N                  Reg N+1                Reg N+2
+//	----------------------- ----------------------- -----------------------
+//	|| c[0] | 7 bits gap || || c[1] | 7 bits gap || || c[2] | 7 bits gap ||
+//	----------------------- ----------------------- -----------------------
 type ArraySingle struct {
 	regCount int64
 
@@ -63,6 +72,15 @@ func MakeArraySingle(itemCount, addr, startBit, width int64) ArraySingle {
 
 // ArrayContinuous describes an access to an array of functionalities
 // with single functionality placed within multiple continuous registers.
+//
+//	Example:
+//
+//	p [4]param; width = 14
+//
+//	           Reg N                        Reg N+1
+//	--------------------------- ---------------------------------
+//	|| p[0] | p[1] | p[2](0) || || p[2](1) | p[3] | 8 bits gap ||
+//	--------------------------- ---------------------------------
 type ArrayContinuous struct {
 	regCount int64
 
@@ -195,7 +213,11 @@ func (am ArrayMultiple) EndBit() int64 {
 }
 
 func (am ArrayMultiple) ItemsInLastReg() int64 {
-	return am.ItemCount % am.ItemsPerReg
+	inLastReg := am.ItemCount % am.ItemsPerReg
+	if inLastReg == 0 {
+		inLastReg = am.ItemsPerReg
+	}
+	return inLastReg
 }
 
 // MakeArrayMultiplePacked makes ArrayMultiple starting from bit 0,
