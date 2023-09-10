@@ -18,39 +18,18 @@ import (
 //	|| s[0] | s[1] | s[2] | s[3] | 4 bits gap ||
 //	--------------------------------------------
 type ArrayOneReg struct {
+	Strategy  string
 	Addr      int64
-	startBit  int64
+	StartBit  int64
 	ItemWidth int64
 	ItemCount int64
-}
-
-func (aor ArrayOneReg) MarshalJSON() ([]byte, error) {
-	j, err := json.Marshal(struct {
-		Strategy  string
-		Addr      int64
-		StartBit  int64
-		ItemWidth int64
-		ItemCount int64
-	}{
-		Strategy:  "OneReg",
-		Addr:      aor.Addr,
-		StartBit:  aor.startBit,
-		ItemWidth: aor.ItemWidth,
-		ItemCount: aor.ItemCount,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return j, nil
 }
 
 func (aor ArrayOneReg) GetRegCount() int64      { return 1 }
 func (aor ArrayOneReg) GetStartAddr() int64     { return aor.Addr }
 func (aor ArrayOneReg) GetEndAddr() int64       { return aor.Addr }
-func (aor ArrayOneReg) GetStartBit() int64      { return aor.startBit }
-func (aor ArrayOneReg) GetEndBit() int64        { return aor.startBit*aor.ItemCount*aor.ItemWidth - 1 }
+func (aor ArrayOneReg) GetStartBit() int64      { return aor.StartBit }
+func (aor ArrayOneReg) GetEndBit() int64        { return aor.StartBit*aor.ItemCount*aor.ItemWidth - 1 }
 func (aor ArrayOneReg) GetWidth() int64         { return aor.ItemWidth }
 func (aor ArrayOneReg) GetStartRegWidth() int64 { return aor.ItemCount * aor.ItemWidth }
 func (aor ArrayOneReg) GetEndRegWidth() int64   { return aor.ItemCount * aor.ItemWidth }
@@ -62,8 +41,9 @@ func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
 	}
 
 	return ArrayOneReg{
+		Strategy:  "ArrayOneReg",
 		Addr:      addr,
-		startBit:  startBit,
+		StartBit:  startBit,
 		ItemCount: itemCount,
 		ItemWidth: width,
 	}
