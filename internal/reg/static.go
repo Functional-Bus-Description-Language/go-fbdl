@@ -42,20 +42,21 @@ func regStaticSingle(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 }
 
 func regStaticArray(st *fn.Static, addr int64, gp *gap.Pool) int64 {
-	var a access.Access
+	var acs access.Access
 
+	// TODO: In all below branches a potential gap can be added.
 	if busWidth/2 < st.Width && st.Width <= busWidth {
-		a = access.MakeArrayOneInReg(st.Count, addr, 0, st.Width)
-		// TODO: This is a place for adding a potential Gap.
-	} else if busWidth%st.Width == 0 || st.Count <= busWidth/st.Width || st.Width < busWidth/2 {
-		a = access.MakeArrayNInReg(st.Count, addr, st.Width)
-		// TODO: This is a place for adding a potential Gap.
+		acs = access.MakeArrayOneInReg(st.Count, addr, 0, st.Width)
+	} else if st.Width <= busWidth/2 && st.Count%(busWidth/st.Width) == 0 {
+		acs = access.MakeArrayNInReg(st.Count, addr, st.Width)
+	} else if st.Width <= busWidth/2 {
+		acs = access.MakeArrayNInRegMInEndReg(st.Count, addr, st.Width)
 	} else {
 		panic("unimplemented")
 	}
-	addr += a.GetRegCount()
+	addr += acs.GetRegCount()
 
-	st.Access = a
+	st.Access = acs
 
 	return addr
 }

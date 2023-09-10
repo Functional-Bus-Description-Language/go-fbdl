@@ -17,15 +17,15 @@ func regAtomicConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	var acs access.Access
 
+	// TODO: In all below branches a potential gap can be added.
 	if cfg.Count*cfg.Width <= busWidth {
 		acs = access.MakeArrayOneReg(cfg.Count, addr, 0, cfg.Width)
-		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth/2 < cfg.Width && cfg.Width <= busWidth {
 		acs = access.MakeArrayOneInReg(cfg.Count, addr, 0, cfg.Width)
-		// TODO: This is a place for adding a potential Gap.
-	} else if busWidth%cfg.Width == 0 || cfg.Count <= busWidth/cfg.Width || cfg.Width < busWidth/2 {
+	} else if cfg.Width <= busWidth/2 && cfg.Count%(busWidth/cfg.Width) == 0 {
 		acs = access.MakeArrayNInReg(cfg.Count, addr, cfg.Width)
-		// TODO: This is a place for adding a potential Gap.
+	} else if cfg.Width <= busWidth/2 {
+		acs = access.MakeArrayNInRegMInEndReg(cfg.Count, addr, cfg.Width)
 	} else {
 		panic("unimplemented")
 	}

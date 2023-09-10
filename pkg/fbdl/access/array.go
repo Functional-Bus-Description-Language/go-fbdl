@@ -200,3 +200,60 @@ func MakeArrayNInReg(itemCount, startAddr, width int64) Access {
 
 	return anir
 }
+
+// ArrayNInRegMInEndReg describes an access to an array of functionalities
+// with multiple functionalities placed within single register.
+//
+//	Example:
+//
+//	c [5]config; width = 15
+//
+//	            Reg N                         Reg N+1                     Reg N+2
+//	------------------------------ ------------------------------ ------------------------
+//	|| c[0] | c[1] | 2 bits gap || || c[2] | c[3] | 2 bits gap || || c[4] | 17 bits gap ||
+//	------------------------------ ------------------------------ ------------------------
+type ArrayNInRegMInEndReg struct {
+	Strategy      string
+	RegCount      int64
+	ItemCount     int64
+	ItemWidth     int64
+	ItemsInReg    int64
+	ItemsInEndReg int64
+	StartAddr     int64
+	StartBit      int64
+}
+
+func (anm ArrayNInRegMInEndReg) GetRegCount() int64      { return anm.RegCount }
+func (anm ArrayNInRegMInEndReg) GetStartAddr() int64     { return anm.StartAddr }
+func (anm ArrayNInRegMInEndReg) GetEndAddr() int64       { return anm.StartAddr + anm.RegCount - 1 }
+func (anm ArrayNInRegMInEndReg) GetWidth() int64         { return anm.ItemWidth }
+func (anm ArrayNInRegMInEndReg) GetStartBit() int64      { return anm.StartBit }
+func (anm ArrayNInRegMInEndReg) GetStartRegWidth() int64 { return anm.ItemsInReg * anm.ItemWidth }
+func (anm ArrayNInRegMInEndReg) GetEndRegWidth() int64   { return anm.ItemsInEndReg * anm.ItemWidth }
+func (anm ArrayNInRegMInEndReg) GetEndBit() int64 {
+	return anm.StartBit + anm.ItemsInEndReg*anm.ItemWidth - 1
+}
+
+// MakeArrayNInRegMInEndReg makes ArrayNInRegMInEndReg starting from bit 0,
+// and placing as many items within single register as possible.
+func MakeArrayNInRegMInEndReg(itemCount, startAddr, width int64) Access {
+	itemsInReg := busWidth / width
+	itemsInEndReg := itemCount % itemsInReg
+
+	if itemsInEndReg == 0 {
+		panic("itemsInEndReg = 0, use ArrayNInReg")
+	}
+
+	anm := ArrayNInRegMInEndReg{
+		Strategy:      "ArrayNInRegMInEndReg",
+		RegCount:      int64(math.Ceil(float64(itemCount) / float64(itemsInReg))),
+		ItemCount:     itemCount,
+		ItemWidth:     width,
+		ItemsInReg:    itemsInReg,
+		ItemsInEndReg: itemsInEndReg,
+		StartAddr:     startAddr,
+		StartBit:      0,
+	}
+
+	return anm
+}

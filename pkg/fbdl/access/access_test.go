@@ -193,3 +193,49 @@ func TestMakeArrayNInReg(t *testing.T) {
 		}
 	}
 }
+
+func TestMakeArrayNInRegMInEndReg(t *testing.T) {
+	var tests = []struct {
+		startAddr int64
+		count     int64
+		width     int64
+		want      Access
+	}{
+		{0, 5, 7,
+			ArrayNInRegMInEndReg{
+				Strategy:      "ArrayNInRegMInEndReg",
+				RegCount:      2,
+				ItemCount:     5,
+				ItemWidth:     7,
+				ItemsInReg:    4,
+				ItemsInEndReg: 1,
+				StartAddr:     0,
+				StartBit:      0,
+			},
+		},
+		{1, 66, 1,
+			ArrayNInRegMInEndReg{
+				Strategy:      "ArrayNInRegMInEndReg",
+				RegCount:      3,
+				ItemCount:     66,
+				ItemWidth:     1,
+				ItemsInReg:    32,
+				ItemsInEndReg: 2,
+				StartAddr:     1,
+				StartBit:      0,
+			},
+		},
+	}
+
+	for i, test := range tests {
+		got := MakeArrayNInRegMInEndReg(test.count, test.startAddr, test.width)
+
+		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
+			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
+		}
+
+		if got != test.want {
+			t.Errorf("[%d] got %v, want %v", i, got, test.want)
+		}
+	}
+}
