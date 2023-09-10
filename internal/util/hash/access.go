@@ -23,8 +23,8 @@ func hashAccessAccess(a access.Access) uint32 {
 	write(&buf, a.GetRegCount())
 	write(&buf, a.GetStartAddr())
 	write(&buf, a.GetEndAddr())
-	write(&buf, a.StartBit())
-	write(&buf, a.EndBit())
+	write(&buf, a.GetStartBit())
+	write(&buf, a.GetEndBit())
 	write(&buf, a.StartRegWidth())
 	write(&buf, a.EndRegWidth())
 

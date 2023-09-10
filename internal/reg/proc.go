@@ -18,9 +18,9 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 			a = access.MakeSingle(addr, baseBit, p.Width)
 		}
 
-		if a.EndBit() < busWidth-1 {
+		if a.GetEndBit() < busWidth-1 {
 			addr += a.GetRegCount() - 1
-			baseBit = a.EndBit() + 1
+			baseBit = a.GetEndBit() + 1
 		} else {
 			addr += a.GetRegCount()
 			baseBit = 0
@@ -50,9 +50,9 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 			a = access.MakeSingle(addr, baseBit, r.Width)
 		}
 
-		if a.EndBit() < busWidth-1 {
+		if a.GetEndBit() < busWidth-1 {
 			addr += a.GetRegCount() - 1
-			baseBit = a.EndBit() + 1
+			baseBit = a.GetEndBit() + 1
 		} else {
 			addr += a.GetRegCount()
 			baseBit = 0
@@ -80,7 +80,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 		} else {
 			lastAccess = params[len(params)-1].Access
 		}
-		if lastAccess.EndBit() < busWidth-1 {
+		if lastAccess.GetEndBit() < busWidth-1 {
 			addr += 1
 		}
 	}

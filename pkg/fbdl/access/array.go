@@ -49,8 +49,8 @@ func (aor ArrayOneReg) MarshalJSON() ([]byte, error) {
 func (aor ArrayOneReg) GetRegCount() int64   { return 1 }
 func (aor ArrayOneReg) GetStartAddr() int64  { return aor.Addr }
 func (aor ArrayOneReg) GetEndAddr() int64    { return aor.Addr }
-func (aor ArrayOneReg) StartBit() int64      { return aor.startBit }
-func (aor ArrayOneReg) EndBit() int64        { return aor.startBit*aor.ItemCount*aor.ItemWidth - 1 }
+func (aor ArrayOneReg) GetStartBit() int64   { return aor.startBit }
+func (aor ArrayOneReg) GetEndBit() int64     { return aor.startBit*aor.ItemCount*aor.ItemWidth - 1 }
 func (aor ArrayOneReg) Width() int64         { return aor.ItemWidth }
 func (aor ArrayOneReg) StartRegWidth() int64 { return aor.ItemCount * aor.ItemWidth }
 func (aor ArrayOneReg) EndRegWidth() int64   { return aor.ItemCount * aor.ItemWidth }
@@ -113,8 +113,8 @@ func (as ArraySingle) MarshalJSON() ([]byte, error) {
 func (as ArraySingle) GetRegCount() int64   { return as.regCount }
 func (as ArraySingle) GetStartAddr() int64  { return as.startAddr }
 func (as ArraySingle) GetEndAddr() int64    { return as.startAddr + as.regCount - 1 }
-func (as ArraySingle) StartBit() int64      { return as.startBit }
-func (as ArraySingle) EndBit() int64        { return as.endBit }
+func (as ArraySingle) GetStartBit() int64   { return as.startBit }
+func (as ArraySingle) GetEndBit() int64     { return as.endBit }
 func (as ArraySingle) Width() int64         { return as.endBit - as.startBit + 1 }
 func (as ArraySingle) StartRegWidth() int64 { return as.Width() }
 func (as ArraySingle) EndRegWidth() int64   { return as.Width() }
@@ -181,11 +181,11 @@ func (ac ArrayContinuous) GetRegCount() int64   { return ac.regCount }
 func (ac ArrayContinuous) GetStartAddr() int64  { return ac.startAddr }
 func (ac ArrayContinuous) GetEndAddr() int64    { return ac.startAddr + ac.regCount - 1 }
 func (ac ArrayContinuous) Width() int64         { return ac.ItemWidth }
-func (ac ArrayContinuous) StartBit() int64      { return ac.startBit }
+func (ac ArrayContinuous) GetStartBit() int64   { return ac.startBit }
 func (ac ArrayContinuous) StartRegWidth() int64 { return busWidth - ac.startBit }
-func (ac ArrayContinuous) EndRegWidth() int64   { return ac.EndBit() + 1 }
+func (ac ArrayContinuous) EndRegWidth() int64   { return ac.GetEndBit() + 1 }
 
-func (ac ArrayContinuous) EndBit() int64 {
+func (ac ArrayContinuous) GetEndBit() int64 {
 	return ((ac.startBit + ac.regCount*ac.ItemWidth - 1) % busWidth)
 }
 
@@ -247,7 +247,7 @@ func (am ArrayMultiple) GetRegCount() int64  { return am.regCount }
 func (am ArrayMultiple) GetStartAddr() int64 { return am.startAddr }
 func (am ArrayMultiple) GetEndAddr() int64   { return am.startAddr + am.regCount - 1 }
 func (am ArrayMultiple) Width() int64        { return am.ItemWidth }
-func (am ArrayMultiple) StartBit() int64     { return am.startBit }
+func (am ArrayMultiple) GetStartBit() int64  { return am.startBit }
 
 func (am ArrayMultiple) StartRegWidth() int64 {
 	if am.ItemCount < am.ItemsPerReg {
@@ -264,7 +264,7 @@ func (am ArrayMultiple) EndRegWidth() int64 {
 	return itemsInEndReg * am.ItemWidth
 }
 
-func (am ArrayMultiple) EndBit() int64 {
+func (am ArrayMultiple) GetEndBit() int64 {
 	if am.regCount == 1 {
 		return am.startBit + am.ItemCount*am.ItemWidth - 1
 	} else if am.ItemCount%am.ItemsPerReg == 0 {
