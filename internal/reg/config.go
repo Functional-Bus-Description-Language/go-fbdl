@@ -17,7 +17,10 @@ func regAtomicConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	var acs access.Access
 
-	if busWidth/2 < cfg.Width && cfg.Width <= busWidth {
+	if cfg.Count*cfg.Width <= busWidth {
+		acs = access.MakeArrayOneReg(cfg.Count, addr, 0, cfg.Width)
+		// TODO: This is a place for adding a potential Gap.
+	} else if busWidth/2 < cfg.Width && cfg.Width <= busWidth {
 		acs = access.MakeArraySingle(cfg.Count, addr, 0, cfg.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth%cfg.Width == 0 || cfg.Count <= busWidth/cfg.Width || cfg.Width < busWidth/2 {

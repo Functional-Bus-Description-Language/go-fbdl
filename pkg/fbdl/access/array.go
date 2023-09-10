@@ -6,6 +6,69 @@ import (
 	"math"
 )
 
+// ArrayOneReg describes an access to an array of functionalities
+// with all items placed in one register.
+//
+//	Example:
+//
+//	s [4]status; width = 7
+//
+//	                   Reg N
+//	--------------------------------------------
+//	|| s[0] | s[1] | s[2] | s[3] | 4 bits gap ||
+//	--------------------------------------------
+type ArrayOneReg struct {
+	Addr      int64
+	startBit  int64
+	ItemWidth int64
+	ItemCount int64
+}
+
+func (aor ArrayOneReg) MarshalJSON() ([]byte, error) {
+	j, err := json.Marshal(struct {
+		Strategy  string
+		Addr      int64
+		StartBit  int64
+		ItemWidth int64
+		ItemCount int64
+	}{
+		Strategy:  "OneReg",
+		Addr:      aor.Addr,
+		StartBit:  aor.startBit,
+		ItemWidth: aor.ItemWidth,
+		ItemCount: aor.ItemCount,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return j, nil
+}
+
+func (aor ArrayOneReg) RegCount() int64      { return 1 }
+func (aor ArrayOneReg) StartAddr() int64     { return aor.Addr }
+func (aor ArrayOneReg) EndAddr() int64       { return aor.Addr }
+func (aor ArrayOneReg) StartBit() int64      { return aor.startBit }
+func (aor ArrayOneReg) EndBit() int64        { return aor.startBit*aor.ItemCount*aor.ItemWidth - 1 }
+func (aor ArrayOneReg) Width() int64         { return aor.ItemWidth }
+func (aor ArrayOneReg) StartRegWidth() int64 { return aor.ItemCount * aor.ItemWidth }
+func (aor ArrayOneReg) EndRegWidth() int64   { return aor.ItemCount * aor.ItemWidth }
+
+func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
+	if startBit+(width*itemCount) > busWidth {
+		msg := `cannot make ArrayOneReg, startBit + (width * itemCount) > busWidth, (%d + (%d * %d) > %d)`
+		panic(fmt.Sprintf(msg, startBit, width, itemCount, busWidth))
+	}
+
+	return ArrayOneReg{
+		Addr:      addr,
+		startBit:  startBit,
+		ItemCount: itemCount,
+		ItemWidth: width,
+	}
+}
+
 // ArraySingle describes an access to an array of functionalities
 // with single item placed within single register.
 //
