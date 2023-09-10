@@ -60,56 +60,35 @@ func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
 //	----------------------- ----------------------- -----------------------
 //	|| c[0] | 7 bits gap || || c[1] | 7 bits gap || || c[2] | 7 bits gap ||
 //	----------------------- ----------------------- -----------------------
-type ArraySingle struct {
-	regCount int64
-
-	startAddr int64
-	startBit  int64
-	endBit    int64
+type ArrayOneInReg struct {
+	Strategy  string
+	RegCount  int64
+	StartAddr int64
+	StartBit  int64
+	EndBit    int64
 }
 
-func (as ArraySingle) MarshalJSON() ([]byte, error) {
-	j, err := json.Marshal(struct {
-		Strategy  string
-		RegCount  int64
-		StartAddr int64
-		StartBit  int64
-		EndBit    int64
-	}{
-		Strategy:  "Single",
-		RegCount:  as.regCount,
-		StartAddr: as.startAddr,
-		StartBit:  as.startBit,
-		EndBit:    as.endBit,
-	})
+func (aoir ArrayOneInReg) GetRegCount() int64      { return aoir.RegCount }
+func (aoir ArrayOneInReg) GetStartAddr() int64     { return aoir.StartAddr }
+func (aoir ArrayOneInReg) GetEndAddr() int64       { return aoir.StartAddr + aoir.RegCount - 1 }
+func (aoir ArrayOneInReg) GetStartBit() int64      { return aoir.StartBit }
+func (aoir ArrayOneInReg) GetEndBit() int64        { return aoir.EndBit }
+func (aoir ArrayOneInReg) GetWidth() int64         { return aoir.EndBit - aoir.StartBit + 1 }
+func (aoir ArrayOneInReg) GetStartRegWidth() int64 { return aoir.GetWidth() }
+func (aoir ArrayOneInReg) GetEndRegWidth() int64   { return aoir.GetWidth() }
 
-	if err != nil {
-		return nil, err
-	}
-
-	return j, nil
-}
-
-func (as ArraySingle) GetRegCount() int64      { return as.regCount }
-func (as ArraySingle) GetStartAddr() int64     { return as.startAddr }
-func (as ArraySingle) GetEndAddr() int64       { return as.startAddr + as.regCount - 1 }
-func (as ArraySingle) GetStartBit() int64      { return as.startBit }
-func (as ArraySingle) GetEndBit() int64        { return as.endBit }
-func (as ArraySingle) GetWidth() int64         { return as.endBit - as.startBit + 1 }
-func (as ArraySingle) GetStartRegWidth() int64 { return as.GetWidth() }
-func (as ArraySingle) GetEndRegWidth() int64   { return as.GetWidth() }
-
-func MakeArraySingle(itemCount, addr, startBit, width int64) ArraySingle {
+func MakeArrayOneInReg(itemCount, addr, startBit, width int64) ArrayOneInReg {
 	if startBit+width > busWidth {
-		msg := `cannot make ArraySingle, startBit + width > busWidth, (%d + %d > %d)`
+		msg := `cannot make ArrayOneInReg, startBit + width > busWidth, (%d + %d > %d)`
 		panic(fmt.Sprintf(msg, startBit, width, busWidth))
 	}
 
-	return ArraySingle{
-		regCount:  itemCount,
-		startAddr: addr,
-		startBit:  startBit,
-		endBit:    startBit + width - 1,
+	return ArrayOneInReg{
+		Strategy:  "ArrayOneInReg",
+		RegCount:  itemCount,
+		StartAddr: addr,
+		StartBit:  startBit,
+		EndBit:    startBit + width - 1,
 	}
 }
 

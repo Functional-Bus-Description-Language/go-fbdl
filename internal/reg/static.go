@@ -45,7 +45,7 @@ func regStaticArray(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	var a access.Access
 
 	if busWidth/2 < st.Width && st.Width <= busWidth {
-		a = access.MakeArraySingle(st.Count, addr, 0, st.Width)
+		a = access.MakeArrayOneInReg(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth%st.Width == 0 || st.Count <= busWidth/st.Width || st.Width < busWidth/2 {
 		a = access.MakeArrayMultiplePacked(st.Count, addr, st.Width)
