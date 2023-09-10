@@ -47,8 +47,8 @@ func (aor ArrayOneReg) MarshalJSON() ([]byte, error) {
 }
 
 func (aor ArrayOneReg) GetRegCount() int64   { return 1 }
-func (aor ArrayOneReg) StartAddr() int64     { return aor.Addr }
-func (aor ArrayOneReg) EndAddr() int64       { return aor.Addr }
+func (aor ArrayOneReg) GetStartAddr() int64  { return aor.Addr }
+func (aor ArrayOneReg) GetEndAddr() int64    { return aor.Addr }
 func (aor ArrayOneReg) StartBit() int64      { return aor.startBit }
 func (aor ArrayOneReg) EndBit() int64        { return aor.startBit*aor.ItemCount*aor.ItemWidth - 1 }
 func (aor ArrayOneReg) Width() int64         { return aor.ItemWidth }
@@ -111,8 +111,8 @@ func (as ArraySingle) MarshalJSON() ([]byte, error) {
 }
 
 func (as ArraySingle) GetRegCount() int64   { return as.regCount }
-func (as ArraySingle) StartAddr() int64     { return as.startAddr }
-func (as ArraySingle) EndAddr() int64       { return as.startAddr + as.regCount - 1 }
+func (as ArraySingle) GetStartAddr() int64  { return as.startAddr }
+func (as ArraySingle) GetEndAddr() int64    { return as.startAddr + as.regCount - 1 }
 func (as ArraySingle) StartBit() int64      { return as.startBit }
 func (as ArraySingle) EndBit() int64        { return as.endBit }
 func (as ArraySingle) Width() int64         { return as.endBit - as.startBit + 1 }
@@ -178,8 +178,8 @@ func (ac ArrayContinuous) MarshalJSON() ([]byte, error) {
 }
 
 func (ac ArrayContinuous) GetRegCount() int64   { return ac.regCount }
-func (ac ArrayContinuous) StartAddr() int64     { return ac.startAddr }
-func (ac ArrayContinuous) EndAddr() int64       { return ac.startAddr + ac.regCount - 1 }
+func (ac ArrayContinuous) GetStartAddr() int64  { return ac.startAddr }
+func (ac ArrayContinuous) GetEndAddr() int64    { return ac.startAddr + ac.regCount - 1 }
 func (ac ArrayContinuous) Width() int64         { return ac.ItemWidth }
 func (ac ArrayContinuous) StartBit() int64      { return ac.startBit }
 func (ac ArrayContinuous) StartRegWidth() int64 { return busWidth - ac.startBit }
@@ -243,11 +243,11 @@ func (am ArrayMultiple) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (am ArrayMultiple) GetRegCount() int64 { return am.regCount }
-func (am ArrayMultiple) StartAddr() int64   { return am.startAddr }
-func (am ArrayMultiple) EndAddr() int64     { return am.startAddr + am.regCount - 1 }
-func (am ArrayMultiple) Width() int64       { return am.ItemWidth }
-func (am ArrayMultiple) StartBit() int64    { return am.startBit }
+func (am ArrayMultiple) GetRegCount() int64  { return am.regCount }
+func (am ArrayMultiple) GetStartAddr() int64 { return am.startAddr }
+func (am ArrayMultiple) GetEndAddr() int64   { return am.startAddr + am.regCount - 1 }
+func (am ArrayMultiple) Width() int64        { return am.ItemWidth }
+func (am ArrayMultiple) StartBit() int64     { return am.startBit }
 
 func (am ArrayMultiple) StartRegWidth() int64 {
 	if am.ItemCount < am.ItemsPerReg {

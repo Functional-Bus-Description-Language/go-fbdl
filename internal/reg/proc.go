@@ -30,7 +30,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	}
 
 	if len(params) > 0 {
-		callAddr := params[len(params)-1].Access.EndAddr()
+		callAddr := params[len(params)-1].Access.GetEndAddr()
 		proc.CallAddr = &callAddr
 	} else if len(proc.Returns) > 0 {
 		if proc.Delay != nil {
@@ -62,7 +62,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	}
 
 	if len(returns) > 0 {
-		exitAddr := returns[len(returns)-1].Access.EndAddr()
+		exitAddr := returns[len(returns)-1].Access.GetEndAddr()
 		proc.ExitAddr = &exitAddr
 	} else {
 		if proc.Delay != nil {

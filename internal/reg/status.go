@@ -20,8 +20,8 @@ func regAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 
 	if acs.EndBit() < busWidth-1 {
 		gp.Add(gap.Gap{
-			StartAddr: acs.EndAddr(),
-			EndAddr:   acs.EndAddr(),
+			StartAddr: acs.GetEndAddr(),
+			EndAddr:   acs.GetEndAddr(),
 			StartBit:  acs.EndBit() + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
@@ -71,8 +71,8 @@ func regNonAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 
 	if acs.EndBit() < busWidth-1 {
 		gp.Add(gap.Gap{
-			StartAddr: acs.EndAddr(),
-			EndAddr:   acs.EndAddr(),
+			StartAddr: acs.GetEndAddr(),
+			EndAddr:   acs.GetEndAddr(),
 			StartBit:  acs.EndBit() + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,

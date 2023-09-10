@@ -46,7 +46,7 @@ func regUpstream(s *fn.Stream, addr int64) int64 {
 		r.Access = a
 	}
 
-	s.StbAddr = returns[len(returns)-1].Access.EndAddr()
+	s.StbAddr = returns[len(returns)-1].Access.GetEndAddr()
 
 	lastAccess := returns[len(returns)-1].Access
 	if lastAccess.EndBit() < busWidth-1 {

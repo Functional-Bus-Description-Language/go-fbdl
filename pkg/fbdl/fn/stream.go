@@ -29,9 +29,9 @@ func (s *Stream) IsUpstream() bool {
 
 func (s *Stream) StartAddr() int64 {
 	if len(s.Params) > 0 {
-		return s.Params[0].Access.StartAddr()
+		return s.Params[0].Access.GetStartAddr()
 	} else if len(s.Returns) > 0 {
-		return s.Returns[0].Access.StartAddr()
+		return s.Returns[0].Access.GetStartAddr()
 	}
 
 	// For empty stream return strobe address.
