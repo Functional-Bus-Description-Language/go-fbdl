@@ -37,9 +37,9 @@ func (ss SingleSingle) GetStartAddr() int64  { return ss.Addr }
 func (ss SingleSingle) GetEndAddr() int64    { return ss.Addr }
 func (ss SingleSingle) GetStartBit() int64   { return ss.startBit }
 func (ss SingleSingle) GetEndBit() int64     { return ss.endBit }
-func (ss SingleSingle) Width() int64         { return ss.endBit - ss.startBit + 1 }
-func (ss SingleSingle) StartRegWidth() int64 { return ss.Width() }
-func (ss SingleSingle) EndRegWidth() int64   { return ss.Width() }
+func (ss SingleSingle) GetWidth() int64      { return ss.endBit - ss.startBit + 1 }
+func (ss SingleSingle) StartRegWidth() int64 { return ss.GetWidth() }
+func (ss SingleSingle) EndRegWidth() int64   { return ss.GetWidth() }
 
 func MakeSingleSingle(addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
@@ -93,7 +93,7 @@ func (sc SingleContinuous) GetEndBit() int64     { return sc.endBit }
 func (sc SingleContinuous) StartRegWidth() int64 { return busWidth - sc.startBit }
 func (sc SingleContinuous) EndRegWidth() int64   { return sc.endBit + 1 }
 
-func (sc SingleContinuous) Width() int64 {
+func (sc SingleContinuous) GetWidth() int64 {
 	w := busWidth - sc.startBit + sc.endBit + 1
 	if sc.regCount > 2 {
 		w += busWidth * (sc.regCount - 2)

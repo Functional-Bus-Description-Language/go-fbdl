@@ -6,7 +6,7 @@ type Access interface {
 	GetEndAddr() int64
 	GetStartBit() int64
 	GetEndBit() int64
-	Width() int64         // Total width of single functionality.
+	GetWidth() int64      // Total width of single functionality.
 	StartRegWidth() int64 // Width occupied in the first register.
 	EndRegWidth() int64   // Width occupied in the last register.
 }
