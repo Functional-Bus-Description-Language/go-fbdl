@@ -17,26 +17,26 @@ func regStatic(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 
 func regStaticSingle(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	/*
-		var a access.Access
+		var acs access.Access
 		if g, ok := gp.GetSingle(st.Width, false); ok {
-			a = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
+			acs = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
 		} else {
 	*/
 
-	a := access.MakeSingle(addr, 0, st.Width)
-	addr += a.GetRegCount()
+	acs := access.MakeSingle(addr, 0, st.Width)
+	addr += acs.GetRegCount()
 
-	if a.GetEndBit() < busWidth-1 {
+	if acs.GetEndBit() < busWidth-1 {
 		gp.Add(gap.Gap{
-			StartAddr: a.GetEndAddr(),
-			EndAddr:   a.GetEndAddr(),
-			StartBit:  a.GetEndBit() + 1,
+			StartAddr: acs.GetEndAddr(),
+			EndAddr:   acs.GetEndAddr(),
+			StartBit:  acs.GetEndBit() + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
 		})
 	}
 
-	st.Access = a
+	st.Access = acs
 
 	return addr
 }

@@ -7,26 +7,26 @@ import (
 
 // regProc registerifies a Proc functionality.
 func regProc(proc *fn.Proc, addr int64) int64 {
-	var a access.Access
+	var acs access.Access
 
 	params := proc.Params
 	baseBit := int64(0)
 	for _, p := range params {
 		if p.IsArray {
-			a = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
+			acs = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
 		} else {
-			a = access.MakeSingle(addr, baseBit, p.Width)
+			acs = access.MakeSingle(addr, baseBit, p.Width)
 		}
 
-		if a.GetEndBit() < busWidth-1 {
-			addr += a.GetRegCount() - 1
-			baseBit = a.GetEndBit() + 1
+		if acs.GetEndBit() < busWidth-1 {
+			addr += acs.GetRegCount() - 1
+			baseBit = acs.GetEndBit() + 1
 		} else {
-			addr += a.GetRegCount()
+			addr += acs.GetRegCount()
 			baseBit = 0
 		}
 
-		p.Access = a
+		p.Access = acs
 	}
 
 	if len(params) > 0 {
@@ -45,20 +45,20 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	returns := proc.Returns
 	for _, r := range returns {
 		if r.IsArray {
-			a = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
+			acs = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
 		} else {
-			a = access.MakeSingle(addr, baseBit, r.Width)
+			acs = access.MakeSingle(addr, baseBit, r.Width)
 		}
 
-		if a.GetEndBit() < busWidth-1 {
-			addr += a.GetRegCount() - 1
-			baseBit = a.GetEndBit() + 1
+		if acs.GetEndBit() < busWidth-1 {
+			addr += acs.GetRegCount() - 1
+			baseBit = acs.GetEndBit() + 1
 		} else {
-			addr += a.GetRegCount()
+			addr += acs.GetRegCount()
 			baseBit = 0
 		}
 
-		r.Access = a
+		r.Access = acs
 	}
 
 	if len(returns) > 0 {

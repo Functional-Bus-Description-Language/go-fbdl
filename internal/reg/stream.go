@@ -24,26 +24,26 @@ func regEmptyStream(s *fn.Stream, addr int64) int64 {
 }
 
 func regUpstream(s *fn.Stream, addr int64) int64 {
-	var a access.Access
+	var acs access.Access
 
 	returns := s.Returns
 	baseBit := int64(0)
 	for _, r := range returns {
 		if r.IsArray {
-			a = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
+			acs = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
 		} else {
-			a = access.MakeSingle(addr, baseBit, r.Width)
+			acs = access.MakeSingle(addr, baseBit, r.Width)
 		}
 
-		if a.GetEndBit() < busWidth-1 {
-			addr += a.GetRegCount() - 1
-			baseBit = a.GetEndBit() + 1
+		if acs.GetEndBit() < busWidth-1 {
+			addr += acs.GetRegCount() - 1
+			baseBit = acs.GetEndBit() + 1
 		} else {
-			addr += a.GetRegCount()
+			addr += acs.GetRegCount()
 			baseBit = 0
 		}
 
-		r.Access = a
+		r.Access = acs
 	}
 
 	s.StbAddr = returns[len(returns)-1].Access.GetEndAddr()
