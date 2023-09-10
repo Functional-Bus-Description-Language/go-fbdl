@@ -19,10 +19,10 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 		}
 
 		if a.EndBit() < busWidth-1 {
-			addr += a.RegCount() - 1
+			addr += a.GetRegCount() - 1
 			baseBit = a.EndBit() + 1
 		} else {
-			addr += a.RegCount()
+			addr += a.GetRegCount()
 			baseBit = 0
 		}
 
@@ -51,10 +51,10 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 		}
 
 		if a.EndBit() < busWidth-1 {
-			addr += a.RegCount() - 1
+			addr += a.GetRegCount() - 1
 			baseBit = a.EndBit() + 1
 		} else {
-			addr += a.RegCount()
+			addr += a.GetRegCount()
 			baseBit = 0
 		}
 

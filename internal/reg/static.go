@@ -24,7 +24,7 @@ func regStaticSingle(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	*/
 
 	a := access.MakeSingle(addr, 0, st.Width)
-	addr += a.RegCount()
+	addr += a.GetRegCount()
 
 	if a.EndBit() < busWidth-1 {
 		gp.Add(gap.Gap{
@@ -53,7 +53,7 @@ func regStaticArray(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	} else {
 		panic("unimplemented")
 	}
-	addr += a.RegCount()
+	addr += a.GetRegCount()
 
 	st.Access = a
 

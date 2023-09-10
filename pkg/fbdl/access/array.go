@@ -46,7 +46,7 @@ func (aor ArrayOneReg) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (aor ArrayOneReg) RegCount() int64      { return 1 }
+func (aor ArrayOneReg) GetRegCount() int64   { return 1 }
 func (aor ArrayOneReg) StartAddr() int64     { return aor.Addr }
 func (aor ArrayOneReg) EndAddr() int64       { return aor.Addr }
 func (aor ArrayOneReg) StartBit() int64      { return aor.startBit }
@@ -110,7 +110,7 @@ func (as ArraySingle) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (as ArraySingle) RegCount() int64      { return as.regCount }
+func (as ArraySingle) GetRegCount() int64   { return as.regCount }
 func (as ArraySingle) StartAddr() int64     { return as.startAddr }
 func (as ArraySingle) EndAddr() int64       { return as.startAddr + as.regCount - 1 }
 func (as ArraySingle) StartBit() int64      { return as.startBit }
@@ -177,7 +177,7 @@ func (ac ArrayContinuous) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (ac ArrayContinuous) RegCount() int64      { return ac.regCount }
+func (ac ArrayContinuous) GetRegCount() int64   { return ac.regCount }
 func (ac ArrayContinuous) StartAddr() int64     { return ac.startAddr }
 func (ac ArrayContinuous) EndAddr() int64       { return ac.startAddr + ac.regCount - 1 }
 func (ac ArrayContinuous) Width() int64         { return ac.ItemWidth }
@@ -243,11 +243,11 @@ func (am ArrayMultiple) MarshalJSON() ([]byte, error) {
 	return j, nil
 }
 
-func (am ArrayMultiple) RegCount() int64  { return am.regCount }
-func (am ArrayMultiple) StartAddr() int64 { return am.startAddr }
-func (am ArrayMultiple) EndAddr() int64   { return am.startAddr + am.regCount - 1 }
-func (am ArrayMultiple) Width() int64     { return am.ItemWidth }
-func (am ArrayMultiple) StartBit() int64  { return am.startBit }
+func (am ArrayMultiple) GetRegCount() int64 { return am.regCount }
+func (am ArrayMultiple) StartAddr() int64   { return am.startAddr }
+func (am ArrayMultiple) EndAddr() int64     { return am.startAddr + am.regCount - 1 }
+func (am ArrayMultiple) Width() int64       { return am.ItemWidth }
+func (am ArrayMultiple) StartBit() int64    { return am.startBit }
 
 func (am ArrayMultiple) StartRegWidth() int64 {
 	if am.ItemCount < am.ItemsPerReg {

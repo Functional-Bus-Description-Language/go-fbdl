@@ -1,7 +1,7 @@
 package access
 
 type Access interface {
-	RegCount() int64 // Number of occupied registers.
+	GetRegCount() int64 // Number of occupied registers.
 	StartAddr() int64
 	EndAddr() int64
 	StartBit() int64

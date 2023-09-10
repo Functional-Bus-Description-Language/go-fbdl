@@ -30,7 +30,7 @@ func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 		panic("unimplemented")
 	}
 
-	addr += acs.RegCount()
+	addr += acs.GetRegCount()
 
 	cfg.Access = acs
 
@@ -48,7 +48,7 @@ func regAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 			WriteSafe: false,
 		})
 	}
-	addr += acs.RegCount()
+	addr += acs.GetRegCount()
 
 	cfg.Access = acs
 
@@ -74,7 +74,7 @@ func regNonAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 			WriteSafe: false,
 		})
 	}
-	addr += acs.RegCount()
+	addr += acs.GetRegCount()
 
 	cfg.Access = acs
 

@@ -20,7 +20,7 @@ func hashAccessSizes(sizes access.Sizes) uint32 {
 func hashAccessAccess(a access.Access) uint32 {
 	buf := bytes.Buffer{}
 
-	write(&buf, a.RegCount())
+	write(&buf, a.GetRegCount())
 	write(&buf, a.StartAddr())
 	write(&buf, a.EndAddr())
 	write(&buf, a.StartBit())
