@@ -17,10 +17,11 @@ func TestMakeSingle(t *testing.T) {
 		want     Access
 	}{
 		{0, 0, 1,
-			SingleSingle{
+			SingleOneReg{
+				Strategy: "SingleOneReg",
 				Addr:     0,
-				startBit: 0,
-				endBit:   0,
+				StartBit: 0,
+				EndBit:   0,
 			},
 		},
 		{1, 31, 2,
@@ -40,10 +41,11 @@ func TestMakeSingle(t *testing.T) {
 			},
 		},
 		{3, 0, 32,
-			SingleSingle{
+			SingleOneReg{
+				Strategy: "SingleOneReg",
 				Addr:     3,
-				startBit: 0,
-				endBit:   31,
+				StartBit: 0,
+				EndBit:   31,
 			},
 		},
 	}

@@ -37,7 +37,7 @@
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "Single",
+				"Strategy": "SingleOneReg",
 				"Addr": 1,
 				"StartBit": 0,
 				"EndBit": 31
@@ -60,7 +60,7 @@
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "Single",
+				"Strategy": "SingleOneReg",
 				"Addr": 0,
 				"StartBit": 0,
 				"EndBit": 31
@@ -78,7 +78,7 @@
 			"ReadValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "Single",
+				"Strategy": "SingleOneReg",
 				"Addr": 2,
 				"StartBit": 0,
 				"EndBit": 31

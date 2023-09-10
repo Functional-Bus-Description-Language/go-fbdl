@@ -5,52 +5,34 @@ import (
 	"fmt"
 )
 
-// SingleSingle describes an access to a single functionality placed within single register.
-type SingleSingle struct {
+// SingleOneReg describes an access to a single functionality placed within single register.
+type SingleOneReg struct {
+	Strategy string
 	Addr     int64
-	startBit int64
-	endBit   int64
+	StartBit int64
+	EndBit   int64
 }
 
-func (ss SingleSingle) MarshalJSON() ([]byte, error) {
-	j, err := json.Marshal(struct {
-		Strategy string
-		Addr     int64
-		StartBit int64
-		EndBit   int64
-	}{
-		Strategy: "Single",
-		Addr:     ss.Addr,
-		StartBit: ss.startBit,
-		EndBit:   ss.endBit,
-	})
+func (sor SingleOneReg) GetRegCount() int64      { return 1 }
+func (sor SingleOneReg) GetStartAddr() int64     { return sor.Addr }
+func (sor SingleOneReg) GetEndAddr() int64       { return sor.Addr }
+func (sor SingleOneReg) GetStartBit() int64      { return sor.StartBit }
+func (sor SingleOneReg) GetEndBit() int64        { return sor.EndBit }
+func (sor SingleOneReg) GetWidth() int64         { return sor.EndBit - sor.StartBit + 1 }
+func (sor SingleOneReg) GetStartRegWidth() int64 { return sor.GetWidth() }
+func (sor SingleOneReg) GetEndRegWidth() int64   { return sor.GetWidth() }
 
-	if err != nil {
-		return nil, err
-	}
-
-	return j, nil
-}
-
-func (ss SingleSingle) GetRegCount() int64      { return 1 }
-func (ss SingleSingle) GetStartAddr() int64     { return ss.Addr }
-func (ss SingleSingle) GetEndAddr() int64       { return ss.Addr }
-func (ss SingleSingle) GetStartBit() int64      { return ss.startBit }
-func (ss SingleSingle) GetEndBit() int64        { return ss.endBit }
-func (ss SingleSingle) GetWidth() int64         { return ss.endBit - ss.startBit + 1 }
-func (ss SingleSingle) GetStartRegWidth() int64 { return ss.GetWidth() }
-func (ss SingleSingle) GetEndRegWidth() int64   { return ss.GetWidth() }
-
-func MakeSingleSingle(addr, startBit, width int64) Access {
+func MakeSingleOneReg(addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
-		msg := `cannot make SingleSingle, startBit + width > busWidth, (%d + %d > %d)`
+		msg := `cannot make SingleOneReg, startBit + width > busWidth, (%d + %d > %d)`
 		panic(fmt.Sprintf(msg, startBit, width, busWidth))
 	}
 
-	return SingleSingle{
+	return SingleOneReg{
+		Strategy: "SingleOneReg",
 		Addr:     addr,
-		startBit: startBit,
-		endBit:   startBit + width - 1,
+		StartBit: startBit,
+		EndBit:   startBit + width - 1,
 	}
 }
 
@@ -129,12 +111,12 @@ func MakeSingleContinuous(addr, startBit, width int64) Access {
 	}
 }
 
-// MakeSingle makes SingleSingle or SingleContinuous depending on the argument values.
+// MakeSingle makes SingleOneReg or SingleContinuous depending on the argument values.
 func MakeSingle(addr, startBit, width int64) Access {
 	firstRegRemainder := busWidth - startBit
 
 	if width <= firstRegRemainder {
-		return MakeSingleSingle(addr, startBit, width)
+		return MakeSingleOneReg(addr, startBit, width)
 	} else {
 		return MakeSingleContinuous(addr, startBit, width)
 	}
