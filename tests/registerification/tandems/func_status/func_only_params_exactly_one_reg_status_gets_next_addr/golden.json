@@ -44,7 +44,7 @@
 					"Range": null,
 					"Width": 28,
 					"Access": {
-						"Strategy": "SingleOneReg",
+						"Type": "SingleOneReg",
 						"Addr": 1,
 						"StartBit": 0,
 						"EndBit": 27
@@ -59,7 +59,7 @@
 					"Range": null,
 					"Width": 3,
 					"Access": {
-						"Strategy": "SingleOneReg",
+						"Type": "SingleOneReg",
 						"Addr": 1,
 						"StartBit": 28,
 						"EndBit": 30
@@ -74,7 +74,7 @@
 					"Range": null,
 					"Width": 1,
 					"Access": {
-						"Strategy": "SingleOneReg",
+						"Type": "SingleOneReg",
 						"Addr": 1,
 						"StartBit": 31,
 						"EndBit": 31
@@ -98,7 +98,7 @@
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "SingleOneReg",
+				"Type": "SingleOneReg",
 				"Addr": 0,
 				"StartBit": 0,
 				"EndBit": 31
@@ -116,7 +116,7 @@
 			"ReadValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "SingleOneReg",
+				"Type": "SingleOneReg",
 				"Addr": 2,
 				"StartBit": 0,
 				"EndBit": 31

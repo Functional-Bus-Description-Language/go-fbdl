@@ -17,7 +17,7 @@ import (
 //	|| s[0] | s[1] | s[2] | s[3] | 4 bits gap ||
 //	--------------------------------------------
 type ArrayOneReg struct {
-	Strategy  string
+	Type      string
 	Addr      int64
 	StartBit  int64
 	ItemWidth int64
@@ -44,7 +44,7 @@ func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
 	}
 
 	return ArrayOneReg{
-		Strategy:  "ArrayOneReg",
+		Type:      "ArrayOneReg",
 		Addr:      addr,
 		StartBit:  startBit,
 		ItemCount: itemCount,
@@ -64,7 +64,7 @@ func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
 //	|| c[0] | 7 bits gap || || c[1] | 7 bits gap || || c[2] | 7 bits gap ||
 //	----------------------- ----------------------- -----------------------
 type ArrayOneInReg struct {
-	Strategy  string
+	Type      string
 	RegCount  int64
 	StartAddr int64
 	StartBit  int64
@@ -87,7 +87,7 @@ func MakeArrayOneInReg(itemCount, addr, startBit, width int64) ArrayOneInReg {
 	}
 
 	return ArrayOneInReg{
-		Strategy:  "ArrayOneInReg",
+		Type:      "ArrayOneInReg",
 		RegCount:  itemCount,
 		StartAddr: addr,
 		StartBit:  startBit,
@@ -107,7 +107,7 @@ func MakeArrayOneInReg(itemCount, addr, startBit, width int64) ArrayOneInReg {
 //	|| p[0] | p[1] | p[2](0) || || p[2](1) | p[3] | 8 bits gap ||
 //	--------------------------- ---------------------------------
 type ArrayNRegs struct {
-	Strategy  string
+	Type      string
 	RegCount  int64
 	ItemCount int64
 	ItemWidth int64
@@ -129,7 +129,7 @@ func (anr ArrayNRegs) GetEndBit() int64 {
 
 func MakeArrayNRegs(itemCount, startAddr, startBit, width int64) Access {
 	anr := ArrayNRegs{
-		Strategy:  "ArrayNRegs",
+		Type:      "ArrayNRegs",
 		ItemCount: itemCount,
 		ItemWidth: width,
 		StartAddr: startAddr,
@@ -156,7 +156,7 @@ func MakeArrayNRegs(itemCount, startAddr, startBit, width int64) Access {
 //	|| c[0] | c[1] | 2 bits gap || || c[2] | c[3] | 2 bits gap || || c[4] | c[5] | 2 bits gap ||
 //	------------------------------ ------------------------------ ------------------------------
 type ArrayNInReg struct {
-	Strategy   string
+	Type       string
 	RegCount   int64
 	ItemCount  int64
 	ItemWidth  int64
@@ -189,7 +189,7 @@ func MakeArrayNInReg(itemCount, startAddr, width int64) Access {
 	}
 
 	anir := ArrayNInReg{
-		Strategy:   "ArrayNInReg",
+		Type:       "ArrayNInReg",
 		RegCount:   itemCount / itemsInReg,
 		ItemCount:  itemCount,
 		ItemWidth:  width,
@@ -213,7 +213,7 @@ func MakeArrayNInReg(itemCount, startAddr, width int64) Access {
 //	|| c[0] | c[1] | 2 bits gap || || c[2] | c[3] | 2 bits gap || || c[4] | 17 bits gap ||
 //	------------------------------ ------------------------------ ------------------------
 type ArrayNInRegMInEndReg struct {
-	Strategy      string
+	Type          string
 	RegCount      int64
 	ItemCount     int64
 	ItemWidth     int64
@@ -245,7 +245,7 @@ func MakeArrayNInRegMInEndReg(itemCount, startAddr, width int64) Access {
 	}
 
 	anm := ArrayNInRegMInEndReg{
-		Strategy:      "ArrayNInRegMInEndReg",
+		Type:          "ArrayNInRegMInEndReg",
 		RegCount:      int64(math.Ceil(float64(itemCount) / float64(itemsInReg))),
 		ItemCount:     itemCount,
 		ItemWidth:     width,

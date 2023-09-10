@@ -13,7 +13,7 @@ import "fmt"
 //	|| s | 9 bits gap ||
 //	--------------------
 type SingleOneReg struct {
-	Strategy string
+	Type     string
 	Addr     int64
 	StartBit int64
 	EndBit   int64
@@ -35,7 +35,7 @@ func MakeSingleOneReg(addr, startBit, width int64) Access {
 	}
 
 	return SingleOneReg{
-		Strategy: "SingleOneReg",
+		Type:     "SingleOneReg",
 		Addr:     addr,
 		StartBit: startBit,
 		EndBit:   startBit + width - 1,
@@ -53,7 +53,7 @@ func MakeSingleOneReg(addr, startBit, width int64) Access {
 //	|| c(0) || || c(1) || || c(2) | 24 bits gap ||
 //	---------- ---------- ------------------------
 type SingleNRegs struct {
-	Strategy  string
+	Type      string
 	RegCount  int64
 	StartAddr int64 // Address of the first register.
 	StartBit  int64
@@ -97,7 +97,7 @@ func MakeSingleNRegs(addr, startBit, width int64) Access {
 	}
 
 	return SingleNRegs{
-		Strategy:  "SingleNRegs",
+		Type:      "SingleNRegs",
 		RegCount:  regCount,
 		StartAddr: addr,
 		StartBit:  startBit,

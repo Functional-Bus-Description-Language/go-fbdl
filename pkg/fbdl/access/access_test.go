@@ -18,7 +18,7 @@ func TestMakeSingle(t *testing.T) {
 	}{
 		{0, 0, 1,
 			SingleOneReg{
-				Strategy: "SingleOneReg",
+				Type:     "SingleOneReg",
 				Addr:     0,
 				StartBit: 0,
 				EndBit:   0,
@@ -26,7 +26,7 @@ func TestMakeSingle(t *testing.T) {
 		},
 		{1, 31, 2,
 			SingleNRegs{
-				Strategy:  "SingleNRegs",
+				Type:      "SingleNRegs",
 				RegCount:  2,
 				StartAddr: 1,
 				StartBit:  31,
@@ -35,7 +35,7 @@ func TestMakeSingle(t *testing.T) {
 		},
 		{2, 30, 57,
 			SingleNRegs{
-				Strategy:  "SingleNRegs",
+				Type:      "SingleNRegs",
 				RegCount:  3,
 				StartAddr: 2,
 				StartBit:  30,
@@ -44,7 +44,7 @@ func TestMakeSingle(t *testing.T) {
 		},
 		{3, 0, 32,
 			SingleOneReg{
-				Strategy: "SingleOneReg",
+				Type:     "SingleOneReg",
 				Addr:     3,
 				StartBit: 0,
 				EndBit:   31,
@@ -75,7 +75,7 @@ func TestMakeArrayNRegs(t *testing.T) {
 	}{
 		{0, 1, 0, 32,
 			ArrayNRegs{
-				Strategy:  "ArrayNRegs",
+				Type:      "ArrayNRegs",
 				RegCount:  1,
 				ItemCount: 1,
 				ItemWidth: 32,
@@ -85,7 +85,7 @@ func TestMakeArrayNRegs(t *testing.T) {
 		},
 		{1, 4, 0, 5,
 			ArrayNRegs{
-				Strategy:  "ArrayNRegs",
+				Type:      "ArrayNRegs",
 				RegCount:  1,
 				ItemCount: 4,
 				ItemWidth: 5,
@@ -95,7 +95,7 @@ func TestMakeArrayNRegs(t *testing.T) {
 		},
 		{2, 2, 20, 23,
 			ArrayNRegs{
-				Strategy:  "ArrayNRegs",
+				Type:      "ArrayNRegs",
 				RegCount:  3,
 				ItemCount: 2,
 				ItemWidth: 23,
@@ -105,7 +105,7 @@ func TestMakeArrayNRegs(t *testing.T) {
 		},
 		{3, 2, 20, 22,
 			ArrayNRegs{
-				Strategy:  "ArrayNRegs",
+				Type:      "ArrayNRegs",
 				RegCount:  2,
 				ItemCount: 2,
 				ItemWidth: 22,
@@ -137,7 +137,7 @@ func TestMakeArrayNInReg(t *testing.T) {
 	}{
 		{2, 4, 16,
 			ArrayNInReg{
-				Strategy:   "ArrayNInReg",
+				Type:       "ArrayNInReg",
 				RegCount:   2,
 				ItemCount:  4,
 				ItemWidth:  16,
@@ -148,7 +148,7 @@ func TestMakeArrayNInReg(t *testing.T) {
 		},
 		{4, 8, 8,
 			ArrayNInReg{
-				Strategy:   "ArrayNInReg",
+				Type:       "ArrayNInReg",
 				RegCount:   2,
 				ItemCount:  8,
 				ItemWidth:  8,
@@ -159,7 +159,7 @@ func TestMakeArrayNInReg(t *testing.T) {
 		},
 		{5, 12, 7,
 			ArrayNInReg{
-				Strategy:   "ArrayNInReg",
+				Type:       "ArrayNInReg",
 				RegCount:   3,
 				ItemCount:  12,
 				ItemWidth:  7,
@@ -170,7 +170,7 @@ func TestMakeArrayNInReg(t *testing.T) {
 		},
 		{6, 50, 3,
 			ArrayNInReg{
-				Strategy:   "ArrayNInReg",
+				Type:       "ArrayNInReg",
 				RegCount:   5,
 				ItemCount:  50,
 				ItemWidth:  3,
@@ -203,7 +203,7 @@ func TestMakeArrayNInRegMInEndReg(t *testing.T) {
 	}{
 		{0, 5, 7,
 			ArrayNInRegMInEndReg{
-				Strategy:      "ArrayNInRegMInEndReg",
+				Type:          "ArrayNInRegMInEndReg",
 				RegCount:      2,
 				ItemCount:     5,
 				ItemWidth:     7,
@@ -215,7 +215,7 @@ func TestMakeArrayNInRegMInEndReg(t *testing.T) {
 		},
 		{1, 66, 1,
 			ArrayNInRegMInEndReg{
-				Strategy:      "ArrayNInRegMInEndReg",
+				Type:          "ArrayNInRegMInEndReg",
 				RegCount:      3,
 				ItemCount:     66,
 				ItemWidth:     1,

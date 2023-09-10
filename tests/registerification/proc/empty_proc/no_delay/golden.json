@@ -52,7 +52,7 @@
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "SingleOneReg",
+				"Type": "SingleOneReg",
 				"Addr": 0,
 				"StartBit": 0,
 				"EndBit": 31

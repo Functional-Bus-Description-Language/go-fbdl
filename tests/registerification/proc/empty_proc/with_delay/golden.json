@@ -47,7 +47,7 @@
 					"Range": null,
 					"Width": 32,
 					"Access": {
-						"Strategy": "SingleOneReg",
+						"Type": "SingleOneReg",
 						"Addr": 1,
 						"StartBit": 0,
 						"EndBit": 31
@@ -71,7 +71,7 @@
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "SingleOneReg",
+				"Type": "SingleOneReg",
 				"Addr": 0,
 				"StartBit": 0,
 				"EndBit": 31
