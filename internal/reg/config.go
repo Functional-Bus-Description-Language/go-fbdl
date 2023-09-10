@@ -24,7 +24,7 @@ func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 		acs = access.MakeArrayOneInReg(cfg.Count, addr, 0, cfg.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth%cfg.Width == 0 || cfg.Count <= busWidth/cfg.Width || cfg.Width < busWidth/2 {
-		acs = access.MakeArrayMultiplePacked(cfg.Count, addr, cfg.Width)
+		acs = access.MakeArrayNInReg(cfg.Count, addr, cfg.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else {
 		panic("unimplemented")

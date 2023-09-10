@@ -43,7 +43,7 @@ func regAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 		acs = access.MakeArrayOneInReg(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth%st.Width == 0 || st.Count <= busWidth/st.Width || st.Width < busWidth/2 {
-		acs = access.MakeArrayMultiplePacked(st.Count, addr, st.Width)
+		acs = access.MakeArrayNInReg(st.Count, addr, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else {
 		panic("unimplemented")
@@ -94,7 +94,7 @@ func regNonAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 		a = access.MakeArrayOneInReg(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth%st.Width == 0 || st.Count <= busWidth/st.Width || st.Width < busWidth/2 {
-		a = access.MakeArrayMultiplePacked(st.Count, addr, st.Width)
+		a = access.MakeArrayNInReg(st.Count, addr, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else {
 		panic("unimplemented")

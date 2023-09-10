@@ -128,87 +128,61 @@ func TestMakeArrayNRegs(t *testing.T) {
 	}
 }
 
-func TestMakeArrayMultiplePacked(t *testing.T) {
+func TestMakeArrayNInReg(t *testing.T) {
 	var tests = []struct {
 		startAddr int64
 		count     int64
 		width     int64
 		want      Access
 	}{
-		{0, 1, 32,
-			ArrayMultiple{
-				regCount:    1,
-				ItemCount:   1,
-				ItemWidth:   32,
-				ItemsPerReg: 1,
-				startAddr:   0,
-				startBit:    0,
+		{2, 4, 16,
+			ArrayNInReg{
+				Strategy:   "ArrayNInReg",
+				RegCount:   2,
+				ItemCount:  4,
+				ItemWidth:  16,
+				ItemsInReg: 2,
+				StartAddr:  2,
+				StartBit:   0,
 			},
 		},
-		{1, 4, 8,
-			ArrayMultiple{
-				regCount:    1,
-				ItemCount:   4,
-				ItemWidth:   8,
-				ItemsPerReg: 4,
-				startAddr:   1,
-				startBit:    0,
+		{4, 8, 8,
+			ArrayNInReg{
+				Strategy:   "ArrayNInReg",
+				RegCount:   2,
+				ItemCount:  8,
+				ItemWidth:  8,
+				ItemsInReg: 4,
+				StartAddr:  4,
+				StartBit:   0,
 			},
 		},
-		{2, 3, 16,
-			ArrayMultiple{
-				regCount:    2,
-				ItemCount:   3,
-				ItemWidth:   16,
-				ItemsPerReg: 2,
-				startAddr:   2,
-				startBit:    0,
-			},
-		},
-		{3, 4, 4,
-			ArrayMultiple{
-				regCount:    1,
-				ItemCount:   4,
-				ItemWidth:   4,
-				ItemsPerReg: 8,
-				startAddr:   3,
-				startBit:    0,
-			},
-		},
-		{4, 5, 8,
-			ArrayMultiple{
-				regCount:    2,
-				ItemCount:   5,
-				ItemWidth:   8,
-				ItemsPerReg: 4,
-				startAddr:   4,
-				startBit:    0,
-			},
-		},
-		{5, 10, 7,
-			ArrayMultiple{
-				regCount:    3,
-				ItemCount:   10,
-				ItemWidth:   7,
-				ItemsPerReg: 4,
-				startAddr:   5,
-				startBit:    0,
+		{5, 12, 7,
+			ArrayNInReg{
+				Strategy:   "ArrayNInReg",
+				RegCount:   3,
+				ItemCount:  12,
+				ItemWidth:  7,
+				ItemsInReg: 4,
+				StartAddr:  5,
+				StartBit:   0,
 			},
 		},
 		{6, 50, 3,
-			ArrayMultiple{
-				regCount:    5,
-				ItemCount:   50,
-				ItemWidth:   3,
-				ItemsPerReg: 10,
-				startAddr:   6,
-				startBit:    0,
+			ArrayNInReg{
+				Strategy:   "ArrayNInReg",
+				RegCount:   5,
+				ItemCount:  50,
+				ItemWidth:  3,
+				ItemsInReg: 10,
+				StartAddr:  6,
+				StartBit:   0,
 			},
 		},
 	}
 
 	for i, test := range tests {
-		got := MakeArrayMultiplePacked(test.count, test.startAddr, test.width)
+		got := MakeArrayNInReg(test.count, test.startAddr, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)

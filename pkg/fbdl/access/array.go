@@ -1,7 +1,6 @@
 package access
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
 )
@@ -36,8 +35,12 @@ func (aor ArrayOneReg) GetEndRegWidth() int64   { return aor.ItemCount * aor.Ite
 
 func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
 	if startBit+(width*itemCount) > busWidth {
-		msg := `cannot make ArrayOneReg, startBit + (width * itemCount) > busWidth, (%d + (%d * %d) > %d)`
-		panic(fmt.Sprintf(msg, startBit, width, itemCount, busWidth))
+		panic(
+			fmt.Sprintf(
+				"cannot make ArrayOneReg, startBit + (width * itemCount) > busWidth, (%d + (%d * %d) > %d)",
+				startBit, width, itemCount, busWidth,
+			),
+		)
 	}
 
 	return ArrayOneReg{
@@ -141,100 +144,59 @@ func MakeArrayNRegs(itemCount, startAddr, startBit, width int64) Access {
 	return anr
 }
 
-// ArrayMultiple describes an access to an array of functionalities
+// ArrayNInReg describes an access to an array of functionalities
 // with multiple functionalities placed within single register.
-type ArrayMultiple struct {
-	regCount int64
-
-	ItemCount   int64
-	ItemWidth   int64
-	ItemsPerReg int64
-	startAddr   int64
-	startBit    int64
+//
+//	Example:
+//
+//	c [6]config; width = 15
+//
+//	            Reg N                         Reg N+1                        Reg N+2
+//	------------------------------ ------------------------------ ------------------------------
+//	|| c[0] | c[1] | 2 bits gap || || c[2] | c[3] | 2 bits gap || || c[4] | c[5] | 2 bits gap ||
+//	------------------------------ ------------------------------ ------------------------------
+type ArrayNInReg struct {
+	Strategy   string
+	RegCount   int64
+	ItemCount  int64
+	ItemWidth  int64
+	ItemsInReg int64
+	StartAddr  int64
+	StartBit   int64
 }
 
-func (am ArrayMultiple) MarshalJSON() ([]byte, error) {
-	j, err := json.Marshal(struct {
-		Strategy    string
-		RegCount    int64
-		ItemCount   int64
-		ItemWidth   int64
-		ItemsPerReg int64
-		StartAddr   int64
-		StartBit    int64
-	}{
-		Strategy:    "Multiple",
-		RegCount:    am.regCount,
-		ItemCount:   am.ItemCount,
-		ItemWidth:   am.ItemWidth,
-		ItemsPerReg: am.ItemsPerReg,
-		StartAddr:   am.startAddr,
-		StartBit:    am.startBit,
-	})
+func (anir ArrayNInReg) GetRegCount() int64      { return anir.RegCount }
+func (anir ArrayNInReg) GetStartAddr() int64     { return anir.StartAddr }
+func (anir ArrayNInReg) GetEndAddr() int64       { return anir.StartAddr + anir.RegCount - 1 }
+func (anir ArrayNInReg) GetWidth() int64         { return anir.ItemWidth }
+func (anir ArrayNInReg) GetStartBit() int64      { return anir.StartBit }
+func (anir ArrayNInReg) GetEndBit() int64        { return anir.StartBit + anir.ItemsInReg*anir.ItemWidth - 1 }
+func (anir ArrayNInReg) GetStartRegWidth() int64 { return anir.GetWidth() }
+func (anir ArrayNInReg) GetEndRegWidth() int64   { return anir.GetWidth() }
 
-	if err != nil {
-		return nil, err
-	}
-
-	return j, nil
-}
-
-func (am ArrayMultiple) GetRegCount() int64  { return am.regCount }
-func (am ArrayMultiple) GetStartAddr() int64 { return am.startAddr }
-func (am ArrayMultiple) GetEndAddr() int64   { return am.startAddr + am.regCount - 1 }
-func (am ArrayMultiple) GetWidth() int64     { return am.ItemWidth }
-func (am ArrayMultiple) GetStartBit() int64  { return am.startBit }
-
-func (am ArrayMultiple) GetStartRegWidth() int64 {
-	if am.ItemCount < am.ItemsPerReg {
-		return am.ItemCount * am.ItemWidth
-	}
-	return am.ItemsPerReg * am.ItemWidth
-}
-
-func (am ArrayMultiple) GetEndRegWidth() int64 {
-	itemsInEndReg := am.ItemCount % am.ItemsPerReg
-	if itemsInEndReg == 0 {
-		itemsInEndReg = am.ItemsPerReg
-	}
-	return itemsInEndReg * am.ItemWidth
-}
-
-func (am ArrayMultiple) GetEndBit() int64 {
-	if am.regCount == 1 {
-		return am.startBit + am.ItemCount*am.ItemWidth - 1
-	} else if am.ItemCount%am.ItemsPerReg == 0 {
-		return am.startBit + am.ItemsPerReg*am.ItemWidth - 1
-	} else {
-		itemsInLast := am.ItemCount % am.ItemsPerReg
-		return am.startBit + itemsInLast*am.ItemWidth - 1
-	}
-}
-
-func (am ArrayMultiple) ItemsInLastReg() int64 {
-	inLastReg := am.ItemCount % am.ItemsPerReg
-	if inLastReg == 0 {
-		inLastReg = am.ItemsPerReg
-	}
-	return inLastReg
-}
-
-// MakeArrayMultiplePacked makes ArrayMultiple starting from bit 0,
+// MakeArrayNInReg makes ArrayNInReg starting from bit 0,
 // and placing as many items within single register as possible.
-func MakeArrayMultiplePacked(itemCount, startAddr, width int64) Access {
-	am := ArrayMultiple{
-		ItemCount:   itemCount,
-		ItemWidth:   width,
-		ItemsPerReg: busWidth / width,
-		startAddr:   startAddr,
-		startBit:    0,
+func MakeArrayNInReg(itemCount, startAddr, width int64) Access {
+	itemsInReg := busWidth / width
+
+	if itemCount%itemsInReg != 0 {
+		panic(
+			fmt.Sprintf(
+				"cannot make ArrayNInReg, itemCount %% itemsInReg != 0, %d %% %d != 0",
+				itemCount, itemsInReg,
+			),
+		)
 	}
 
-	if itemCount <= am.ItemsPerReg {
-		am.regCount = 1
-	} else {
-		am.regCount = int64(math.Ceil(float64(itemCount) / float64(am.ItemsPerReg)))
+	anir := ArrayNInReg{
+		Strategy:   "ArrayNInReg",
+		RegCount:   itemCount / itemsInReg,
+		ItemCount:  itemCount,
+		ItemWidth:  width,
+		ItemsInReg: itemsInReg,
+		StartAddr:  startAddr,
+		StartBit:   0,
 	}
 
-	return am
+	return anir
 }
