@@ -92,7 +92,7 @@ func MakeArrayOneInReg(itemCount, addr, startBit, width int64) ArrayOneInReg {
 	}
 }
 
-// ArrayContinuous describes an access to an array of functionalities
+// ArrayNRegs describes an access to an array of functionalities
 // with single functionality placed within multiple continuous registers.
 //
 //	Example:
@@ -103,65 +103,42 @@ func MakeArrayOneInReg(itemCount, addr, startBit, width int64) ArrayOneInReg {
 //	--------------------------- ---------------------------------
 //	|| p[0] | p[1] | p[2](0) || || p[2](1) | p[3] | 8 bits gap ||
 //	--------------------------- ---------------------------------
-type ArrayContinuous struct {
-	regCount int64
-
+type ArrayNRegs struct {
+	Strategy  string
+	RegCount  int64
 	ItemCount int64
 	ItemWidth int64
-	startAddr int64
-	startBit  int64
+	StartAddr int64
+	StartBit  int64
 }
 
-func (ac ArrayContinuous) MarshalJSON() ([]byte, error) {
-	j, err := json.Marshal(struct {
-		Strategy  string
-		RegCount  int64
-		ItemCount int64
-		ItemWidth int64
-		StartAddr int64
-		StartBit  int64
-	}{
-		Strategy:  "Continuous",
-		RegCount:  ac.regCount,
-		ItemCount: ac.ItemCount,
-		ItemWidth: ac.ItemWidth,
-		StartAddr: ac.startAddr,
-		StartBit:  ac.startBit,
-	})
+func (anr ArrayNRegs) GetRegCount() int64      { return anr.RegCount }
+func (anr ArrayNRegs) GetStartAddr() int64     { return anr.StartAddr }
+func (anr ArrayNRegs) GetEndAddr() int64       { return anr.StartAddr + anr.RegCount - 1 }
+func (anr ArrayNRegs) GetWidth() int64         { return anr.ItemWidth }
+func (anr ArrayNRegs) GetStartBit() int64      { return anr.StartBit }
+func (anr ArrayNRegs) GetStartRegWidth() int64 { return busWidth - anr.StartBit }
+func (anr ArrayNRegs) GetEndRegWidth() int64   { return anr.GetEndBit() + 1 }
 
-	if err != nil {
-		return nil, err
-	}
-
-	return j, nil
+func (anr ArrayNRegs) GetEndBit() int64 {
+	return ((anr.StartBit + anr.RegCount*anr.ItemWidth - 1) % busWidth)
 }
 
-func (ac ArrayContinuous) GetRegCount() int64      { return ac.regCount }
-func (ac ArrayContinuous) GetStartAddr() int64     { return ac.startAddr }
-func (ac ArrayContinuous) GetEndAddr() int64       { return ac.startAddr + ac.regCount - 1 }
-func (ac ArrayContinuous) GetWidth() int64         { return ac.ItemWidth }
-func (ac ArrayContinuous) GetStartBit() int64      { return ac.startBit }
-func (ac ArrayContinuous) GetStartRegWidth() int64 { return busWidth - ac.startBit }
-func (ac ArrayContinuous) GetEndRegWidth() int64   { return ac.GetEndBit() + 1 }
-
-func (ac ArrayContinuous) GetEndBit() int64 {
-	return ((ac.startBit + ac.regCount*ac.ItemWidth - 1) % busWidth)
-}
-
-func MakeArrayContinuous(itemCount, startAddr, startBit, width int64) Access {
-	ac := ArrayContinuous{
+func MakeArrayNRegs(itemCount, startAddr, startBit, width int64) Access {
+	anr := ArrayNRegs{
+		Strategy:  "ArrayNRegs",
 		ItemCount: itemCount,
 		ItemWidth: width,
-		startAddr: startAddr,
-		startBit:  startBit,
+		StartAddr: startAddr,
+		StartBit:  startBit,
 	}
 
 	totalWidth := itemCount * width
 	firstRegWidth := busWidth - startBit
 
-	ac.regCount = int64(math.Ceil((float64(totalWidth)-float64(firstRegWidth))/float64(busWidth))) + 1
+	anr.RegCount = int64(math.Ceil((float64(totalWidth)-float64(firstRegWidth))/float64(busWidth))) + 1
 
-	return ac
+	return anr
 }
 
 // ArrayMultiple describes an access to an array of functionalities

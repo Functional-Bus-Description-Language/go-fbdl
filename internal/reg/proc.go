@@ -13,7 +13,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	baseBit := int64(0)
 	for _, p := range params {
 		if p.IsArray {
-			a = access.MakeArrayContinuous(p.Count, addr, baseBit, p.Width)
+			a = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
 		} else {
 			a = access.MakeSingle(addr, baseBit, p.Width)
 		}
@@ -45,7 +45,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	returns := proc.Returns
 	for _, r := range returns {
 		if r.IsArray {
-			a = access.MakeArrayContinuous(r.Count, addr, baseBit, r.Width)
+			a = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
 		} else {
 			a = access.MakeSingle(addr, baseBit, r.Width)
 		}

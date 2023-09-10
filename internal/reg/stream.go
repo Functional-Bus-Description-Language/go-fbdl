@@ -30,7 +30,7 @@ func regUpstream(s *fn.Stream, addr int64) int64 {
 	baseBit := int64(0)
 	for _, r := range returns {
 		if r.IsArray {
-			a = access.MakeArrayContinuous(r.Count, addr, baseBit, r.Width)
+			a = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
 		} else {
 			a = access.MakeSingle(addr, baseBit, r.Width)
 		}

@@ -65,7 +65,7 @@ func TestMakeSingle(t *testing.T) {
 	}
 }
 
-func TestMakeArrayContinuous(t *testing.T) {
+func TestMakeArrayNRegs(t *testing.T) {
 	var tests = []struct {
 		startAddr int64
 		count     int64
@@ -74,45 +74,49 @@ func TestMakeArrayContinuous(t *testing.T) {
 		want      Access
 	}{
 		{0, 1, 0, 32,
-			ArrayContinuous{
-				regCount:  1,
+			ArrayNRegs{
+				Strategy:  "ArrayNRegs",
+				RegCount:  1,
 				ItemCount: 1,
 				ItemWidth: 32,
-				startAddr: 0,
-				startBit:  0,
+				StartAddr: 0,
+				StartBit:  0,
 			},
 		},
 		{1, 4, 0, 5,
-			ArrayContinuous{
-				regCount:  1,
+			ArrayNRegs{
+				Strategy:  "ArrayNRegs",
+				RegCount:  1,
 				ItemCount: 4,
 				ItemWidth: 5,
-				startAddr: 1,
-				startBit:  0,
+				StartAddr: 1,
+				StartBit:  0,
 			},
 		},
 		{2, 2, 20, 23,
-			ArrayContinuous{
-				regCount:  3,
+			ArrayNRegs{
+				Strategy:  "ArrayNRegs",
+				RegCount:  3,
 				ItemCount: 2,
 				ItemWidth: 23,
-				startAddr: 2,
-				startBit:  20,
+				StartAddr: 2,
+				StartBit:  20,
 			},
 		},
 		{3, 2, 20, 22,
-			ArrayContinuous{
-				regCount:  2,
+			ArrayNRegs{
+				Strategy:  "ArrayNRegs",
+				RegCount:  2,
 				ItemCount: 2,
 				ItemWidth: 22,
-				startAddr: 3,
-				startBit:  20,
+				StartAddr: 3,
+				StartBit:  20,
 			},
 		},
 	}
 
 	for i, test := range tests {
-		got := MakeArrayContinuous(test.count, test.startAddr, test.startBit, test.width)
+		got := MakeArrayNRegs(test.count, test.startAddr, test.startBit, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
