@@ -25,8 +25,8 @@ func hashAccessAccess(a access.Access) uint32 {
 	write(&buf, a.GetEndAddr())
 	write(&buf, a.GetStartBit())
 	write(&buf, a.GetEndBit())
-	write(&buf, a.StartRegWidth())
-	write(&buf, a.EndRegWidth())
+	write(&buf, a.GetStartRegWidth())
+	write(&buf, a.GetEndRegWidth())
 
 	return adler32.Checksum(buf.Bytes())
 }
