@@ -15,12 +15,14 @@
 		"Start": 0,
 		"End": 3
 	},
-	"BoolConsts": null,
-	"BoolListConsts": null,
-	"FloatConsts": null,
-	"IntConsts": null,
-	"IntListConsts": null,
-	"StrConsts": null,
+	"Consts": {
+		"Bools": null,
+		"BoolLists": null,
+		"Floats": null,
+		"Ints": null,
+		"IntLists": null,
+		"Strings": null
+	},
 	"Configs": [
 		{
 			"Name": "C1",
@@ -35,7 +37,7 @@
 			"ResetValue": "",
 			"Width": 20,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 1,
 				"StartBit": 0,
 				"EndBit": 19
@@ -54,7 +56,7 @@
 			"ResetValue": "",
 			"Width": 14,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 2,
 				"StartBit": 0,
 				"EndBit": 13
@@ -72,12 +74,12 @@
 			"IsArray": false,
 			"Count": 1,
 			"Groups": null,
-			"InitValue": "x\"a4ae07ac\"",
+			"InitValue": "x\"9fee0762\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 0,
 				"StartBit": 0,
 				"EndBit": 31
@@ -95,7 +97,7 @@
 			"ReadValue": "",
 			"Width": 18,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 2,
 				"StartBit": 14,
 				"EndBit": 31
@@ -111,7 +113,7 @@
 			"ReadValue": "",
 			"Width": 12,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 1,
 				"StartBit": 20,
 				"EndBit": 31

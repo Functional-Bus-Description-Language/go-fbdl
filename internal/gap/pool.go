@@ -1,8 +1,8 @@
 package gap
 
 type Pool struct {
-	singles []Gap
-	arrays  []Gap
+	singles []Single
+	arrays  []Array
 }
 
 func (p *Pool) Add(g Gap) {
@@ -34,4 +34,20 @@ func (p *Pool) Add(g Gap) {
 			}
 		}
 	}
+}
+
+// GetSingle returns Single gap from the Pool if gap with desired parameters is found in the pool.
+// In such a case second return is true, otherwise second return is false.
+//
+// writeSafe parameter indicates wheter gap has to be write safe.
+// If writeSafe = true, then gap must be write safe.
+// if writeSafe = false, then gap can be write safe, but does not have to.
+func (p *Pool) GetSingle(width int64, writeSafe bool) (Single, bool) {
+	for i, s := range p.singles {
+		if (s.Width() >= width) && (!writeSafe || (writeSafe && s.WriteSafe)) {
+			p.singles = append(p.singles[:i], p.singles[i+1:]...)
+			return s, true
+		}
+	}
+	return Single{}, false
 }

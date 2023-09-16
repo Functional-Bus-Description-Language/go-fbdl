@@ -15,8 +15,14 @@ func regAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 }
 
 func regAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
-	acs := access.MakeSingle(addr, 0, st.Width)
-	addr += acs.GetRegCount()
+	var acs access.Access
+
+	if g, ok := gp.GetSingle(st.Width, false); ok {
+		acs = access.MakeSingle(g.Addr, g.StartBit, st.Width)
+	} else {
+		acs = access.MakeSingle(addr, 0, st.Width)
+		addr += acs.GetRegCount()
+	}
 
 	if acs.GetEndBit() < busWidth-1 {
 		gp.Add(gap.Single{
@@ -64,9 +70,14 @@ func regNonAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 }
 
 func regNonAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
-	// TODO: Check if there is gap at the end that can be utilized.
-	acs := access.MakeSingle(addr, 0, st.Width)
-	addr += acs.GetRegCount()
+	var acs access.Access
+
+	if g, ok := gp.GetSingle(st.Width, false); ok {
+		acs = access.MakeSingle(g.Addr, g.StartBit, st.Width)
+	} else {
+		acs = access.MakeSingle(addr, 0, st.Width)
+		addr += acs.GetRegCount()
+	}
 
 	if acs.GetEndBit() < busWidth-1 {
 		gp.Add(gap.Single{
