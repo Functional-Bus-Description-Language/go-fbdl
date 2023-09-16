@@ -27,9 +27,8 @@ func regStaticSingle(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	addr += acs.GetRegCount()
 
 	if acs.GetEndBit() < busWidth-1 {
-		gp.Add(gap.Gap{
-			StartAddr: acs.GetEndAddr(),
-			EndAddr:   acs.GetEndAddr(),
+		gp.Add(gap.Single{
+			Addr:      acs.GetEndAddr(),
 			StartBit:  acs.GetEndBit() + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
