@@ -257,3 +257,58 @@ func MakeArrayNInRegMInEndReg(itemCount, startAddr, width int64) Access {
 
 	return anm
 }
+
+// ArrayOneInNRegs describes an access to an array of functionalities
+// with one functionality placed in N registers.
+// Start bit is always 0.
+//
+//	Example:
+//
+//	c [2]config; width = 33
+//
+//	    Reg N               Reg N+1              Reg N+2              Reg N+3
+//	------------- --------------------------- ------------- ---------------------------
+//	|| c[0](0) || || c[0](1) | 31 bits gap || || c[1](0) || || c[1](1) | 31 bits gap ||
+//	------------- --------------------------- ------------- ---------------------------
+type ArrayOneInNRegs struct {
+	Type      string
+	ItemCount int64
+	ItemWidth int64
+	StartAddr int64
+}
+
+func (aoinr ArrayOneInNRegs) GetRegCount() int64 {
+	if aoinr.ItemWidth%busWidth == 0 {
+		return aoinr.ItemCount * aoinr.ItemWidth / busWidth
+	}
+	return aoinr.ItemCount * (aoinr.ItemWidth/busWidth + 1)
+}
+func (aoinr ArrayOneInNRegs) GetStartAddr() int64     { return aoinr.StartAddr }
+func (aoinr ArrayOneInNRegs) GetEndAddr() int64       { return aoinr.StartAddr + aoinr.GetRegCount() - 1 }
+func (aoinr ArrayOneInNRegs) GetWidth() int64         { return aoinr.ItemWidth }
+func (aoinr ArrayOneInNRegs) GetStartBit() int64      { return 0 }
+func (aoinr ArrayOneInNRegs) GetStartRegWidth() int64 { return busWidth }
+func (aoinr ArrayOneInNRegs) GetEndRegWidth() int64   { return aoinr.GetEndBit() + 1 }
+func (aoinr ArrayOneInNRegs) GetEndBit() int64 {
+	if aoinr.ItemWidth%busWidth == 0 {
+		return busWidth - 1
+	}
+	return aoinr.ItemWidth - (aoinr.ItemWidth/busWidth)*busWidth - 1
+}
+
+// MakeArrayOneInNRegs makes ArrayNInRegMInEndReg starting from bit 0,
+// and placing as many items within single register as possible.
+func MakeArrayOneInNRegs(itemCount, startAddr, width int64) Access {
+	if width <= busWidth {
+		panic(fmt.Sprintf("width <= busWidth, %d <= %d", width, busWidth))
+	}
+
+	aoinr := ArrayOneInNRegs{
+		Type:      "ArrayOneInNRegs",
+		ItemCount: itemCount,
+		ItemWidth: width,
+		StartAddr: startAddr,
+	}
+
+	return aoinr
+}

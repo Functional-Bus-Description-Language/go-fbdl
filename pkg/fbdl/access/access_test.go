@@ -239,3 +239,53 @@ func TestMakeArrayNInRegMInEndReg(t *testing.T) {
 		}
 	}
 }
+
+func TestMakeArrayOneInNRegs(t *testing.T) {
+	var tests = []struct {
+		startAddr    int64
+		count        int64
+		width        int64
+		want         Access
+		wantRegCount int64
+		wantEndBit   int64
+	}{
+		{0, 2, 33,
+			ArrayOneInNRegs{
+				Type:      "ArrayOneInNRegs",
+				ItemCount: 2,
+				ItemWidth: 33,
+				StartAddr: 0,
+			},
+			4, 0,
+		},
+		{1, 3, 64,
+			ArrayOneInNRegs{
+				Type:      "ArrayOneInNRegs",
+				ItemCount: 3,
+				ItemWidth: 64,
+				StartAddr: 1,
+			},
+			6, 31,
+		},
+	}
+
+	for i, test := range tests {
+		got := MakeArrayOneInNRegs(test.count, test.startAddr, test.width)
+
+		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
+			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
+		}
+
+		if got != test.want {
+			t.Errorf("[%d] got %v, want %v", i, got, test.want)
+		}
+
+		if got.GetRegCount() != test.wantRegCount {
+			t.Errorf("[%d] got %d, want %d", i, got.GetRegCount(), test.wantRegCount)
+		}
+
+		if got.GetEndBit() != test.wantEndBit {
+			t.Errorf("[%d] got %d, want %d", i, got.GetEndBit(), test.wantEndBit)
+		}
+	}
+}
