@@ -15,12 +15,14 @@
 		"Start": 0,
 		"End": 3
 	},
-	"BoolConsts": null,
-	"BoolListConsts": null,
-	"FloatConsts": null,
-	"IntConsts": null,
-	"IntListConsts": null,
-	"StrConsts": null,
+	"Consts": {
+		"Bools": null,
+		"BoolLists": null,
+		"Floats": null,
+		"Ints": null,
+		"IntLists": null,
+		"Strings": null
+	},
 	"Configs": null,
 	"Irqs": null,
 	"Masks": null,
@@ -33,12 +35,12 @@
 			"IsArray": false,
 			"Count": 1,
 			"Groups": null,
-			"InitValue": "x\"89900555\"",
+			"InitValue": "x\"9c2b06cc\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 0,
 				"StartBit": 0,
 				"EndBit": 31
@@ -56,7 +58,7 @@
 			"ReadValue": "",
 			"Width": 20,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 1,
 				"StartBit": 0,
 				"EndBit": 19
@@ -72,7 +74,7 @@
 			"ReadValue": "",
 			"Width": 13,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 2,
 				"StartBit": 0,
 				"EndBit": 12
