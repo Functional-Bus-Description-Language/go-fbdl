@@ -295,6 +295,12 @@ func (aoinr ArrayOneInNRegs) GetEndBit() int64 {
 	}
 	return aoinr.ItemWidth - (aoinr.ItemWidth/busWidth)*busWidth - 1
 }
+func (aoinr ArrayOneInNRegs) GetRegsPerItem() int64 {
+	if aoinr.ItemWidth%busWidth == 0 {
+		return aoinr.ItemWidth / busWidth
+	}
+	return aoinr.ItemWidth/busWidth + 1
+}
 
 // MakeArrayOneInNRegs makes ArrayNInRegMInEndReg starting from bit 0,
 // and placing as many items within single register as possible.
