@@ -107,7 +107,10 @@ tokenLoop:
 				c.i--
 			case tok.Newline:
 				continue
-			case tok.Dedent, tok.Eof:
+			case tok.Dedent:
+				c.i++
+				break tokenLoop
+			case tok.Eof:
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "identifier or dedent")
