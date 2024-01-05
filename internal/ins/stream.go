@@ -6,8 +6,14 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
 )
+
+type streamDiary struct {
+	delaySet bool
+}
 
 func insStream(typeChain []prs.Functionality) (*fn.Stream, error) {
 	f, err := makeFunctionality(typeChain)
@@ -17,13 +23,15 @@ func insStream(typeChain []prs.Functionality) (*fn.Stream, error) {
 	stream := fn.Stream{}
 	stream.Func = f
 
+	diary := streamDiary{}
+
 	tci := typeChainIter(typeChain)
 	for {
 		typ, ok := tci()
 		if !ok {
 			break
 		}
-		err := applyStreamType(&stream, typ)
+		err := applyStreamType(&stream, typ, &diary)
 		if err != nil {
 			return nil, fmt.Errorf("%v", err)
 		}
@@ -32,7 +40,36 @@ func insStream(typeChain []prs.Functionality) (*fn.Stream, error) {
 	return &stream, nil
 }
 
-func applyStreamType(strm *fn.Stream, typ prs.Functionality) error {
+func applyStreamType(strm *fn.Stream, typ prs.Functionality, diary *streamDiary) error {
+	for _, prop := range typ.Props() {
+		if err := util.IsValidProperty(prop.Name, "stream"); err != nil {
+			return fmt.Errorf(": %v", err)
+		}
+		if err := checkProp(prop); err != nil {
+			return fmt.Errorf("%s: %v", prop.Loc(), err)
+		}
+
+		v, err := prop.Value.Eval()
+		if err != nil {
+			return fmt.Errorf("cannot evaluate expression")
+		}
+
+		switch prop.Name {
+		case "delay":
+			if diary.delaySet {
+				return fmt.Errorf(propAlreadySetMsg, prop.Loc(), "delay")
+			}
+			t := v.(val.Time)
+			delay := fbdlVal.Time{S: t.S, Ns: t.Ns}
+
+			strm.Delay = &delay
+			diary.delaySet = true
+		default:
+			panic("should never happen")
+		}
+
+	}
+
 	for _, s := range typ.Symbols() {
 		pe, ok := s.(*prs.Inst)
 		if !ok {

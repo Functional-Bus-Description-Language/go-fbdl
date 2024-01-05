@@ -74,6 +74,7 @@
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
+			"Delay": null,
 			"Params": null,
 			"Returns": [
 				{
