@@ -12,7 +12,7 @@ func regStream(s *fn.Stream, addr int64) int64 {
 	} else if len(s.Returns) > 0 {
 		return regUpstream(s, addr)
 	} else {
-		panic("downstream registerification not yet implemented")
+		return regDownstream(s, addr)
 	}
 }
 
@@ -49,6 +49,39 @@ func regUpstream(s *fn.Stream, addr int64) int64 {
 	s.StbAddr = returns[len(returns)-1].Access.GetEndAddr()
 
 	lastAccess := returns[len(returns)-1].Access
+	if lastAccess.GetEndBit() < busWidth-1 {
+		addr += 1
+	}
+
+	return addr
+}
+
+func regDownstream(s *fn.Stream, addr int64) int64 {
+	var acs access.Access
+
+	params := s.Params
+	baseBit := int64(0)
+	for _, p := range params {
+		if p.IsArray {
+			acs = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
+		} else {
+			acs = access.MakeSingle(addr, baseBit, p.Width)
+		}
+
+		if acs.GetEndBit() < busWidth-1 {
+			addr += acs.GetRegCount() - 1
+			baseBit = acs.GetEndBit() + 1
+		} else {
+			addr += acs.GetRegCount()
+			baseBit = 0
+		}
+
+		p.Access = acs
+	}
+
+	s.StbAddr = params[len(params)-1].Access.GetEndAddr()
+
+	lastAccess := params[len(params)-1].Access
 	if lastAccess.GetEndBit() < busWidth-1 {
 		addr += 1
 	}
