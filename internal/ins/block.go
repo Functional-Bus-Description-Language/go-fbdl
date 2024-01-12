@@ -137,6 +137,8 @@ func fillBlockProps(blk *fn.Block) {
 
 func addBlockInnerElement(blk *fn.Block, f any) {
 	switch f := f.(type) {
+	case (*fn.Blackbox):
+		block.AddBlackbox(blk, f)
 	case (*fn.Config):
 		block.AddConfig(blk, f)
 	case (*fn.Irq):

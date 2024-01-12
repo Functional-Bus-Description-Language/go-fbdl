@@ -99,6 +99,8 @@ func insFunctionality(pf prs.Functionality) fn.Functionality {
 
 	typ := typeChain[0].Type()
 	switch typ {
+	case "blackbox":
+		f, err = insBlackbox(typeChain)
 	case "block", "bus":
 		f, err = insBlock(typeChain)
 	case "config":

@@ -18,15 +18,16 @@ type Block struct {
 
 	Consts cnst.Container
 
-	Configs   []*Config
-	Irqs      []*Irq
-	Masks     []*Mask
-	Memories  []*Memory
-	Procs     []*Proc
-	Statics   []*Static
-	Statuses  []*Status
-	Streams   []*Stream
-	Subblocks []*Block
+	Blackboxes []*Blackbox
+	Configs    []*Config
+	Irqs       []*Irq
+	Masks      []*Mask
+	Memories   []*Memory
+	Procs      []*Proc
+	Statics    []*Static
+	Statuses   []*Status
+	Streams    []*Stream
+	Subblocks  []*Block
 }
 
 func (b Block) Type() string { return "block" }

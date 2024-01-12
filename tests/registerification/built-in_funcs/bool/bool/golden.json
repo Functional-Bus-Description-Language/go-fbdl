@@ -23,6 +23,7 @@
 		"IntLists": null,
 		"Strings": null
 	},
+	"Blackboxes": null,
 	"Configs": [
 		{
 			"Name": "c1",
