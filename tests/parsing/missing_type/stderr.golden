@@ -1,0 +1,4 @@
+bus.fbd:2:6: unexpected newline, expected functionality type
+   |
+ 2 | 	Proc
+   | 	    ^

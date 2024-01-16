@@ -39,11 +39,15 @@ func ErrorLoc(err error, src []byte) string {
 	}
 
 	lineEndIdx := e.Tok.End()
-	for {
-		if lineEndIdx == len(src)-1 || src[lineEndIdx+1] == '\n' {
-			break
+	if _ , ok := e.Tok.(Newline); !ok {
+		for {
+			if lineEndIdx == len(src)-1 || src[lineEndIdx+1] == '\n' {
+				break
+			}
+			lineEndIdx++
 		}
-		lineEndIdx++
+	} else {
+		lineEndIdx--
 	}
 
 	line := src[lineStartIdx : lineEndIdx+1]
