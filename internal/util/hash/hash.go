@@ -30,6 +30,8 @@ func Hash(data any) uint32 {
 		return hashAccessAccess(d)
 	case *fn.Func:
 		return hashFunc(d)
+	case *fn.Blackbox:
+		return hashBlackbox(d)
 	case *fn.Block:
 		return hashBlock(d)
 	case *fn.Config:

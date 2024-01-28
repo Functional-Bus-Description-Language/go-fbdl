@@ -22,6 +22,10 @@ func hashBlock(b *fn.Block) uint32 {
 	// cnst.Container
 	write(&buf, Hash(&b.Consts))
 
+	// Blackboxes
+	for _, b := range b.Blackboxes {
+		write(&buf, Hash(b))
+	}
 	// Configs
 	for _, c := range b.Configs {
 		write(&buf, Hash(c))
