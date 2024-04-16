@@ -41,68 +41,68 @@ func (t Type) eq(t2 Type) bool {
 	return true
 }
 
-func buildType(toks []tok.Token, c *ctx) (Type, error) {
+func buildType(toks []tok.Token, ctx *context) (Type, error) {
 	typ := Type{}
-	c.i++
+	ctx.i++
 
 	// Name
-	if t, ok := toks[c.i].(tok.Ident); ok {
+	if t, ok := toks[ctx.i].(tok.Ident); ok {
 		typ.Name = t
 	} else {
-		return typ, unexpected(toks[c.i], "identifier")
+		return typ, unexpected(toks[ctx.i], "identifier")
 	}
-	c.i++
+	ctx.i++
 
 	// Parameter List
-	params, err := buildParamList(toks, c)
+	params, err := buildParamList(toks, ctx)
 	if err != nil {
 		return typ, err
 	}
 	typ.Params = params
 
 	// Count
-	if _, ok := toks[c.i].(tok.LeftBracket); ok {
-		c.i++
-		expr, err := buildExpr(toks, c, nil)
+	if _, ok := toks[ctx.i].(tok.LeftBracket); ok {
+		ctx.i++
+		expr, err := buildExpr(toks, ctx, nil)
 		if err != nil {
 			return typ, err
 		}
 		typ.Count = expr
-		if _, ok := toks[c.i].(tok.RightBracket); !ok {
-			return typ, unexpected(toks[c.i], "']'")
+		if _, ok := toks[ctx.i].(tok.RightBracket); !ok {
+			return typ, unexpected(toks[ctx.i], "']'")
 		}
-		c.i++
+		ctx.i++
 	}
 
 	// Type
-	switch t := toks[c.i].(type) {
+	switch t := toks[ctx.i].(type) {
 	case tok.Functionality, tok.Ident, tok.QualIdent:
 		typ.Type = t
-		c.i++
+		ctx.i++
 	default:
 		return typ, unexpected(t, "functionality type")
 	}
 
 	// Argument List
-	args, err := buildArgList(toks, c)
+	args, err := buildArgList(toks, ctx)
 	if err != nil {
 		return typ, err
 	}
 	typ.Args = args
 
 	// Body
-	switch t := toks[c.i].(type) {
+	switch t := toks[ctx.i].(type) {
 	case tok.Semicolon:
-		c.i++
-		props, err := buildPropAssignments(toks, c)
+		ctx.i++
+		props, err := buildPropAssignments(toks, ctx)
 		if err != nil {
 			return typ, err
 		}
 		typ.Body.Props = props
 	case tok.Newline:
-		if _, ok := toks[c.i+1].(tok.Indent); ok {
-			c.i += 2
-			body, err := buildBody(toks, c)
+		if _, ok := toks[ctx.i+1].(tok.Indent); ok {
+			ctx.i += 2
+			body, err := buildBody(toks, ctx)
 			if err != nil {
 				return typ, err
 			}

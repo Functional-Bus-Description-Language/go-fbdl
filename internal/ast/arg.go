@@ -13,13 +13,13 @@ type Arg struct {
 	ValueFirstTok tok.Token
 }
 
-func buildArgList(toks []tok.Token, c *ctx) ([]Arg, error) {
-	if _, ok := toks[c.i].(tok.LeftParen); !ok {
+func buildArgList(toks []tok.Token, ctx *context) ([]Arg, error) {
+	if _, ok := toks[ctx.i].(tok.LeftParen); !ok {
 		return nil, nil
 	}
-	if _, ok := toks[c.i+1].(tok.RightParen); ok {
+	if _, ok := toks[ctx.i+1].(tok.RightParen); ok {
 		return nil, fmt.Errorf(
-			"%s: empty argument list", tok.Loc(toks[c.i]),
+			"%s: empty argument list", tok.Loc(toks[ctx.i]),
 		)
 	}
 
@@ -36,63 +36,63 @@ func buildArgList(toks []tok.Token, c *ctx) ([]Arg, error) {
 
 tokenLoop:
 	for {
-		c.i++
+		ctx.i++
 		switch state {
 		case Name:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.Ident:
-				switch toks[c.i+1].(type) {
+				switch toks[ctx.i+1].(type) {
 				case tok.Ass:
 					a.Name = t
 					state = Ass
 				default:
 					a.Name = nil
 					a.ValueFirstTok = t
-					expr, err := buildExpr(toks, c, nil)
+					expr, err := buildExpr(toks, ctx, nil)
 					if err != nil {
 						return nil, err
 					}
-					c.i--
+					ctx.i--
 					a.Value = expr
 					args = append(args, a)
 					state = Comma
 				}
 			default:
 				a.Name = nil
-				a.ValueFirstTok = toks[c.i]
-				expr, err := buildExpr(toks, c, nil)
+				a.ValueFirstTok = toks[ctx.i]
+				expr, err := buildExpr(toks, ctx, nil)
 				if err != nil {
 					return nil, err
 				}
-				c.i--
+				ctx.i--
 				a.Value = expr
 				args = append(args, a)
 				state = Comma
 			}
 		case Ass:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.Ass:
 				state = Val
 			default:
 				return nil, unexpected(t, "'='")
 			}
 		case Comma:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.Comma:
 				state = Name
 			case tok.RightParen:
-				c.i++
+				ctx.i++
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "',' or ')'")
 			}
 		case Val:
-			a.ValueFirstTok = toks[c.i]
-			expr, err := buildExpr(toks, c, nil)
+			a.ValueFirstTok = toks[ctx.i]
+			expr, err := buildExpr(toks, ctx, nil)
 			if err != nil {
 				return nil, err
 			}
-			c.i--
+			ctx.i--
 			a.Value = expr
 			args = append(args, a)
 			state = Comma

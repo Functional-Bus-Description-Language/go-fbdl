@@ -17,7 +17,7 @@ func TestBuildTypeSingleLine(t *testing.T) {
 		},
 	}
 
-	c := ctx{}
+	c := context{}
 	got, err := buildType(toks, &c)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
@@ -58,7 +58,7 @@ func TestBuildTypeMultiLine(t *testing.T) {
 		},
 	}
 
-	c := ctx{}
+	c := context{}
 	got, err := buildType(toks, &c)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)

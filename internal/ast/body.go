@@ -43,7 +43,7 @@ func (b Body) eq(b2 Body) bool {
 	return true
 }
 
-func buildBody(toks []tok.Token, c *ctx) (Body, error) {
+func buildBody(toks []tok.Token, ctx *context) (Body, error) {
 	var (
 		err    error
 		body   Body
@@ -56,17 +56,17 @@ func buildBody(toks []tok.Token, c *ctx) (Body, error) {
 
 tokenLoop:
 	for {
-		if _, ok := toks[c.i].(tok.Eof); ok {
+		if _, ok := toks[ctx.i].(tok.Eof); ok {
 			break
 		}
 
-		switch t := toks[c.i].(type) {
+		switch t := toks[ctx.i].(type) {
 		case tok.Newline:
-			c.i++
+			ctx.i++
 		case tok.Comment:
-			doc = buildDoc(toks, c)
+			doc = buildDoc(toks, ctx)
 		case tok.Const:
-			consts, err = buildConst(toks, c)
+			consts, err = buildConst(toks, ctx)
 			if len(consts) > 0 {
 				if doc.endLine() == consts[0].Name.Line()+1 {
 					consts[0].Doc = doc
@@ -74,10 +74,10 @@ tokenLoop:
 				body.Consts = append(body.Consts, consts...)
 			}
 		case tok.Ident:
-			ins, err = buildInst(toks, c)
+			ins, err = buildInst(toks, ctx)
 			body.Insts = append(body.Insts, ins)
 		case tok.Property:
-			props, err = buildPropAssignments(toks, c)
+			props, err = buildPropAssignments(toks, ctx)
 			if err != nil {
 				return body, err
 			}
@@ -85,10 +85,10 @@ tokenLoop:
 				body.Props = append(body.Props, props...)
 			}
 		case tok.Type:
-			typ, err = buildType(toks, c)
+			typ, err = buildType(toks, ctx)
 			body.Types = append(body.Types, typ)
 		case tok.Dedent:
-			c.i++
+			ctx.i++
 			break tokenLoop
 		default:
 			return body, unexpected(t, "const, type, identifier, or comment")

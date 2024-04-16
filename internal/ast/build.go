@@ -5,7 +5,7 @@ import (
 )
 
 // Building context
-type ctx struct {
+type context struct {
 	i int // Current token index
 }
 
@@ -14,7 +14,7 @@ func Build(src []byte) (File, error) {
 	var (
 		err    error
 		f      File
-		c      ctx
+		ctx    context
 		doc    Doc
 		consts []Const
 		imps   []Import
@@ -28,17 +28,17 @@ func Build(src []byte) (File, error) {
 	}
 
 	for {
-		if _, ok := toks[c.i].(tok.Eof); ok {
+		if _, ok := toks[ctx.i].(tok.Eof); ok {
 			break
 		}
 
-		switch t := toks[c.i].(type) {
+		switch t := toks[ctx.i].(type) {
 		case tok.Newline:
-			c.i++
+			ctx.i++
 		case tok.Comment:
-			doc = buildDoc(toks, &c)
+			doc = buildDoc(toks, &ctx)
 		case tok.Const:
-			consts, err = buildConst(toks, &c)
+			consts, err = buildConst(toks, &ctx)
 			if len(consts) > 0 {
 				if doc.endLine() == consts[0].Name.Line()-1 {
 					consts[0].Doc = doc
@@ -46,18 +46,18 @@ func Build(src []byte) (File, error) {
 				f.Consts = append(f.Consts, consts...)
 			}
 		case tok.Ident:
-			ins, err = buildInst(toks, &c)
+			ins, err = buildInst(toks, &ctx)
 			if doc.endLine() == ins.Name.Line()-1 {
 				ins.Doc = doc
 			}
 			f.Insts = append(f.Insts, ins)
 		case tok.Import:
-			imps, err = buildImport(toks, &c)
+			imps, err = buildImport(toks, &ctx)
 			if len(imps) > 0 {
 				f.Imports = append(f.Imports, imps...)
 			}
 		case tok.Type:
-			typ, err = buildType(toks, &c)
+			typ, err = buildType(toks, &ctx)
 			f.Types = append(f.Types, typ)
 		default:
 			return f, unexpected(t, "const, type, identifier, import or comment")

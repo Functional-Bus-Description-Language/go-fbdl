@@ -33,53 +33,53 @@ func (i Inst) eq(i2 Inst) bool {
 	return true
 }
 
-func buildInst(toks []tok.Token, c *ctx) (Inst, error) {
-	inst := Inst{Name: toks[c.i].(tok.Ident)}
-	c.i++
+func buildInst(toks []tok.Token, ctx *context) (Inst, error) {
+	inst := Inst{Name: toks[ctx.i].(tok.Ident)}
+	ctx.i++
 
 	// Count
-	if _, ok := toks[c.i].(tok.LeftBracket); ok {
-		c.i++
-		expr, err := buildExpr(toks, c, nil)
+	if _, ok := toks[ctx.i].(tok.LeftBracket); ok {
+		ctx.i++
+		expr, err := buildExpr(toks, ctx, nil)
 		if err != nil {
 			return inst, err
 		}
 		inst.Count = expr
-		if _, ok := toks[c.i].(tok.RightBracket); !ok {
-			return inst, unexpected(toks[c.i], "']'")
+		if _, ok := toks[ctx.i].(tok.RightBracket); !ok {
+			return inst, unexpected(toks[ctx.i], "']'")
 		}
-		c.i++
+		ctx.i++
 	}
 
 	// Type
-	switch t := toks[c.i].(type) {
+	switch t := toks[ctx.i].(type) {
 	case tok.Functionality, tok.Ident, tok.QualIdent:
 		inst.Type = t
-		c.i++
+		ctx.i++
 	default:
 		return inst, unexpected(t, "functionality type")
 	}
 
 	// Argument List
-	args, err := buildArgList(toks, c)
+	args, err := buildArgList(toks, ctx)
 	if err != nil {
 		return inst, err
 	}
 	inst.Args = args
 
 	// Body
-	switch t := toks[c.i].(type) {
+	switch t := toks[ctx.i].(type) {
 	case tok.Semicolon:
-		c.i++
-		props, err := buildPropAssignments(toks, c)
+		ctx.i++
+		props, err := buildPropAssignments(toks, ctx)
 		if err != nil {
 			return inst, err
 		}
 		inst.Body.Props = props
 	case tok.Newline:
-		if _, ok := toks[c.i+1].(tok.Indent); ok {
-			c.i += 2
-			body, err := buildBody(toks, c)
+		if _, ok := toks[ctx.i+1].(tok.Indent); ok {
+			ctx.i += 2
+			body, err := buildBody(toks, ctx)
 			if err != nil {
 				return inst, err
 			}

@@ -10,47 +10,47 @@ type Import struct {
 	Path tok.String
 }
 
-func buildImport(toks []tok.Token, c *ctx) ([]Import, error) {
-	switch t := toks[c.i+1].(type) {
+func buildImport(toks []tok.Token, ctx *context) ([]Import, error) {
+	switch t := toks[ctx.i+1].(type) {
 	case tok.Ident, tok.String:
-		return buildSingleImport(toks, c)
+		return buildSingleImport(toks, ctx)
 	case tok.Newline:
-		return buildMultiImport(toks, c)
+		return buildMultiImport(toks, ctx)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleImport(toks []tok.Token, c *ctx) ([]Import, error) {
+func buildSingleImport(toks []tok.Token, ctx *context) ([]Import, error) {
 	i := Import{}
 
-	c.i++
-	switch t := toks[c.i].(type) {
+	ctx.i++
+	switch t := toks[ctx.i].(type) {
 	case tok.Ident:
 		i.Name = t
-		c.i++
-		switch t := toks[c.i].(type) {
+		ctx.i++
+		switch t := toks[ctx.i].(type) {
 		case tok.String:
 			i.Path = t
-			c.i++
+			ctx.i++
 		default:
 			return nil, unexpected(t, "string")
 		}
 	case tok.String:
 		i.Path = t
-		c.i++
+		ctx.i++
 	}
 
 	return []Import{i}, nil
 }
 
-func buildMultiImport(toks []tok.Token, c *ctx) ([]Import, error) {
+func buildMultiImport(toks []tok.Token, ctx *context) ([]Import, error) {
 	imps := []Import{}
 	i := Import{}
 
-	c.i += 2
-	if _, ok := toks[c.i].(tok.Indent); !ok {
-		return nil, unexpected(toks[c.i], "indent increase")
+	ctx.i += 2
+	if _, ok := toks[ctx.i].(tok.Indent); !ok {
+		return nil, unexpected(toks[ctx.i], "indent increase")
 	}
 
 	const (
@@ -61,10 +61,10 @@ func buildMultiImport(toks []tok.Token, c *ctx) ([]Import, error) {
 
 tokenLoop:
 	for {
-		c.i++
+		ctx.i++
 		switch state {
 		case Name:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.Ident:
 				i.Name = t
 				state = Path
@@ -75,7 +75,7 @@ tokenLoop:
 			case tok.Newline:
 				// Do nothing
 			case tok.Dedent:
-				c.i++
+				ctx.i++
 				break tokenLoop
 			case tok.Eof:
 				break tokenLoop
@@ -83,7 +83,7 @@ tokenLoop:
 				return nil, unexpected(t, "identifier or string")
 			}
 		case Path:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.String:
 				i.Path = t
 				imps = append(imps, i)

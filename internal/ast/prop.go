@@ -10,7 +10,7 @@ type Prop struct {
 	Value Expr
 }
 
-func buildPropAssignments(toks []tok.Token, c *ctx) ([]Prop, error) {
+func buildPropAssignments(toks []tok.Token, ctx *context) ([]Prop, error) {
 	props := []Prop{}
 	p := Prop{}
 
@@ -23,13 +23,13 @@ func buildPropAssignments(toks []tok.Token, c *ctx) ([]Prop, error) {
 	state := Prop
 
 	// Decrement contex index as it is incremented at the beginnig of the for loop.
-	c.i--
+	ctx.i--
 tokenLoop:
 	for {
-		c.i++
+		ctx.i++
 		switch state {
 		case Prop:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.Property:
 				p.Name = t
 				state = Ass
@@ -37,23 +37,23 @@ tokenLoop:
 				return nil, unexpected(t, "property name")
 			}
 		case Ass:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "'='")
 			}
 		case Exp:
-			expr, err := buildExpr(toks, c, nil)
+			expr, err := buildExpr(toks, ctx, nil)
 			if err != nil {
 				return nil, err
 			}
-			c.i--
+			ctx.i--
 			p.Value = expr
 			props = append(props, p)
 			state = Semicolon
 		case Semicolon:
-			switch t := toks[c.i].(type) {
+			switch t := toks[ctx.i].(type) {
 			case tok.Newline, tok.Eof:
 				break tokenLoop
 			case tok.Semicolon:

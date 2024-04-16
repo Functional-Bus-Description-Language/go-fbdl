@@ -52,14 +52,14 @@ func (d Doc) Text(src []byte) string {
 	return text
 }
 
-func buildDoc(toks []tok.Token, c *ctx) Doc {
+func buildDoc(toks []tok.Token, ctx *context) Doc {
 	doc := Doc{}
-	doc.Lines = append(doc.Lines, toks[c.i].(tok.Comment))
+	doc.Lines = append(doc.Lines, toks[ctx.i].(tok.Comment))
 
 	prevNewline := false
 	for {
-		c.i++
-		switch t := toks[c.i].(type) {
+		ctx.i++
+		switch t := toks[ctx.i].(type) {
 		case tok.Newline:
 			if prevNewline {
 				break
