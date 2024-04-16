@@ -207,7 +207,7 @@ func Parse(src []byte) ([]Token, error) {
 	toks = append(
 		toks,
 		Eof{
-			position: position{
+			position{
 				start:  ctx.idx,
 				end:    ctx.idx,
 				line:   ctx.line,
@@ -223,7 +223,7 @@ func parseSpace(ctx *context, src []byte, toks []Token) error {
 	if t, ok := lastToken(toks); ok {
 		if _, ok := t.(Newline); ok {
 			return Error{
-				Indent{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+				Indent{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 				"space character ' ' not allowed for indent",
 			}
 		}
@@ -245,7 +245,7 @@ func parseSpace(ctx *context, src []byte, toks []Token) error {
 func parseTab(ctx *context, src []byte, toks *[]Token) error {
 	start := ctx.idx
 
-	tab := Indent{position: position{start, start, ctx.line, ctx.col(ctx.idx)}}
+	tab := Indent{position{start, start, ctx.line, ctx.col(ctx.idx)}}
 	errMsg := "tab character '\\t' not allowed for alignment"
 	if t, ok := lastToken(*toks); ok {
 		if _, ok := t.(Newline); !ok {
@@ -267,7 +267,7 @@ func parseTab(ctx *context, src []byte, toks *[]Token) error {
 			indent++
 		} else if b == ' ' {
 			return Error{
-				Indent{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+				Indent{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 				"space character ' ' right after tab character '\\t'",
 			}
 		} else {
@@ -276,15 +276,15 @@ func parseTab(ctx *context, src []byte, toks *[]Token) error {
 	}
 
 	if indent == ctx.indent+1 {
-		t := Indent{position: position{start, ctx.idx - 1, ctx.line, ctx.col(start)}}
+		t := Indent{position{start, ctx.idx - 1, ctx.line, ctx.col(start)}}
 		*toks = append(*toks, t)
 	} else if indent > ctx.indent+1 {
 		return Error{
-			Indent{position: position{start, start, ctx.line, ctx.col(start)}}, "multi indent increase",
+			Indent{position{start, start, ctx.line, ctx.col(start)}}, "multi indent increase",
 		}
 	} else if indent < ctx.indent {
 		// Insert proper number of INDENT_DEC tokens.
-		t := Dedent{position: position{start, start, ctx.line, ctx.col(start)}}
+		t := Dedent{position{start, start, ctx.line, ctx.col(start)}}
 		for i := 0; indent+i < ctx.indent; i++ {
 			*toks = append(*toks, t)
 		}
@@ -302,7 +302,7 @@ func parseNewline(ctx *context, src []byte, toks *[]Token) error {
 		}
 	}
 
-	nl := Newline{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	nl := Newline{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 
 	// Eat all newlines
 	for {
@@ -357,12 +357,12 @@ func parseComma(ctx *context, toks []Token) (Token, error) {
 	if t, ok := lastToken(toks); ok {
 		if _, ok := t.(Comma); ok {
 			return nil, Error{
-				Comma{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}, "redundant ','",
+				Comma{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}, "redundant ','",
 			}
 		}
 	}
 
-	t := Comma{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	t := Comma{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return t, nil
 }
@@ -371,162 +371,162 @@ func parseSemicolon(ctx *context, toks []Token) (Token, error) {
 	if t, ok := lastToken(toks); ok {
 		if _, ok := t.(Semicolon); ok {
 			return nil, Error{
-				Semicolon{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}, "redundant ';'",
+				Semicolon{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}, "redundant ';'",
 			}
 		}
 	}
 
-	t := Semicolon{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	t := Semicolon{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return t, nil
 }
 
 func parseNonequalityOperator(ctx *context) Neq {
-	n := Neq{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	n := Neq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return n
 }
 
 func parseNegationOperator(ctx *context) Neg {
-	n := Neg{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	n := Neg{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return n
 }
 
 func parseEqualityOperator(ctx *context) Eq {
-	e := Eq{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	e := Eq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return e
 }
 
 func parseAssignmentOperator(ctx *context) Ass {
-	a := Ass{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	a := Ass{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return a
 }
 
 func parseAdditionOperator(ctx *context) Add {
-	a := Add{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	a := Add{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return a
 }
 
 func parseSubtractionOperator(ctx *context) Sub {
-	toks := Sub{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	toks := Sub{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return toks
 }
 
 func parseRemainderOperator(ctx *context) Rem {
-	r := Rem{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	r := Rem{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return r
 }
 
 func parseExponentiationOperator(ctx *context) Exp {
-	e := Exp{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	e := Exp{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return e
 }
 
 func parseMultiplicationOperator(ctx *context) Mul {
-	m := Mul{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	m := Mul{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return m
 }
 
 func parseDivisionOperator(ctx *context) Div {
-	d := Div{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	d := Div{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return d
 }
 
 func parseLessThanEqualOperator(ctx *context) LessEq {
-	le := LessEq{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	le := LessEq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return le
 }
 
 func parseLeftShiftOperator(ctx *context) LeftShift {
-	ls := LeftShift{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	ls := LeftShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return ls
 }
 
 func parseLessThanOperator(ctx *context) Less {
-	l := Less{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	l := Less{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return l
 }
 
 func parseGreaterThanEqualOperator(ctx *context) GreaterEq {
-	ge := GreaterEq{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	ge := GreaterEq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return ge
 }
 
 func parseRightShiftOperator(ctx *context) RightShift {
-	rs := RightShift{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	rs := RightShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return rs
 }
 
 func parseGreaterThanOperator(ctx *context) Greater {
-	g := Greater{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	g := Greater{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return g
 }
 
 func parseLeftParenthesis(ctx *context) LeftParen {
-	lp := LeftParen{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	lp := LeftParen{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return lp
 }
 
 func parseRightParenthesis(ctx *context) RightParen {
-	rp := RightParen{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	rp := RightParen{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return rp
 }
 
 func parseLeftBracket(ctx *context) LeftBracket {
-	lb := LeftBracket{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	lb := LeftBracket{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return lb
 }
 
 func parseRightBracket(ctx *context) RightBracket {
-	rb := RightBracket{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	rb := RightBracket{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return rb
 }
 
 func parseLogicalAnd(ctx *context) And {
-	a := And{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	a := And{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return a
 }
 
 func parseBitAnd(ctx *context) BitAnd {
-	ba := BitAnd{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	ba := BitAnd{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return ba
 }
 
 func parseLogicalOr(ctx *context) Or {
-	o := Or{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	o := Or{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx += 2
 	return o
 }
 
 func parseBitOr(ctx *context) BitOr {
-	bo := BitOr{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	bo := BitOr{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 	ctx.idx++
 	return bo
 }
 
 func parseString(ctx *context, src []byte) (String, error) {
-	t := String{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
+	t := String{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}}
 
 	for {
 		ctx.idx++
@@ -546,7 +546,7 @@ func parseString(ctx *context, src []byte) (String, error) {
 }
 
 func parseBinBitString(ctx *context, src []byte) (Token, error) {
-	t := BitString{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 
 	// Skip b"
 	ctx.idx += 2
@@ -570,7 +570,7 @@ func parseBinBitString(ctx *context, src []byte) (Token, error) {
 				return t, Error{t, "unterminated binary bit string, probably missing '\"'"}
 			default:
 				return t, Error{
-					BitString{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+					BitString{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 					fmt.Sprintf("invalid character '%c' in binary bit string", b),
 				}
 			}
@@ -579,7 +579,7 @@ func parseBinBitString(ctx *context, src []byte) (Token, error) {
 }
 
 func parseOctalBitString(ctx *context, src []byte) (Token, error) {
-	t := BitString{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 
 	// Skip o"
 	ctx.idx += 2
@@ -603,7 +603,7 @@ func parseOctalBitString(ctx *context, src []byte) (Token, error) {
 				return t, Error{t, "unterminated octal bit string, probably missing '\"'"}
 			default:
 				return t, Error{
-					BitString{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+					BitString{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 					fmt.Sprintf("invalid character '%c' in octal bit string", b),
 				}
 			}
@@ -612,7 +612,7 @@ func parseOctalBitString(ctx *context, src []byte) (Token, error) {
 }
 
 func parseHexBitString(ctx *context, src []byte) (Token, error) {
-	t := BitString{position: position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
 
 	// Skip x"
 	ctx.idx += 2
@@ -635,7 +635,7 @@ func parseHexBitString(ctx *context, src []byte) (Token, error) {
 			return t, Error{t, "unterminated hex bit string, probably missing '\"'"}
 		default:
 			return t, Error{
-				BitString{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+				BitString{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 				fmt.Sprintf("invalid character '%c' in hex bit string", b),
 			}
 		}
@@ -654,7 +654,7 @@ func parseNumber(ctx *context, src []byte) (Number, error) {
 		return parseHexInt(ctx, src)
 	}
 
-	i := Int{position: position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
+	i := Int{position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
 	hasPoint := false
 	hasE := false
 
@@ -672,13 +672,13 @@ func parseNumber(ctx *context, src []byte) (Number, error) {
 		if b == '.' {
 			if hasPoint {
 				return nil, Error{
-					Real{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+					Real{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 					"second point character '.' in number",
 				}
 			} else {
 				if hasE {
 					return nil, Error{
-						Real{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+						Real{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 						"point character '.' after exponent in number",
 					}
 				}
@@ -687,7 +687,7 @@ func parseNumber(ctx *context, src []byte) (Number, error) {
 		} else if b == 'e' || b == 'E' {
 			if hasE {
 				return nil, Error{
-					Real{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+					Real{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 					"second exponent in number",
 				}
 			} else {
@@ -697,7 +697,7 @@ func parseNumber(ctx *context, src []byte) (Number, error) {
 			break
 		} else {
 			return nil, Error{
-				Int{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+				Int{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 				fmt.Sprintf("invalid character '%c' in number", b),
 			}
 		}
@@ -713,7 +713,7 @@ func parseNumber(ctx *context, src []byte) (Number, error) {
 }
 
 func parseBinInt(ctx *context, src []byte) (Int, error) {
-	t := Int{position: position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
+	t := Int{position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
 
 	// Skip 0b
 	ctx.idx += 2
@@ -728,7 +728,7 @@ func parseBinInt(ctx *context, src []byte) (Int, error) {
 			break
 		} else {
 			return t, Error{
-				Int{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+				Int{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 				fmt.Sprintf("invalid character '%c' in binary", b),
 			}
 		}
@@ -738,7 +738,7 @@ func parseBinInt(ctx *context, src []byte) (Int, error) {
 }
 
 func parseOctalInt(ctx *context, src []byte) (Int, error) {
-	t := Int{position: position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
+	t := Int{position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
 
 	// Skip 0o
 	ctx.idx += 2
@@ -753,7 +753,7 @@ func parseOctalInt(ctx *context, src []byte) (Int, error) {
 			break
 		} else {
 			return t, Error{
-				Int{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+				Int{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 				fmt.Sprintf("invalid character '%c' in octal", b),
 			}
 		}
@@ -763,7 +763,7 @@ func parseOctalInt(ctx *context, src []byte) (Int, error) {
 }
 
 func parseHexInt(ctx *context, src []byte) (Int, error) {
-	t := Int{position: position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
+	t := Int{position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
 
 	// Skip 0x
 	ctx.idx += 2
@@ -778,7 +778,7 @@ func parseHexInt(ctx *context, src []byte) (Int, error) {
 			break
 		} else {
 			return t, Error{
-				Int{position: position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
+				Int{position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}},
 				fmt.Sprintf("invalid character '%c' in hex", b),
 			}
 		}
@@ -808,7 +808,7 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 		for i, chunk := range chunks {
 			if bytes.Contains(chunk, []byte{'.'}) {
 				t = QualIdent{
-					position: position{
+					position{
 						start: ctx.idx, end: ctx.idx + len(chunk) - 1, line: ctx.line, column: ctx.col(ctx.idx),
 					},
 				}
@@ -817,7 +817,7 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 				}
 			} else {
 				t = Ident{
-					position: position{
+					position{
 						start: ctx.idx, end: ctx.idx + len(chunk) - 1, line: ctx.line, column: ctx.col(ctx.idx),
 					},
 				}
@@ -827,13 +827,13 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 			}
 			*toks = append(*toks, t)
 			ctx.idx += len(chunks[i])
-			t = Sub{position: position{start: ctx.idx, end: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
+			t = Sub{position{start: ctx.idx, end: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
 			*toks = append(*toks, t)
 			ctx.idx++
 		}
 	} else if hasDot {
 		// It is qualified identifier
-		t = QualIdent{position: position{start: ctx.idx, end: ctx.idx + len(word) - 1, line: ctx.line, column: ctx.col(ctx.idx)}}
+		t = QualIdent{position{start: ctx.idx, end: ctx.idx + len(word) - 1, line: ctx.line, column: ctx.col(ctx.idx)}}
 
 		if !isValidQualifiedIdentifier(word) {
 			return t, Error{t, qualIdentErrMsg}
@@ -843,9 +843,9 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 	}
 
 	splitHyphenatedWord := func() (Ident, Sub, Ident) {
-		i1 := Ident{position: position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
-		s := Sub{position: position{line: ctx.line}}
-		i2 := Ident{position: position{end: ctx.idx + len(word) - 1, line: ctx.line}}
+		i1 := Ident{position{start: ctx.idx, line: ctx.line, column: ctx.col(ctx.idx)}}
+		s := Sub{position{line: ctx.line}}
+		i2 := Ident{position{end: ctx.idx + len(word) - 1, line: ctx.line}}
 
 		for i := 0; i < len(word); i++ {
 			if word[i] == '-' {
@@ -870,7 +870,7 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 			t = parseProperty(word, ctx)
 			// If it is not property, then it must be an identifier.
 			if _, ok := t.(None); ok {
-				t = Ident{position: position{t.Start(), t.End(), t.Line(), t.Column()}}
+				t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
 			} else {
 				// However, properties are properties only if they are in valid place,
 				// otherwise, these are regular identifiers.
@@ -879,7 +879,7 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 					case Newline, Semicolon, Indent:
 						// Do nothing, this is property
 					default:
-						t = Ident{position: position{t.Start(), t.End(), t.Line(), t.Column()}}
+						t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
 					}
 				}
 			}
@@ -890,11 +890,11 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 			if prevTok, ok := lastToken(*toks); ok {
 				switch prevTok.(type) {
 				case Newline, Indent, Dedent:
-					t = Ident{position: position{t.Start(), t.End(), t.Line(), t.Column()}}
+					t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
 				}
 			}
 			if len(*toks) == 0 {
-				t = Ident{position: position{t.Start(), t.End(), t.Line(), t.Column()}}
+				t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
 			}
 		}
 	} else {
@@ -937,7 +937,7 @@ func parseWord(ctx *context, src []byte, toks *[]Token) (Token, error) {
 				switch string(word) {
 				case "ns", "us", "ms", "s":
 					t = Time{
-						position: position{
+						position{
 							start:  prevTok.Start(),
 							end:    t.End(),
 							line:   prevTok.Line(),
@@ -963,40 +963,40 @@ func parseKeyword(word []byte, ctx *context) Token {
 
 	switch string(word) {
 	case "false", "true":
-		return Bool{position: position{s, e, l, col}}
+		return Bool{position{s, e, l, col}}
 	case "block":
-		return Block{position: position{s, e, l, col}}
+		return Block{position{s, e, l, col}}
 	case "bus":
-		return Bus{position: position{s, e, l, col}}
+		return Bus{position{s, e, l, col}}
 	case "config":
-		return Config{position: position{s, e, l, col}}
+		return Config{position{s, e, l, col}}
 	case "const":
-		return Const{position: position{s, e, l, col}}
+		return Const{position{s, e, l, col}}
 	case "import":
-		return Import{position: position{s, e, l, col}}
+		return Import{position{s, e, l, col}}
 	case "irq":
-		return Irq{position: position{s, e, l, col}}
+		return Irq{position{s, e, l, col}}
 	case "mask":
-		return Mask{position: position{s, e, l, col}}
+		return Mask{position{s, e, l, col}}
 	case "memory":
-		return Memory{position: position{s, e, l, col}}
+		return Memory{position{s, e, l, col}}
 	case "param":
-		return Param{position: position{s, e, l, col}}
+		return Param{position{s, e, l, col}}
 	case "proc":
-		return Proc{position: position{s, e, l, col}}
+		return Proc{position{s, e, l, col}}
 	case "return":
-		return Return{position: position{s, e, l, col}}
+		return Return{position{s, e, l, col}}
 	case "static":
-		return Static{position: position{s, e, l, col}}
+		return Static{position{s, e, l, col}}
 	case "status":
-		return Status{position: position{s, e, l, col}}
+		return Status{position{s, e, l, col}}
 	case "stream":
-		return Stream{position: position{s, e, l, col}}
+		return Stream{position{s, e, l, col}}
 	case "type":
-		return Type{position: position{s, e, l, col}}
+		return Type{position{s, e, l, col}}
 	}
 
-	return None{position: position{s, e, l, col}}
+	return None{position{s, e, l, col}}
 }
 
 func parseProperty(word []byte, ctx *context) Token {
@@ -1007,46 +1007,46 @@ func parseProperty(word []byte, ctx *context) Token {
 
 	switch string(word) {
 	case "access":
-		return Access{position: position{s, e, l, col}}
+		return Access{position{s, e, l, col}}
 	case "add-enable":
-		return AddEnable{position: position{s, e, l, col}}
+		return AddEnable{position{s, e, l, col}}
 	case "atomic":
-		return Atomic{position: position{s, e, l, col}}
+		return Atomic{position{s, e, l, col}}
 	case "byte-write-enable":
-		return ByteWriteEnable{position: position{s, e, l, col}}
+		return ByteWriteEnable{position{s, e, l, col}}
 	case "clear":
-		return Clear{position: position{s, e, l, col}}
+		return Clear{position{s, e, l, col}}
 	case "delay":
-		return Delay{position: position{s, e, l, col}}
+		return Delay{position{s, e, l, col}}
 	case "enable-init-value":
-		return EnableInitValue{position: position{s, e, l, col}}
+		return EnableInitValue{position{s, e, l, col}}
 	case "enable-reset-value":
-		return EnableResetValue{position: position{s, e, l, col}}
+		return EnableResetValue{position{s, e, l, col}}
 	case "groups":
-		return Groups{position: position{s, e, l, col}}
+		return Groups{position{s, e, l, col}}
 	case "init-value":
-		return InitValue{position: position{s, e, l, col}}
+		return InitValue{position{s, e, l, col}}
 	case "in-trigger":
-		return InTrigger{position: position{s, e, l, col}}
+		return InTrigger{position{s, e, l, col}}
 	case "masters":
-		return Masters{position: position{s, e, l, col}}
+		return Masters{position{s, e, l, col}}
 	case "out-trigger":
-		return OutTrigger{position: position{s, e, l, col}}
+		return OutTrigger{position{s, e, l, col}}
 	case "range":
-		return Range{position: position{s, e, l, col}}
+		return Range{position{s, e, l, col}}
 	case "read-latency":
-		return ReadLatency{position: position{s, e, l, col}}
+		return ReadLatency{position{s, e, l, col}}
 	case "read-value":
-		return ReadValue{position: position{s, e, l, col}}
+		return ReadValue{position{s, e, l, col}}
 	case "reset":
-		return Reset{position: position{s, e, l, col}}
+		return Reset{position{s, e, l, col}}
 	case "reset-value":
-		return ResetValue{position: position{s, e, l, col}}
+		return ResetValue{position{s, e, l, col}}
 	case "size":
-		return Size{position: position{s, e, l, col}}
+		return Size{position{s, e, l, col}}
 	case "width":
-		return Width{position: position{s, e, l, col}}
+		return Width{position{s, e, l, col}}
 	}
 
-	return None{position: position{s, e, l, col}}
+	return None{position{s, e, l, col}}
 }
