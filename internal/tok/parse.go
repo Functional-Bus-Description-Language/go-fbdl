@@ -70,14 +70,6 @@ func isDigit(b byte) bool {
 	return '0' <= b && b <= '9'
 }
 
-func isBinDigit(b byte) bool {
-	return '0' <= b && b <= '1'
-}
-
-func isOctalDigit(b byte) bool {
-	return '0' <= b && b <= '7'
-}
-
 func isHexDigit(b byte) bool {
 	return ('0' <= b && b <= '9') ||
 		('a' <= b && b <= 'f') ||
@@ -722,7 +714,7 @@ func parseBinInt(ctx *context, src []byte) (Int, error) {
 			break
 		}
 		b := src[ctx.idx]
-		if isBinDigit(b) {
+		if b == '0' || b == '1' {
 			ctx.idx++
 		} else if isValidAfterNumber(b) {
 			break
@@ -747,7 +739,7 @@ func parseOctalInt(ctx *context, src []byte) (Int, error) {
 			break
 		}
 		b := src[ctx.idx]
-		if isOctalDigit(b) {
+		if '0' <= b && b <= '7' {
 			ctx.idx++
 		} else if isValidAfterNumber(b) {
 			break
