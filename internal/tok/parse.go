@@ -44,24 +44,24 @@ func lastToken(toks []Token) (Token, bool) {
 func getWord(src []byte, idx int) ([]byte, bool, bool) {
 	hasHyphen := false
 	hasDot := false
-	end_idx := idx
+	endIdx := idx
 
 	for {
-		if end_idx >= len(src) {
-			return src[idx:end_idx], hasHyphen, hasDot
+		if endIdx >= len(src) {
+			return src[idx:endIdx], hasHyphen, hasDot
 		}
 
-		b := src[end_idx]
+		b := src[endIdx]
 		if isLetter(b) || isDigit(b) || b == '_' || b == '-' || b == '.' {
 			if b == '-' {
 				hasHyphen = true
 			} else if b == '.' {
 				hasDot = true
 			}
-			end_idx++
+			endIdx++
 			continue
 		} else {
-			return src[idx:end_idx], hasHyphen, hasDot
+			return src[idx:endIdx], hasHyphen, hasDot
 		}
 	}
 }
