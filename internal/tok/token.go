@@ -125,7 +125,7 @@ type (
 	Width            struct{ position }
 	// Currently unused tokens
 	Period     struct{ position } // .
-	Colon      struct{ position } // : - currently unused
+	Colon      struct{ position } // :
 	LeftBrace  struct{ position } // {
 	RightBrace struct{ position } // }
 )
