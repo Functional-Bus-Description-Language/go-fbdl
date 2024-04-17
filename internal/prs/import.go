@@ -3,6 +3,7 @@ package prs
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
@@ -27,7 +28,7 @@ func buildImports(astImports []ast.Import, src []byte) []Import {
 			path = tok.Text(ai.Path, src)
 			path = path[1 : len(path)-1]
 			// TODO: Should it be [0] or the last element?
-			name = strings.Split(path, "/")[0]
+			name = strings.Split(path, string(os.PathSeparator))[0]
 			if len(name) > 4 && name[0:3] == "fbd-" {
 				name = name[4:]
 			}

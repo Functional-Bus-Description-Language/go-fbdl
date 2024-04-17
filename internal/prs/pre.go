@@ -25,7 +25,7 @@ func DiscoverPackages(main string) Packages {
 
 	fbdpath := os.Getenv("FBDPATH")
 	if len(fbdpath) != 0 {
-		pathsToLook = append(pathsToLook, strings.Split(fbdpath, ":")...)
+		pathsToLook = append(pathsToLook, strings.Split(fbdpath, string(os.PathListSeparator))...)
 	}
 
 	// TODO: Add support for $HOME/local/.lib/fbd
