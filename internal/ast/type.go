@@ -2,6 +2,7 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 )
 
 // The Type struct represents type definition.
@@ -16,29 +17,7 @@ type Type struct {
 }
 
 func (t Type) eq(t2 Type) bool {
-	if !t.Doc.eq(t2.Doc) ||
-		t.Name != t2.Name ||
-		len(t.Params) != len(t2.Params) ||
-		t.Count != t2.Count ||
-		t.Type != t2.Type ||
-		len(t.Args) != len(t2.Args) ||
-		!t.Body.eq(t2.Body) {
-		return false
-	}
-
-	for n := range t.Params {
-		if t.Params[n] != t2.Params[n] {
-			return false
-		}
-	}
-
-	for n := range t.Args {
-		if t.Args[n] != t2.Args[n] {
-			return false
-		}
-	}
-
-	return true
+	return reflect.DeepEqual(t, t2)
 }
 
 func buildType(toks []tok.Token, ctx *context) (Type, error) {

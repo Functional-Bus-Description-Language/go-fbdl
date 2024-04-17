@@ -12,37 +12,6 @@ type Body struct {
 	Types  []Type
 }
 
-func (b Body) eq(b2 Body) bool {
-	if len(b.Consts) != len(b2.Consts) ||
-		len(b.Insts) != len(b2.Insts) ||
-		len(b.Props) != len(b2.Props) {
-		return false
-	}
-
-	for i := range b.Consts {
-		if !b.Consts[i].eq(b2.Consts[i]) {
-			return false
-		}
-	}
-	for i := range b.Insts {
-		if !b.Insts[i].eq(b2.Insts[i]) {
-			return false
-		}
-	}
-	for i := range b.Props {
-		if b.Props[i] != b2.Props[i] {
-			return false
-		}
-	}
-	for i := range b.Types {
-		if !b.Types[i].eq(b2.Types[i]) {
-			return false
-		}
-	}
-
-	return true
-}
-
 func buildBody(toks []tok.Token, ctx *context) (Body, error) {
 	var (
 		err    error

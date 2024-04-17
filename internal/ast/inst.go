@@ -2,6 +2,7 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 )
 
 // The Inst struct represents functionality instantiation.
@@ -15,22 +16,7 @@ type Inst struct {
 }
 
 func (i Inst) eq(i2 Inst) bool {
-	if !i.Doc.eq(i2.Doc) ||
-		i.Name != i2.Name ||
-		i.Count != i2.Count ||
-		i.Type != i2.Type ||
-		len(i.Args) != len(i2.Args) ||
-		!i.Body.eq(i2.Body) {
-		return false
-	}
-
-	for n := range i.Args {
-		if i.Args[n] != i2.Args[n] {
-			return false
-		}
-	}
-
-	return true
+	return reflect.DeepEqual(i, i2)
 }
 
 func buildInst(toks []tok.Token, ctx *context) (Inst, error) {

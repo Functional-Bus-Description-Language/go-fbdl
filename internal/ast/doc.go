@@ -18,18 +18,6 @@ func (d Doc) endLine() int {
 	return d.Lines[len(d.Lines)-1].Line()
 }
 
-func (d Doc) eq(d2 Doc) bool {
-	if len(d.Lines) != len(d2.Lines) {
-		return false
-	}
-	for i := range d.Lines {
-		if d.Lines[i] != d2.Lines[i] {
-			return false
-		}
-	}
-	return true
-}
-
 func (d Doc) Text(src []byte) string {
 	text := ""
 	for i, l := range d.Lines {

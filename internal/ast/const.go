@@ -2,6 +2,7 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 )
 
 // The const struct represents constant.
@@ -12,7 +13,7 @@ type Const struct {
 }
 
 func (c Const) eq(c2 Const) bool {
-	return c.Doc.eq(c2.Doc) && c.Name == c2.Name && c.Value == c2.Value
+	return reflect.DeepEqual(c, c2)
 }
 
 func buildConst(toks []tok.Token, ctx *context) ([]Const, error) {

@@ -2,6 +2,7 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 )
 
 // The Expr interface represents generic expression.
@@ -79,21 +80,7 @@ func (ue UnaryExpr) expr()  {}
 func (pe ParenExpr) expr()  {}
 
 func (c Call) eq(c2 Call) bool {
-	if c.Name != c2.Name {
-		return false
-	}
-
-	if len(c.Args) != len(c2.Args) {
-		return false
-	}
-
-	for i := range c.Args {
-		if c.Args[i] != c2.Args[i] {
-			return false
-		}
-	}
-
-	return true
+	return reflect.DeepEqual(c, c2)
 }
 
 // leftOp is the operator on the left side of the expression.
