@@ -7,8 +7,8 @@ import (
 )
 
 type Error struct {
-	Tok Token
 	Msg string
+	Tok Token
 }
 
 func (e Error) Error() string {

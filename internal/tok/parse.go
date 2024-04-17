@@ -161,8 +161,8 @@ func parseSpace(ctx *context, toks []Token) error {
 	if t, ok := lastToken(toks); ok {
 		if _, ok := t.(Newline); ok {
 			return Error{
-				Indent{ctx.pos()},
 				"space character ' ' not allowed for indent",
+				Indent{ctx.pos()},
 			}
 		}
 	}
@@ -187,10 +187,10 @@ func parseTab(ctx *context, toks *[]Token) error {
 
 	if t, ok := lastToken(*toks); ok {
 		if _, ok := t.(Newline); !ok {
-			return Error{tab, errMsg}
+			return Error{errMsg, tab}
 		}
 	} else {
-		return Error{tab, errMsg}
+		return Error{errMsg, tab}
 	}
 
 	indent := 1
@@ -205,8 +205,8 @@ func parseTab(ctx *context, toks *[]Token) error {
 			indent++
 		} else if b == ' ' {
 			return Error{
-				Indent{ctx.pos()},
 				"space character ' ' right after tab character '\\t'",
+				Indent{ctx.pos()},
 			}
 		} else {
 			break
@@ -218,7 +218,8 @@ func parseTab(ctx *context, toks *[]Token) error {
 		*toks = append(*toks, t)
 	} else if indent > ctx.indent+1 {
 		return Error{
-			Indent{position{start, start, ctx.line, ctx.col(start)}}, "multi indent increase",
+			"multi indent increase",
+			Indent{position{start, start, ctx.line, ctx.col(start)}},
 		}
 	} else if indent < ctx.indent {
 		// Insert proper number of INDENT_DEC tokens.
@@ -236,7 +237,7 @@ func parseTab(ctx *context, toks *[]Token) error {
 func parseNewline(ctx *context, toks *[]Token) error {
 	if t, ok := lastToken(*toks); ok {
 		if _, ok := t.(Semicolon); ok {
-			return Error{t, "extra ';' at line end"}
+			return Error{"extra ';' at line end", t}
 		}
 	}
 
@@ -294,9 +295,7 @@ func parseComment(ctx *context, toks []Token) Token {
 func parseComma(ctx *context, toks []Token) (Token, error) {
 	if t, ok := lastToken(toks); ok {
 		if _, ok := t.(Comma); ok {
-			return nil, Error{
-				Comma{ctx.pos()}, "redundant ','",
-			}
+			return nil, Error{"redundant ','", Comma{ctx.pos()}}
 		}
 	}
 
@@ -308,9 +307,7 @@ func parseComma(ctx *context, toks []Token) (Token, error) {
 func parseSemicolon(ctx *context, toks []Token) (Token, error) {
 	if t, ok := lastToken(toks); ok {
 		if _, ok := t.(Semicolon); ok {
-			return nil, Error{
-				Semicolon{ctx.pos()}, "redundant ';'",
-			}
+			return nil, Error{"redundant ';'", Semicolon{ctx.pos()}}
 		}
 	}
 
@@ -469,7 +466,7 @@ func parseString(ctx *context) (String, error) {
 	for {
 		ctx.idx++
 		if ctx.end() {
-			return t, Error{t, "unterminated string, probably missing '\"'"}
+			return t, Error{"unterminated string, probably missing '\"'", t}
 		}
 		b := ctx.byte()
 		if b != '\n' {
@@ -490,7 +487,7 @@ func parseBinBitString(ctx *context) (Token, error) {
 	ctx.idx += 2
 	for {
 		if ctx.end() {
-			return t, Error{t, "unterminated binary bit string, probably missing '\"'"}
+			return t, Error{"unterminated binary bit string, probably missing '\"'", t}
 		}
 
 		switch b := ctx.byte(); b {
@@ -505,11 +502,11 @@ func parseBinBitString(ctx *context) (Token, error) {
 		default:
 			switch b {
 			case ' ', '\n', ';', ',':
-				return t, Error{t, "unterminated binary bit string, probably missing '\"'"}
+				return t, Error{"unterminated binary bit string, probably missing '\"'", t}
 			default:
 				return t, Error{
-					BitString{ctx.pos()},
 					fmt.Sprintf("invalid character '%c' in binary bit string", b),
+					BitString{ctx.pos()},
 				}
 			}
 		}
@@ -523,7 +520,7 @@ func parseOctalBitString(ctx *context) (Token, error) {
 	ctx.idx += 2
 	for {
 		if ctx.end() {
-			return t, Error{t, "unterminated octal bit string, probably missing '\"'"}
+			return t, Error{"unterminated octal bit string, probably missing '\"'", t}
 		}
 
 		switch b := ctx.byte(); b {
@@ -538,11 +535,11 @@ func parseOctalBitString(ctx *context) (Token, error) {
 		default:
 			switch b {
 			case ' ', '\n', ';', ',':
-				return t, Error{t, "unterminated octal bit string, probably missing '\"'"}
+				return t, Error{"unterminated octal bit string, probably missing '\"'", t}
 			default:
 				return t, Error{
-					BitString{ctx.pos()},
 					fmt.Sprintf("invalid character '%c' in octal bit string", b),
+					BitString{ctx.pos()},
 				}
 			}
 		}
@@ -556,7 +553,7 @@ func parseHexBitString(ctx *context) (Token, error) {
 	ctx.idx += 2
 	for {
 		if ctx.end() {
-			return t, Error{t, "unterminated hex bit string, probably missing '\"'"}
+			return t, Error{"unterminated hex bit string, probably missing '\"'", t}
 		}
 
 		switch b := ctx.byte(); b {
@@ -570,11 +567,11 @@ func parseHexBitString(ctx *context) (Token, error) {
 			t.end++
 			ctx.idx++
 		case ' ', '\n', ';', ',':
-			return t, Error{t, "unterminated hex bit string, probably missing '\"'"}
+			return t, Error{"unterminated hex bit string, probably missing '\"'", t}
 		default:
 			return t, Error{
-				BitString{ctx.pos()},
 				fmt.Sprintf("invalid character '%c' in hex bit string", b),
+				BitString{ctx.pos()},
 			}
 		}
 	}
@@ -610,14 +607,14 @@ func parseNumber(ctx *context) (Number, error) {
 		if b == '.' {
 			if hasPoint {
 				return nil, Error{
-					Real{ctx.pos()},
 					"second point character '.' in number",
+					Real{ctx.pos()},
 				}
 			} else {
 				if hasE {
 					return nil, Error{
-						Real{ctx.pos()},
 						"point character '.' after exponent in number",
+						Real{ctx.pos()},
 					}
 				}
 				hasPoint = true
@@ -625,8 +622,8 @@ func parseNumber(ctx *context) (Number, error) {
 		} else if b == 'e' || b == 'E' {
 			if hasE {
 				return nil, Error{
-					Real{ctx.pos()},
 					"second exponent in number",
+					Real{ctx.pos()},
 				}
 			} else {
 				hasE = true
@@ -635,8 +632,8 @@ func parseNumber(ctx *context) (Number, error) {
 			break
 		} else {
 			return nil, Error{
-				Int{ctx.pos()},
 				fmt.Sprintf("invalid character '%c' in number", b),
+				Int{ctx.pos()},
 			}
 		}
 	}
@@ -666,8 +663,8 @@ func parseBinInt(ctx *context) (Int, error) {
 			break
 		} else {
 			return t, Error{
-				Int{ctx.pos()},
 				fmt.Sprintf("invalid character '%c' in binary", b),
+				Int{ctx.pos()},
 			}
 		}
 	}
@@ -691,8 +688,8 @@ func parseOctalInt(ctx *context) (Int, error) {
 			break
 		} else {
 			return t, Error{
-				Int{ctx.pos()},
 				fmt.Sprintf("invalid character '%c' in octal", b),
+				Int{ctx.pos()},
 			}
 		}
 	}
@@ -717,8 +714,8 @@ func parseHexInt(ctx *context) (Int, error) {
 			break
 		} else {
 			return t, Error{
-				Int{ctx.pos()},
 				fmt.Sprintf("invalid character '%c' in hex", b),
+				Int{ctx.pos()},
 			}
 		}
 	}
@@ -752,7 +749,7 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 					},
 				}
 				if !isValidQualifiedIdentifier(chunk) {
-					return t, Error{t, qualIdentErrMsg}
+					return t, Error{qualIdentErrMsg, t}
 				}
 			} else {
 				t = Ident{
@@ -775,7 +772,7 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 		t = QualIdent{position{start: ctx.idx, end: ctx.idx + len(word) - 1, line: ctx.line, column: ctx.col(ctx.idx)}}
 
 		if !isValidQualifiedIdentifier(word) {
-			return t, Error{t, qualIdentErrMsg}
+			return t, Error{qualIdentErrMsg, t}
 		}
 
 		return t, nil
