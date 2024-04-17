@@ -6,7 +6,7 @@ import (
 
 // The Expr interface represents generic expression.
 type Expr interface {
-	exprNode()
+	expr()
 }
 
 // Expression nodes
@@ -65,18 +65,18 @@ type (
 	}
 )
 
-func (be BinaryExpr) exprNode() {}
-func (bs BitString) exprNode()  {}
-func (b Bool) exprNode()        {}
-func (c Call) exprNode()        {}
-func (l List) exprNode()        {}
-func (i Ident) exprNode()       {}
-func (i Int) exprNode()         {}
-func (r Real) exprNode()        {}
-func (s String) exprNode()      {}
-func (t Time) exprNode()        {}
-func (ue UnaryExpr) exprNode()  {}
-func (pe ParenExpr) exprNode()  {}
+func (be BinaryExpr) expr() {}
+func (bs BitString) expr()  {}
+func (b Bool) expr()        {}
+func (c Call) expr()        {}
+func (l List) expr()        {}
+func (i Ident) expr()       {}
+func (i Int) expr()         {}
+func (r Real) expr()        {}
+func (s String) expr()      {}
+func (t Time) expr()        {}
+func (ue UnaryExpr) expr()  {}
+func (pe ParenExpr) expr()  {}
 
 func (c Call) eq(c2 Call) bool {
 	if c.Name != c2.Name {
