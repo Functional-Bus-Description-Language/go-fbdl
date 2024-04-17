@@ -13,7 +13,7 @@ func TestBuildTypeSingleLine(t *testing.T) {
 		Count:  Int{toks[8].(tok.Int)},
 		Type:   toks[10].(tok.Config),
 		Body: Body{
-			Props: []Prop{Prop{toks[12].(tok.Width), Ident{toks[14].(tok.Ident)}}},
+			Props: []Property{Property{toks[12].(tok.Width), Ident{toks[14].(tok.Ident)}}},
 		},
 	}
 
@@ -48,8 +48,8 @@ func TestBuildTypeMultiLine(t *testing.T) {
 			Consts: []Const{
 				Const{Name: toks[13].(tok.Ident), Value: String{toks[15].(tok.String)}},
 			},
-			Props: []Prop{
-				Prop{
+			Props: []Property{
+				Property{
 					Name:  toks[17].(tok.InitValue),
 					Value: Ident{toks[19].(tok.Ident)},
 				},

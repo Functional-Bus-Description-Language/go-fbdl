@@ -12,9 +12,9 @@ func TestBuildInstSingleLine(t *testing.T) {
 		Count: Int{toks[2].(tok.Int)},
 		Type:  toks[4].(tok.Status),
 		Body: Body{
-			Props: []Prop{
-				Prop{toks[6].(tok.Atomic), Bool{toks[8].(tok.Bool)}},
-				Prop{toks[10].(tok.Width), Int{toks[12].(tok.Int)}},
+			Props: []Property{
+				Property{toks[6].(tok.Atomic), Bool{toks[8].(tok.Bool)}},
+				Property{toks[10].(tok.Width), Int{toks[12].(tok.Int)}},
 			},
 		},
 	}
@@ -54,15 +54,15 @@ func TestBuildInstMultiLine(t *testing.T) {
 					Name: toks[24].(tok.Ident),
 					Type: toks[25].(tok.Config),
 					Body: Body{
-						Props: []Prop{
-							Prop{toks[28].(tok.Range), Int{toks[30].(tok.Int)}},
+						Props: []Property{
+							Property{toks[28].(tok.Range), Int{toks[30].(tok.Int)}},
 						},
 					},
 				},
 			},
-			Props: []Prop{
-				Prop{toks[11].(tok.Masters), Int{toks[13].(tok.Int)}},
-				Prop{toks[15].(tok.Reset), String{toks[17].(tok.String)}},
+			Props: []Property{
+				Property{toks[11].(tok.Masters), Int{toks[13].(tok.Int)}},
+				Property{toks[15].(tok.Reset), String{toks[17].(tok.String)}},
 			},
 		},
 	}
