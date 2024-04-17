@@ -3,6 +3,7 @@ package ast
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 	"testing"
 )
 
@@ -14,7 +15,7 @@ func checkExpr(c context, i int, got Expr, want Expr, err error) error {
 	errMsg := "context.i = %d, i = %d\n\ngot:  %+v\nwant: %+v"
 	switch want := want.(type) {
 	case Call:
-		if !want.eq(got.(Call)) {
+		if !reflect.DeepEqual(got, want) {
 			return fmt.Errorf(errMsg, c.i, i, got, want)
 		}
 	default:

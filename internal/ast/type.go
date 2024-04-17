@@ -2,7 +2,6 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
-	"reflect"
 )
 
 // The Type struct represents type definition.
@@ -14,10 +13,6 @@ type Type struct {
 	Type   tok.Token // Basic type, identifier or qualified identifier
 	Args   []Arg
 	Body   Body
-}
-
-func (t Type) eq(t2 Type) bool {
-	return reflect.DeepEqual(t, t2)
 }
 
 func buildType(toks []tok.Token, ctx *context) (Type, error) {

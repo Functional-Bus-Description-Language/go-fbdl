@@ -2,7 +2,6 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
-	"reflect"
 )
 
 // The Expr interface represents generic expression.
@@ -78,10 +77,6 @@ func (s String) expr()      {}
 func (t Time) expr()        {}
 func (ue UnaryExpr) expr()  {}
 func (pe ParenExpr) expr()  {}
-
-func (c Call) eq(c2 Call) bool {
-	return reflect.DeepEqual(c, c2)
-}
 
 // leftOp is the operator on the left side of the expression.
 func buildExpr(toks []tok.Token, ctx *context, leftOp tok.Operator) (Expr, error) {

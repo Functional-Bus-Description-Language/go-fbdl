@@ -2,6 +2,7 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 	"testing"
 )
 
@@ -26,7 +27,7 @@ func TestBuildTypeSingleLine(t *testing.T) {
 		t.Fatalf("c.i = %d", c.i)
 	}
 
-	if !got.eq(want) {
+	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("\ngot:\n%+v,\nwant\n%+v", got, want)
 	}
 }
@@ -67,7 +68,7 @@ func TestBuildTypeMultiLine(t *testing.T) {
 		t.Fatalf("c.i = %d", c.i)
 	}
 
-	if !got.eq(want) {
+	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("\ngot:\n%+v,\nwant\n%+v", got, want)
 	}
 }

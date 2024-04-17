@@ -2,6 +2,7 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 	"testing"
 )
 
@@ -19,7 +20,7 @@ func TestBuildSingleConst(t *testing.T) {
 	if c.i != 4 {
 		t.Fatalf("c.i = %d", c.i)
 	}
-	if !got[0].eq(want) {
+	if !reflect.DeepEqual(got[0], want) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
 	}
 }
@@ -53,7 +54,7 @@ func TestBuildMultiConst(t *testing.T) {
 	}
 
 	for i := range want {
-		if !got[i].eq(want[i]) {
+		if !reflect.DeepEqual(got[i], want[i]) {
 			t.Fatalf("i: %d\ngot:\n%+v,\nwant\n%+v", i, got[i], want[i])
 		}
 	}
