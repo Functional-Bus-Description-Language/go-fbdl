@@ -2,13 +2,36 @@ package tok
 
 import "fmt"
 
-type Token interface {
-	Start() int
-	End() int
-	Line() int
-	Column() int
-	Name() string
-}
+// Various token types
+type (
+	Token interface {
+		Start() int
+		End() int
+		Line() int
+		Column() int
+		Name() string
+	}
+
+	Functionality interface {
+		Token
+		functionality()
+	}
+
+	Number interface {
+		Token
+		number()
+	}
+
+	Operator interface {
+		Token
+		Precedence() int
+	}
+
+	Property interface {
+		Token
+		property()
+	}
+)
 
 // Loc returns location of the token within the file in "line:column" format.
 func Loc(t Token) string {
@@ -18,26 +41,6 @@ func Loc(t Token) string {
 // Text returns token text from the source.
 func Text(t Token, src []byte) string {
 	return string(src[t.Start() : t.End()+1])
-}
-
-type Functionality interface {
-	Token
-	functionalityToken()
-}
-
-type Number interface {
-	Token
-	numberToken()
-}
-
-type Operator interface {
-	Token
-	Precedence() int
-}
-
-type Property interface {
-	Token
-	propertyToken()
 }
 
 type None struct {
@@ -105,7 +108,7 @@ type Int struct {
 
 func (i Int) Name() string { return "integer" }
 
-func (i Int) numberToken() {}
+func (i Int) number() {}
 
 type Real struct {
 	position
@@ -113,7 +116,7 @@ type Real struct {
 
 func (r Real) Name() string { return "real" }
 
-func (r Real) numberToken() {}
+func (r Real) number() {}
 
 type String struct {
 	position
@@ -365,7 +368,7 @@ type Block struct {
 
 func (b Block) Name() string { return "'block'" }
 
-func (b Block) functionalityToken() {}
+func (b Block) functionality() {}
 
 type Bus struct {
 	position
@@ -373,217 +376,217 @@ type Bus struct {
 
 func (b Bus) Name() string { return "'bus'" }
 
-func (b Bus) functionalityToken() {}
+func (b Bus) functionality() {}
 
 type Config struct {
 	position
 }
 
-func (c Config) Name() string        { return "'config'" }
-func (c Config) functionalityToken() {}
+func (c Config) Name() string   { return "'config'" }
+func (c Config) functionality() {}
 
 type Irq struct {
 	position
 }
 
-func (i Irq) Name() string        { return "'irq'" }
-func (i Irq) functionalityToken() {}
+func (i Irq) Name() string   { return "'irq'" }
+func (i Irq) functionality() {}
 
 type Mask struct {
 	position
 }
 
-func (m Mask) Name() string        { return "'mask'" }
-func (m Mask) functionalityToken() {}
+func (m Mask) Name() string   { return "'mask'" }
+func (m Mask) functionality() {}
 
 type Memory struct {
 	position
 }
 
-func (m Memory) Name() string        { return "'memory'" }
-func (m Memory) functionalityToken() {}
+func (m Memory) Name() string   { return "'memory'" }
+func (m Memory) functionality() {}
 
 type Param struct {
 	position
 }
 
-func (p Param) Name() string        { return "'param'" }
-func (p Param) functionalityToken() {}
+func (p Param) Name() string   { return "'param'" }
+func (p Param) functionality() {}
 
 type Proc struct {
 	position
 }
 
-func (p Proc) Name() string        { return "'proc'" }
-func (p Proc) functionalityToken() {}
+func (p Proc) Name() string   { return "'proc'" }
+func (p Proc) functionality() {}
 
 type Return struct {
 	position
 }
 
-func (r Return) Name() string        { return "'return'" }
-func (r Return) functionalityToken() {}
+func (r Return) Name() string   { return "'return'" }
+func (r Return) functionality() {}
 
 type Static struct {
 	position
 }
 
-func (s Static) Name() string        { return "'static'" }
-func (s Static) functionalityToken() {}
+func (s Static) Name() string   { return "'static'" }
+func (s Static) functionality() {}
 
 type Status struct {
 	position
 }
 
-func (s Status) Name() string        { return "'status'" }
-func (s Status) functionalityToken() {}
+func (s Status) Name() string   { return "'status'" }
+func (s Status) functionality() {}
 
 type Stream struct {
 	position
 }
 
-func (s Stream) Name() string        { return "'stream'" }
-func (s Stream) functionalityToken() {}
+func (s Stream) Name() string   { return "'stream'" }
+func (s Stream) functionality() {}
 
 type Access struct {
 	position
 }
 
-func (a Access) Name() string   { return "'access'" }
-func (a Access) propertyToken() {}
+func (a Access) Name() string { return "'access'" }
+func (a Access) property()    {}
 
 type AddEnable struct {
 	position
 }
 
-func (ae AddEnable) Name() string   { return "'add-enable'" }
-func (ae AddEnable) propertyToken() {}
+func (ae AddEnable) Name() string { return "'add-enable'" }
+func (ae AddEnable) property()    {}
 
 type Atomic struct {
 	position
 }
 
-func (a Atomic) Name() string   { return "'atomic'" }
-func (a Atomic) propertyToken() {}
+func (a Atomic) Name() string { return "'atomic'" }
+func (a Atomic) property()    {}
 
 type ByteWriteEnable struct {
 	position
 }
 
-func (bwe ByteWriteEnable) Name() string   { return "'byte-write-enable'" }
-func (bwe ByteWriteEnable) propertyToken() {}
+func (bwe ByteWriteEnable) Name() string { return "'byte-write-enable'" }
+func (bwe ByteWriteEnable) property()    {}
 
 type Clear struct {
 	position
 }
 
-func (c Clear) Name() string   { return "'clear'" }
-func (c Clear) propertyToken() {}
+func (c Clear) Name() string { return "'clear'" }
+func (c Clear) property()    {}
 
 type Delay struct {
 	position
 }
 
-func (d Delay) Name() string   { return "'delay'" }
-func (d Delay) propertyToken() {}
+func (d Delay) Name() string { return "'delay'" }
+func (d Delay) property()    {}
 
 type EnableInitValue struct {
 	position
 }
 
-func (eiv EnableInitValue) Name() string   { return "'enable-init-value'" }
-func (eiv EnableInitValue) propertyToken() {}
+func (eiv EnableInitValue) Name() string { return "'enable-init-value'" }
+func (eiv EnableInitValue) property()    {}
 
 type EnableResetValue struct {
 	position
 }
 
-func (erv EnableResetValue) Name() string   { return "'enable-reset-value'" }
-func (erv EnableResetValue) propertyToken() {}
+func (erv EnableResetValue) Name() string { return "'enable-reset-value'" }
+func (erv EnableResetValue) property()    {}
 
 type Groups struct {
 	position
 }
 
-func (g Groups) Name() string   { return "'groups'" }
-func (g Groups) propertyToken() {}
+func (g Groups) Name() string { return "'groups'" }
+func (g Groups) property()    {}
 
 type InitValue struct {
 	position
 }
 
-func (iv InitValue) Name() string   { return "'init-value'" }
-func (iv InitValue) propertyToken() {}
+func (iv InitValue) Name() string { return "'init-value'" }
+func (iv InitValue) property()    {}
 
 type InTrigger struct {
 	position
 }
 
-func (it InTrigger) Name() string   { return "'in-trigger'" }
-func (it InTrigger) propertyToken() {}
+func (it InTrigger) Name() string { return "'in-trigger'" }
+func (it InTrigger) property()    {}
 
 type Masters struct {
 	position
 }
 
-func (m Masters) Name() string   { return "'masters'" }
-func (m Masters) propertyToken() {}
+func (m Masters) Name() string { return "'masters'" }
+func (m Masters) property()    {}
 
 type OutTrigger struct {
 	position
 }
 
-func (ot OutTrigger) Name() string   { return "'out-trigger'" }
-func (ot OutTrigger) propertyToken() {}
+func (ot OutTrigger) Name() string { return "'out-trigger'" }
+func (ot OutTrigger) property()    {}
 
 type Range struct {
 	position
 }
 
-func (r Range) Name() string   { return "'range'" }
-func (r Range) propertyToken() {}
+func (r Range) Name() string { return "'range'" }
+func (r Range) property()    {}
 
 type ReadLatency struct {
 	position
 }
 
-func (rl ReadLatency) Name() string  { return "'read-latency'" }
-func (r ReadLatency) propertyToken() {}
+func (rl ReadLatency) Name() string { return "'read-latency'" }
+func (r ReadLatency) property()     {}
 
 type ReadValue struct {
 	position
 }
 
-func (rv ReadValue) Name() string   { return "'read-value'" }
-func (rv ReadValue) propertyToken() {}
+func (rv ReadValue) Name() string { return "'read-value'" }
+func (rv ReadValue) property()    {}
 
 type Reset struct {
 	position
 }
 
-func (r Reset) Name() string   { return "'reset'" }
-func (r Reset) propertyToken() {}
+func (r Reset) Name() string { return "'reset'" }
+func (r Reset) property()    {}
 
 type ResetValue struct {
 	position
 }
 
-func (rv ResetValue) Name() string   { return "'reset-value'" }
-func (rv ResetValue) propertyToken() {}
+func (rv ResetValue) Name() string { return "'reset-value'" }
+func (rv ResetValue) property()    {}
 
 type Size struct {
 	position
 }
 
-func (s Size) Name() string   { return "'size'" }
-func (s Size) propertyToken() {}
+func (s Size) Name() string { return "'size'" }
+func (s Size) property()    {}
 
 type Width struct {
 	position
 }
 
-func (w Width) Name() string   { return "'width'" }
-func (w Width) propertyToken() {}
+func (w Width) Name() string { return "'width'" }
+func (w Width) property()    {}
 
 // . - currently unused
 type Period struct {
