@@ -1,3 +1,6 @@
+linters:
+  enable:
+    - exhaustive
 run:
   skip-files:
     - internal/ins/grp_order.go

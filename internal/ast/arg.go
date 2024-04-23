@@ -26,8 +26,9 @@ func buildArgList(toks []tok.Token, ctx *context) ([]Arg, error) {
 	args := []Arg{}
 	a := Arg{}
 
+	type State int
 	const (
-		Name = iota
+		Name State = iota
 		Ass
 		Comma
 		Val

@@ -24,8 +24,9 @@ func buildParamList(toks []tok.Token, ctx *context) ([]Param, error) {
 	params := []Param{}
 	p := Param{}
 
+	type State int
 	const (
-		Name = iota
+		Name State = iota
 		Ass
 		Val
 		Comma

@@ -44,8 +44,9 @@ func buildMultiConst(toks []tok.Token, ctx *context) ([]Const, error) {
 	consts := []Const{}
 	con := Const{}
 
+	type State int
 	const (
-		Indent int = iota
+		Indent State = iota
 		FirstId
 		Ass
 		Exp

@@ -53,8 +53,9 @@ func buildMultiImport(toks []tok.Token, ctx *context) ([]Import, error) {
 		return nil, unexpected(toks[ctx.i], "indent increase")
 	}
 
+	type State int
 	const (
-		Name = iota
+		Name State = iota
 		Path
 	)
 	state := Name

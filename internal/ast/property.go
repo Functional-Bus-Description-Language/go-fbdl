@@ -14,8 +14,9 @@ func buildPropAssignments(toks []tok.Token, ctx *context) ([]Property, error) {
 	props := []Property{}
 	prop := Property{}
 
+	type State int
 	const (
-		Prop = iota
+		Prop State = iota
 		Ass
 		Exp
 		Semicolon
