@@ -1,4 +1,5 @@
-bus.fbd:3:2: reassignment to 'width' property
+error: reassignment to 'width' property
+bus.fbd +3:2
    |
  3 | 	width = 2
    | 	^^^^^

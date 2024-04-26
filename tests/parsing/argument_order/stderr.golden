@@ -1,4 +1,5 @@
-bus.fbd:4:18: positional argument follows keyword argument
+error: positional argument follows keyword argument
+bus.fbd +4:18
    |
  4 | Main my_bus(c=2, 1)
    |                  ^

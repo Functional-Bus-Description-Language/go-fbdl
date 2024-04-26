@@ -7,7 +7,7 @@ import (
 )
 
 func TestBuildInstSingleLine(t *testing.T) {
-	toks, _ := tok.Parse([]byte("S [5]status; atomic = false; width = 10"))
+	toks, _ := tok.Parse([]byte("S [5]status; atomic = false; width = 10"), "")
 	want := Inst{
 		Name:  toks[0].(tok.Ident),
 		Count: Int{toks[2].(tok.Int)},
@@ -40,6 +40,7 @@ func TestBuildInstMultiLine(t *testing.T) {
 	const FOO = true
 	C config
 		range = 8`),
+		"",
 	)
 	want := Inst{
 		Name: toks[0].(tok.Ident),

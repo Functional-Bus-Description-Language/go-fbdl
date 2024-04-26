@@ -7,7 +7,7 @@ import (
 )
 
 func TestBuildTypeSingleLine(t *testing.T) {
-	toks, _ := tok.Parse([]byte("type foo_t(W=1) [8]config; width = W"))
+	toks, _ := tok.Parse([]byte("type foo_t(W=1) [8]config; width = W"), "")
 	want := Type{
 		Name:   toks[1].(tok.Ident),
 		Params: []Param{Param{toks[3].(tok.Ident), Int{toks[5].(tok.Int)}}},
@@ -37,6 +37,7 @@ func TestBuildTypeMultiLine(t *testing.T) {
 	const A = "a"
 	init-value = A
 	type cfg_t config`),
+		"",
 	)
 	want := Type{
 		Name: toks[1].(tok.Ident),

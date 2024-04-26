@@ -1,4 +1,5 @@
-bus.fbd:2:25: unterminated hex bit string, probably missing '"'
+error: unterminated hex bit string, probably missing '"'
+bus.fbd +2:25
    |
  2 | 	c config; init-value = x"1100; width = 64
    | 	                       ^^^^^^

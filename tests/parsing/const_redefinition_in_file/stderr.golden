@@ -1,4 +1,5 @@
-bus.fbd:3:7: redefinition of constant 'A', first definition line 1 column 7
+error: redefinition of constant 'A', first definition line 1 column 7
+bus.fbd +3:7
    |
  3 | const A = 2
    |       ^

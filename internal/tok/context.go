@@ -7,6 +7,7 @@ type context struct {
 	idx    int // Current buffer index
 	nlIdx  int // Last newline index
 	src    []byte
+	path   string
 }
 
 func (ctx context) end() bool {
@@ -20,7 +21,7 @@ func (ctx context) col(idx int) int {
 
 // Creates position from the current context state.
 func (ctx context) pos() position {
-	return position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx)}
+	return position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}
 }
 
 // Returns byte with index equal idx.

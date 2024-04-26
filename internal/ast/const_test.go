@@ -7,7 +7,7 @@ import (
 )
 
 func TestBuildSingleConst(t *testing.T) {
-	toks, _ := tok.Parse([]byte("const A = 15"))
+	toks, _ := tok.Parse([]byte("const A = 15"), "")
 	want := Const{
 		Name:  toks[1].(tok.Ident),
 		Value: Int{toks[3].(tok.Int)},
@@ -33,6 +33,7 @@ func TestBuildMultiConst(t *testing.T) {
 	C = 3.14
 
 	D = false`),
+		"",
 	)
 	want := []Const{
 		Const{Name: toks[3].(tok.Ident), Value: Int{toks[5].(tok.Int)}},

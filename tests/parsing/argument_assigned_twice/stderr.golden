@@ -1,4 +1,5 @@
-bus.fbd:4:18: reassignment to 'm' argument
+error: reassignment to 'm' argument
+bus.fbd +4:18
    |
  4 | Main my_bus(m=1, m=2)
    |                  ^

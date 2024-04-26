@@ -46,7 +46,7 @@ func getWord(src []byte, idx int) ([]byte, bool, bool) {
 }
 
 // Parses src byte array containing the source code and returns token Stream.
-func Parse(src []byte) ([]Token, error) {
+func Parse(src []byte, path string) ([]Token, error) {
 	var (
 		ctx  context
 		tok  Token
@@ -56,6 +56,7 @@ func Parse(src []byte) ([]Token, error) {
 	ctx.line = 1
 	ctx.nlIdx = -1
 	ctx.src = src
+	ctx.path = path
 
 	for {
 		if ctx.end() {
@@ -214,16 +215,16 @@ func parseTab(ctx *context, toks *[]Token) error {
 	}
 
 	if indent == ctx.indent+1 {
-		t := Indent{position{start, ctx.idx - 1, ctx.line, ctx.col(start)}}
+		t := Indent{position{start, ctx.idx - 1, ctx.line, ctx.col(start), ctx.src, ctx.path}}
 		*toks = append(*toks, t)
 	} else if indent > ctx.indent+1 {
 		return Error{
 			"multi indent increase",
-			Indent{position{start, start, ctx.line, ctx.col(start)}},
+			Indent{position{start, start, ctx.line, ctx.col(start), ctx.src, ctx.path}},
 		}
 	} else if indent < ctx.indent {
 		// Insert proper number of INDENT_DEC tokens.
-		t := Dedent{position{start, start, ctx.line, ctx.col(start)}}
+		t := Dedent{position{start, start, ctx.line, ctx.col(start), ctx.src, ctx.path}}
 		for i := 0; indent+i < ctx.indent; i++ {
 			*toks = append(*toks, t)
 		}
@@ -317,7 +318,7 @@ func parseSemicolon(ctx *context, toks []Token) (Token, error) {
 }
 
 func parseNonequalityOperator(ctx *context) Neq {
-	n := Neq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	n := Neq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return n
 }
@@ -329,7 +330,7 @@ func parseNegationOperator(ctx *context) Neg {
 }
 
 func parseEqualityOperator(ctx *context) Eq {
-	e := Eq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	e := Eq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return e
 }
@@ -359,7 +360,7 @@ func parseRemainderOperator(ctx *context) Rem {
 }
 
 func parseExponentiationOperator(ctx *context) Exp {
-	e := Exp{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	e := Exp{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return e
 }
@@ -377,13 +378,13 @@ func parseDivisionOperator(ctx *context) Div {
 }
 
 func parseLessThanEqualOperator(ctx *context) LessEq {
-	le := LessEq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	le := LessEq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return le
 }
 
 func parseLeftShiftOperator(ctx *context) LeftShift {
-	ls := LeftShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	ls := LeftShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return ls
 }
@@ -395,13 +396,13 @@ func parseLessThanOperator(ctx *context) Less {
 }
 
 func parseGreaterThanEqualOperator(ctx *context) GreaterEq {
-	ge := GreaterEq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	ge := GreaterEq{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return ge
 }
 
 func parseRightShiftOperator(ctx *context) RightShift {
-	rs := RightShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	rs := RightShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return rs
 }
@@ -437,7 +438,7 @@ func parseRightBracket(ctx *context) RightBracket {
 }
 
 func parseLogicalAnd(ctx *context) And {
-	a := And{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	a := And{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return a
 }
@@ -449,7 +450,7 @@ func parseBitAnd(ctx *context) BitAnd {
 }
 
 func parseLogicalOr(ctx *context) Or {
-	o := Or{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	o := Or{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return o
 }
@@ -481,7 +482,7 @@ func parseString(ctx *context) (String, error) {
 }
 
 func parseBinBitString(ctx *context) (Token, error) {
-	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 
 	// Skip b"
 	ctx.idx += 2
@@ -514,7 +515,7 @@ func parseBinBitString(ctx *context) (Token, error) {
 }
 
 func parseOctalBitString(ctx *context) (Token, error) {
-	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 
 	// Skip o"
 	ctx.idx += 2
@@ -547,7 +548,7 @@ func parseOctalBitString(ctx *context) (Token, error) {
 }
 
 func parseHexBitString(ctx *context) (Token, error) {
-	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx)}}
+	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 
 	// Skip x"
 	ctx.idx += 2
@@ -806,7 +807,7 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 			t = parseProperty(word, ctx)
 			// If it is not property, then it must be an identifier.
 			if _, ok := t.(None); ok {
-				t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
+				t = Ident{position{t.Start(), t.End(), t.Line(), t.Column(), ctx.src, ctx.path}}
 			} else {
 				// However, properties are properties only if they are in valid place,
 				// otherwise, these are regular identifiers.
@@ -815,7 +816,7 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 					case Newline, Semicolon, Indent:
 						// Do nothing, this is property
 					default:
-						t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
+						t = Ident{position{t.Start(), t.End(), t.Line(), t.Column(), ctx.src, ctx.path}}
 					}
 				}
 			}
@@ -826,11 +827,11 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 			if prevTok, ok := lastToken(*toks); ok {
 				switch prevTok.(type) {
 				case Newline, Indent, Dedent:
-					t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
+					t = Ident{position{t.Start(), t.End(), t.Line(), t.Column(), ctx.src, ctx.path}}
 				}
 			}
 			if len(*toks) == 0 {
-				t = Ident{position{t.Start(), t.End(), t.Line(), t.Column()}}
+				t = Ident{position{t.Start(), t.End(), t.Line(), t.Column(), ctx.src, ctx.path}}
 			}
 		}
 	} else {
@@ -897,7 +898,7 @@ func parseKeyword(word []byte, ctx *context) Token {
 	l := ctx.line
 	col := ctx.col(ctx.idx)
 
-	pos := position{s, e, l, col}
+	pos := position{s, e, l, col, ctx.src, ctx.path}
 
 	switch string(word) {
 	case "false", "true":
@@ -943,7 +944,7 @@ func parseProperty(word []byte, ctx *context) Token {
 	l := ctx.line
 	col := ctx.col(ctx.idx)
 
-	pos := position{s, e, l, col}
+	pos := position{s, e, l, col, ctx.src, ctx.path}
 
 	switch string(word) {
 	case "access":

@@ -1,4 +1,5 @@
-bus.fbd:1:26: parameters without default value must precede the ones with default value
+error: parameters without default value must precede the ones with default value
+bus.fbd +1:26
    |
  1 | type my_config(width=10, foo) config
    |                          ^^^

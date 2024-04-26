@@ -1,4 +1,5 @@
-bus.fbd:2:37: extra ';' at line end
+error: extra ';' at line end
+bus.fbd +2:37
    |
  2 | 	st status width = 10; atomic = true;
    | 	                                   ^

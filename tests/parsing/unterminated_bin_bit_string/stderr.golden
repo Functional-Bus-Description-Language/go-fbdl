@@ -1,4 +1,5 @@
-bus.fbd:2:25: unterminated binary bit string, probably missing '"'
+error: unterminated binary bit string, probably missing '"'
+bus.fbd +2:25
    |
  2 | 	c config; init-value = b"1100
    | 	                       ^^^^^^

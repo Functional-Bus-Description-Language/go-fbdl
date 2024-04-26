@@ -9,6 +9,8 @@ type (
 		End() int
 		Line() int
 		Column() int
+		Src() []byte
+		Path() string
 		Name() string
 	}
 

@@ -2,11 +2,12 @@ package ast
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"reflect"
 	"testing"
 )
 
 func TestBuildSingleImport(t *testing.T) {
-	toks, _ := tok.Parse([]byte(`import "some/path"`))
+	toks, _ := tok.Parse([]byte(`import "some/path"`), "")
 	want := Import{
 		Name: nil,
 		Path: toks[1].(tok.String),
@@ -19,11 +20,11 @@ func TestBuildSingleImport(t *testing.T) {
 	if c.i != 2 {
 		t.Fatalf("c.i = %d", c.i)
 	}
-	if got[0] != want {
+	if !reflect.DeepEqual(got[0], want) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
 	}
 
-	toks, _ = tok.Parse([]byte(`import pkg "path"`))
+	toks, _ = tok.Parse([]byte(`import pkg "path"`), "")
 	want = Import{
 		Name: toks[1].(tok.Ident),
 		Path: toks[2].(tok.String),
@@ -36,7 +37,7 @@ func TestBuildSingleImport(t *testing.T) {
 	if c.i != 3 {
 		t.Fatalf("c.i = %d", c.i)
 	}
-	if got[0] != want {
+	if !reflect.DeepEqual(got[0], want) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
 	}
 }
@@ -47,6 +48,7 @@ func TestBuildMultiImport(t *testing.T) {
 	pkg "path2"
 
 	"path3"`),
+		"",
 	)
 	want := []Import{
 		Import{Path: toks[3].(tok.String)},
@@ -64,7 +66,7 @@ func TestBuildMultiImport(t *testing.T) {
 	}
 
 	for i := range want {
-		if got[i] != want[i] {
+		if !reflect.DeepEqual(got[i], want[i]) {
 			t.Fatalf("i: %d\ngot:\n%+v,\nwant\n%+v", i, got[i], want[i])
 		}
 	}

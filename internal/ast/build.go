@@ -10,7 +10,7 @@ type context struct {
 }
 
 // Build builds ast from provided source.
-func Build(src []byte) (File, error) {
+func Build(src []byte, path string) (File, error) {
 	var (
 		err    error
 		f      File
@@ -22,7 +22,7 @@ func Build(src []byte) (File, error) {
 		typ    Type
 	)
 
-	toks, err := tok.Parse([]byte(src))
+	toks, err := tok.Parse([]byte(src), path)
 	if err != nil {
 		return File{}, err
 	}

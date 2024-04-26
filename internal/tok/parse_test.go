@@ -1,6 +1,7 @@
 package tok
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -348,7 +349,7 @@ func TestParse(t *testing.T) {
 			t.Fatalf("Invalid test index %d, expected %d", test.idx, i)
 		}
 
-		got, err := Parse([]byte(test.src))
+		got, err := Parse([]byte(test.src), "")
 		if err != nil {
 			t.Fatalf("Test %d: err != nil: %v", i, err)
 		}
@@ -361,7 +362,11 @@ func TestParse(t *testing.T) {
 		}
 
 		for j, tok := range test.want {
-			if got[j] != tok {
+			if reflect.TypeOf(got[j]) != reflect.TypeOf(tok) ||
+				got[j].Start() != tok.Start() ||
+				got[j].End() != tok.End() ||
+				got[j].Line() != tok.Line() ||
+				got[j].Column() != tok.Column() {
 				t.Fatalf(
 					"\nTest: %d\n\nCode:\n%s\n\nToken: %d\n got: %+v\nwant: %+v",
 					i, test.src, j, got[j], tok,
@@ -380,107 +385,107 @@ func TestParseError(t *testing.T) {
 		{
 			0,
 			"\n ",
-			"2:1: space character ' ' not allowed for indent",
+			"space character ' ' not allowed for indent",
 		},
 		{
 			1,
 			";\n",
-			"1:1: extra ';' at line end",
+			"extra ';' at line end",
 		},
 		{
 			2,
 			" ; \n",
-			"1:2: extra ';' at line end",
+			"extra ';' at line end",
 		},
 		{
 			3,
 			";;",
-			"1:2: redundant ';'",
+			"redundant ';'",
 		},
 		{
 			4,
 			"b\"01-uUwWxXzZ3\"",
-			"1:14: invalid character '3' in binary bit string",
+			"invalid character '3' in binary bit string",
 		},
 		{
 			5,
 			"B\"0",
-			"1:1: unterminated binary bit string, probably missing '\"'",
+			"unterminated binary bit string, probably missing '\"'",
 		},
 		{
 			6,
 			"o\"01234567-uUwWxXzZ8\"",
-			"1:20: invalid character '8' in octal bit string",
+			"invalid character '8' in octal bit string",
 		},
 		{
 			7,
 			"O\"0",
-			"1:1: unterminated octal bit string, probably missing '\"'",
+			"unterminated octal bit string, probably missing '\"'",
 		},
 		{
 			8,
 			"x\"0123456789aAbBcCdDeEfF-uUwWxXzZ8g\"",
-			"1:35: invalid character 'g' in hex bit string",
+			"invalid character 'g' in hex bit string",
 		},
 		{
 			9,
 			"X\"0",
-			"1:1: unterminated hex bit string, probably missing '\"'",
+			"unterminated hex bit string, probably missing '\"'",
 		},
 		{
 			10,
 			",,",
-			"1:2: redundant ','",
+			"redundant ','",
 		},
 		{
 			11,
 			"1.2.3",
-			"1:4: second point character '.' in number",
+			"second point character '.' in number",
 		},
 		{
 			12,
 			"1e2.",
-			"1:4: point character '.' after exponent in number",
+			"point character '.' after exponent in number",
 		},
 		{
 			13,
 			"1e2d",
-			"1:4: invalid character 'd' in number",
+			"invalid character 'd' in number",
 		},
 		{
 			14,
 			"\n\"str",
-			"2:1: unterminated string, probably missing '\"'",
+			"unterminated string, probably missing '\"'",
 		},
 		{
 			15,
 			"\t",
-			"1:1: tab character '\\t' not allowed for alignment",
+			"tab character '\\t' not allowed for alignment",
 		},
 		{
 			16,
 			"Main bus\n\tc config;\twidth = 7",
-			"2:11: tab character '\\t' not allowed for alignment",
+			"tab character '\\t' not allowed for alignment",
 		},
 		{
 			17,
 			"Main bus\n\t c config",
-			"2:2: space character ' ' right after tab character '\\t'",
+			"space character ' ' right after tab character '\\t'",
 		},
 		{
 			18,
 			"Main bus\n\t\tc config",
-			"2:1: multi indent increase",
+			"multi indent increase",
 		},
 		{
 			19,
 			"pkg.sym",
-			"1:1: symbol name in qualified identifier must start with upper case letter",
+			"symbol name in qualified identifier must start with upper case letter",
 		},
 		{
 			20,
 			"a-b.c",
-			"1:3: symbol name in qualified identifier must start with upper case letter",
+			"symbol name in qualified identifier must start with upper case letter",
 		},
 	}
 
@@ -489,13 +494,14 @@ func TestParseError(t *testing.T) {
 			t.Fatalf("Invalid test index %d, expected %d", test.idx, i)
 		}
 
-		_, err := Parse([]byte(test.src))
+		_, err := Parse([]byte(test.src), "")
 		if err == nil {
 			t.Fatalf("%d: err == nil, expected != nil", i)
 		}
 
-		if err.Error() != test.err {
-			t.Fatalf("%d:\n got: %v\nwant: %v", i, err, test.err)
+		tokErr := err.(Error)
+		if tokErr.Msg != test.err {
+			t.Fatalf("\nTest %d:\n\ngot:\n%v\n\nwant:\n%v", i, tokErr.Msg, test.err)
 		}
 	}
 }

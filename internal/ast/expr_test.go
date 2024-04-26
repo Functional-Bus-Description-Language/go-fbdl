@@ -19,7 +19,7 @@ func checkExpr(c context, i int, got Expr, want Expr, err error) error {
 			return fmt.Errorf(errMsg, c.i, i, got, want)
 		}
 	default:
-		if got != want {
+		if !reflect.DeepEqual(got, want) {
 			return fmt.Errorf(errMsg, c.i, i, got, want)
 		}
 	}
@@ -28,7 +28,7 @@ func checkExpr(c context, i int, got Expr, want Expr, err error) error {
 }
 
 func TestBuildIdent(t *testing.T) {
-	toks, _ := tok.Parse([]byte("id"))
+	toks, _ := tok.Parse([]byte("id"), "")
 	want := Ident{Name: toks[0]}
 	c := context{}
 	got, err := buildExpr(toks, &c, nil)
@@ -39,7 +39,7 @@ func TestBuildIdent(t *testing.T) {
 }
 
 func TestBuildUnaryExpr(t *testing.T) {
-	toks, _ := tok.Parse([]byte("-abc"))
+	toks, _ := tok.Parse([]byte("-abc"), "")
 	want := UnaryExpr{
 		Op: toks[0], X: Ident{Name: toks[1]},
 	}
@@ -50,7 +50,7 @@ func TestBuildUnaryExpr(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 
-	toks, _ = tok.Parse([]byte("+ 10"))
+	toks, _ = tok.Parse([]byte("+ 10"), "")
 	want = UnaryExpr{
 		Op: toks[0], X: Int{toks[1].(tok.Int)},
 	}
@@ -63,7 +63,7 @@ func TestBuildUnaryExpr(t *testing.T) {
 }
 
 func TestBuildParenExpr(t *testing.T) {
-	toks, _ := tok.Parse([]byte("(a >> b)"))
+	toks, _ := tok.Parse([]byte("(a >> b)"), "")
 	want := ParenExpr{
 		X: BinaryExpr{
 			X:  Ident{Name: toks[1]},
@@ -80,7 +80,7 @@ func TestBuildParenExpr(t *testing.T) {
 }
 
 func TestBuildCall(t *testing.T) {
-	toks, _ := tok.Parse([]byte("floor(v)"))
+	toks, _ := tok.Parse([]byte("floor(v)"), "")
 	want := Call{
 		Name: toks[0].(tok.Ident),
 		Args: []Expr{
@@ -94,7 +94,7 @@ func TestBuildCall(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 
-	toks, _ = tok.Parse([]byte("foo(12.35, true)"))
+	toks, _ = tok.Parse([]byte("foo(12.35, true)"), "")
 	want = Call{
 		Name: toks[0].(tok.Ident),
 		Args: []Expr{
@@ -111,7 +111,7 @@ func TestBuildCall(t *testing.T) {
 }
 
 func TestBuildBinaryExpr(t *testing.T) {
-	toks, _ := tok.Parse([]byte("A + 1"))
+	toks, _ := tok.Parse([]byte("A + 1"), "")
 	want := BinaryExpr{
 		X: Ident{Name: toks[0]}, Op: toks[1].(tok.Operator), Y: Int{toks[2].(tok.Int)},
 	}
@@ -120,10 +120,10 @@ func TestBuildBinaryExpr(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	if got != want {
+	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("\ngot:  %+v\nwant: %+v", got, want)
 	}
-	toks, _ = tok.Parse([]byte("A + B * C"))
+	toks, _ = tok.Parse([]byte("A + B * C"), "")
 	want = BinaryExpr{
 		X:  Ident{Name: toks[0]},
 		Op: toks[1].(tok.Operator),
@@ -140,7 +140,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 
-	toks, _ = tok.Parse([]byte("A * B - C"))
+	toks, _ = tok.Parse([]byte("A * B - C"), "")
 	want = BinaryExpr{
 		X: BinaryExpr{
 			X:  Ident{Name: toks[0]},
@@ -157,7 +157,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 
-	toks, _ = tok.Parse([]byte("A ** B + C / D"))
+	toks, _ = tok.Parse([]byte("A ** B + C / D"), "")
 	want = BinaryExpr{
 		X: BinaryExpr{
 			X:  Ident{Name: toks[0]},
@@ -178,7 +178,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 
-	toks, _ = tok.Parse([]byte("A * (B + C) / D"))
+	toks, _ = tok.Parse([]byte("A * (B + C) / D"), "")
 	want = BinaryExpr{
 		X: BinaryExpr{
 			X:  Ident{Name: toks[0]},
@@ -201,7 +201,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 
-	toks, _ = tok.Parse([]byte("A % B == D || false"))
+	toks, _ = tok.Parse([]byte("A % B == D || false"), "")
 	want = BinaryExpr{
 		X: BinaryExpr{
 			X: BinaryExpr{

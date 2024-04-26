@@ -10,7 +10,7 @@ func TestDoc(t *testing.T) {
 #Line 2
 #
 # Line 4`
-	toks, _ := tok.Parse([]byte(src))
+	toks, _ := tok.Parse([]byte(src), "")
 
 	c := context{}
 	doc := buildDoc(toks, &c)

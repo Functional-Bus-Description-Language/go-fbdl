@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
@@ -89,9 +88,9 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		log.Fatalf("cannot read %s: %v", path, err)
 	}
 
-	astFile, err := ast.Build(src)
+	astFile, err := ast.Build(src, path)
 	if err != nil {
-		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
+		log.Fatalf("%v", err)
 	}
 
 	file := File{
@@ -115,7 +114,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	// Handle file and package constants
 	consts, err := buildConsts(astFile.Consts, src, &file)
 	if err != nil {
-		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
+		log.Fatalf("%s", err)
 	}
 	file.Consts = consts
 	for _, c := range consts {
@@ -130,7 +129,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	// Handle type definitions
 	types, err := buildTypes(astFile.Types, src)
 	if err != nil {
-		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
+		log.Fatalf("%s", err)
 	}
 	file.Types = types
 	for _, t := range types {
@@ -145,7 +144,7 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 	// Handle instantiations
 	insts, err := buildInsts(astFile.Insts, src)
 	if err != nil {
-		log.Fatalf("%s:%s\n%s", path, err, tok.ErrorLoc(err, src))
+		log.Fatalf("%s", err)
 	}
 	file.Insts = insts
 	for _, i := range insts {

@@ -1,7 +1,6 @@
 package ast
 
 import (
-	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
@@ -16,9 +15,10 @@ func buildParamList(toks []tok.Token, ctx *context) ([]Param, error) {
 		return nil, nil
 	}
 	if _, ok := toks[ctx.i+1].(tok.RightParen); ok {
-		return nil, fmt.Errorf(
-			"%s: empty parameter list", tok.Loc(toks[ctx.i]),
-		)
+		return nil, tok.Error{
+			Msg: "empty parameter list",
+			Tok: tok.Join(toks[ctx.i], toks[ctx.i+1]),
+		}
 	}
 
 	params := []Param{}

@@ -2,6 +2,8 @@ package tok
 
 import (
 	"fmt"
+	"github.com/mattn/go-isatty"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -11,26 +13,35 @@ type Error struct {
 	Tok Token
 }
 
-func (e Error) Error() string {
+func (err Error) getColor() (string, string) {
+	if isatty.IsTerminal(os.Stdout.Fd()) {
+		return "\033[1;31m", "\033[0m"
+	}
+	return "", ""
+}
+
+func (err Error) Error() string {
+	colorPrefix, colorSuffix := err.getColor()
+
 	return fmt.Sprintf(
-		"%d:%d: %s", e.Tok.Line(), e.Tok.Column(), e.Msg,
+		"%serror%s: %s\n%s +%d:%d\n%s",
+		colorPrefix, colorSuffix, err.Msg, err.Tok.Path(), err.Tok.Line(), err.Tok.Column(), err.code(),
 	)
 }
 
-// ErrorLoc returns error token location.
-func ErrorLoc(err error, src []byte) string {
-	e := err.(Error)
-
+// Returns error token code.
+func (err Error) code() string {
+	src := err.Tok.Src()
 	b := strings.Builder{}
 
-	lineNum := strconv.FormatInt(int64(e.Tok.Line()), 10)
+	lineNum := strconv.FormatInt(int64(err.Tok.Line()), 10)
 	lineNumWidth := len(lineNum)
 	for i := 0; i < lineNumWidth+2; i++ {
 		b.WriteRune(' ')
 	}
 	b.WriteString("|\n")
 
-	lineStartIdx := e.Tok.Start()
+	lineStartIdx := err.Tok.Start()
 	for {
 		if lineStartIdx == 0 || src[lineStartIdx-1] == '\n' {
 			break
@@ -38,8 +49,8 @@ func ErrorLoc(err error, src []byte) string {
 		lineStartIdx--
 	}
 
-	lineEndIdx := e.Tok.End()
-	if _, ok := e.Tok.(Newline); !ok {
+	lineEndIdx := err.Tok.End()
+	if _, ok := err.Tok.(Newline); !ok {
 		for {
 			if lineEndIdx == len(src)-1 || src[lineEndIdx+1] == '\n' {
 				break
@@ -75,7 +86,7 @@ func ErrorLoc(err error, src []byte) string {
 	b.WriteRune(' ')
 
 	col := 1
-	if e.Tok.Column() > 1 {
+	if err.Tok.Column() > 1 {
 		for i := 0; i < indent; i++ {
 			b.WriteRune('\t')
 			col++
@@ -83,20 +94,24 @@ func ErrorLoc(err error, src []byte) string {
 	}
 
 	for {
-		if col == e.Tok.Column() {
+		if col == err.Tok.Column() {
 			break
 		}
 		b.WriteRune(' ')
 		col++
 	}
 
+	colorPrefix, colorSuffix := err.getColor()
+
+	b.WriteString(colorPrefix)
 	for {
-		if col == e.Tok.Column()+(e.Tok.End()-e.Tok.Start()+1) {
+		if col == err.Tok.Column()+(err.Tok.End()-err.Tok.Start()+1) {
 			break
 		}
 		b.WriteRune('^')
 		col++
 	}
+	b.WriteString(colorSuffix)
 
 	b.WriteRune('\n')
 
