@@ -13,7 +13,7 @@ type Arg struct {
 	Value Expr
 }
 
-func buildArgList(astArgs []ast.Arg, src []byte, scope Scope) ([]Arg, error) {
+func buildArgList(astArgs []ast.Argument, src []byte, scope Scope) ([]Arg, error) {
 	if len(astArgs) == 0 {
 		return nil, nil
 	}

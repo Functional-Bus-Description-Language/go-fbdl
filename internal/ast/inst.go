@@ -10,7 +10,7 @@ type Inst struct {
 	Name  tok.Ident
 	Count Expr      // If not nil, then it is a list
 	Type  tok.Token // Basic type, identifier or qualified identifier
-	Args  []Arg
+	Args  []Argument
 	Body  Body
 }
 
