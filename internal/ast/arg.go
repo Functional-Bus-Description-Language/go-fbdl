@@ -4,15 +4,15 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Argument struct represents instantiation or type argument.
+// The Arg struct represents instantiation or type argument.
 // ValueFirstTok token might be useful to get argument location when Name is nil.
-type Argument struct {
+type Arg struct {
 	Name          tok.Token // tok.Ident or nil
 	Value         Expr
 	ValueFirstTok tok.Token
 }
 
-func buildArgList(toks []tok.Token, ctx *context) ([]Argument, error) {
+func buildArgList(toks []tok.Token, ctx *context) ([]Arg, error) {
 	if _, ok := toks[ctx.i].(tok.LeftParen); !ok {
 		return nil, nil
 	}
@@ -23,8 +23,8 @@ func buildArgList(toks []tok.Token, ctx *context) ([]Argument, error) {
 		}
 	}
 
-	args := []Argument{}
-	a := Argument{}
+	args := []Arg{}
+	a := Arg{}
 
 	type State int
 	const (

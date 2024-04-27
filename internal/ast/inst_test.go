@@ -45,9 +45,9 @@ func TestBuildInstMultiLine(t *testing.T) {
 	want := Inst{
 		Name: toks[0].(tok.Ident),
 		Type: toks[1].(tok.QualIdent),
-		Args: []Argument{
-			Argument{nil, Int{toks[3].(tok.Int)}, toks[3].(tok.Int)},
-			Argument{toks[5].(tok.Ident), Real{toks[7].(tok.Real)}, toks[7].(tok.Real)},
+		Args: []Arg{
+			Arg{nil, Int{toks[3].(tok.Int)}, toks[3].(tok.Int)},
+			Arg{toks[5].(tok.Ident), Real{toks[7].(tok.Real)}, toks[7].(tok.Real)},
 		},
 		Body: Body{
 			Consts: []Const{Const{Name: toks[20].(tok.Ident), Value: Bool{toks[22].(tok.Bool)}}},
