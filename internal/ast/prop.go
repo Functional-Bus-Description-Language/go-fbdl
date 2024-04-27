@@ -4,15 +4,15 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Property struct represents functionality property.
-type Property struct {
+// The Prop struct represents functionality property.
+type Prop struct {
 	Name  tok.Property
 	Value Expr
 }
 
-func buildPropAssignments(toks []tok.Token, ctx *context) ([]Property, error) {
-	props := []Property{}
-	prop := Property{}
+func buildPropAssignments(toks []tok.Token, ctx *context) ([]Prop, error) {
+	props := []Prop{}
+	p := Prop{}
 
 	type State int
 	const (
@@ -32,7 +32,7 @@ tokenLoop:
 		case Prop:
 			switch t := toks[ctx.i].(type) {
 			case tok.Property:
-				prop.Name = t
+				p.Name = t
 				state = Ass
 			default:
 				return nil, unexpected(t, "property name")
@@ -50,8 +50,8 @@ tokenLoop:
 				return nil, err
 			}
 			ctx.i--
-			prop.Value = expr
-			props = append(props, prop)
+			p.Value = expr
+			props = append(props, p)
 			state = Semicolon
 		case Semicolon:
 			switch t := toks[ctx.i].(type) {

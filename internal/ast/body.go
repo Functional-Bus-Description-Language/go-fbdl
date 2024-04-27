@@ -8,7 +8,7 @@ import (
 type Body struct {
 	Consts []Const
 	Insts  []Inst
-	Props  []Property
+	Props  []Prop
 	Types  []Type
 }
 
@@ -19,7 +19,7 @@ func buildBody(toks []tok.Token, ctx *context) (Body, error) {
 		consts []Const
 		doc    Doc
 		ins    Inst
-		props  []Property
+		props  []Prop
 		typ    Type
 	)
 
