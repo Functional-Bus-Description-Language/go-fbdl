@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Type struct represents type definition.
+// Type represents type definition.
 type Type struct {
 	Doc    Doc
 	Name   tok.Ident

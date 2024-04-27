@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Doc struct represents documentation comment.
+// Doc represents a documentation comment.
 type Doc struct {
 	Lines []tok.Comment
 }

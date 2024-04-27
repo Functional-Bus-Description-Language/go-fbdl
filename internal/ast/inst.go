@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Inst struct represents functionality instantiation.
+// Inst represents functionality instantiation.
 type Inst struct {
 	Doc   Doc
 	Name  tok.Ident

@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The const struct represents constant.
+// Const represents a constant.
 type Const struct {
 	Doc   Doc
 	Name  tok.Ident

@@ -1,3 +1,4 @@
+// Package tok implements Functional Bus Description Language tokens.
 package tok
 
 import "fmt"

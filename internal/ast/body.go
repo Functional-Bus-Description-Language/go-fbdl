@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Body struct represents functionality body.
+// Body represents a functionality body.
 type Body struct {
 	Consts []Const
 	Insts  []Inst

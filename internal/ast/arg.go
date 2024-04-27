@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Arg struct represents instantiation or type argument.
+// Arg represents instantiation or type argument.
 // ValueFirstTok token might be useful to get argument location when Name is nil.
 type Arg struct {
 	Name          tok.Token // tok.Ident or nil

@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The import struct represents package import.
+// Import represents a package import.
 type Import struct {
 	Name tok.Token // tok.Ident or nil
 	Path tok.String

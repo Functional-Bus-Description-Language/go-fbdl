@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Prop struct represents functionality property.
+// Prop represents functionality property.
 type Prop struct {
 	Name  tok.Property
 	Value Expr

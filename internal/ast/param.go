@@ -4,7 +4,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Param struct represents type parameter.
+// Param represents type parameter.
 type Param struct {
 	Name  tok.Ident
 	Value Expr // Default value of the parameter
