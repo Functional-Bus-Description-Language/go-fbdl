@@ -23,7 +23,7 @@ func buildPropAssignments(toks []tok.Token, ctx *context) ([]Property, error) {
 	)
 	state := Prop
 
-	// Decrement contex index as it is incremented at the beginnig of the for loop.
+	// Decrement context index as it is incremented at the beginnig of the for loop.
 	ctx.i--
 tokenLoop:
 	for {
