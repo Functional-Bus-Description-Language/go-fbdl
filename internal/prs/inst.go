@@ -80,8 +80,8 @@ func (i Inst) Params() []Param {
 	panic("should never happen, element definition cannot have parameters")
 }
 
-// buildInsts builds list of Insts based on the list of ast.Inst.
-func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
+// buildInsts builds list of Insts based on the list of ast.Instance.
+func buildInsts(astInsts []ast.Instance, src []byte) ([]*Inst, error) {
 	insts := make([]*Inst, 0, len(astInsts))
 	cache := make(map[string]*Inst)
 
@@ -108,7 +108,7 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 	return insts, nil
 }
 
-func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
+func buildInst(ai ast.Instance, src []byte) (*Inst, error) {
 	i := &Inst{}
 
 	i.line = ai.Name.Line()

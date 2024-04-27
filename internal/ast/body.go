@@ -7,7 +7,7 @@ import (
 // The Body struct represents functionality body.
 type Body struct {
 	Consts []Const
-	Insts  []Inst
+	Insts  []Instance
 	Props  []Property
 	Types  []Type
 }
@@ -18,7 +18,7 @@ func buildBody(toks []tok.Token, ctx *context) (Body, error) {
 		body   Body
 		consts []Const
 		doc    Doc
-		ins    Inst
+		ins    Instance
 		props  []Property
 		typ    Type
 	)

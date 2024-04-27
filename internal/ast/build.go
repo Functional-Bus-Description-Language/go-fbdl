@@ -18,7 +18,7 @@ func Build(src []byte, path string) (File, error) {
 		doc    Doc
 		consts []Const
 		imps   []Import
-		ins    Inst
+		ins    Instance
 		typ    Type
 	)
 
