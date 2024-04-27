@@ -8,7 +8,7 @@ import (
 
 func TestBuildInstSingleLine(t *testing.T) {
 	toks, _ := tok.Parse([]byte("S [5]status; atomic = false; width = 10"), "")
-	want := Instance{
+	want := Inst{
 		Name:  toks[0].(tok.Ident),
 		Count: Int{toks[2].(tok.Int)},
 		Type:  toks[4].(tok.Status),
@@ -42,7 +42,7 @@ func TestBuildInstMultiLine(t *testing.T) {
 		range = 8`),
 		"",
 	)
-	want := Instance{
+	want := Inst{
 		Name: toks[0].(tok.Ident),
 		Type: toks[1].(tok.QualIdent),
 		Args: []Argument{
@@ -51,8 +51,8 @@ func TestBuildInstMultiLine(t *testing.T) {
 		},
 		Body: Body{
 			Consts: []Const{Const{Name: toks[20].(tok.Ident), Value: Bool{toks[22].(tok.Bool)}}},
-			Insts: []Instance{
-				Instance{
+			Insts: []Inst{
+				Inst{
 					Name: toks[24].(tok.Ident),
 					Type: toks[25].(tok.Config),
 					Body: Body{

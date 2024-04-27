@@ -3,6 +3,6 @@ package ast
 type File struct {
 	Imports []Import
 	Consts  []Const
-	Insts   []Instance
+	Insts   []Inst
 	Types   []Type
 }

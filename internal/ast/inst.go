@@ -4,8 +4,8 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Instance struct represents functionality instantiation.
-type Instance struct {
+// The Inst struct represents functionality instantiation.
+type Inst struct {
 	Doc   Doc
 	Name  tok.Ident
 	Count Expr      // If not nil, then it is a list
@@ -14,8 +14,8 @@ type Instance struct {
 	Body  Body
 }
 
-func buildInst(toks []tok.Token, ctx *context) (Instance, error) {
-	inst := Instance{Name: toks[ctx.i].(tok.Ident)}
+func buildInst(toks []tok.Token, ctx *context) (Inst, error) {
+	inst := Inst{Name: toks[ctx.i].(tok.Ident)}
 	ctx.i++
 
 	// Count
