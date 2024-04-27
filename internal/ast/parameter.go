@@ -4,13 +4,13 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// The Param struct represents type parameter.
-type Param struct {
+// The Parameter struct represents type parameter.
+type Parameter struct {
 	Name  tok.Ident
 	Value Expr // Default value of the parameter
 }
 
-func buildParamList(toks []tok.Token, ctx *context) ([]Param, error) {
+func buildParamList(toks []tok.Token, ctx *context) ([]Parameter, error) {
 	if _, ok := toks[ctx.i].(tok.LeftParen); !ok {
 		return nil, nil
 	}
@@ -21,8 +21,8 @@ func buildParamList(toks []tok.Token, ctx *context) ([]Param, error) {
 		}
 	}
 
-	params := []Param{}
-	p := Param{}
+	params := []Parameter{}
+	p := Parameter{}
 
 	type State int
 	const (
@@ -51,7 +51,7 @@ tokenLoop:
 				state = Val
 			case tok.Comma:
 				params = append(params, p)
-				p = Param{}
+				p = Parameter{}
 				state = Name
 			case tok.RightParen:
 				params = append(params, p)
@@ -68,7 +68,7 @@ tokenLoop:
 			ctx.i--
 			p.Value = expr
 			params = append(params, p)
-			p = Param{}
+			p = Parameter{}
 			state = Comma
 		case Comma:
 			switch t := toks[ctx.i].(type) {

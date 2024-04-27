@@ -10,7 +10,7 @@ func TestBuildTypeSingleLine(t *testing.T) {
 	toks, _ := tok.Parse([]byte("type foo_t(W=1) [8]config; width = W"), "")
 	want := Type{
 		Name:   toks[1].(tok.Ident),
-		Params: []Param{Param{toks[3].(tok.Ident), Int{toks[5].(tok.Int)}}},
+		Params: []Parameter{Parameter{toks[3].(tok.Ident), Int{toks[5].(tok.Int)}}},
 		Count:  Int{toks[8].(tok.Int)},
 		Type:   toks[10].(tok.Config),
 		Body: Body{
