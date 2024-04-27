@@ -8,7 +8,7 @@ import (
 type Type struct {
 	Doc    Doc
 	Name   tok.Ident
-	Params []Parameter
+	Params []Param
 	Count  Expr      // If Count is not nil, then the type is a list
 	Type   tok.Token // Basic type, identifier or qualified identifier
 	Args   []Argument

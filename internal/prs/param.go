@@ -14,7 +14,7 @@ type Param struct {
 	DfltValue Expr
 }
 
-func buildParamList(astParams []ast.Parameter, src []byte, scope Scope) ([]Param, error) {
+func buildParamList(astParams []ast.Param, src []byte, scope Scope) ([]Param, error) {
 	if len(astParams) == 0 {
 		return nil, nil
 	}
