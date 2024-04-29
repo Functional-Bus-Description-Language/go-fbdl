@@ -6,12 +6,12 @@ import (
 
 // Inst represents functionality instantiation.
 type Inst struct {
-	Doc   Doc
-	Name  tok.Ident
-	Count Expr      // If not nil, then it is a list
-	Type  tok.Token // Basic type, identifier or qualified identifier
-	Args  []Arg
-	Body  Body
+	Doc     Doc
+	Name    tok.Ident
+	Count   Expr      // If not nil, then it is a list
+	Type    tok.Token // Basic type, identifier or qualified identifier
+	ArgList ArgList
+	Body    Body
 }
 
 func buildInst(toks []tok.Token, ctx *context) (Inst, error) {
@@ -42,11 +42,11 @@ func buildInst(toks []tok.Token, ctx *context) (Inst, error) {
 	}
 
 	// Argument List
-	args, err := buildArgList(toks, ctx)
+	argList, err := buildArgList(toks, ctx)
 	if err != nil {
 		return inst, err
 	}
-	inst.Args = args
+	inst.ArgList = argList
 
 	// Body
 	switch t := toks[ctx.i].(type) {

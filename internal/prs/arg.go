@@ -13,52 +13,62 @@ type Arg struct {
 	Value Expr
 }
 
-func buildArgList(astArgs []ast.Arg, src []byte, scope Scope) ([]Arg, error) {
-	if len(astArgs) == 0 {
-		return nil, nil
+type ArgList struct {
+	LeftParen  tok.LeftParen
+	Args       []Arg
+	RightParen tok.RightParen
+}
+
+func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, error) {
+	if len(astArgList.Args) == 0 {
+		return ArgList{}, nil
 	}
 
-	args := []Arg{}
+	argList := ArgList{
+		LeftParen:  astArgList.LeftParen,
+		Args:       make([]Arg, 0, len(astArgList.Args)),
+		RightParen: astArgList.RightParen,
+	}
 	names := make(map[string]bool)
 
-	for _, aa := range astArgs {
-		a := Arg{}
+	for _, aal := range astArgList.Args {
+		arg := Arg{}
 
-		if aa.Name != nil {
-			name := tok.Text(aa.Name, src)
+		if aal.Name != nil {
+			name := tok.Text(aal.Name, src)
 			if names[name] {
-				return nil, tok.Error{
+				return argList, tok.Error{
 					Msg: fmt.Sprintf("reassignment to '%s' argument", name),
-					Tok: aa.Name,
+					Tok: aal.Name,
 				}
 			}
 			names[name] = true
-			a.Name = name
+			arg.Name = name
 		}
 
-		v, err := MakeExpr(aa.Value, src, scope)
+		val, err := MakeExpr(aal.Value, src, scope)
 		if err != nil {
-			return nil, err
+			return argList, err
 		}
-		a.Value = v
+		arg.Value = val
 
-		args = append(args, a)
+		argList.Args = append(argList.Args, arg)
 	}
 
 	// Check whether arguments without name precede arguments with name.
 	withName := false
-	for i, a := range args {
-		if withName && a.Name == "" {
-			return nil, tok.Error{
+	for i, arg := range argList.Args {
+		if withName && arg.Name == "" {
+			return argList, tok.Error{
 				Msg: "positional argument follows keyword argument",
-				Tok: astArgs[i].ValueFirstTok,
+				Tok: astArgList.Args[i].ValueFirstTok,
 			}
 		}
 
-		if a.Name != "" {
+		if arg.Name != "" {
 			withName = true
 		}
 	}
 
-	return args, nil
+	return argList, nil
 }

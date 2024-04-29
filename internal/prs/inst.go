@@ -15,7 +15,7 @@ type Inst struct {
 	typ   string
 	count Expr
 
-	args         []Arg
+	argList      ArgList
 	resolvedArgs map[string]Expr
 
 	props PropContainer
@@ -58,7 +58,7 @@ func (i *Inst) GetType(name string) (*Type, error) {
 	return i.scope.GetType(name)
 }
 
-func (i Inst) Args() []Arg                         { return i.args }
+func (i Inst) Args() []Arg                         { return i.argList.Args }
 func (i *Inst) SetResolvedArgs(ra map[string]Expr) { i.resolvedArgs = ra }
 func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
 func (i Inst) Props() PropContainer                { return i.props }
@@ -124,15 +124,15 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 
 	i.typ = tok.Text(ai.Type, src)
 
-	args, err := buildArgList(ai.Args, src, i)
+	argList, err := buildArgList(ai.ArgList, src, i)
 	if err != nil {
 		return nil, err
 	}
-	i.args = args
+	i.argList = argList
 
-	if util.IsBaseType(i.typ) && len(i.args) > 0 {
+	if util.IsBaseType(i.typ) && len(i.argList.Args) > 0 {
 		return nil, tok.Error{
-			Tok: ai.Type,
+			Tok: tok.Join(i.argList.LeftParen, i.argList.RightParen),
 			Msg: fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
 		}
 	}

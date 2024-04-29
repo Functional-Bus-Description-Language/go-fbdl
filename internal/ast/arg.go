@@ -12,19 +12,31 @@ type Arg struct {
 	ValueFirstTok tok.Token
 }
 
-func buildArgList(toks []tok.Token, ctx *context) ([]Arg, error) {
+// ArgList represents argument list.
+type ArgList struct {
+	LeftParen  tok.LeftParen
+	Args       []Arg
+	RightParen tok.RightParen
+}
+
+func buildArgList(toks []tok.Token, ctx *context) (ArgList, error) {
 	if _, ok := toks[ctx.i].(tok.LeftParen); !ok {
-		return nil, nil
+		return ArgList{}, nil
 	}
+
+	argList := ArgList{
+		LeftParen: toks[ctx.i].(tok.LeftParen),
+		Args:      []Arg{},
+	}
+
 	if _, ok := toks[ctx.i+1].(tok.RightParen); ok {
-		return nil, tok.Error{
+		return argList, tok.Error{
 			Msg: "empty argument list",
 			Tok: tok.Join(toks[ctx.i], toks[ctx.i+1]),
 		}
 	}
 
-	args := []Arg{}
-	a := Arg{}
+	arg := Arg{}
 
 	type State int
 	const (
@@ -44,30 +56,30 @@ tokenLoop:
 			case tok.Ident:
 				switch toks[ctx.i+1].(type) {
 				case tok.Ass:
-					a.Name = t
+					arg.Name = t
 					state = Ass
 				default:
-					a.Name = nil
-					a.ValueFirstTok = t
+					arg.Name = nil
+					arg.ValueFirstTok = t
 					expr, err := buildExpr(toks, ctx, nil)
 					if err != nil {
-						return nil, err
+						return argList, err
 					}
 					ctx.i--
-					a.Value = expr
-					args = append(args, a)
+					arg.Value = expr
+					argList.Args = append(argList.Args, arg)
 					state = Comma
 				}
 			default:
-				a.Name = nil
-				a.ValueFirstTok = toks[ctx.i]
+				arg.Name = nil
+				arg.ValueFirstTok = toks[ctx.i]
 				expr, err := buildExpr(toks, ctx, nil)
 				if err != nil {
-					return nil, err
+					return argList, err
 				}
 				ctx.i--
-				a.Value = expr
-				args = append(args, a)
+				arg.Value = expr
+				argList.Args = append(argList.Args, arg)
 				state = Comma
 			}
 		case Ass:
@@ -75,30 +87,31 @@ tokenLoop:
 			case tok.Ass:
 				state = Val
 			default:
-				return nil, unexpected(t, "'='")
+				return argList, unexpected(t, "'='")
 			}
 		case Comma:
 			switch t := toks[ctx.i].(type) {
 			case tok.Comma:
 				state = Name
 			case tok.RightParen:
+				argList.RightParen = t
 				ctx.i++
 				break tokenLoop
 			default:
-				return nil, unexpected(t, "',' or ')'")
+				return argList, unexpected(t, "',' or ')'")
 			}
 		case Val:
-			a.ValueFirstTok = toks[ctx.i]
+			arg.ValueFirstTok = toks[ctx.i]
 			expr, err := buildExpr(toks, ctx, nil)
 			if err != nil {
-				return nil, err
+				return argList, err
 			}
 			ctx.i--
-			a.Value = expr
-			args = append(args, a)
+			arg.Value = expr
+			argList.Args = append(argList.Args, arg)
 			state = Comma
 		}
 	}
 
-	return args, nil
+	return argList, nil
 }

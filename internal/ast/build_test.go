@@ -133,7 +133,6 @@ func TestBuildError(t *testing.T) {
 			t.Fatalf("%d: err == nil, expected != nil", i)
 		}
 
-		println(i)
 		tokErr := err.(tok.Error)
 		if tokErr.Msg != test.err {
 			t.Fatalf("\nTest %d:\n\ngot:\n%v\nwant:\n%v", i, tokErr.Msg, test.err)

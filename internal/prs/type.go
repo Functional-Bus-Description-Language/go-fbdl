@@ -16,7 +16,7 @@ type Type struct {
 	count Expr
 
 	params       []Param
-	args         []Arg
+	args         ArgList
 	resolvedArgs map[string]Expr
 
 	props PropContainer
@@ -56,7 +56,7 @@ func (t *Type) GetType(name string) (*Type, error) {
 
 func (t Type) Kind() SymbolKind                    { return TypeDef }
 func (t Type) Type() string                        { return t.typ }
-func (t Type) Args() []Arg                         { return t.args }
+func (t Type) Args() []Arg                         { return t.args.Args }
 func (t Type) Params() []Param                     { return t.params }
 func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
 func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
@@ -121,9 +121,9 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	}
 	t.args = args
 
-	if util.IsBaseType(t.typ) && len(t.args) > 0 {
+	if util.IsBaseType(t.typ) && len(t.args.Args) > 0 {
 		return nil, tok.Error{
-			Tok: at.Type,
+			Tok: tok.Join(t.args.LeftParen, t.args.RightParen),
 			Msg: fmt.Sprintf("base type '%s' does not accept argument list", t.typ),
 		}
 	}
