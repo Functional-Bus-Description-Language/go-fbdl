@@ -96,8 +96,7 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 func buildType(at ast.Type, src []byte) (*Type, error) {
 	t := &Type{}
 
-	t.line = at.Name.Line()
-	t.col = at.Name.Column()
+	t.tok = at.Name
 	t.name = tok.Text(at.Name, src)
 	t.doc = at.Doc.Text(src)
 

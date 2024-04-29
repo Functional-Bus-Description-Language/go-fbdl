@@ -1,6 +1,9 @@
 package prs
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+)
 
 type SymbolKind uint8
 
@@ -26,16 +29,15 @@ type Symbol interface {
 
 type symbol struct {
 	file  *File
-	line  int
-	col   int // Column of first character
+	tok   tok.Token // Symbol name token
 	name  string
 	doc   string
 	scope Scope
 }
 
 func (s symbol) Name() string { return s.name }
-func (s symbol) Line() int    { return s.line }
-func (s symbol) Col() int     { return s.col }
+func (s symbol) Line() int    { return s.tok.Line() }
+func (s symbol) Col() int     { return s.tok.Column() }
 func (s symbol) Doc() string  { return s.doc }
 func (s symbol) Scope() Scope { return s.scope }
 func (s symbol) File() *File  { return s.file }

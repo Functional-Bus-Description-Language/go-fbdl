@@ -23,8 +23,7 @@ func buildConsts(astConsts []ast.Const, src []byte, scope Scope) ([]*Const, erro
 	for _, ac := range astConsts {
 		c := &Const{}
 
-		c.line = ac.Name.Line()
-		c.col = ac.Name.Column()
+		c.tok = ac.Name
 		c.name = tok.Text(ac.Name, src)
 		v, err := MakeExpr(ac.Value, src, scope)
 		if err != nil {

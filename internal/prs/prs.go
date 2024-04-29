@@ -65,13 +65,13 @@ func checkInstantiations(pkg *Package) {
 			if ins.typ != "bus" && util.IsBaseType(ins.typ) {
 				log.Fatalf(
 					"%s:%d:%d: functionality '%s' of type %s cannot be instantiated at package level",
-					f.Path, ins.line, ins.col, ins.name, ins.typ,
+					f.Path, ins.Line(), ins.Col(), ins.name, ins.typ,
 				)
 			} else if ins.typ == "bus" {
 				if pkg.Name != "main" {
 					log.Fatalf(
 						"%s:%d:%d: bus instantiation must be placed within 'main' package",
-						f.Path, ins.line, ins.col,
+						f.Path, ins.Line(), ins.Col(),
 					)
 				}
 			}

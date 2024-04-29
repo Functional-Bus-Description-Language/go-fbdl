@@ -51,8 +51,8 @@ func (p *Package) addConst(c *Const) error {
 		first, _ := p.symbolContainer.GetConst(c.name)
 		return fmt.Errorf(
 			msg, c.name, p.Name,
-			first.File().Path, first.line, first.col,
-			c.File().Path, c.line, c.col,
+			first.File().Path, first.Line(), first.Col(),
+			c.File().Path, c.Line(), c.Col(),
 		)
 	}
 
@@ -70,8 +70,8 @@ func (p *Package) addInst(i *Inst) error {
 		first, _ := p.symbolContainer.GetConst(i.name)
 		return fmt.Errorf(
 			msg, i.name, p.Name,
-			first.File().Path, first.line, first.col,
-			i.File().Path, i.line, i.col,
+			first.File().Path, first.Line(), first.Col(),
+			i.File().Path, i.Line(), i.Col(),
 		)
 	}
 
@@ -89,8 +89,8 @@ func (p *Package) addType(t *Type) error {
 		first, _ := p.symbolContainer.GetConst(t.name)
 		return fmt.Errorf(
 			msg, t.name, p.Name,
-			first.File().Path, first.line, first.col,
-			t.File().Path, t.line, t.col,
+			first.File().Path, first.Line(), first.Col(),
+			t.File().Path, t.Line(), t.Col(),
 		)
 	}
 
