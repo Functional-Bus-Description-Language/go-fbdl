@@ -9,8 +9,8 @@ import (
 )
 
 type Error struct {
-	Msg string
-	Tok Token
+	Msg  string
+	Toks []Token
 }
 
 func (err Error) getColor() (string, string) {
@@ -25,23 +25,23 @@ func (err Error) Error() string {
 
 	return fmt.Sprintf(
 		"%serror%s: %s\n%s +%d:%d\n%s",
-		colorPrefix, colorSuffix, err.Msg, err.Tok.Path(), err.Tok.Line(), err.Tok.Column(), err.code(),
+		colorPrefix, colorSuffix, err.Msg, err.Toks[0].Path(), err.Toks[0].Line(), err.Toks[0].Column(), err.code(),
 	)
 }
 
 // Returns error token code.
 func (err Error) code() string {
-	src := err.Tok.Src()
+	src := err.Toks[0].Src()
 	b := strings.Builder{}
 
-	lineNum := strconv.FormatInt(int64(err.Tok.Line()), 10)
+	lineNum := strconv.FormatInt(int64(err.Toks[0].Line()), 10)
 	lineNumWidth := len(lineNum)
 	for i := 0; i < lineNumWidth+2; i++ {
 		b.WriteRune(' ')
 	}
 	b.WriteString("|\n")
 
-	lineStartIdx := err.Tok.Start()
+	lineStartIdx := err.Toks[0].Start()
 	for {
 		if lineStartIdx == 0 || src[lineStartIdx-1] == '\n' {
 			break
@@ -49,8 +49,8 @@ func (err Error) code() string {
 		lineStartIdx--
 	}
 
-	lineEndIdx := err.Tok.End()
-	if _, ok := err.Tok.(Newline); !ok {
+	lineEndIdx := err.Toks[0].End()
+	if _, ok := err.Toks[0].(Newline); !ok {
 		for {
 			if lineEndIdx == len(src)-1 || src[lineEndIdx+1] == '\n' {
 				break
@@ -86,7 +86,7 @@ func (err Error) code() string {
 	b.WriteRune(' ')
 
 	col := 1
-	if err.Tok.Column() > 1 {
+	if err.Toks[0].Column() > 1 {
 		for i := 0; i < indent; i++ {
 			b.WriteRune('\t')
 			col++
@@ -94,7 +94,7 @@ func (err Error) code() string {
 	}
 
 	for {
-		if col == err.Tok.Column() {
+		if col == err.Toks[0].Column() {
 			break
 		}
 		b.WriteRune(' ')
@@ -105,7 +105,7 @@ func (err Error) code() string {
 
 	b.WriteString(colorPrefix)
 	for {
-		if col == err.Tok.Column()+(err.Tok.End()-err.Tok.Start()+1) {
+		if col == err.Toks[0].Column()+(err.Toks[0].End()-err.Toks[0].Start()+1) {
 			break
 		}
 		b.WriteRune('^')

@@ -93,11 +93,11 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 
 		if first, ok := cache[i.name]; ok {
 			return nil, tok.Error{
-				Tok: ai.Name,
 				Msg: fmt.Sprintf(
 					"reinstantiation of '%s', first instantiation line %d column %d",
 					i.name, first.Line(), first.Col(),
 				),
+				Toks: []tok.Token{ai.Name},
 			}
 		}
 
@@ -131,8 +131,8 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 
 	if util.IsBaseType(i.typ) && len(i.argList.Args) > 0 {
 		return nil, tok.Error{
-			Tok: tok.Join(i.argList.LeftParen, i.argList.RightParen),
-			Msg: fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
+			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
+			Toks: []tok.Token{tok.Join(i.argList.LeftParen, i.argList.RightParen)},
 		}
 	}
 
@@ -145,15 +145,15 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, i.typ); err != nil {
 				return nil, tok.Error{
-					Tok: ai.Body.Props[j].Name,
-					Msg: err.Error(),
+					Msg:  err.Error(),
+					Toks: []tok.Token{ai.Body.Props[j].Name},
 				}
 			}
 
 			if err := checkPropConflict(i.typ, p, props[0:j]); err != nil {
 				return nil, tok.Error{
-					Tok: ai.Body.Props[j].Name,
-					Msg: err.Error(),
+					Msg:  err.Error(),
+					Toks: []tok.Token{ai.Body.Props[j].Name},
 				}
 			}
 		}

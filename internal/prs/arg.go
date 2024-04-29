@@ -38,8 +38,8 @@ func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, err
 			name := tok.Text(aal.Name, src)
 			if names[name] {
 				return argList, tok.Error{
-					Msg: fmt.Sprintf("reassignment to '%s' argument", name),
-					Tok: aal.Name,
+					Msg:  fmt.Sprintf("reassignment to '%s' argument", name),
+					Toks: []tok.Token{aal.Name},
 				}
 			}
 			names[name] = true
@@ -60,8 +60,8 @@ func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, err
 	for i, arg := range argList.Args {
 		if withName && arg.Name == "" {
 			return argList, tok.Error{
-				Msg: "positional argument follows keyword argument",
-				Tok: astArgList.Args[i].ValueFirstTok,
+				Msg:  "positional argument follows keyword argument",
+				Toks: []tok.Token{astArgList.Args[i].ValueFirstTok},
 			}
 		}
 

@@ -28,8 +28,8 @@ func buildParamList(astParams []ast.Param, src []byte, scope Scope) ([]Param, er
 		name := tok.Text(ap.Name, src)
 		if names[name] {
 			return nil, tok.Error{
-				Tok: ap.Name,
-				Msg: fmt.Sprintf("redeclaration of '%s' parameter", name),
+				Msg:  fmt.Sprintf("redeclaration of '%s' parameter", name),
+				Toks: []tok.Token{ap.Name},
 			}
 		}
 		names[name] = true
@@ -51,8 +51,8 @@ func buildParamList(astParams []ast.Param, src []byte, scope Scope) ([]Param, er
 	for i, p := range params {
 		if withDflt && p.DfltValue == nil {
 			return nil, tok.Error{
-				Tok: astParams[i].Name,
-				Msg: "parameters without default value must precede the ones with default value",
+				Msg:  "parameters without default value must precede the ones with default value",
+				Toks: []tok.Token{astParams[i].Name},
 			}
 		}
 

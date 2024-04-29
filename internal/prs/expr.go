@@ -200,7 +200,7 @@ func MakeCall(e ast.Call, src []byte, s Scope) (Call, error) {
 
 	err := assertCall(c)
 	if err != nil {
-		return c, tok.Error{Tok: e.Name, Msg: err.Error()}
+		return c, tok.Error{Msg: err.Error(), Toks: []tok.Token{e.Name}}
 	}
 
 	return c, nil

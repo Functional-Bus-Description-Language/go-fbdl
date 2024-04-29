@@ -31,8 +31,8 @@ func buildArgList(toks []tok.Token, ctx *context) (ArgList, error) {
 
 	if _, ok := toks[ctx.i+1].(tok.RightParen); ok {
 		return argList, tok.Error{
-			Msg: "empty argument list",
-			Tok: tok.Join(toks[ctx.i], toks[ctx.i+1]),
+			Msg:  "empty argument list",
+			Toks: []tok.Token{tok.Join(toks[ctx.i], toks[ctx.i+1])},
 		}
 	}
 

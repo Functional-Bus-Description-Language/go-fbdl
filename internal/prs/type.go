@@ -78,11 +78,11 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 
 		if first, ok := cache[t.name]; ok {
 			return nil, tok.Error{
-				Tok: at.Name,
 				Msg: fmt.Sprintf(
 					"redefinition of type '%s', first definition line %d column %d",
 					t.name, first.Line(), first.Col(),
 				),
+				Toks: []tok.Token{at.Name},
 			}
 		}
 
@@ -122,8 +122,8 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 
 	if util.IsBaseType(t.typ) && len(t.args.Args) > 0 {
 		return nil, tok.Error{
-			Tok: tok.Join(t.args.LeftParen, t.args.RightParen),
-			Msg: fmt.Sprintf("base type '%s' does not accept argument list", t.typ),
+			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", t.typ),
+			Toks: []tok.Token{tok.Join(t.args.LeftParen, t.args.RightParen)},
 		}
 	}
 
@@ -136,15 +136,15 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, t.typ); err != nil {
 				return nil, tok.Error{
-					Tok: at.Body.Props[j].Name,
-					Msg: err.Error(),
+					Msg:  err.Error(),
+					Toks: []tok.Token{at.Body.Props[j].Name},
 				}
 			}
 
 			if err := checkPropConflict(t.typ, p, props[0:j]); err != nil {
 				return nil, tok.Error{
-					Tok: at.Body.Props[j].Name,
-					Msg: err.Error(),
+					Msg:  err.Error(),
+					Toks: []tok.Token{at.Body.Props[j].Name},
 				}
 			}
 		}

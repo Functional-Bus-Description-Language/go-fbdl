@@ -16,8 +16,8 @@ func buildParamList(toks []tok.Token, ctx *context) ([]Param, error) {
 	}
 	if _, ok := toks[ctx.i+1].(tok.RightParen); ok {
 		return nil, tok.Error{
-			Msg: "empty parameter list",
-			Tok: tok.Join(toks[ctx.i], toks[ctx.i+1]),
+			Msg:  "empty parameter list",
+			Toks: []tok.Token{tok.Join(toks[ctx.i], toks[ctx.i+1])},
 		}
 	}
 

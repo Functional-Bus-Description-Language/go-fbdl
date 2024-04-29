@@ -7,7 +7,7 @@ import (
 
 func unexpected(t tok.Token, expected string) error {
 	return tok.Error{
-		Msg: fmt.Sprintf("unexpected %s, expected "+expected, t.Name()),
-		Tok: t,
+		Msg:  fmt.Sprintf("unexpected %s, expected "+expected, t.Name()),
+		Toks: []tok.Token{t},
 	}
 }

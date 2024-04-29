@@ -34,11 +34,11 @@ func buildConsts(astConsts []ast.Const, src []byte, scope Scope) ([]*Const, erro
 
 		if first, ok := cache[c.name]; ok {
 			return nil, tok.Error{
-				Tok: ac.Name,
 				Msg: fmt.Sprintf(
 					"redefinition of constant '%s', first definition line %d column %d",
 					c.name, first.Line(), first.Col(),
 				),
+				Toks: []tok.Token{ac.Name},
 			}
 		}
 

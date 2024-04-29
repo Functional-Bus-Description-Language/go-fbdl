@@ -24,8 +24,8 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 		p.Value = v
 		if ok := pc.Add(p); !ok {
 			return nil, sc, tok.Error{
-				Tok: ap.Name,
-				Msg: fmt.Sprintf("reassignment to '%s' property", p.Name),
+				Msg:  fmt.Sprintf("reassignment to '%s' property", p.Name),
+				Toks: []tok.Token{ap.Name},
 			}
 		}
 	}
@@ -38,8 +38,8 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	for i, c := range consts {
 		if ok := sc.addConst(c); !ok {
 			return nil, sc, tok.Error{
-				Tok: astBody.Consts[i].Name,
-				Msg: fmt.Sprintf("redefinition of symbol '%s'", c.Name()),
+				Msg:  fmt.Sprintf("redefinition of symbol '%s'", c.Name()),
+				Toks: []tok.Token{astBody.Consts[i].Name},
 			}
 		}
 	}
@@ -52,8 +52,8 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	for i, t := range types {
 		if ok := sc.addType(t); !ok {
 			return nil, sc, tok.Error{
-				Tok: astBody.Types[i].Name,
-				Msg: fmt.Sprintf("redefinition of symbol '%s'", t.Name()),
+				Msg:  fmt.Sprintf("redefinition of symbol '%s'", t.Name()),
+				Toks: []tok.Token{astBody.Types[i].Name},
 			}
 		}
 	}
@@ -66,8 +66,8 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	for i, ins := range insts {
 		if ok := sc.addInst(ins); !ok {
 			return nil, sc, tok.Error{
-				Tok: astBody.Insts[i].Name,
-				Msg: fmt.Sprintf("redefinition of symbol '%s'", ins.Name()),
+				Msg:  fmt.Sprintf("redefinition of symbol '%s'", ins.Name()),
+				Toks: []tok.Token{astBody.Insts[i].Name},
 			}
 		}
 	}
