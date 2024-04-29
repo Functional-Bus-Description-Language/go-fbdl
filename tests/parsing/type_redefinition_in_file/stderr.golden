@@ -3,3 +3,7 @@ bus.fbd +2:6
    |
  2 | type t static
    |      ^
+bus.fbd +1:6
+   |
+ 1 | type t config
+   |      ^

@@ -82,7 +82,7 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 					"redefinition of type '%s', first definition line %d column %d",
 					t.name, first.Line(), first.Col(),
 				),
-				Toks: []tok.Token{at.Name},
+				Toks: []tok.Token{at.Name, first.tok},
 			}
 		}
 

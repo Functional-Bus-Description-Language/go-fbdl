@@ -3,3 +3,7 @@ bus.fbd +3:7
    |
  3 | 	type b config
    | 	     ^
+bus.fbd +2:7
+   |
+ 2 | 	type b status
+   | 	     ^
