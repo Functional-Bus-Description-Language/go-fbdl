@@ -19,14 +19,18 @@ type ArgList struct {
 	RightParen tok.RightParen
 }
 
+func (al ArgList) Len() int {
+	return len(al.Args)
+}
+
 func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, error) {
-	if len(astArgList.Args) == 0 {
+	if astArgList.Len() == 0 {
 		return ArgList{}, nil
 	}
 
 	argList := ArgList{
 		LeftParen:  astArgList.LeftParen,
-		Args:       make([]Arg, 0, len(astArgList.Args)),
+		Args:       make([]Arg, 0, astArgList.Len()),
 		RightParen: astArgList.RightParen,
 	}
 	names := make(map[string]bool)

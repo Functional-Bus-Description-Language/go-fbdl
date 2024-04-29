@@ -19,6 +19,10 @@ type ArgList struct {
 	RightParen tok.RightParen
 }
 
+func (al ArgList) Len() int {
+	return len(al.Args)
+}
+
 func buildArgList(toks []tok.Token, ctx *context) (ArgList, error) {
 	if _, ok := toks[ctx.i].(tok.LeftParen); !ok {
 		return ArgList{}, nil

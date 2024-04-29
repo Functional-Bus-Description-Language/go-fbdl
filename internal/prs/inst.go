@@ -129,7 +129,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	}
 	i.argList = argList
 
-	if util.IsBaseType(i.typ) && len(i.argList.Args) > 0 {
+	if util.IsBaseType(i.typ) && i.argList.Len() > 0 {
 		return nil, tok.Error{
 			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
 			Toks: []tok.Token{tok.Join(i.argList.LeftParen, i.argList.RightParen)},
