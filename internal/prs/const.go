@@ -38,7 +38,7 @@ func buildConsts(astConsts []ast.Const, src []byte, scope Scope) ([]*Const, erro
 					"redefinition of constant '%s', first definition line %d column %d",
 					c.name, first.Line(), first.Col(),
 				),
-				Toks: []tok.Token{ac.Name},
+				Toks: []tok.Token{ac.Name, first.tok},
 			}
 		}
 

@@ -3,3 +3,7 @@ bus.fbd +3:7
    |
  3 | const A = 2
    |       ^
+bus.fbd +1:7
+   |
+ 1 | const A = 1
+   |       ^
