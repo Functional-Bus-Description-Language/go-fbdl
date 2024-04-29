@@ -23,25 +23,38 @@ func (err Error) getColor() (string, string) {
 func (err Error) Error() string {
 	colorPrefix, colorSuffix := err.getColor()
 
-	return fmt.Sprintf(
-		"%serror%s: %s\n%s +%d:%d\n%s",
-		colorPrefix, colorSuffix, err.Msg, err.Toks[0].Path(), err.Toks[0].Line(), err.Toks[0].Column(), err.code(),
+	msg := fmt.Sprintf(
+		"%serror%s: %s\n",
+		colorPrefix, colorSuffix, err.Msg,
 	)
+
+	for _, tok := range err.Toks {
+		msg += err.code(tok)
+	}
+
+	return msg
 }
 
 // Returns error token code.
-func (err Error) code() string {
-	src := err.Toks[0].Src()
+func (err Error) code(tok Token) string {
 	b := strings.Builder{}
 
-	lineNum := strconv.FormatInt(int64(err.Toks[0].Line()), 10)
+	b.WriteString(
+		fmt.Sprintf(
+			"%s +%d:%d\n",
+			tok.Path(), tok.Line(), tok.Column(),
+		),
+	)
+
+	lineNum := strconv.FormatInt(int64(tok.Line()), 10)
 	lineNumWidth := len(lineNum)
 	for i := 0; i < lineNumWidth+2; i++ {
 		b.WriteRune(' ')
 	}
 	b.WriteString("|\n")
 
-	lineStartIdx := err.Toks[0].Start()
+	src := tok.Src()
+	lineStartIdx := tok.Start()
 	for {
 		if lineStartIdx == 0 || src[lineStartIdx-1] == '\n' {
 			break
@@ -49,8 +62,8 @@ func (err Error) code() string {
 		lineStartIdx--
 	}
 
-	lineEndIdx := err.Toks[0].End()
-	if _, ok := err.Toks[0].(Newline); !ok {
+	lineEndIdx := tok.End()
+	if _, ok := tok.(Newline); !ok {
 		for {
 			if lineEndIdx == len(src)-1 || src[lineEndIdx+1] == '\n' {
 				break
@@ -86,7 +99,7 @@ func (err Error) code() string {
 	b.WriteRune(' ')
 
 	col := 1
-	if err.Toks[0].Column() > 1 {
+	if tok.Column() > 1 {
 		for i := 0; i < indent; i++ {
 			b.WriteRune('\t')
 			col++
@@ -94,7 +107,7 @@ func (err Error) code() string {
 	}
 
 	for {
-		if col == err.Toks[0].Column() {
+		if col == tok.Column() {
 			break
 		}
 		b.WriteRune(' ')
@@ -105,7 +118,7 @@ func (err Error) code() string {
 
 	b.WriteString(colorPrefix)
 	for {
-		if col == err.Toks[0].Column()+(err.Toks[0].End()-err.Toks[0].Start()+1) {
+		if col == tok.Column()+(tok.End()-tok.Start()+1) {
 			break
 		}
 		b.WriteRune('^')
