@@ -1,0 +1,9 @@
+error: redefinition of type 'my_type' in package 'pkg'
+fbd/pkg/b.fbd +1:6
+   |
+ 1 | type my_type stream
+   |      ^^^^^^^
+fbd/pkg/a.fbd +1:6
+   |
+ 1 | type my_type mask
+   |      ^^^^^^^

@@ -81,15 +81,11 @@ func (p *Package) addType(t *Type) error {
 	defer p.symbolsMutex.Unlock()
 
 	if !p.symbolContainer.addType(t) {
-		msg := `redefinition of type '%s' in package '%s'
-  %s:%d:%d
-  %s:%d:%d`
-		first, _ := p.symbolContainer.GetConst(t.name)
-		return fmt.Errorf(
-			msg, t.name, p.Name,
-			first.File().Path, first.Line(), first.Col(),
-			t.File().Path, t.Line(), t.Col(),
+		msg := fmt.Sprintf(
+			"redefinition of type '%s' in package '%s'", t.name, p.Name,
 		)
+		first, _ := p.symbolContainer.GetType(t.name)
+		return tok.Error{Msg: msg, Toks: []tok.Token{t.tok, first.tok}}
 	}
 
 	return nil
