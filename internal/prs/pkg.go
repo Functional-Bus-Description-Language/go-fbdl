@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
 type Packages map[string][]*Package
@@ -45,15 +47,11 @@ func (p *Package) addConst(c *Const) error {
 	defer p.symbolsMutex.Unlock()
 
 	if !p.symbolContainer.addConst(c) {
-		msg := `redefinition of constant '%s' in package '%s'
-  %s:%d:%d
-  %s:%d:%d`
-		first, _ := p.symbolContainer.GetConst(c.name)
-		return fmt.Errorf(
-			msg, c.name, p.Name,
-			first.File().Path, first.Line(), first.Col(),
-			c.File().Path, c.Line(), c.Col(),
+		msg := fmt.Sprintf(
+			"redefinition of constant '%s' in package '%s'", c.name, p.Name,
 		)
+		first, _ := p.symbolContainer.GetConst(c.name)
+		return tok.Error{Msg: msg, Toks: []tok.Token{c.tok, first.tok}}
 	}
 
 	return nil

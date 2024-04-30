@@ -1,0 +1,9 @@
+error: redefinition of constant 'FOO' in package 'pkg'
+fbd/pkg/b.fbd +1:7
+   |
+ 1 | const FOO = 2
+   |       ^^^
+fbd/pkg/a.fbd +1:7
+   |
+ 1 | const FOO = 1
+   |       ^^^

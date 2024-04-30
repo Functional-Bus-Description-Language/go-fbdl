@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strings"
 	"sync"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
@@ -44,6 +45,12 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 		panic(err)
 	}
 
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	cwd += string(os.PathSeparator)
+
 	for _, file := range pkgDirContent {
 		if file.IsDir() {
 			continue
@@ -52,8 +59,11 @@ func parsePackage(pkg *Package, wg *sync.WaitGroup) {
 			continue
 		}
 
+		filePath := path.Join(pkg.Path, file.Name())
+		filePath = strings.TrimPrefix(filePath, cwd)
+
 		filesWG.Add(1)
-		parseFile(path.Join(pkg.Path, file.Name()), pkg, &filesWG)
+		parseFile(filePath, pkg, &filesWG)
 	}
 
 	checkInstantiations(pkg)
