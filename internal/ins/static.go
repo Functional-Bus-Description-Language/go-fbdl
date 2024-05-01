@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -47,7 +48,10 @@ func insStatic(typeChain []prs.Functionality) (*fn.Static, error) {
 	err = fillStaticValues(&st, diary)
 	if err != nil {
 		last := typeChain[len(typeChain)-1]
-		return nil, fmt.Errorf("%d:%d: %v", last.Line(), last.Col(), err)
+		return nil, tok.Error{
+			Msg:  fmt.Sprintf("%v", err),
+			Toks: []tok.Token{last.Tok()},
+		}
 	}
 
 	return &st, nil
@@ -59,7 +63,7 @@ func applyStaticType(st *fn.Static, typ prs.Functionality, diary *staticDiary) e
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(p); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line, err)
+			return err
 		}
 
 		v, err := p.Value.Eval()

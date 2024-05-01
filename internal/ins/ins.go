@@ -128,7 +128,7 @@ func insFunctionality(pf prs.Functionality) fn.Functionality {
 	}
 
 	if err != nil {
-		log.Fatalf("%s:%v", pf.File().Path, err)
+		log.Fatalf("%v", err)
 	}
 
 	return f

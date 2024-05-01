@@ -1,1 +1,5 @@
-bus.fbd:2:12: 'range' property value must be natural, value -127 is negative
+error: 'range' property value must be natural, value -127 is negative
+bus.fbd +2:20
+   |
+ 2 | 	C config; range = -127
+   | 	                  ^^^^

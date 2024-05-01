@@ -5,8 +5,13 @@ import (
 )
 
 // The Expr interface represents generic expression.
+//
+// The Tok method returns token which position spans the whole expression.
+// It is useful for error messages.
+// No assumptions shall be made on the returned token type.
 type Expr interface {
 	expr()
+	Tok() tok.Token
 }
 
 // Expression nodes
@@ -32,7 +37,9 @@ type (
 	}
 
 	List struct {
-		Xs []Expr
+		LeftBracket  tok.LeftBracket
+		Xs           []Expr
+		RightBracket tok.RightBracket
 	}
 
 	Ident struct {
@@ -61,22 +68,47 @@ type (
 	}
 
 	ParenExpr struct {
-		X Expr
+		LeftParen  tok.LeftParen
+		X          Expr
+		RightParen tok.RightParen
 	}
 )
 
-func (be BinaryExpr) expr() {}
-func (bs BitString) expr()  {}
-func (b Bool) expr()        {}
-func (c Call) expr()        {}
-func (l List) expr()        {}
-func (i Ident) expr()       {}
-func (i Int) expr()         {}
-func (r Real) expr()        {}
-func (s String) expr()      {}
-func (t Time) expr()        {}
-func (ue UnaryExpr) expr()  {}
-func (pe ParenExpr) expr()  {}
+func (be BinaryExpr) expr()          {}
+func (be BinaryExpr) Tok() tok.Token { return tok.Join(be.X.Tok(), be.Y.Tok()) }
+
+func (bs BitString) expr()          {}
+func (bs BitString) Tok() tok.Token { return bs.X }
+
+func (b Bool) expr()          {}
+func (b Bool) Tok() tok.Token { return b.X }
+
+func (c Call) expr()          {}
+func (c Call) Tok() tok.Token { return c.Name }
+
+func (l List) expr()          {}
+func (l List) Tok() tok.Token { return tok.Join(l.LeftBracket, l.RightBracket) }
+
+func (i Ident) expr()          {}
+func (i Ident) Tok() tok.Token { return i.Name }
+
+func (i Int) expr()          {}
+func (i Int) Tok() tok.Token { return i.X }
+
+func (r Real) expr()          {}
+func (r Real) Tok() tok.Token { return r.X }
+
+func (s String) expr()          {}
+func (s String) Tok() tok.Token { return s.X }
+
+func (t Time) expr()          {}
+func (t Time) Tok() tok.Token { return t.X }
+
+func (ue UnaryExpr) expr()          {}
+func (ue UnaryExpr) Tok() tok.Token { return tok.Join(ue.Op, ue.X.Tok()) }
+
+func (pe ParenExpr) expr()          {}
+func (pe ParenExpr) Tok() tok.Token { return tok.Join(pe.LeftParen, pe.RightParen) }
 
 // leftOp is the operator on the left side of the expression.
 func buildExpr(toks []tok.Token, ctx *context, leftOp tok.Operator) (Expr, error) {
@@ -191,6 +223,9 @@ func buildParenExpr(toks []tok.Token, ctx *context) (ParenExpr, error) {
 		err  error
 		expr Expr
 	)
+
+	pe.LeftParen = toks[ctx.i].(tok.LeftParen)
+
 	ctx.i++
 	expr, err = buildExpr(toks, ctx, nil)
 	if err != nil {
@@ -199,6 +234,7 @@ func buildParenExpr(toks []tok.Token, ctx *context) (ParenExpr, error) {
 	pe.X = expr
 
 	if _, ok := toks[ctx.i].(tok.RightParen); ok {
+		pe.RightParen = toks[ctx.i].(tok.RightParen)
 		ctx.i++
 	} else {
 		return pe, unexpected(toks[ctx.i], "')'")
@@ -210,6 +246,7 @@ func buildParenExpr(toks []tok.Token, ctx *context) (ParenExpr, error) {
 func buildList(toks []tok.Token, ctx *context) (List, error) {
 	l := List{}
 	prevExpr := false
+	l.LeftBracket = toks[ctx.i].(tok.LeftBracket)
 	lbi := ctx.i // Left bracket token index
 	ctx.i++
 
@@ -217,6 +254,7 @@ tokenLoop:
 	for {
 		switch t := toks[ctx.i].(type) {
 		case tok.RightBracket:
+			l.RightBracket = t
 			ctx.i++
 			break tokenLoop
 		case tok.Comma:

@@ -1,1 +1,5 @@
-bus.fbd:3:3: 'in-trigger' property must be "Edge" or "Level", current value "abc"
+error: 'in-trigger' property must be "Edge" or "Level", current value "abc"
+bus.fbd +3:16
+   |
+ 3 | 		in-trigger = "abc"
+   | 		             ^^^^^

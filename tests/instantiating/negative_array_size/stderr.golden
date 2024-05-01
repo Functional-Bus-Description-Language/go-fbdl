@@ -1,1 +1,5 @@
-bus.fbd:2:2: functionality 'S' has negative array size -1
+error: functionality 'S' has negative array size -1
+bus.fbd +2:2
+   |
+ 2 | 	S [-1] status
+   | 	^

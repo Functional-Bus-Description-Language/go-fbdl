@@ -58,7 +58,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(p); err != nil {
-			return fmt.Errorf("%s: %v", p.Loc(), err)
+			return err
 		}
 
 		v, err := p.Value.Eval()

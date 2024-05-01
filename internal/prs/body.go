@@ -14,14 +14,15 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	for _, ap := range astBody.Props {
 		p := Prop{}
 
-		p.Line = ap.Name.Line()
-		p.Col = ap.Name.Column()
+		p.NameTok = ap.Name
 		p.Name = tok.Text(ap.Name, src)
 		v, err := MakeExpr(ap.Value, src, scope)
 		if err != nil {
 			return nil, sc, err
 		}
 		p.Value = v
+		p.ValueTok = ap.Value.Tok()
+
 		if ok := pc.Add(p); !ok {
 			return nil, sc, tok.Error{
 				Msg:  fmt.Sprintf("reassignment to '%s' property", p.Name),

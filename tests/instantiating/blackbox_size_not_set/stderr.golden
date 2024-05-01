@@ -1,1 +1,5 @@
-bus.fbd:2:2: 'blackbox' must have 'size' property set
+error: 'Bb' of type 'blackbox' must have 'size' property set
+bus.fbd +2:2
+   |
+ 2 | 	Bb blackbox
+   | 	^^

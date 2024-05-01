@@ -60,7 +60,7 @@ func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) 
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(p); err != nil {
-			return fmt.Errorf("%s: %v", p.Loc(), err)
+			return err
 		}
 
 		v, err := p.Value.Eval()

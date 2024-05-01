@@ -1,19 +1,27 @@
 package prs
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+)
 
 // Prop struct represents functionality property.
 type Prop struct {
-	Line  int
-	Col   int
-	Name  string
-	Value Expr
+	NameTok tok.Token
+	Name    string
+
+	Value    Expr
+	ValueTok tok.Token
 }
+
+func (p Prop) Line() int { return p.NameTok.Line() }
+func (p Prop) Col() int  { return p.NameTok.Column() }
 
 func (p Prop) Loc() string {
-	return fmt.Sprintf("%d:%d", p.Line, p.Col)
+	return fmt.Sprintf("%d:%d", p.Line(), p.Col())
 }
 
+// PropContainer represents a list of properties.
 type PropContainer []Prop
 
 func (pc *PropContainer) Add(prop Prop) bool {

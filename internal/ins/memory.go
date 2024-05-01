@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -42,7 +43,10 @@ func insMemory(typeChain []prs.Functionality) (*fn.Memory, error) {
 	err = fillMemoryProps(&mem, diary)
 	if err != nil {
 		last := typeChain[len(typeChain)-1]
-		return nil, fmt.Errorf("%d:%d: %v", last.Line(), last.Col(), err)
+		return nil, tok.Error{
+			Msg:  fmt.Sprintf("%v", err),
+			Toks: []tok.Token{last.Tok()},
+		}
 	}
 
 	return &mem, nil
@@ -54,7 +58,7 @@ func applyMemoryType(mem *fn.Memory, typ prs.Functionality, diary *memDiary) err
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(p); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line, err)
+			return err
 		}
 
 		v, err := p.Value.Eval()
@@ -111,7 +115,9 @@ func fillMemoryProps(mem *fn.Memory, diary memDiary) error {
 	}
 
 	if !diary.readLatencySet && mem.Access != "Write Only" {
-		return fmt.Errorf("'memory' must have 'read-latency' property set when its access equals %q", mem.Access)
+		return fmt.Errorf(
+			"'memory' must have 'read-latency' property set when its access equals %q", mem.Access,
+		)
 	}
 
 	if !diary.widthSet {

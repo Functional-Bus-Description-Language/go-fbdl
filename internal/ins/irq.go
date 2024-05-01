@@ -59,7 +59,7 @@ func applyIrqType(irq *fn.Irq, typ prs.Functionality, diary *irqDiary) error {
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(p); err != nil {
-			return fmt.Errorf("%s: %v", p.Loc(), err)
+			return err
 		}
 
 		v, err := p.Value.Eval()

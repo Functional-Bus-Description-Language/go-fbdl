@@ -1,1 +1,5 @@
-bus.fbd:3:13: 'range' property value must be natural, value with index 1 is negative -127
+3:13: error: 'range' property value must be natural, value with index 1 is negative -127
+bus.fbd +3:21
+   |
+ 3 | 		PI param; range = [1, -127]
+   | 		                  ^^^^^^^^^

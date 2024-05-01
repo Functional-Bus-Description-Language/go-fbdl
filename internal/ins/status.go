@@ -59,7 +59,7 @@ func applyStatusType(st *fn.Status, typ prs.Functionality, diary *statusDiary) e
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(p); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line, err)
+			return err
 		}
 
 		v, err := p.Value.Eval()

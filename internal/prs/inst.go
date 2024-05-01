@@ -151,10 +151,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 			}
 
 			if err := checkPropConflict(i.typ, p, props[0:j]); err != nil {
-				return nil, tok.Error{
-					Msg:  err.Error(),
-					Toks: []tok.Token{ai.Body.Props[j].Name},
-				}
+				return nil, err
 			}
 		}
 	}

@@ -1,1 +1,5 @@
-bus.fbd:4:3: cannot instantiate 'P' functionality: all 'stream' inner functionalities must be of the same base type and must be 'param' or 'return', 'P' base type is 'param'
+error: cannot instantiate 'P' functionality: all 'stream' inner functionalities must be of the same base type and must be 'param' or 'return', 'P' base type is 'param'
+bus.fbd +2:2
+   |
+ 2 | 	My_Stream stream
+   | 	^^^^^^^^^

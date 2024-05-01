@@ -65,11 +65,13 @@ func TestBuildUnaryExpr(t *testing.T) {
 func TestBuildParenExpr(t *testing.T) {
 	toks, _ := tok.Parse([]byte("(a >> b)"), "")
 	want := ParenExpr{
+		LeftParen: toks[0].(tok.LeftParen),
 		X: BinaryExpr{
 			X:  Ident{Name: toks[1]},
 			Op: toks[2].(tok.Operator),
 			Y:  Ident{Name: toks[3]},
 		},
+		RightParen: toks[4].(tok.RightParen),
 	}
 	c := context{}
 	got, err := buildExpr(toks, &c, nil)
@@ -184,11 +186,13 @@ func TestBuildBinaryExpr(t *testing.T) {
 			X:  Ident{Name: toks[0]},
 			Op: toks[1].(tok.Operator),
 			Y: ParenExpr{
+				LeftParen: toks[2].(tok.LeftParen),
 				X: BinaryExpr{
 					X:  Ident{Name: toks[3]},
 					Op: toks[4].(tok.Operator),
 					Y:  Ident{Name: toks[5]},
 				},
+				RightParen: toks[6].(tok.RightParen),
 			},
 		},
 		Op: toks[7].(tok.Operator),
