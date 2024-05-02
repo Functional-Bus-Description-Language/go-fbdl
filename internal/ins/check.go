@@ -23,7 +23,10 @@ func checkProp(prop prs.Prop) error {
 	case "access":
 		v, ok := pv.(val.Str)
 		if !ok {
-			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+			return tok.Error{
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 		if v != "Read Write" && v != "Read Only" && v != "Write Only" {
 			return tok.Error{

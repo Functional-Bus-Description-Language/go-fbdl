@@ -1,0 +1,5 @@
+error: 'access' property must be of type 'string', current type 'float'
+bus.fbd +3:12
+   |
+ 3 | 		access = 3.14
+   | 		         ^^^^
