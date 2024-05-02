@@ -49,7 +49,10 @@ func checkProp(prop prs.Prop) error {
 		case val.Time:
 			break
 		default:
-			return fmt.Errorf(invalidTypeMsg, name, "time", pv.Type())
+			return tok.Error{
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "time", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 	case "enable-init-value", "enable-reset-value", "init-value", "read-value", "reset-value":
 		switch pv.(type) {

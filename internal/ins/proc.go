@@ -46,7 +46,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(prop); err != nil {
-			return fmt.Errorf("%s: %v", prop.Loc(), err)
+			return err
 		}
 
 		v, err := prop.Value.Eval()
