@@ -26,9 +26,12 @@ func checkProp(prop prs.Prop) error {
 			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
 		}
 		if v != "Read Write" && v != "Read Only" && v != "Write Only" {
-			return fmt.Errorf(
-				"'access' property must be \"Read Write\", \"Read Only\" or \"Write Only\", current value (%q)", v,
-			)
+			return tok.Error{
+				Msg: fmt.Sprintf(
+					"'access' property must be \"Read Write\", \"Read Only\" or \"Write Only\", current value %q", v,
+				),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 	case "add-enable", "atomic", "byte-write-enable":
 		if _, ok := pv.(val.Bool); !ok {

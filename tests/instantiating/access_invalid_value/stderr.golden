@@ -1,0 +1,5 @@
+error: 'access' property must be "Read Write", "Read Only" or "Write Only", current value "Foo"
+bus.fbd +2:21
+   |
+ 2 | 	M memory; access = "Foo"
+   | 	                   ^^^^^
