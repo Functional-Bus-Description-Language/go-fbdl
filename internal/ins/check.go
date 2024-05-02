@@ -103,7 +103,10 @@ func checkProp(prop prs.Prop) error {
 			return fmt.Errorf(invalidTypeMsg, name, "integer", pv.Type())
 		}
 		if v < 1 {
-			return fmt.Errorf("'masters' property must be positive, current value (%d)", v)
+			return tok.Error{
+				Msg:  fmt.Sprintf("'masters' property must be positive, current value %d", v),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 	case "range":
 		switch v := pv.(type) {
