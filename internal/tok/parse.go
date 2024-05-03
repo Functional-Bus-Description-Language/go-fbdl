@@ -875,10 +875,12 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 				case "ns", "us", "ms", "s":
 					t = Time{
 						position{
-							start:  prevTok.Start(),
-							end:    t.End(),
-							line:   prevTok.Line(),
-							column: prevTok.Column(),
+							prevTok.Start(),
+							t.End(),
+							prevTok.Line(),
+							prevTok.Column(),
+							ctx.src,
+							ctx.path,
 						},
 					}
 					// Remove previous Int from the list
