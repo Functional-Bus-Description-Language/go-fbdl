@@ -59,7 +59,7 @@ func applyMaskType(mask *fn.Mask, typ prs.Functionality, diary *maskDiary) error
 			return fmt.Errorf(": %v", err)
 		}
 		if err := checkProp(p); err != nil {
-			return fmt.Errorf("%s: line %d: %v", typ.File().Path, p.Line(), err)
+			return err
 		}
 
 		v, err := p.Value.Eval()

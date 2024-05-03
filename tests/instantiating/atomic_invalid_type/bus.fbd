@@ -1,0 +1,3 @@
+Main bus
+	M mask
+		atomic = 10 ns
