@@ -1,5 +1,0 @@
-error: 'atomic' property must be of type 'bool', current type 'time'
-bus.fbd +3:12
-   |
- 3 | 		atomic = 10 ns
-   | 		         ^^^^^
