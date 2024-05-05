@@ -1,0 +1,3 @@
+Main bus
+	I irq
+		clear = "Lorem"

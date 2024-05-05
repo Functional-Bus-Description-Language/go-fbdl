@@ -52,9 +52,10 @@ func checkProp(prop prs.Prop) error {
 			}
 		}
 		if v != "Explicit" && v != "On Read" {
-			return fmt.Errorf(
-				"clear property must be \"Explicit\" or \"On Read\", current value (%q)", v,
-			)
+			return tok.Error{
+				Msg:  fmt.Sprintf("clear property must be \"Explicit\" or \"On Read\", current value %q", v),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 	case "delay":
 		switch pv.(type) {
