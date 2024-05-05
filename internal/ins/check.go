@@ -197,7 +197,10 @@ func checkProp(prop prs.Prop) error {
 	case "reset":
 		v, ok := pv.(val.Str)
 		if !ok {
-			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+			return tok.Error{
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 		reset := string(v)
 		if reset != "Sync" && reset != "Async" {
