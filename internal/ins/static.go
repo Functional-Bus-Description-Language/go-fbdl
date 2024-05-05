@@ -49,7 +49,7 @@ func insStatic(typeChain []prs.Functionality) (*fn.Static, error) {
 	if err != nil {
 		last := typeChain[len(typeChain)-1]
 		return nil, tok.Error{
-			Msg:  fmt.Sprintf("%v", err),
+			Msg:  fmt.Sprintf("'%s' %v", last.Name(), err),
 			Toks: []tok.Token{last.Tok()},
 		}
 	}
@@ -124,7 +124,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		}
 		st.InitValue = fbdlVal.MakeBitStr(val)
 	} else {
-		return fmt.Errorf("'static' functionality must have 'init-value' property set")
+		return fmt.Errorf("static functionality must have init-value property set")
 	}
 
 	if diary.resetValSet {

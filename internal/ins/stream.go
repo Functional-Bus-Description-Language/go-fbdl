@@ -103,7 +103,7 @@ func addStreamInnerFunctionality(s *fn.Stream, f fn.Functionality) error {
 	if (f.Type() == "return" && len(s.Params) > 0) ||
 		(f.Type() == "param" && len(s.Returns) > 0) {
 		return fmt.Errorf(
-			"all 'stream' inner functionalities must be of the same base type and must be 'param' or 'return', "+
+			"all stream inner functionalities must be of the same base type and must be param or return, "+
 				"'%s' base type is '%s'", f.GetName(), f.Type(),
 		)
 	}
