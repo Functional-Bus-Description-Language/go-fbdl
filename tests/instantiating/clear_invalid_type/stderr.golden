@@ -1,0 +1,5 @@
+error: clear property must be of type string, current type integer
+bus.fbd +3:11
+   |
+ 3 | 		clear = 1
+   | 		        ^
