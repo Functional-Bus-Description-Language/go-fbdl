@@ -116,7 +116,10 @@ func checkProp(prop prs.Prop) error {
 	case "masters":
 		v, ok := pv.(val.Int)
 		if !ok {
-			return fmt.Errorf(invalidTypeMsg, name, "integer", pv.Type())
+			return tok.Error{
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 		if v < 1 {
 			return tok.Error{
