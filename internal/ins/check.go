@@ -72,7 +72,10 @@ func checkProp(prop prs.Prop) error {
 		case val.Int, val.BitStr:
 			break
 		default:
-			return fmt.Errorf(invalidTypeMsg, name, "integer or bit string", pv.Type())
+			return tok.Error{
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer or bit string", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 	case "groups":
 		switch v := pv.(type) {

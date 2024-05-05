@@ -1,0 +1,5 @@
+error: reset-value property must be of type integer or bit string, current type float
+bus.fbd +2:26
+   |
+ 2 | 	C config; reset-value = 3.14
+   | 	                        ^^^^
