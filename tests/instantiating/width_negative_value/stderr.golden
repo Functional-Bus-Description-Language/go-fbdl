@@ -1,0 +1,5 @@
+error: width property must be natural, current value -10
+bus.fbd +3:11
+   |
+ 3 | 		width = -10
+   | 		        ^^^

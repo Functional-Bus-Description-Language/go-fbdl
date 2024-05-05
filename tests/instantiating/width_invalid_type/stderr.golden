@@ -1,4 +1,4 @@
-error: 'width' property must be of type 'integer', current type 'float'
+error: width property must be of type integer, current type float
 bus.fbd +2:20
    |
  2 | 	C config; width = 10.12

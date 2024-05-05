@@ -1,4 +1,4 @@
-error: empty 'range' property value list
+error: empty range property value list
 bus.fbd +2:20
    |
  2 | 	C config; range = []

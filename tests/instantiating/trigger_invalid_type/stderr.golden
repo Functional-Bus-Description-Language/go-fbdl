@@ -1,0 +1,5 @@
+error: in-trigger property must be of type string, current type time
+bus.fbd +3:16
+   |
+ 3 | 		in-trigger = 15 ns
+   | 		             ^^^^^

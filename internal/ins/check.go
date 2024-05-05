@@ -15,7 +15,7 @@ func checkProp(prop prs.Prop) error {
 		return fmt.Errorf("cannot evaluate expression: %v", err)
 	}
 
-	invalidTypeMsg := `'%s' property must be of type '%s', current type '%s'`
+	invalidTypeMsg := `%s property must be of type %s, current type %s`
 
 	name := prop.Name
 
@@ -31,7 +31,7 @@ func checkProp(prop prs.Prop) error {
 		if v != "Read Write" && v != "Read Only" && v != "Write Only" {
 			return tok.Error{
 				Msg: fmt.Sprintf(
-					"'access' property must be \"Read Write\", \"Read Only\" or \"Write Only\", current value %q", v,
+					"access property must be \"Read Write\", \"Read Only\" or \"Write Only\", current value %q", v,
 				),
 				Toks: []tok.Token{prop.ValueTok},
 			}
@@ -50,7 +50,7 @@ func checkProp(prop prs.Prop) error {
 		}
 		if v != "Explicit" && v != "On Read" {
 			return fmt.Errorf(
-				"'clear' property must be \"Explicit\" or \"On Read\", current value (%q)", v,
+				"clear property must be \"Explicit\" or \"On Read\", current value (%q)", v,
 			)
 		}
 	case "delay":
@@ -105,7 +105,7 @@ func checkProp(prop prs.Prop) error {
 		}
 		if v != "Edge" && v != "Level" {
 			return tok.Error{
-				Msg:  fmt.Sprintf("'%s' property must be \"Edge\" or \"Level\", current value %q", name, v),
+				Msg:  fmt.Sprintf("%s property must be \"Edge\" or \"Level\", current value %q", name, v),
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
@@ -116,7 +116,7 @@ func checkProp(prop prs.Prop) error {
 		}
 		if v < 1 {
 			return tok.Error{
-				Msg:  fmt.Sprintf("'masters' property must be positive, current value %d", v),
+				Msg:  fmt.Sprintf("masters property must be positive, current value %d", v),
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
@@ -125,20 +125,20 @@ func checkProp(prop prs.Prop) error {
 		case val.Int:
 			if v < 0 {
 				return tok.Error{
-					Msg:  fmt.Sprintf("'range' property value must be natural, value %d is negative", v),
+					Msg:  fmt.Sprintf("range property value must be natural, value %d is negative", v),
 					Toks: []tok.Token{prop.ValueTok},
 				}
 			}
 		case val.List:
 			if len(v) == 0 {
 				return tok.Error{
-					Msg:  "empty 'range' property value list",
+					Msg:  "empty range property value list",
 					Toks: []tok.Token{prop.ValueTok},
 				}
 			}
 			if len(v)%2 != 0 {
 				return tok.Error{
-					Msg:  fmt.Sprintf("length of 'range' property value list must be even, current length %d", len(v)),
+					Msg:  fmt.Sprintf("length of range property value list must be even, current length %d", len(v)),
 					Toks: []tok.Token{prop.ValueTok},
 				}
 			}
@@ -149,7 +149,7 @@ func checkProp(prop prs.Prop) error {
 				if !ok {
 					return tok.Error{
 						Msg: fmt.Sprintf(
-							"all values in 'range' property list must be of type 'integer', value with index %d is of type '%s'",
+							"all values in range property list must be of type integer, value with index %d is of type %s",
 							i, bound.Type(),
 						),
 						Toks: []tok.Token{prop.ValueTok},
@@ -158,7 +158,7 @@ func checkProp(prop prs.Prop) error {
 				if bound_val < 0 {
 					return tok.Error{
 						Msg: fmt.Sprintf(
-							"'range' property value must be natural, value with index %d is negative %d",
+							"range property value must be natural, value with index %d is negative %d",
 							i, bound_val,
 						),
 						Toks: []tok.Token{prop.ValueTok},
@@ -174,7 +174,7 @@ func checkProp(prop prs.Prop) error {
 				if lower && lowerBound > upperBound {
 					return tok.Error{
 						Msg: fmt.Sprintf(
-							"'range' property list, lower bound with index %d (%d) is greater than upper bound with index %d (%d)",
+							"range property list, lower bound with index %d (%d) is greater than upper bound with index %d (%d)",
 							i-1, lowerBound, i, upperBound,
 						),
 						Toks: []tok.Token{prop.ValueTok},
@@ -195,7 +195,7 @@ func checkProp(prop prs.Prop) error {
 		reset := string(v)
 		if reset != "Sync" && reset != "Async" {
 			return tok.Error{
-				Msg:  fmt.Sprintf("'reset' property must be \"Sync\" or \"Async\", current value %q", reset),
+				Msg:  fmt.Sprintf("reset property must be \"Sync\" or \"Async\", current value %q", reset),
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
@@ -209,7 +209,7 @@ func checkProp(prop prs.Prop) error {
 		}
 		if v < 0 {
 			return tok.Error{
-				Msg:  fmt.Sprintf("'%s' property must be natural, current value %d", prop.Name, v),
+				Msg:  fmt.Sprintf("%s property must be natural, current value %d", prop.Name, v),
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}

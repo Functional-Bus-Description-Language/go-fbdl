@@ -1,4 +1,4 @@
-error: 'masters' property must be positive, current value -10
+error: masters property must be positive, current value -10
 bus.fbd +2:12
    |
  2 | 	masters = -10
