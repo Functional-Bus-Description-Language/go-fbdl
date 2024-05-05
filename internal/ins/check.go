@@ -98,7 +98,10 @@ func checkProp(prop prs.Prop) error {
 	case "in-trigger", "out-trigger":
 		v, ok := pv.(val.Str)
 		if !ok {
-			return fmt.Errorf(invalidTypeMsg, name, "string", pv.Type())
+			return tok.Error{
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
 		}
 		if v != "Edge" && v != "Level" {
 			return tok.Error{
