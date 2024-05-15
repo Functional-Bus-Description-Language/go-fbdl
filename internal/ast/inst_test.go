@@ -20,8 +20,8 @@ func TestBuildInstSingleLine(t *testing.T) {
 		},
 	}
 
-	ctx := context{}
-	got, err := buildInst(toks, &ctx)
+	ctx := context{toks: toks}
+	got, err := buildInst(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
@@ -73,8 +73,8 @@ func TestBuildInstMultiLine(t *testing.T) {
 		},
 	}
 
-	ctx := context{}
-	got, err := buildInst(toks, &ctx)
+	ctx := context{toks: toks}
+	got, err := buildInst(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}

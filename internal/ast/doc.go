@@ -40,14 +40,14 @@ func (d Doc) Text(src []byte) string {
 	return text
 }
 
-func buildDoc(toks []tok.Token, ctx *context) Doc {
+func buildDoc(ctx *context) Doc {
 	doc := Doc{}
-	doc.Lines = append(doc.Lines, toks[ctx.idx].(tok.Comment))
+	doc.Lines = append(doc.Lines, ctx.tok().(tok.Comment))
 
 	prevNewline := false
 	for {
 		ctx.idx++
-		switch t := toks[ctx.idx].(type) {
+		switch t := ctx.tok().(type) {
 		case tok.Newline:
 			if prevNewline {
 				break

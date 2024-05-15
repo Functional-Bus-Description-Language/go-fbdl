@@ -11,27 +11,27 @@ type Const struct {
 	Value Expr
 }
 
-func buildConst(toks []tok.Token, ctx *context) ([]Const, error) {
-	switch t := toks[ctx.idx+1].(type) {
+func buildConst(ctx *context) ([]Const, error) {
+	switch t := ctx.nextTok().(type) {
 	case tok.Ident:
-		return buildSingleConst(toks, ctx)
+		return buildSingleConst(ctx)
 	case tok.Newline:
-		return buildMultiConst(toks, ctx)
+		return buildMultiConst(ctx)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleConst(toks []tok.Token, ctx *context) ([]Const, error) {
-	con := Const{Name: toks[ctx.idx+1].(tok.Ident)}
+func buildSingleConst(ctx *context) ([]Const, error) {
+	con := Const{Name: ctx.nextTok().(tok.Ident)}
 
 	ctx.idx += 2
-	if _, ok := toks[ctx.idx].(tok.Ass); !ok {
-		return nil, unexpected(toks[ctx.idx], "'='")
+	if _, ok := ctx.tok().(tok.Ass); !ok {
+		return nil, unexpected(ctx.tok(), "'='")
 	}
 
 	ctx.idx++
-	expr, err := buildExpr(toks, ctx, nil)
+	expr, err := buildExpr(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func buildSingleConst(toks []tok.Token, ctx *context) ([]Const, error) {
 	return []Const{con}, nil
 }
 
-func buildMultiConst(toks []tok.Token, ctx *context) ([]Const, error) {
+func buildMultiConst(ctx *context) ([]Const, error) {
 	consts := []Const{}
 	con := Const{}
 
@@ -60,7 +60,7 @@ tokenLoop:
 		ctx.idx++
 		switch state {
 		case Indent:
-			switch t := toks[ctx.idx].(type) {
+			switch t := ctx.tok().(type) {
 			case tok.Newline:
 				continue
 			case tok.Indent:
@@ -69,7 +69,7 @@ tokenLoop:
 				return nil, unexpected(t, "indent or newline")
 			}
 		case FirstId:
-			switch t := toks[ctx.idx].(type) {
+			switch t := ctx.tok().(type) {
 			case tok.Ident:
 				con.Name = t
 				state = Ass
@@ -77,14 +77,14 @@ tokenLoop:
 				return nil, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := toks[ctx.idx].(type) {
+			switch t := ctx.tok().(type) {
 			case tok.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "'='")
 			}
 		case Exp:
-			expr, err := buildExpr(toks, ctx, nil)
+			expr, err := buildExpr(ctx, nil)
 			if err != nil {
 				return nil, err
 			}
@@ -94,12 +94,12 @@ tokenLoop:
 			ctx.idx--
 			state = Id
 		case Id:
-			switch t := toks[ctx.idx].(type) {
+			switch t := ctx.tok().(type) {
 			case tok.Ident:
 				con.Name = t
 				state = Ass
 			case tok.Comment:
-				doc := buildDoc(toks, ctx)
+				doc := buildDoc(ctx)
 				con.Doc = doc
 				ctx.idx--
 			case tok.Newline:

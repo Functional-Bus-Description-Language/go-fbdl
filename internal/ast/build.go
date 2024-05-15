@@ -4,11 +4,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 )
 
-// Building context
-type context struct {
-	idx int // Current token index
-}
-
 // Build builds ast from provided source.
 func Build(src []byte, path string) (File, error) {
 	var (
@@ -26,19 +21,20 @@ func Build(src []byte, path string) (File, error) {
 	if err != nil {
 		return File{}, err
 	}
+	ctx.toks = toks
 
 	for {
-		if _, ok := toks[ctx.idx].(tok.Eof); ok {
+		if _, ok := ctx.tok().(tok.Eof); ok {
 			break
 		}
 
-		switch t := toks[ctx.idx].(type) {
+		switch t := ctx.tok().(type) {
 		case tok.Newline:
 			ctx.idx++
 		case tok.Comment:
-			doc = buildDoc(toks, &ctx)
+			doc = buildDoc(&ctx)
 		case tok.Const:
-			consts, err = buildConst(toks, &ctx)
+			consts, err = buildConst(&ctx)
 			if len(consts) > 0 {
 				if doc.endLine() == consts[0].Name.Line()-1 {
 					consts[0].Doc = doc
@@ -46,18 +42,18 @@ func Build(src []byte, path string) (File, error) {
 				f.Consts = append(f.Consts, consts...)
 			}
 		case tok.Ident:
-			ins, err = buildInst(toks, &ctx)
+			ins, err = buildInst(&ctx)
 			if doc.endLine() == ins.Name.Line()-1 {
 				ins.Doc = doc
 			}
 			f.Insts = append(f.Insts, ins)
 		case tok.Import:
-			imps, err = buildImport(toks, &ctx)
+			imps, err = buildImport(&ctx)
 			if len(imps) > 0 {
 				f.Imports = append(f.Imports, imps...)
 			}
 		case tok.Type:
-			typ, err = buildType(toks, &ctx)
+			typ, err = buildType(&ctx)
 			f.Types = append(f.Types, typ)
 		default:
 			return f, unexpected(t, "const, type, identifier, import or comment")

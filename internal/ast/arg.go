@@ -23,20 +23,20 @@ func (al ArgList) Len() int {
 	return len(al.Args)
 }
 
-func buildArgList(toks []tok.Token, ctx *context) (ArgList, error) {
-	if _, ok := toks[ctx.idx].(tok.LeftParen); !ok {
+func buildArgList(ctx *context) (ArgList, error) {
+	if _, ok := ctx.tok().(tok.LeftParen); !ok {
 		return ArgList{}, nil
 	}
 
 	argList := ArgList{
-		LeftParen: toks[ctx.idx].(tok.LeftParen),
+		LeftParen: ctx.tok().(tok.LeftParen),
 		Args:      []Arg{},
 	}
 
-	if _, ok := toks[ctx.idx+1].(tok.RightParen); ok {
+	if _, ok := ctx.nextTok().(tok.RightParen); ok {
 		return argList, tok.Error{
 			Msg:  "empty argument list",
-			Toks: []tok.Token{tok.Join(toks[ctx.idx], toks[ctx.idx+1])},
+			Toks: []tok.Token{tok.Join(ctx.tok(), ctx.nextTok())},
 		}
 	}
 
@@ -56,16 +56,16 @@ tokenLoop:
 		ctx.idx++
 		switch state {
 		case Name:
-			switch t := toks[ctx.idx].(type) {
+			switch t := ctx.tok().(type) {
 			case tok.Ident:
-				switch toks[ctx.idx+1].(type) {
+				switch ctx.nextTok().(type) {
 				case tok.Ass:
 					arg.Name = t
 					state = Ass
 				default:
 					arg.Name = nil
 					arg.ValueFirstTok = t
-					expr, err := buildExpr(toks, ctx, nil)
+					expr, err := buildExpr(ctx, nil)
 					if err != nil {
 						return argList, err
 					}
@@ -76,8 +76,8 @@ tokenLoop:
 				}
 			default:
 				arg.Name = nil
-				arg.ValueFirstTok = toks[ctx.idx]
-				expr, err := buildExpr(toks, ctx, nil)
+				arg.ValueFirstTok = ctx.tok()
+				expr, err := buildExpr(ctx, nil)
 				if err != nil {
 					return argList, err
 				}
@@ -87,14 +87,14 @@ tokenLoop:
 				state = Comma
 			}
 		case Ass:
-			switch t := toks[ctx.idx].(type) {
+			switch t := ctx.tok().(type) {
 			case tok.Ass:
 				state = Val
 			default:
 				return argList, unexpected(t, "'='")
 			}
 		case Comma:
-			switch t := toks[ctx.idx].(type) {
+			switch t := ctx.tok().(type) {
 			case tok.Comma:
 				state = Name
 			case tok.RightParen:
@@ -105,8 +105,8 @@ tokenLoop:
 				return argList, unexpected(t, "',' or ')'")
 			}
 		case Val:
-			arg.ValueFirstTok = toks[ctx.idx]
-			expr, err := buildExpr(toks, ctx, nil)
+			arg.ValueFirstTok = ctx.tok()
+			expr, err := buildExpr(ctx, nil)
 			if err != nil {
 				return argList, err
 			}

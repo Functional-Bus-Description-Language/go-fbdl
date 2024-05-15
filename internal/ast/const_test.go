@@ -12,8 +12,8 @@ func TestBuildSingleConst(t *testing.T) {
 		Name:  toks[1].(tok.Ident),
 		Value: Int{toks[3].(tok.Int)},
 	}
-	ctx := context{}
-	got, err := buildSingleConst(toks, &ctx)
+	ctx := context{toks: toks}
+	got, err := buildSingleConst(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
@@ -45,8 +45,8 @@ func TestBuildMultiConst(t *testing.T) {
 		},
 		Const{Name: toks[17].(tok.Ident), Value: Bool{toks[19].(tok.Bool)}},
 	}
-	ctx := context{}
-	got, err := buildMultiConst(toks, &ctx)
+	ctx := context{toks: toks}
+	got, err := buildMultiConst(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}

@@ -15,41 +15,41 @@ type Type struct {
 	Body   Body
 }
 
-func buildType(toks []tok.Token, ctx *context) (Type, error) {
+func buildType(ctx *context) (Type, error) {
 	typ := Type{}
 	ctx.idx++
 
 	// Name
-	if t, ok := toks[ctx.idx].(tok.Ident); ok {
+	if t, ok := ctx.tok().(tok.Ident); ok {
 		typ.Name = t
 	} else {
-		return typ, unexpected(toks[ctx.idx], "identifier")
+		return typ, unexpected(ctx.tok(), "identifier")
 	}
 	ctx.idx++
 
 	// Parameter List
-	params, err := buildParamList(toks, ctx)
+	params, err := buildParamList(ctx)
 	if err != nil {
 		return typ, err
 	}
 	typ.Params = params
 
 	// Count
-	if _, ok := toks[ctx.idx].(tok.LeftBracket); ok {
+	if _, ok := ctx.tok().(tok.LeftBracket); ok {
 		ctx.idx++
-		expr, err := buildExpr(toks, ctx, nil)
+		expr, err := buildExpr(ctx, nil)
 		if err != nil {
 			return typ, err
 		}
 		typ.Count = expr
-		if _, ok := toks[ctx.idx].(tok.RightBracket); !ok {
-			return typ, unexpected(toks[ctx.idx], "']'")
+		if _, ok := ctx.tok().(tok.RightBracket); !ok {
+			return typ, unexpected(ctx.tok(), "']'")
 		}
 		ctx.idx++
 	}
 
 	// Type
-	switch t := toks[ctx.idx].(type) {
+	switch t := ctx.tok().(type) {
 	case tok.Functionality, tok.Ident, tok.QualIdent:
 		typ.Type = t
 		ctx.idx++
@@ -58,25 +58,25 @@ func buildType(toks []tok.Token, ctx *context) (Type, error) {
 	}
 
 	// Argument List
-	args, err := buildArgList(toks, ctx)
+	args, err := buildArgList(ctx)
 	if err != nil {
 		return typ, err
 	}
 	typ.Args = args
 
 	// Body
-	switch t := toks[ctx.idx].(type) {
+	switch t := ctx.tok().(type) {
 	case tok.Semicolon:
 		ctx.idx++
-		props, err := buildPropAssignments(toks, ctx)
+		props, err := buildPropAssignments(ctx)
 		if err != nil {
 			return typ, err
 		}
 		typ.Body.Props = props
 	case tok.Newline:
-		if _, ok := toks[ctx.idx+1].(tok.Indent); ok {
+		if _, ok := ctx.nextTok().(tok.Indent); ok {
 			ctx.idx += 2
-			body, err := buildBody(toks, ctx)
+			body, err := buildBody(ctx)
 			if err != nil {
 				return typ, err
 			}

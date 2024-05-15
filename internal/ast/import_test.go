@@ -12,8 +12,8 @@ func TestBuildSingleImport(t *testing.T) {
 		Name: nil,
 		Path: toks[1].(tok.String),
 	}
-	ctx := context{}
-	got, err := buildSingleImport(toks, &ctx)
+	ctx := context{toks: toks}
+	got, err := buildSingleImport(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
@@ -29,8 +29,8 @@ func TestBuildSingleImport(t *testing.T) {
 		Name: toks[1].(tok.Ident),
 		Path: toks[2].(tok.String),
 	}
-	ctx = context{}
-	got, err = buildSingleImport(toks, &ctx)
+	ctx = context{toks: toks}
+	got, err = buildSingleImport(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
@@ -56,8 +56,8 @@ func TestBuildMultiImport(t *testing.T) {
 		Import{Path: toks[8].(tok.String)},
 	}
 
-	ctx := context{}
-	got, err := buildMultiImport(toks, &ctx)
+	ctx := context{toks: toks}
+	got, err := buildMultiImport(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}

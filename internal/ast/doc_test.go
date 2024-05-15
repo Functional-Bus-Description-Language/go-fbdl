@@ -12,8 +12,8 @@ func TestDoc(t *testing.T) {
 # Line 4`
 	toks, _ := tok.Parse([]byte(src), "")
 
-	c := context{}
-	doc := buildDoc(toks, &c)
+	ctx := context{toks: toks}
+	doc := buildDoc(&ctx)
 	got := doc.Text([]byte(src))
 	want := `Line 1
 Line 2
