@@ -141,7 +141,10 @@ func Parse(src []byte, path string) ([]Token, error) {
 		} else if isLetter(b) {
 			tok, err = parseWord(&ctx, &toks)
 		} else {
-			panic(fmt.Sprintf("unhandled byte '%c'", b))
+			return nil, Error{
+				Msg:  fmt.Sprintf("invalid byte 0x%x, ('%c')", b, b),
+				Toks: []Token{None{position: ctx.pos()}},
+			}
 		}
 
 		if err != nil {
