@@ -25,6 +25,14 @@ type List []Value
 
 func (l List) Type() string { return "list" }
 
+// Range represents FBDL range type.
+type Range struct {
+	L int64
+	R int64
+}
+
+func (r Range) Type() string { return "range" }
+
 // Str represents FBDL string type.
 type Str string
 

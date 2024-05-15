@@ -119,12 +119,11 @@ func TestBuildBinaryExpr(t *testing.T) {
 	}
 	c := context{}
 	got, err := buildExpr(toks, &c, nil)
+	err = checkExpr(c, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("\ngot:  %+v\nwant: %+v", got, want)
-	}
+
 	toks, _ = tok.Parse([]byte("A + B * C"), "")
 	want = BinaryExpr{
 		X:  Ident{Name: toks[0]},
@@ -222,6 +221,19 @@ func TestBuildBinaryExpr(t *testing.T) {
 	c.i = 0
 	got, err = buildExpr(toks, &c, nil)
 	err = checkExpr(c, 7, got, want, err)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+}
+
+func TestBuildRange(t *testing.T) {
+	toks, _ := tok.Parse([]byte("0:18"), "")
+	want := Range{
+		L: Int{X: toks[0].(tok.Int)}, R: Int{toks[2].(tok.Int)},
+	}
+	c := context{}
+	got, err := buildExpr(toks, &c, nil)
+	err = checkExpr(c, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}

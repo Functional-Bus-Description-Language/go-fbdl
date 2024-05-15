@@ -50,6 +50,11 @@ type (
 		X tok.Int
 	}
 
+	Range struct {
+		L Expr
+		R Expr
+	}
+
 	Real struct {
 		X tok.Real
 	}
@@ -97,6 +102,9 @@ func (i Int) Tok() tok.Token { return i.X }
 
 func (r Real) expr()          {}
 func (r Real) Tok() tok.Token { return r.X }
+
+func (r Range) expr()          {}
+func (r Range) Tok() tok.Token { return tok.Join(r.L.Tok(), r.R.Tok()) }
 
 func (s String) expr()          {}
 func (s String) Tok() tok.Token { return s.X }
@@ -159,7 +167,16 @@ func buildExpr(toks []tok.Token, ctx *context, leftOp tok.Operator) (Expr, error
 			return expr, nil
 		}
 
-		if (leftOp == nil) ||
+		if _, ok := toks[ctx.i].(tok.Colon); ok {
+			r := Range{L: expr}
+			ctx.i++
+			expr, err = buildExpr(toks, ctx, rightOp)
+			if err != nil {
+				return expr, err
+			}
+			r.R = expr
+			expr = r
+		} else if (leftOp == nil) ||
 			(leftOp != nil && (leftOp.Precedence() < rightOp.Precedence())) {
 			be := BinaryExpr{X: expr, Op: rightOp}
 			ctx.i++

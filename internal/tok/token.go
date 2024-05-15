@@ -343,7 +343,8 @@ func (w Width) property()    {}
 
 func (p Period) Name() string { return "'.'" }
 
-func (c Colon) Name() string { return "':'" }
+func (c Colon) Name() string    { return "':'" }
+func (c Colon) Precedence() int { return 0 }
 
 func (lb LeftBrace) Name() string { return "'{'" }
 

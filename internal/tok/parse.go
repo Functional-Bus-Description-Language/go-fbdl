@@ -80,6 +80,8 @@ func Parse(src []byte, path string) ([]Token, error) {
 			tok, err = parseComma(&ctx, toks)
 		} else if b == ';' {
 			tok, err = parseSemicolon(&ctx, toks)
+		} else if b == ':' {
+			tok = parseColon(&ctx, toks)
 		} else if b == '!' && nb == '=' {
 			tok = parseNonequalityOperator(&ctx)
 		} else if b == '!' {
@@ -318,6 +320,12 @@ func parseSemicolon(ctx *context, toks []Token) (Token, error) {
 	t := Semicolon{ctx.pos()}
 	ctx.idx++
 	return t, nil
+}
+
+func parseColon(ctx *context, toks []Token) Token {
+	c := Colon{ctx.pos()}
+	ctx.idx++
+	return c
 }
 
 func parseNonequalityOperator(ctx *context) Neq {

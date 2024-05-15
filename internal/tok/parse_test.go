@@ -342,6 +342,18 @@ func TestParse(t *testing.T) {
 				Eof{position{start: 9, end: 9, line: 1, column: 10}},
 			},
 		},
+		{
+			24,
+			"range = 1:9",
+			[]Token{
+				Range{position{start: 0, end: 4, line: 1, column: 1}},
+				Ass{position{start: 6, end: 6, line: 1, column: 7}},
+				Int{position{start: 8, end: 8, line: 1, column: 9}},
+				Colon{position{start: 9, end: 9, line: 1, column: 10}},
+				Int{position{start: 10, end: 10, line: 1, column: 11}},
+				Eof{position{start: 11, end: 11, line: 1, column: 12}},
+			},
+		},
 	}
 
 	for i, test := range tests {

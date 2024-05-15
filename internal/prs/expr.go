@@ -34,6 +34,8 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
 		expr, err = MakeList(e, src, s)
 	case ast.Bool:
 		expr = MakeBool(e, src)
+	case ast.Range:
+		expr, err = MakeRange(e, src, s)
 	case ast.Real:
 		expr, err = MakeReal(e, src)
 	case ast.String:
@@ -275,6 +277,32 @@ type Real struct {
 
 func (r Real) Eval() (val.Value, error) {
 	return val.Float(r.x), nil
+}
+
+type Range struct {
+	l Expr
+	r Expr
+}
+
+func MakeRange(e ast.Range, src []byte, s Scope) (Range, error) {
+	l, err := MakeExpr(e.L, src, s)
+	if err != nil {
+		return Range{}, fmt.Errorf("make range: left bound: %v", err)
+	}
+
+	r, err := MakeExpr(e.R, src, s)
+	if err != nil {
+		return Range{}, fmt.Errorf("make range: right bound: %v", err)
+	}
+
+	return Range{l: l, r: r}, nil
+}
+
+func (rng Range) Eval() (val.Value, error) {
+	l, _ := rng.l.Eval()
+	r, _ := rng.r.Eval()
+
+	return val.Range{L: int64(l.(val.Int)), R: int64(r.(val.Int))}, nil
 }
 
 func MakeReal(e ast.Real, src []byte) (Real, error) {
