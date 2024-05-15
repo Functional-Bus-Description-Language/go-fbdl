@@ -24,13 +24,13 @@ func buildPropAssignments(toks []tok.Token, ctx *context) ([]Prop, error) {
 	state := Prop
 
 	// Decrement context index as it is incremented at the beginnig of the for loop.
-	ctx.i--
+	ctx.idx--
 tokenLoop:
 	for {
-		ctx.i++
+		ctx.idx++
 		switch state {
 		case Prop:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Property:
 				p.Name = t
 				state = Ass
@@ -38,7 +38,7 @@ tokenLoop:
 				return nil, unexpected(t, "property name")
 			}
 		case Ass:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Ass:
 				state = Exp
 			default:
@@ -49,12 +49,12 @@ tokenLoop:
 			if err != nil {
 				return nil, err
 			}
-			ctx.i--
+			ctx.idx--
 			p.Value = expr
 			props = append(props, p)
 			state = Semicolon
 		case Semicolon:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Newline, tok.Eof:
 				break tokenLoop
 			case tok.Semicolon:

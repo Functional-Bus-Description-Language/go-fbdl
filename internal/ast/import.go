@@ -11,7 +11,7 @@ type Import struct {
 }
 
 func buildImport(toks []tok.Token, ctx *context) ([]Import, error) {
-	switch t := toks[ctx.i+1].(type) {
+	switch t := toks[ctx.idx+1].(type) {
 	case tok.Ident, tok.String:
 		return buildSingleImport(toks, ctx)
 	case tok.Newline:
@@ -24,21 +24,21 @@ func buildImport(toks []tok.Token, ctx *context) ([]Import, error) {
 func buildSingleImport(toks []tok.Token, ctx *context) ([]Import, error) {
 	i := Import{}
 
-	ctx.i++
-	switch t := toks[ctx.i].(type) {
+	ctx.idx++
+	switch t := toks[ctx.idx].(type) {
 	case tok.Ident:
 		i.Name = t
-		ctx.i++
-		switch t := toks[ctx.i].(type) {
+		ctx.idx++
+		switch t := toks[ctx.idx].(type) {
 		case tok.String:
 			i.Path = t
-			ctx.i++
+			ctx.idx++
 		default:
 			return nil, unexpected(t, "string")
 		}
 	case tok.String:
 		i.Path = t
-		ctx.i++
+		ctx.idx++
 	}
 
 	return []Import{i}, nil
@@ -48,9 +48,9 @@ func buildMultiImport(toks []tok.Token, ctx *context) ([]Import, error) {
 	imps := []Import{}
 	i := Import{}
 
-	ctx.i += 2
-	if _, ok := toks[ctx.i].(tok.Indent); !ok {
-		return nil, unexpected(toks[ctx.i], "indent increase")
+	ctx.idx += 2
+	if _, ok := toks[ctx.idx].(tok.Indent); !ok {
+		return nil, unexpected(toks[ctx.idx], "indent increase")
 	}
 
 	type State int
@@ -62,10 +62,10 @@ func buildMultiImport(toks []tok.Token, ctx *context) ([]Import, error) {
 
 tokenLoop:
 	for {
-		ctx.i++
+		ctx.idx++
 		switch state {
 		case Name:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Ident:
 				i.Name = t
 				state = Path
@@ -76,7 +76,7 @@ tokenLoop:
 			case tok.Newline:
 				// Do nothing
 			case tok.Dedent:
-				ctx.i++
+				ctx.idx++
 				break tokenLoop
 			case tok.Eof:
 				break tokenLoop
@@ -84,7 +84,7 @@ tokenLoop:
 				return nil, unexpected(t, "identifier or string")
 			}
 		case Path:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.String:
 				i.Path = t
 				imps = append(imps, i)

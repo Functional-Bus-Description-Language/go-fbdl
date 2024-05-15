@@ -12,7 +12,7 @@ type Const struct {
 }
 
 func buildConst(toks []tok.Token, ctx *context) ([]Const, error) {
-	switch t := toks[ctx.i+1].(type) {
+	switch t := toks[ctx.idx+1].(type) {
 	case tok.Ident:
 		return buildSingleConst(toks, ctx)
 	case tok.Newline:
@@ -23,14 +23,14 @@ func buildConst(toks []tok.Token, ctx *context) ([]Const, error) {
 }
 
 func buildSingleConst(toks []tok.Token, ctx *context) ([]Const, error) {
-	con := Const{Name: toks[ctx.i+1].(tok.Ident)}
+	con := Const{Name: toks[ctx.idx+1].(tok.Ident)}
 
-	ctx.i += 2
-	if _, ok := toks[ctx.i].(tok.Ass); !ok {
-		return nil, unexpected(toks[ctx.i], "'='")
+	ctx.idx += 2
+	if _, ok := toks[ctx.idx].(tok.Ass); !ok {
+		return nil, unexpected(toks[ctx.idx], "'='")
 	}
 
-	ctx.i++
+	ctx.idx++
 	expr, err := buildExpr(toks, ctx, nil)
 	if err != nil {
 		return nil, err
@@ -54,13 +54,13 @@ func buildMultiConst(toks []tok.Token, ctx *context) ([]Const, error) {
 	)
 	state := Indent
 
-	ctx.i += 1
+	ctx.idx += 1
 tokenLoop:
 	for {
-		ctx.i++
+		ctx.idx++
 		switch state {
 		case Indent:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Newline:
 				continue
 			case tok.Indent:
@@ -69,7 +69,7 @@ tokenLoop:
 				return nil, unexpected(t, "indent or newline")
 			}
 		case FirstId:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Ident:
 				con.Name = t
 				state = Ass
@@ -77,7 +77,7 @@ tokenLoop:
 				return nil, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Ass:
 				state = Exp
 			default:
@@ -91,21 +91,21 @@ tokenLoop:
 			con.Value = expr
 			consts = append(consts, con)
 			con = Const{}
-			ctx.i--
+			ctx.idx--
 			state = Id
 		case Id:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Ident:
 				con.Name = t
 				state = Ass
 			case tok.Comment:
 				doc := buildDoc(toks, ctx)
 				con.Doc = doc
-				ctx.i--
+				ctx.idx--
 			case tok.Newline:
 				continue
 			case tok.Dedent:
-				ctx.i++
+				ctx.idx++
 				break tokenLoop
 			case tok.Eof:
 				break tokenLoop

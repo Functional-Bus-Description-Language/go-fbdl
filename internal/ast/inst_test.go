@@ -20,13 +20,13 @@ func TestBuildInstSingleLine(t *testing.T) {
 		},
 	}
 
-	c := context{}
-	got, err := buildInst(toks, &c)
+	ctx := context{}
+	got, err := buildInst(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 13 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 13 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
 	if !reflect.DeepEqual(got, want) {
@@ -73,14 +73,14 @@ func TestBuildInstMultiLine(t *testing.T) {
 		},
 	}
 
-	c := context{}
-	got, err := buildInst(toks, &c)
+	ctx := context{}
+	got, err := buildInst(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
 
-	if c.i != 31 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 31 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
 	if !reflect.DeepEqual(got, want) {

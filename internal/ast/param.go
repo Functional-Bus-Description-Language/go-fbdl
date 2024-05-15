@@ -11,13 +11,13 @@ type Param struct {
 }
 
 func buildParamList(toks []tok.Token, ctx *context) ([]Param, error) {
-	if _, ok := toks[ctx.i].(tok.LeftParen); !ok {
+	if _, ok := toks[ctx.idx].(tok.LeftParen); !ok {
 		return nil, nil
 	}
-	if _, ok := toks[ctx.i+1].(tok.RightParen); ok {
+	if _, ok := toks[ctx.idx+1].(tok.RightParen); ok {
 		return nil, tok.Error{
 			Msg:  "empty parameter list",
-			Toks: []tok.Token{tok.Join(toks[ctx.i], toks[ctx.i+1])},
+			Toks: []tok.Token{tok.Join(toks[ctx.idx], toks[ctx.idx+1])},
 		}
 	}
 
@@ -35,10 +35,10 @@ func buildParamList(toks []tok.Token, ctx *context) ([]Param, error) {
 
 tokenLoop:
 	for {
-		ctx.i++
+		ctx.idx++
 		switch state {
 		case Name:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Ident:
 				p.Name = t
 				state = Ass
@@ -46,7 +46,7 @@ tokenLoop:
 				return nil, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Ass:
 				state = Val
 			case tok.Comma:
@@ -55,7 +55,7 @@ tokenLoop:
 				state = Name
 			case tok.RightParen:
 				params = append(params, p)
-				ctx.i++
+				ctx.idx++
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "'=', ')' or ','")
@@ -65,17 +65,17 @@ tokenLoop:
 			if err != nil {
 				return nil, err
 			}
-			ctx.i--
+			ctx.idx--
 			p.Value = expr
 			params = append(params, p)
 			p = Param{}
 			state = Comma
 		case Comma:
-			switch t := toks[ctx.i].(type) {
+			switch t := toks[ctx.idx].(type) {
 			case tok.Comma:
 				state = Name
 			case tok.RightParen:
-				ctx.i++
+				ctx.idx++
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "',' or ')'")

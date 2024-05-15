@@ -15,28 +15,28 @@ type Inst struct {
 }
 
 func buildInst(toks []tok.Token, ctx *context) (Inst, error) {
-	inst := Inst{Name: toks[ctx.i].(tok.Ident)}
-	ctx.i++
+	inst := Inst{Name: toks[ctx.idx].(tok.Ident)}
+	ctx.idx++
 
 	// Count
-	if _, ok := toks[ctx.i].(tok.LeftBracket); ok {
-		ctx.i++
+	if _, ok := toks[ctx.idx].(tok.LeftBracket); ok {
+		ctx.idx++
 		expr, err := buildExpr(toks, ctx, nil)
 		if err != nil {
 			return inst, err
 		}
 		inst.Count = expr
-		if _, ok := toks[ctx.i].(tok.RightBracket); !ok {
-			return inst, unexpected(toks[ctx.i], "']'")
+		if _, ok := toks[ctx.idx].(tok.RightBracket); !ok {
+			return inst, unexpected(toks[ctx.idx], "']'")
 		}
-		ctx.i++
+		ctx.idx++
 	}
 
 	// Type
-	switch t := toks[ctx.i].(type) {
+	switch t := toks[ctx.idx].(type) {
 	case tok.Functionality, tok.Ident, tok.QualIdent:
 		inst.Type = t
-		ctx.i++
+		ctx.idx++
 	default:
 		return inst, unexpected(t, "functionality type")
 	}
@@ -49,17 +49,17 @@ func buildInst(toks []tok.Token, ctx *context) (Inst, error) {
 	inst.ArgList = argList
 
 	// Body
-	switch t := toks[ctx.i].(type) {
+	switch t := toks[ctx.idx].(type) {
 	case tok.Semicolon:
-		ctx.i++
+		ctx.idx++
 		props, err := buildPropAssignments(toks, ctx)
 		if err != nil {
 			return inst, err
 		}
 		inst.Body.Props = props
 	case tok.Newline:
-		if _, ok := toks[ctx.i+1].(tok.Indent); ok {
-			ctx.i += 2
+		if _, ok := toks[ctx.idx+1].(tok.Indent); ok {
+			ctx.idx += 2
 			body, err := buildBody(toks, ctx)
 			if err != nil {
 				return inst, err

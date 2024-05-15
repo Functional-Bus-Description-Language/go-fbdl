@@ -12,13 +12,13 @@ func TestBuildSingleConst(t *testing.T) {
 		Name:  toks[1].(tok.Ident),
 		Value: Int{toks[3].(tok.Int)},
 	}
-	c := context{}
-	got, err := buildSingleConst(toks, &c)
+	ctx := context{}
+	got, err := buildSingleConst(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 4 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 4 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 	if !reflect.DeepEqual(got[0], want) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
@@ -45,13 +45,13 @@ func TestBuildMultiConst(t *testing.T) {
 		},
 		Const{Name: toks[17].(tok.Ident), Value: Bool{toks[19].(tok.Bool)}},
 	}
-	c := context{}
-	got, err := buildMultiConst(toks, &c)
+	ctx := context{}
+	got, err := buildMultiConst(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 20 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 20 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
 	for i := range want {

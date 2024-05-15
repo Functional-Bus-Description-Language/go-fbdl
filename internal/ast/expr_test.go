@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func checkExpr(c context, i int, got Expr, want Expr, err error) error {
+func checkExpr(ctx context, i int, got Expr, want Expr, err error) error {
 	if err != nil {
 		return err
 	}
@@ -16,11 +16,11 @@ func checkExpr(c context, i int, got Expr, want Expr, err error) error {
 	switch want := want.(type) {
 	case Call:
 		if !reflect.DeepEqual(got, want) {
-			return fmt.Errorf(errMsg, c.i, i, got, want)
+			return fmt.Errorf(errMsg, ctx.idx, i, got, want)
 		}
 	default:
 		if !reflect.DeepEqual(got, want) {
-			return fmt.Errorf(errMsg, c.i, i, got, want)
+			return fmt.Errorf(errMsg, ctx.idx, i, got, want)
 		}
 	}
 
@@ -30,9 +30,9 @@ func checkExpr(c context, i int, got Expr, want Expr, err error) error {
 func TestBuildIdent(t *testing.T) {
 	toks, _ := tok.Parse([]byte("id"), "")
 	want := Ident{Name: toks[0]}
-	c := context{}
-	got, err := buildExpr(toks, &c, nil)
-	err = checkExpr(c, 1, got, want, err)
+	ctx := context{}
+	got, err := buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 1, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -43,9 +43,9 @@ func TestBuildUnaryExpr(t *testing.T) {
 	want := UnaryExpr{
 		Op: toks[0], X: Ident{Name: toks[1]},
 	}
-	c := context{}
-	got, err := buildExpr(toks, &c, nil)
-	err = checkExpr(c, 2, got, want, err)
+	ctx := context{}
+	got, err := buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 2, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -54,9 +54,9 @@ func TestBuildUnaryExpr(t *testing.T) {
 	want = UnaryExpr{
 		Op: toks[0], X: Int{toks[1].(tok.Int)},
 	}
-	c.i = 0
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 2, got, want, err)
+	ctx.idx = 0
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 2, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -73,9 +73,9 @@ func TestBuildParenExpr(t *testing.T) {
 		},
 		RightParen: toks[4].(tok.RightParen),
 	}
-	c := context{}
-	got, err := buildExpr(toks, &c, nil)
-	err = checkExpr(c, 5, got, want, err)
+	ctx := context{}
+	got, err := buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -89,9 +89,9 @@ func TestBuildCall(t *testing.T) {
 			Ident{Name: toks[2].(tok.Ident)},
 		},
 	}
-	c := context{}
-	got, err := buildExpr(toks, &c, nil)
-	err = checkExpr(c, 4, got, want, err)
+	ctx := context{}
+	got, err := buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 4, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -104,9 +104,9 @@ func TestBuildCall(t *testing.T) {
 			Bool{toks[4].(tok.Bool)},
 		},
 	}
-	c.i = 0
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 6, got, want, err)
+	ctx.idx = 0
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 6, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -117,9 +117,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 	want := BinaryExpr{
 		X: Ident{Name: toks[0]}, Op: toks[1].(tok.Operator), Y: Int{toks[2].(tok.Int)},
 	}
-	c := context{}
-	got, err := buildExpr(toks, &c, nil)
-	err = checkExpr(c, 5, got, want, err)
+	ctx := context{}
+	got, err := buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -134,9 +134,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 			Y:  Ident{Name: toks[4]},
 		},
 	}
-	c.i = 0
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 5, got, want, err)
+	ctx.idx = 0
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -151,9 +151,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[3].(tok.Operator),
 		Y:  Ident{Name: toks[4]},
 	}
-	c.i = 0
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 5, got, want, err)
+	ctx.idx = 0
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -172,9 +172,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 			Y:  Ident{Name: toks[6]},
 		},
 	}
-	c.i = 0
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 7, got, want, err)
+	ctx.idx = 0
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 7, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -197,9 +197,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[7].(tok.Operator),
 		Y:  Ident{Name: toks[8]},
 	}
-	c.i = 0
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 9, got, want, err)
+	ctx.idx = 0
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 9, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -218,9 +218,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[5].(tok.Operator),
 		Y:  Bool{toks[6].(tok.Bool)},
 	}
-	c.i = 0
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 7, got, want, err)
+	ctx.idx = 0
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 7, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -229,9 +229,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 	want = BinaryExpr{
 		X: Int{X: toks[0].(tok.Int)}, Op: toks[1].(tok.Colon), Y: Int{toks[2].(tok.Int)},
 	}
-	c = context{}
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 5, got, want, err)
+	ctx = context{}
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -242,9 +242,9 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[2].(tok.Operator),
 		Y:  Int{toks[3].(tok.Int)},
 	}
-	c = context{}
-	got, err = buildExpr(toks, &c, nil)
-	err = checkExpr(c, 5, got, want, err)
+	ctx = context{}
+	got, err = buildExpr(toks, &ctx, nil)
+	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}

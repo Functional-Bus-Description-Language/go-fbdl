@@ -6,7 +6,7 @@ import (
 
 // Building context
 type context struct {
-	i int // Current token index
+	idx int // Current token index
 }
 
 // Build builds ast from provided source.
@@ -28,13 +28,13 @@ func Build(src []byte, path string) (File, error) {
 	}
 
 	for {
-		if _, ok := toks[ctx.i].(tok.Eof); ok {
+		if _, ok := toks[ctx.idx].(tok.Eof); ok {
 			break
 		}
 
-		switch t := toks[ctx.i].(type) {
+		switch t := toks[ctx.idx].(type) {
 		case tok.Newline:
-			ctx.i++
+			ctx.idx++
 		case tok.Comment:
 			doc = buildDoc(toks, &ctx)
 		case tok.Const:

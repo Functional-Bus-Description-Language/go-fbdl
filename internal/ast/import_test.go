@@ -12,13 +12,13 @@ func TestBuildSingleImport(t *testing.T) {
 		Name: nil,
 		Path: toks[1].(tok.String),
 	}
-	c := context{}
-	got, err := buildSingleImport(toks, &c)
+	ctx := context{}
+	got, err := buildSingleImport(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 2 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 2 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 	if !reflect.DeepEqual(got[0], want) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
@@ -29,13 +29,13 @@ func TestBuildSingleImport(t *testing.T) {
 		Name: toks[1].(tok.Ident),
 		Path: toks[2].(tok.String),
 	}
-	c = context{}
-	got, err = buildSingleImport(toks, &c)
+	ctx = context{}
+	got, err = buildSingleImport(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 3 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 3 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 	if !reflect.DeepEqual(got[0], want) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
@@ -56,13 +56,13 @@ func TestBuildMultiImport(t *testing.T) {
 		Import{Path: toks[8].(tok.String)},
 	}
 
-	c := context{}
-	got, err := buildMultiImport(toks, &c)
+	ctx := context{}
+	got, err := buildMultiImport(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 9 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 9 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
 	for i := range want {

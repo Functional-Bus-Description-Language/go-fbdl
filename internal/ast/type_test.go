@@ -18,13 +18,13 @@ func TestBuildTypeSingleLine(t *testing.T) {
 		},
 	}
 
-	c := context{}
-	got, err := buildType(toks, &c)
+	ctx := context{}
+	got, err := buildType(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 15 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 15 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
 	if !reflect.DeepEqual(got, want) {
@@ -64,13 +64,13 @@ func TestBuildTypeMultiLine(t *testing.T) {
 		},
 	}
 
-	c := context{}
-	got, err := buildType(toks, &c)
+	ctx := context{}
+	got, err := buildType(toks, &ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if c.i != 24 {
-		t.Fatalf("c.i = %d", c.i)
+	if ctx.idx != 24 {
+		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
 	if !reflect.DeepEqual(got, want) {

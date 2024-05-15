@@ -25,13 +25,13 @@ func buildBody(toks []tok.Token, ctx *context) (Body, error) {
 
 tokenLoop:
 	for {
-		if _, ok := toks[ctx.i].(tok.Eof); ok {
+		if _, ok := toks[ctx.idx].(tok.Eof); ok {
 			break
 		}
 
-		switch t := toks[ctx.i].(type) {
+		switch t := toks[ctx.idx].(type) {
 		case tok.Newline:
-			ctx.i++
+			ctx.idx++
 		case tok.Comment:
 			doc = buildDoc(toks, ctx)
 		case tok.Const:
@@ -57,7 +57,7 @@ tokenLoop:
 			typ, err = buildType(toks, ctx)
 			body.Types = append(body.Types, typ)
 		case tok.Dedent:
-			ctx.i++
+			ctx.idx++
 			break tokenLoop
 		default:
 			return body, unexpected(t, "const, type, identifier, or comment")

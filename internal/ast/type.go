@@ -17,15 +17,15 @@ type Type struct {
 
 func buildType(toks []tok.Token, ctx *context) (Type, error) {
 	typ := Type{}
-	ctx.i++
+	ctx.idx++
 
 	// Name
-	if t, ok := toks[ctx.i].(tok.Ident); ok {
+	if t, ok := toks[ctx.idx].(tok.Ident); ok {
 		typ.Name = t
 	} else {
-		return typ, unexpected(toks[ctx.i], "identifier")
+		return typ, unexpected(toks[ctx.idx], "identifier")
 	}
-	ctx.i++
+	ctx.idx++
 
 	// Parameter List
 	params, err := buildParamList(toks, ctx)
@@ -35,24 +35,24 @@ func buildType(toks []tok.Token, ctx *context) (Type, error) {
 	typ.Params = params
 
 	// Count
-	if _, ok := toks[ctx.i].(tok.LeftBracket); ok {
-		ctx.i++
+	if _, ok := toks[ctx.idx].(tok.LeftBracket); ok {
+		ctx.idx++
 		expr, err := buildExpr(toks, ctx, nil)
 		if err != nil {
 			return typ, err
 		}
 		typ.Count = expr
-		if _, ok := toks[ctx.i].(tok.RightBracket); !ok {
-			return typ, unexpected(toks[ctx.i], "']'")
+		if _, ok := toks[ctx.idx].(tok.RightBracket); !ok {
+			return typ, unexpected(toks[ctx.idx], "']'")
 		}
-		ctx.i++
+		ctx.idx++
 	}
 
 	// Type
-	switch t := toks[ctx.i].(type) {
+	switch t := toks[ctx.idx].(type) {
 	case tok.Functionality, tok.Ident, tok.QualIdent:
 		typ.Type = t
-		ctx.i++
+		ctx.idx++
 	default:
 		return typ, unexpected(t, "functionality type")
 	}
@@ -65,17 +65,17 @@ func buildType(toks []tok.Token, ctx *context) (Type, error) {
 	typ.Args = args
 
 	// Body
-	switch t := toks[ctx.i].(type) {
+	switch t := toks[ctx.idx].(type) {
 	case tok.Semicolon:
-		ctx.i++
+		ctx.idx++
 		props, err := buildPropAssignments(toks, ctx)
 		if err != nil {
 			return typ, err
 		}
 		typ.Body.Props = props
 	case tok.Newline:
-		if _, ok := toks[ctx.i+1].(tok.Indent); ok {
-			ctx.i += 2
+		if _, ok := toks[ctx.idx+1].(tok.Indent); ok {
+			ctx.idx += 2
 			body, err := buildBody(toks, ctx)
 			if err != nil {
 				return typ, err
