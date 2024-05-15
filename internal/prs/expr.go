@@ -51,25 +51,9 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
 	return expr, err
 }
 
-type BinaryOperator uint8
-
-const (
-	Add BinaryOperator = iota
-	Subtract
-	Multiply
-	Divide
-	Modulo
-	Power
-	LeftShift
-	RightShift
-	Range
-)
-
-var binaryOperatorSign = [...]string{"+", "-", "*", "/", "%", "**", "<<", ">>", ":"}
-
 type BinaryExpr struct {
 	x  Expr
-	op BinaryOperator
+	op tok.Operator
 	y  Expr
 }
 
@@ -87,28 +71,28 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	case val.Int:
 		switch y := y.(type) {
 		case val.Int:
-			switch be.op {
-			case Add:
+			switch be.op.(type) {
+			case tok.Add:
 				return val.Int(x + y), nil
-			case Subtract:
+			case tok.Sub:
 				return val.Int(x - y), nil
-			case Multiply:
+			case tok.Mul:
 				return val.Int(x * y), nil
-			case Divide:
+			case tok.Div:
 				if x%y == 0 {
 					return val.Int(x / y), nil
 				} else {
 					panic("unimplemented")
 				}
-			case Modulo:
+			case tok.Rem:
 				return val.Int(x % y), nil
-			case Power:
+			case tok.Exp:
 				return val.Int(int64(math.Pow(float64(x), float64(y)))), nil
-			case LeftShift:
+			case tok.LeftShift:
 				return val.Int(x << y), nil
-			case RightShift:
+			case tok.RightShift:
 				return val.Int(x >> y), nil
-			case Range:
+			case tok.Colon:
 				return val.Range{L: int64(x), R: int64(y)}, nil
 			}
 		}
@@ -117,7 +101,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	panic(
 		fmt.Sprintf(
 			"unimplemented binary expression evaluation for %s %s %s",
-			x.Type(), binaryOperatorSign[be.op], y.Type(),
+			x.Type(), be.op.Name(), y.Type(),
 		),
 	)
 }
@@ -133,31 +117,7 @@ func MakeBinaryExpr(e ast.BinaryExpr, src []byte, s Scope) (BinaryExpr, error) {
 		return BinaryExpr{}, fmt.Errorf("make binary expression: right operand: %v", err)
 	}
 
-	var op BinaryOperator
-	switch text := tok.Text(e.Op, src); text {
-	case "+":
-		op = Add
-	case "-":
-		op = Subtract
-	case "*":
-		op = Multiply
-	case "/":
-		op = Divide
-	case "%":
-		op = Modulo
-	case "**":
-		op = Power
-	case "<<":
-		op = LeftShift
-	case ">>":
-		op = RightShift
-	case ":":
-		op = Range
-	default:
-		return BinaryExpr{}, fmt.Errorf("make binary expression: invalid operator %s", text)
-	}
-
-	return BinaryExpr{x: x, op: op, y: y}, nil
+	return BinaryExpr{x: x, op: e.Op, y: y}, nil
 }
 
 type BitString struct {
