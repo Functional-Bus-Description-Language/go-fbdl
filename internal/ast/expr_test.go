@@ -224,15 +224,26 @@ func TestBuildBinaryExpr(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-}
 
-func TestBuildRange(t *testing.T) {
-	toks, _ := tok.Parse([]byte("0:18"), "")
-	want := Range{
-		L: Int{X: toks[0].(tok.Int)}, R: Int{toks[2].(tok.Int)},
+	toks, _ = tok.Parse([]byte("0:18"), "")
+	want = BinaryExpr{
+		X: Int{X: toks[0].(tok.Int)}, Op: toks[1].(tok.Colon), Y: Int{toks[2].(tok.Int)},
 	}
-	c := context{}
-	got, err := buildExpr(toks, &c, nil)
+	c = context{}
+	got, err = buildExpr(toks, &c, nil)
+	err = checkExpr(c, 5, got, want, err)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+
+	toks, _ = tok.Parse([]byte("-1:0"), "")
+	want = BinaryExpr{
+		X:  UnaryExpr{Op: toks[0], X: Int{X: toks[1].(tok.Int)}},
+		Op: toks[2].(tok.Operator),
+		Y:  Int{toks[3].(tok.Int)},
+	}
+	c = context{}
+	got, err = buildExpr(toks, &c, nil)
 	err = checkExpr(c, 5, got, want, err)
 	if err != nil {
 		t.Fatalf("%v", err)

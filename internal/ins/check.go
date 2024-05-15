@@ -139,6 +139,13 @@ func checkProp(prop prs.Prop) error {
 					Toks: []tok.Token{prop.ValueTok},
 				}
 			}
+		case val.Range:
+			if v.L < 0 {
+				return tok.Error{
+					Msg:  fmt.Sprintf("negative range left bound %d", v.L),
+					Toks: []tok.Token{prop.ValueTok},
+				}
+			}
 		case val.List:
 			if len(v) == 0 {
 				return tok.Error{
@@ -155,7 +162,7 @@ func checkProp(prop prs.Prop) error {
 			lower := true
 			var lowerBound, upperBound int64
 			for i, bound := range v {
-				bound_val, ok := bound.(val.Int)
+				boundVal, ok := bound.(val.Int)
 				if !ok {
 					return tok.Error{
 						Msg: fmt.Sprintf(
@@ -165,20 +172,20 @@ func checkProp(prop prs.Prop) error {
 						Toks: []tok.Token{prop.ValueTok},
 					}
 				}
-				if bound_val < 0 {
+				if boundVal < 0 {
 					return tok.Error{
 						Msg: fmt.Sprintf(
 							"range property value must be natural, value with index %d is negative %d",
-							i, bound_val,
+							i, boundVal,
 						),
 						Toks: []tok.Token{prop.ValueTok},
 					}
 				}
 				if lower {
-					lowerBound = int64(bound_val)
+					lowerBound = int64(boundVal)
 					lower = false
 				} else {
-					upperBound = int64(bound_val)
+					upperBound = int64(boundVal)
 					lower = true
 				}
 				if lower && lowerBound > upperBound {
@@ -193,7 +200,7 @@ func checkProp(prop prs.Prop) error {
 			}
 		default:
 			return tok.Error{
-				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer or [integer]", pv.Type()),
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer, range or [range]", pv.Type()),
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
