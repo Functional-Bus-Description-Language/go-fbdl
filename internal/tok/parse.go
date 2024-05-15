@@ -142,7 +142,7 @@ func Parse(src []byte, path string) ([]Token, error) {
 			tok, err = parseWord(&ctx, &toks)
 		} else {
 			return nil, Error{
-				Msg:  fmt.Sprintf("invalid byte 0x%x, ('%c')", b, b),
+				Msg:  fmt.Sprintf("invalid byte 0x%x ('%c')", b, b),
 				Toks: []Token{None{position: ctx.pos()}},
 			}
 		}
