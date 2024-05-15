@@ -83,8 +83,10 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 		return val.Int(0), fmt.Errorf("binary operation, right operand: %v", err)
 	}
 
-	if x, ok := x.(val.Int); ok {
-		if y, ok := y.(val.Int); ok {
+	switch x := x.(type) {
+	case val.Int:
+		switch y := y.(type) {
+		case val.Int:
 			switch be.op {
 			case Add:
 				return val.Int(x + y), nil
@@ -96,7 +98,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 				if x%y == 0 {
 					return val.Int(x / y), nil
 				} else {
-					panic("not yet implement, needs float point type")
+					panic("unimplemented")
 				}
 			case Modulo:
 				return val.Int(x % y), nil
