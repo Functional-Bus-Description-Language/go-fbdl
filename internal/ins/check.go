@@ -12,7 +12,7 @@ import (
 func checkProp(prop prs.Prop) error {
 	pv, err := prop.Value.Eval()
 	if err != nil {
-		return fmt.Errorf("cannot evaluate expression: %v", err)
+		return err
 	}
 
 	invalidTypeMsg := `%s property must be of type %s, current type %s`

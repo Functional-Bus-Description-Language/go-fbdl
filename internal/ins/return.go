@@ -52,7 +52,7 @@ func applyReturnType(ret *fn.Return, typ prs.Functionality, diary *returnDiary) 
 
 		v, err := p.Value.Eval()
 		if err != nil {
-			return fmt.Errorf("cannot evaluate expression")
+			return err
 		}
 
 		switch p.Name {

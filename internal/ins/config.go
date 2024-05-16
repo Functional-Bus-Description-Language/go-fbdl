@@ -65,7 +65,7 @@ func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) 
 
 		v, err := p.Value.Eval()
 		if err != nil {
-			return fmt.Errorf("cannot evaluate expression")
+			return err
 		}
 
 		switch p.Name {

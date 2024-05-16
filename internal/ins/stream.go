@@ -52,7 +52,7 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality, diary *streamDiary)
 
 		v, err := prop.Value.Eval()
 		if err != nil {
-			return fmt.Errorf("cannot evaluate expression")
+			return err
 		}
 
 		switch prop.Name {

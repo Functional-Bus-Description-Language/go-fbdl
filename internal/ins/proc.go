@@ -51,7 +51,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 
 		v, err := prop.Value.Eval()
 		if err != nil {
-			return fmt.Errorf("cannot evaluate expression")
+			return err
 		}
 
 		switch prop.Name {

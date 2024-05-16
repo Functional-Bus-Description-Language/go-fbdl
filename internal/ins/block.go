@@ -63,7 +63,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 
 		v, err := p.Value.Eval()
 		if err != nil {
-			return fmt.Errorf("cannot evaluate expression")
+			return err
 		}
 
 		switch p.Name {

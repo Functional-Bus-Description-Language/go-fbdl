@@ -5,6 +5,8 @@ import (
 	"math"
 )
 
+const RepoIssueUrl = "https://github.com/Functional-Bus-Description-Language/go-fbdl/issues"
+
 func IsBaseType(t string) bool {
 	baseTypes := [...]string{
 		"blackbox", "block", "bus", "config", "irq", "mask", "memory", "param", "proc", "return", "static", "status", "stream",

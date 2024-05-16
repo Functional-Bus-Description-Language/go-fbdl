@@ -88,6 +88,7 @@ type (
 	RightBracket struct{ position } // ]
 	Comma        struct{ position } // ,
 	Semicolon    struct{ position } // ;
+	Colon        struct{ position } // :
 	// Keyword tokens
 	Const  struct{ position }
 	Import struct{ position }
@@ -128,7 +129,6 @@ type (
 	Width            struct{ position }
 	// Currently unused tokens
 	Period     struct{ position } // .
-	Colon      struct{ position } // :
 	LeftBrace  struct{ position } // {
 	RightBrace struct{ position } // }
 )
@@ -237,6 +237,9 @@ func (c Comma) Name() string { return "','" }
 
 func (s Semicolon) Name() string { return "';'" }
 
+func (c Colon) Name() string    { return "':'" }
+func (c Colon) Precedence() int { return 0 }
+
 func (c Const) Name() string { return "'const'" }
 
 func (i Import) Name() string { return "'import'" }
@@ -342,9 +345,6 @@ func (w Width) Name() string { return "'width'" }
 func (w Width) property()    {}
 
 func (p Period) Name() string { return "'.'" }
-
-func (c Colon) Name() string    { return "':'" }
-func (c Colon) Precedence() int { return 0 }
 
 func (lb LeftBrace) Name() string { return "'{'" }
 

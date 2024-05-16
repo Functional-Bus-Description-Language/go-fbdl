@@ -59,7 +59,7 @@ func applyBlackboxType(bb *fn.Blackbox, typ prs.Functionality) error {
 
 		v, err := p.Value.Eval()
 		if err != nil {
-			return fmt.Errorf("cannot evaluate expression")
+			return err
 		}
 
 		switch p.Name {

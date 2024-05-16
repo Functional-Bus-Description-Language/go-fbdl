@@ -68,7 +68,7 @@ func applyStaticType(st *fn.Static, typ prs.Functionality, diary *staticDiary) e
 
 		v, err := p.Value.Eval()
 		if err != nil {
-			return fmt.Errorf("cannot evaluate expression")
+			return err
 		}
 
 		switch p.Name {

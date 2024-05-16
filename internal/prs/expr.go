@@ -8,6 +8,7 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
@@ -98,12 +99,13 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 		}
 	}
 
-	panic(
-		fmt.Sprintf(
-			"unimplemented binary expression evaluation for %s %s %s",
-			x.Type(), be.op.Name(), y.Type(),
+	return val.Int(0), tok.Error{
+		Msg: fmt.Sprintf(
+			"unimplemented binary expression evaluation for %s operator, left operand type %s, right operand type %s, please report this error on %s",
+			be.op.Name(), x.Type(), y.Type(), util.RepoIssueUrl,
 		),
-	)
+		Toks: []tok.Token{be.op},
+	}
 }
 
 func MakeBinaryExpr(e ast.BinaryExpr, src []byte, s Scope) (BinaryExpr, error) {
