@@ -35,8 +35,8 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
 		expr, err = MakeList(e, src, s)
 	case ast.Bool:
 		expr = MakeBool(e, src)
-	case ast.Real:
-		expr, err = MakeReal(e, src)
+	case ast.Float:
+		expr, err = MakeFloat(e, src)
 	case ast.String:
 		expr = MakeString(e, src)
 	case ast.Time:
@@ -250,22 +250,22 @@ func MakeBool(e ast.Bool, src []byte) Bool {
 	return Bool{x: text == "true"}
 }
 
-type Real struct {
+type Float struct {
 	x float64
 }
 
-func (r Real) Eval() (val.Value, error) {
-	return val.Float(r.x), nil
+func (f Float) Eval() (val.Value, error) {
+	return val.Float(f.x), nil
 }
 
-func MakeReal(e ast.Real, src []byte) (Real, error) {
+func MakeFloat(e ast.Float, src []byte) (Float, error) {
 	text := tok.Text(e.X, src)
 	x, err := strconv.ParseFloat(text, 64)
 	if err != nil {
-		return Real{}, fmt.Errorf("make real: %v", err)
+		return Float{}, fmt.Errorf("make float: %v", err)
 	}
 
-	return Real{x: x}, nil
+	return Float{x: x}, nil
 }
 
 type DeclaredIdentifier struct {

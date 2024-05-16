@@ -50,8 +50,8 @@ type (
 		X tok.Int
 	}
 
-	Real struct {
-		X tok.Real
+	Float struct {
+		X tok.Float
 	}
 
 	String struct {
@@ -95,8 +95,8 @@ func (i Ident) Tok() tok.Token { return i.Name }
 func (i Int) expr()          {}
 func (i Int) Tok() tok.Token { return i.X }
 
-func (r Real) expr()          {}
-func (r Real) Tok() tok.Token { return r.X }
+func (f Float) expr()          {}
+func (f Float) Tok() tok.Token { return f.X }
 
 func (s String) expr()          {}
 func (s String) Tok() tok.Token { return s.X }
@@ -131,8 +131,8 @@ func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
 		expr, err = buildBool(ctx)
 	case tok.Int:
 		expr, err = buildInt(ctx)
-	case tok.Real:
-		expr, err = buildReal(ctx)
+	case tok.Float:
+		expr, err = buildFloat(ctx)
 	case tok.String:
 		expr, err = buildString(ctx)
 	case tok.Time:
@@ -193,8 +193,8 @@ func buildInt(ctx *context) (Int, error) {
 	return int_, nil
 }
 
-func buildReal(ctx *context) (Real, error) {
-	r := Real{ctx.tok().(tok.Real)}
+func buildFloat(ctx *context) (Float, error) {
+	r := Float{ctx.tok().(tok.Float)}
 	ctx.idx++
 	return r, nil
 }

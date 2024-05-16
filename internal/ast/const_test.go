@@ -41,7 +41,7 @@ func TestBuildMultiConst(t *testing.T) {
 		Const{
 			Doc:   Doc{Lines: []tok.Comment{toks[11].(tok.Comment)}},
 			Name:  toks[13].(tok.Ident),
-			Value: Real{toks[15].(tok.Real)},
+			Value: Float{toks[15].(tok.Float)},
 		},
 		Const{Name: toks[17].(tok.Ident), Value: Bool{toks[19].(tok.Bool)}},
 	}

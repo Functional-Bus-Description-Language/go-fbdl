@@ -620,13 +620,13 @@ func parseNumber(ctx *context) (Number, error) {
 			if hasPoint {
 				return nil, Error{
 					"second point character '.' in number",
-					[]Token{Real{ctx.pos()}},
+					[]Token{Float{ctx.pos()}},
 				}
 			} else {
 				if hasE {
 					return nil, Error{
 						"point character '.' after exponent in number",
-						[]Token{Real{ctx.pos()}},
+						[]Token{Float{ctx.pos()}},
 					}
 				}
 				hasPoint = true
@@ -635,7 +635,7 @@ func parseNumber(ctx *context) (Number, error) {
 			if hasE {
 				return nil, Error{
 					"second exponent in number",
-					[]Token{Real{ctx.pos()}},
+					[]Token{Float{ctx.pos()}},
 				}
 			} else {
 				hasE = true
@@ -653,7 +653,7 @@ func parseNumber(ctx *context) (Number, error) {
 	i.end = ctx.idx - 1
 	var n Number = i
 	if hasPoint || hasE {
-		n = Real(i)
+		n = Float(i)
 	}
 
 	return n, nil

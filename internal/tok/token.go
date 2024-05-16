@@ -57,7 +57,7 @@ type (
 	QualIdent struct{ position } // Qualified Identifier
 	Bool      struct{ position }
 	Int       struct{ position }
-	Real      struct{ position }
+	Float     struct{ position }
 	String    struct{ position }
 	BitString struct{ position }
 	Time      struct{ position }
@@ -154,9 +154,9 @@ func (b Bool) Name() string { return "bool" }
 func (i Int) Name() string { return "integer" }
 func (i Int) number()      {}
 
-func (r Real) Name() string { return "real" }
+func (f Float) Name() string { return "float" }
 
-func (r Real) number() {}
+func (f Float) number() {}
 
 func (s String) Name() string { return "string" }
 

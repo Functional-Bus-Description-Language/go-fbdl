@@ -59,7 +59,7 @@ func TestBuildError(t *testing.T) {
 		{
 			9,
 			"const\n\t2.24 = A",
-			"unexpected real, expected identifier",
+			"unexpected float, expected identifier",
 		},
 		{
 			10,

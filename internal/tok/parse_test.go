@@ -318,7 +318,7 @@ func TestParse(t *testing.T) {
 				Newline{position{start: 51, end: 51, line: 4, column: 15}},
 				Ident{position{start: 53, end: 53, line: 5, column: 2}},
 				Ass{position{start: 55, end: 55, line: 5, column: 4}},
-				Real{position{start: 57, end: 60, line: 5, column: 6}},
+				Float{position{start: 57, end: 60, line: 5, column: 6}},
 				Eof{position{start: 61, end: 61, line: 5, column: 10}},
 			},
 		},

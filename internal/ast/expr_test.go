@@ -101,7 +101,7 @@ func TestBuildCall(t *testing.T) {
 	want = Call{
 		Name: toks[0].(tok.Ident),
 		Args: []Expr{
-			Real{toks[2].(tok.Real)},
+			Float{toks[2].(tok.Float)},
 			Bool{toks[4].(tok.Bool)},
 		},
 	}

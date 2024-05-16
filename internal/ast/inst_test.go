@@ -49,7 +49,7 @@ func TestBuildInstMultiLine(t *testing.T) {
 			LParen: toks[2].(tok.LParen),
 			Args: []Arg{
 				Arg{nil, Int{toks[3].(tok.Int)}, toks[3].(tok.Int)},
-				Arg{toks[5].(tok.Ident), Real{toks[7].(tok.Real)}, toks[7].(tok.Real)},
+				Arg{toks[5].(tok.Ident), Float{toks[7].(tok.Float)}, toks[7].(tok.Float)},
 			},
 			RParen: toks[8].(tok.RParen),
 		},
