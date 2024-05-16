@@ -85,6 +85,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 				if x%y == 0 {
 					v = val.Int(x / y)
 				} else {
+					// Float must be returned here
 					panic("unimplemented")
 				}
 			case tok.Rem:
