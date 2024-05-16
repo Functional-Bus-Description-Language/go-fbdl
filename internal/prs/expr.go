@@ -61,12 +61,14 @@ type BinaryExpr struct {
 func (be BinaryExpr) Eval() (val.Value, error) {
 	x, err := be.x.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("binary operation, left operand: %v", err)
+		return nil, err
 	}
 	y, err := be.y.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("binary operation, right operand: %v", err)
+		return nil, err
 	}
+
+	var v val.Value
 
 	switch x := x.(type) {
 	case val.Int:
@@ -74,32 +76,36 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 		case val.Int:
 			switch be.op.(type) {
 			case tok.Add:
-				return val.Int(x + y), nil
+				v = val.Int(x + y)
 			case tok.Sub:
-				return val.Int(x - y), nil
+				v = val.Int(x - y)
 			case tok.Mul:
-				return val.Int(x * y), nil
+				v = val.Int(x * y)
 			case tok.Div:
 				if x%y == 0 {
-					return val.Int(x / y), nil
+					v = val.Int(x / y)
 				} else {
 					panic("unimplemented")
 				}
 			case tok.Rem:
-				return val.Int(x % y), nil
+				v = val.Int(x % y)
 			case tok.Exp:
-				return val.Int(int64(math.Pow(float64(x), float64(y)))), nil
+				v = val.Int(int64(math.Pow(float64(x), float64(y))))
 			case tok.LShift:
-				return val.Int(x << y), nil
+				v = val.Int(x << y)
 			case tok.RShift:
-				return val.Int(x >> y), nil
+				v = val.Int(x >> y)
 			case tok.Colon:
-				return val.Range{L: int64(x), R: int64(y)}, nil
+				v = val.Range{L: int64(x), R: int64(y)}
 			}
 		}
 	}
 
-	return val.Int(0), tok.Error{
+	if v != nil {
+		return v, nil
+	}
+
+	return nil, tok.Error{
 		Msg: fmt.Sprintf(
 			"unimplemented binary expression evaluation for %s operator, left operand type %s, right operand type %s, please report this error on %s",
 			be.op.Name(), x.Type(), y.Type(), util.RepoIssueUrl,
