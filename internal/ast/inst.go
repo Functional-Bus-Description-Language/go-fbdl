@@ -19,14 +19,14 @@ func buildInst(ctx *context) (Inst, error) {
 	ctx.idx++
 
 	// Count
-	if _, ok := ctx.tok().(tok.LeftBracket); ok {
+	if _, ok := ctx.tok().(tok.LBracket); ok {
 		ctx.idx++
 		expr, err := buildExpr(ctx, nil)
 		if err != nil {
 			return inst, err
 		}
 		inst.Count = expr
-		if _, ok := ctx.tok().(tok.RightBracket); !ok {
+		if _, ok := ctx.tok().(tok.RBracket); !ok {
 			return inst, unexpected(ctx.tok(), "']'")
 		}
 		ctx.idx++

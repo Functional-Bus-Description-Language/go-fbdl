@@ -14,9 +14,9 @@ type Arg struct {
 
 // ArgList represents argument list.
 type ArgList struct {
-	LeftParen  tok.LeftParen
-	Args       []Arg
-	RightParen tok.RightParen
+	LParen tok.LParen
+	Args   []Arg
+	RParen tok.RParen
 }
 
 func (al ArgList) Len() int {
@@ -24,16 +24,16 @@ func (al ArgList) Len() int {
 }
 
 func buildArgList(ctx *context) (ArgList, error) {
-	if _, ok := ctx.tok().(tok.LeftParen); !ok {
+	if _, ok := ctx.tok().(tok.LParen); !ok {
 		return ArgList{}, nil
 	}
 
 	argList := ArgList{
-		LeftParen: ctx.tok().(tok.LeftParen),
-		Args:      []Arg{},
+		LParen: ctx.tok().(tok.LParen),
+		Args:   []Arg{},
 	}
 
-	if _, ok := ctx.nextTok().(tok.RightParen); ok {
+	if _, ok := ctx.nextTok().(tok.RParen); ok {
 		return argList, tok.Error{
 			Msg:  "empty argument list",
 			Toks: []tok.Token{tok.Join(ctx.tok(), ctx.nextTok())},
@@ -97,8 +97,8 @@ tokenLoop:
 			switch t := ctx.tok().(type) {
 			case tok.Comma:
 				state = Name
-			case tok.RightParen:
-				argList.RightParen = t
+			case tok.RParen:
+				argList.RParen = t
 				ctx.idx++
 				break tokenLoop
 			default:

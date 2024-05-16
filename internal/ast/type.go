@@ -35,14 +35,14 @@ func buildType(ctx *context) (Type, error) {
 	typ.Params = params
 
 	// Count
-	if _, ok := ctx.tok().(tok.LeftBracket); ok {
+	if _, ok := ctx.tok().(tok.LBracket); ok {
 		ctx.idx++
 		expr, err := buildExpr(ctx, nil)
 		if err != nil {
 			return typ, err
 		}
 		typ.Count = expr
-		if _, ok := ctx.tok().(tok.RightBracket); !ok {
+		if _, ok := ctx.tok().(tok.RBracket); !ok {
 			return typ, unexpected(ctx.tok(), "']'")
 		}
 		ctx.idx++

@@ -89,9 +89,9 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 				return val.Int(x % y), nil
 			case tok.Exp:
 				return val.Int(int64(math.Pow(float64(x), float64(y)))), nil
-			case tok.LeftShift:
+			case tok.LShift:
 				return val.Int(x << y), nil
-			case tok.RightShift:
+			case tok.RShift:
 				return val.Int(x >> y), nil
 			case tok.Colon:
 				return val.Range{L: int64(x), R: int64(y)}, nil

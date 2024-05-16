@@ -47,48 +47,48 @@ func Text(t Token, src []byte) string {
 }
 
 type (
-	None         struct{ position }
-	Comment      struct{ position }
-	Indent       struct{ position } // Indent increment
-	Dedent       struct{ position } // Indent decrement
-	Newline      struct{ position }
-	Eof          struct{ position } // End of file
-	Ident        struct{ position } // Identifier
-	QualIdent    struct{ position } // Qualified Identifier
-	Bool         struct{ position }
-	Int          struct{ position }
-	Real         struct{ position }
-	String       struct{ position }
-	BitString    struct{ position }
-	Time         struct{ position }
-	Neg          struct{ position } // !
-	Ass          struct{ position } // =
-	Add          struct{ position } // +
-	Sub          struct{ position } // -
-	Mul          struct{ position } // *
-	Div          struct{ position } // /
-	Rem          struct{ position } // %
-	Exp          struct{ position } // **
-	Eq           struct{ position } // ==
-	Neq          struct{ position } // !=
-	Less         struct{ position } // <
-	LessEq       struct{ position } // <=
-	Greater      struct{ position } // >
-	GreaterEq    struct{ position } // >=
-	And          struct{ position } // &&
-	Or           struct{ position } // ||
-	LeftShift    struct{ position } // <<
-	RightShift   struct{ position } // >>
-	BitAnd       struct{ position } // &
-	BitOr        struct{ position } // |
-	Xor          struct{ position } // ^
-	LeftParen    struct{ position } // (
-	RightParen   struct{ position } // )
-	LeftBracket  struct{ position } // [
-	RightBracket struct{ position } // ]
-	Comma        struct{ position } // ,
-	Semicolon    struct{ position } // ;
-	Colon        struct{ position } // :
+	None      struct{ position }
+	Comment   struct{ position }
+	Indent    struct{ position } // Indent increment
+	Dedent    struct{ position } // Indent decrement
+	Newline   struct{ position }
+	Eof       struct{ position } // End of file
+	Ident     struct{ position } // Identifier
+	QualIdent struct{ position } // Qualified Identifier
+	Bool      struct{ position }
+	Int       struct{ position }
+	Real      struct{ position }
+	String    struct{ position }
+	BitString struct{ position }
+	Time      struct{ position }
+	Neg       struct{ position } // !
+	Ass       struct{ position } // =
+	Add       struct{ position } // +
+	Sub       struct{ position } // -
+	Mul       struct{ position } // *
+	Div       struct{ position } // /
+	Rem       struct{ position } // %
+	Exp       struct{ position } // **
+	Eq        struct{ position } // ==
+	Neq       struct{ position } // !=
+	Less      struct{ position } // <
+	LessEq    struct{ position } // <=
+	Greater   struct{ position } // >
+	GreaterEq struct{ position } // >=
+	And       struct{ position } // &&
+	Or        struct{ position } // ||
+	LShift    struct{ position } // <<
+	RShift    struct{ position } // >>
+	BitAnd    struct{ position } // &
+	BitOr     struct{ position } // |
+	Xor       struct{ position } // ^
+	LParen    struct{ position } // (
+	RParen    struct{ position } // )
+	LBracket  struct{ position } // [
+	RBracket  struct{ position } // ]
+	Comma     struct{ position } // ,
+	Semicolon struct{ position } // ;
+	Colon     struct{ position } // :
 	// Keyword tokens
 	Const  struct{ position }
 	Import struct{ position }
@@ -128,9 +128,9 @@ type (
 	Size             struct{ position }
 	Width            struct{ position }
 	// Currently unused tokens
-	Period     struct{ position } // .
-	LeftBrace  struct{ position } // {
-	RightBrace struct{ position } // }
+	Period struct{ position } // .
+	LBrace struct{ position } // {
+	RBrace struct{ position } // }
 )
 
 func (n None) Name() string { return "" }
@@ -210,11 +210,11 @@ func (a And) Precedence() int { return 2 }
 func (o Or) Name() string    { return "'||'" }
 func (o Or) Precedence() int { return 1 }
 
-func (ls LeftShift) Name() string    { return "'<<'" }
-func (ls LeftShift) Precedence() int { return 5 }
+func (ls LShift) Name() string    { return "'<<'" }
+func (ls LShift) Precedence() int { return 5 }
 
-func (ls RightShift) Name() string    { return "'>>'" }
-func (ls RightShift) Precedence() int { return 5 }
+func (ls RShift) Name() string    { return "'>>'" }
+func (ls RShift) Precedence() int { return 5 }
 
 func (ba BitAnd) Name() string    { return "'&'" }
 func (ba BitAnd) Precedence() int { return 5 }
@@ -225,13 +225,13 @@ func (bo BitOr) Precedence() int { return 4 }
 func (x Xor) Name() string    { return "'^'" }
 func (x Xor) Precedence() int { return 4 }
 
-func (lp LeftParen) Name() string { return "'('" }
+func (lp LParen) Name() string { return "'('" }
 
-func (lp RightParen) Name() string { return "')'" }
+func (lp RParen) Name() string { return "')'" }
 
-func (lb LeftBracket) Name() string { return "'['" }
+func (lb LBracket) Name() string { return "'['" }
 
-func (rb RightBracket) Name() string { return "']'" }
+func (rb RBracket) Name() string { return "']'" }
 
 func (c Comma) Name() string { return "','" }
 
@@ -346,6 +346,6 @@ func (w Width) property()    {}
 
 func (p Period) Name() string { return "'.'" }
 
-func (lb LeftBrace) Name() string { return "'{'" }
+func (lb LBrace) Name() string { return "'{'" }
 
-func (rb RightBrace) Name() string { return "'}'" }
+func (rb RBrace) Name() string { return "'}'" }

@@ -11,10 +11,10 @@ type Param struct {
 }
 
 func buildParamList(ctx *context) ([]Param, error) {
-	if _, ok := ctx.tok().(tok.LeftParen); !ok {
+	if _, ok := ctx.tok().(tok.LParen); !ok {
 		return nil, nil
 	}
-	if _, ok := ctx.nextTok().(tok.RightParen); ok {
+	if _, ok := ctx.nextTok().(tok.RParen); ok {
 		return nil, tok.Error{
 			Msg:  "empty parameter list",
 			Toks: []tok.Token{tok.Join(ctx.tok(), ctx.nextTok())},
@@ -53,7 +53,7 @@ tokenLoop:
 				params = append(params, p)
 				p = Param{}
 				state = Name
-			case tok.RightParen:
+			case tok.RParen:
 				params = append(params, p)
 				ctx.idx++
 				break tokenLoop
@@ -74,7 +74,7 @@ tokenLoop:
 			switch t := ctx.tok().(type) {
 			case tok.Comma:
 				state = Name
-			case tok.RightParen:
+			case tok.RParen:
 				ctx.idx++
 				break tokenLoop
 			default:

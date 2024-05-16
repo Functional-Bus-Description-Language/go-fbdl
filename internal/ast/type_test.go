@@ -43,12 +43,12 @@ func TestBuildTypeMultiLine(t *testing.T) {
 		Name: toks[1].(tok.Ident),
 		Type: toks[2].(tok.Ident),
 		Args: ArgList{
-			LeftParen: toks[3].(tok.LeftParen),
+			LParen: toks[3].(tok.LParen),
 			Args: []Arg{
 				Arg{nil, Int{toks[4].(tok.Int)}, toks[4].(tok.Int)},
 				Arg{toks[6].(tok.Ident), Int{toks[8].(tok.Int)}, toks[8].(tok.Int)},
 			},
-			RightParen: toks[9].(tok.RightParen),
+			RParen: toks[9].(tok.RParen),
 		},
 		Body: Body{
 			Consts: []Const{

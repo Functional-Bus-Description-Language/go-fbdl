@@ -37,9 +37,9 @@ type (
 	}
 
 	List struct {
-		LeftBracket  tok.LeftBracket
-		Xs           []Expr
-		RightBracket tok.RightBracket
+		LBracket tok.LBracket
+		Xs       []Expr
+		RBracket tok.RBracket
 	}
 
 	Ident struct {
@@ -68,9 +68,9 @@ type (
 	}
 
 	ParenExpr struct {
-		LeftParen  tok.LeftParen
-		X          Expr
-		RightParen tok.RightParen
+		LParen tok.LParen
+		X      Expr
+		RParen tok.RParen
 	}
 )
 
@@ -87,7 +87,7 @@ func (c Call) expr()          {}
 func (c Call) Tok() tok.Token { return c.Name }
 
 func (l List) expr()          {}
-func (l List) Tok() tok.Token { return tok.Join(l.LeftBracket, l.RightBracket) }
+func (l List) Tok() tok.Token { return tok.Join(l.LBracket, l.RBracket) }
 
 func (i Ident) expr()          {}
 func (i Ident) Tok() tok.Token { return i.Name }
@@ -108,7 +108,7 @@ func (ue UnaryExpr) expr()          {}
 func (ue UnaryExpr) Tok() tok.Token { return tok.Join(ue.Op, ue.X.Tok()) }
 
 func (pe ParenExpr) expr()          {}
-func (pe ParenExpr) Tok() tok.Token { return tok.Join(pe.LeftParen, pe.RightParen) }
+func (pe ParenExpr) Tok() tok.Token { return tok.Join(pe.LParen, pe.RParen) }
 
 // leftOp is the operator on the left side of the expression.
 func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
@@ -122,7 +122,7 @@ func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
 		expr, err = buildUnaryExpr(ctx)
 	case tok.Ident:
 		switch ctx.nextTok().(type) {
-		case tok.LeftParen:
+		case tok.LParen:
 			expr, err = buildCallExpr(ctx)
 		default:
 			expr, err = buildIdent(ctx)
@@ -139,9 +139,9 @@ func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
 		expr, err = buildTime(ctx)
 	case tok.BitString:
 		expr, err = buildBitString(ctx)
-	case tok.LeftParen:
+	case tok.LParen:
 		expr, err = buildParenExpr(ctx)
-	case tok.LeftBracket:
+	case tok.LBracket:
 		expr, err = buildList(ctx)
 	default:
 		return Ident{}, unexpected(t, "expression")
@@ -224,7 +224,7 @@ func buildParenExpr(ctx *context) (ParenExpr, error) {
 		expr Expr
 	)
 
-	pe.LeftParen = ctx.tok().(tok.LeftParen)
+	pe.LParen = ctx.tok().(tok.LParen)
 
 	ctx.idx++
 	expr, err = buildExpr(ctx, nil)
@@ -233,8 +233,8 @@ func buildParenExpr(ctx *context) (ParenExpr, error) {
 	}
 	pe.X = expr
 
-	if rp, ok := ctx.tok().(tok.RightParen); ok {
-		pe.RightParen = rp
+	if rp, ok := ctx.tok().(tok.RParen); ok {
+		pe.RParen = rp
 		ctx.idx++
 	} else {
 		return pe, unexpected(ctx.tok(), "')'")
@@ -246,15 +246,15 @@ func buildParenExpr(ctx *context) (ParenExpr, error) {
 func buildList(ctx *context) (List, error) {
 	l := List{}
 	prevExpr := false
-	l.LeftBracket = ctx.tok().(tok.LeftBracket)
+	l.LBracket = ctx.tok().(tok.LBracket)
 	lbi := ctx.idx // Left bracket token index
 	ctx.idx++
 
 tokenLoop:
 	for {
 		switch t := ctx.tok().(type) {
-		case tok.RightBracket:
-			l.RightBracket = t
+		case tok.RBracket:
+			l.RBracket = t
 			ctx.idx++
 			break tokenLoop
 		case tok.Comma:
@@ -294,7 +294,7 @@ func buildCallExpr(ctx *context) (Call, error) {
 tokenLoop:
 	for {
 		switch t := ctx.tok().(type) {
-		case tok.RightParen:
+		case tok.RParen:
 			ctx.idx++
 			break tokenLoop
 		case tok.Comma:

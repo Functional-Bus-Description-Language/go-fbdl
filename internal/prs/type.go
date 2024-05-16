@@ -123,7 +123,7 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	if util.IsBaseType(t.typ) && len(t.args.Args) > 0 {
 		return nil, tok.Error{
 			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", t.typ),
-			Toks: []tok.Token{tok.Join(t.args.LeftParen, t.args.RightParen)},
+			Toks: []tok.Token{tok.Join(t.args.LParen, t.args.RParen)},
 		}
 	}
 

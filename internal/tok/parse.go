@@ -394,8 +394,8 @@ func parseLessThanEqualOperator(ctx *context) LessEq {
 	return le
 }
 
-func parseLeftShiftOperator(ctx *context) LeftShift {
-	ls := LeftShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
+func parseLeftShiftOperator(ctx *context) LShift {
+	ls := LShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return ls
 }
@@ -412,8 +412,8 @@ func parseGreaterThanEqualOperator(ctx *context) GreaterEq {
 	return ge
 }
 
-func parseRightShiftOperator(ctx *context) RightShift {
-	rs := RightShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
+func parseRightShiftOperator(ctx *context) RShift {
+	rs := RShift{position{ctx.idx, ctx.idx + 1, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}}
 	ctx.idx += 2
 	return rs
 }
@@ -424,26 +424,26 @@ func parseGreaterThanOperator(ctx *context) Greater {
 	return g
 }
 
-func parseLeftParenthesis(ctx *context) LeftParen {
-	lp := LeftParen{ctx.pos()}
+func parseLeftParenthesis(ctx *context) LParen {
+	lp := LParen{ctx.pos()}
 	ctx.idx++
 	return lp
 }
 
-func parseRightParenthesis(ctx *context) RightParen {
-	rp := RightParen{ctx.pos()}
+func parseRightParenthesis(ctx *context) RParen {
+	rp := RParen{ctx.pos()}
 	ctx.idx++
 	return rp
 }
 
-func parseLeftBracket(ctx *context) LeftBracket {
-	lb := LeftBracket{ctx.pos()}
+func parseLeftBracket(ctx *context) LBracket {
+	lb := LBracket{ctx.pos()}
 	ctx.idx++
 	return lb
 }
 
-func parseRightBracket(ctx *context) RightBracket {
-	rb := RightBracket{ctx.pos()}
+func parseRightBracket(ctx *context) RBracket {
+	rb := RBracket{ctx.pos()}
 	ctx.idx++
 	return rb
 }
