@@ -1,0 +1,2 @@
+Main bus
+	C config; width = 1 << 3.4

@@ -97,8 +97,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 				if x%y == 0 {
 					v = val.Int(x / y)
 				} else {
-					// Float must be returned here
-					panic("unimplemented")
+					v = val.Float(float64(x) / float64(y))
 				}
 			}
 		case tok.Rem:
@@ -114,12 +113,34 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 		case tok.LShift:
 			switch y := y.(type) {
 			case val.Int:
+				if y < 0 {
+					return nil, tok.Error{
+						Msg:  fmt.Sprintf("negative value of left shift %d", y),
+						Toks: []tok.Token{be.ast.Y.Tok()},
+					}
+				}
 				v = val.Int(x << y)
+			default:
+				return nil, tok.Error{
+					Msg:  fmt.Sprintf("right operand of left shift must be of type integer, current type %s", y.Type()),
+					Toks: []tok.Token{be.ast.Y.Tok()},
+				}
 			}
 		case tok.RShift:
 			switch y := y.(type) {
 			case val.Int:
+				if y < 0 {
+					return nil, tok.Error{
+						Msg:  fmt.Sprintf("negative value of right shift %d", y),
+						Toks: []tok.Token{be.ast.Y.Tok()},
+					}
+				}
 				v = val.Int(x >> y)
+			default:
+				return nil, tok.Error{
+					Msg:  fmt.Sprintf("right operand of right shift must be of type integer, current type %s", y.Type()),
+					Toks: []tok.Token{be.ast.Y.Tok()},
+				}
 			}
 		case tok.Colon:
 			switch y := y.(type) {

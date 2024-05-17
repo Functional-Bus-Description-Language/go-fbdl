@@ -1,0 +1,5 @@
+error: right operand of right shift must be of type integer, current type time
+bus.fbd +2:25
+   |
+ 2 | 	C config; width = 1 >> 10 ns
+   | 	                       ^^^^^
