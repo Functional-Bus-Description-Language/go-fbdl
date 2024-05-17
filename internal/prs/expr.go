@@ -75,38 +75,59 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 
 	switch x := x.(type) {
 	case val.Int:
-		switch y := y.(type) {
-		case val.Int:
-			switch op.(type) {
-			case tok.Add:
+		switch op.(type) {
+		case tok.Add:
+			switch y := y.(type) {
+			case val.Int:
 				v = val.Int(x + y)
-			case tok.Sub:
+			}
+		case tok.Sub:
+			switch y := y.(type) {
+			case val.Int:
 				v = val.Int(x - y)
-			case tok.Mul:
+			}
+		case tok.Mul:
+			switch y := y.(type) {
+			case val.Int:
 				v = val.Int(x * y)
-			case tok.Div:
+			}
+		case tok.Div:
+			switch y := y.(type) {
+			case val.Int:
 				if x%y == 0 {
 					v = val.Int(x / y)
 				} else {
 					// Float must be returned here
 					panic("unimplemented")
 				}
-			case tok.Rem:
-				v = val.Int(x % y)
-			case tok.Exp:
-				v = val.Int(int64(math.Pow(float64(x), float64(y))))
-			case tok.LShift:
-				v = val.Int(x << y)
-			case tok.RShift:
-				v = val.Int(x >> y)
-			case tok.Colon:
-				v = val.Range{L: int64(x), R: int64(y)}
 			}
-		case val.Float:
-			switch op.(type) {
-			case tok.Colon:
+		case tok.Rem:
+			switch y := y.(type) {
+			case val.Int:
+				v = val.Int(x % y)
+			}
+		case tok.Exp:
+			switch y := y.(type) {
+			case val.Int:
+				v = val.Int(int64(math.Pow(float64(x), float64(y))))
+			}
+		case tok.LShift:
+			switch y := y.(type) {
+			case val.Int:
+				v = val.Int(x << y)
+			}
+		case tok.RShift:
+			switch y := y.(type) {
+			case val.Int:
+				v = val.Int(x >> y)
+			}
+		case tok.Colon:
+			switch y := y.(type) {
+			case val.Int:
+				v = val.Range{L: int64(x), R: int64(y)}
+			default:
 				return nil, tok.Error{
-					Msg:  "right bound of range must be of type integer, current type float",
+					Msg:  fmt.Sprintf("right bound of range must be of type integer, current type %s", y.Type()),
 					Toks: []tok.Token{be.ast.Y.Tok()},
 				}
 			}
