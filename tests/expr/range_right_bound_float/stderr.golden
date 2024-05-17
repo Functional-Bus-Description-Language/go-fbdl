@@ -1,0 +1,5 @@
+error: right bound of range must be of type integer, current type float
+bus.fbd +2:22
+   |
+ 2 | 	C config; range = 0:3.14
+   | 	                    ^^^^

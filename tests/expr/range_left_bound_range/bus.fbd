@@ -1,0 +1,2 @@
+Main bus
+	C config; range = 0:1:2

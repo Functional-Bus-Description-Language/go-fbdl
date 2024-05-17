@@ -53,6 +53,8 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
 }
 
 type BinaryExpr struct {
+	ast ast.BinaryExpr
+
 	x  Expr
 	op tok.Operator
 	y  Expr
@@ -67,6 +69,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	if err != nil {
 		return nil, err
 	}
+	op := be.op // Operator
 
 	var v val.Value
 
@@ -74,7 +77,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	case val.Int:
 		switch y := y.(type) {
 		case val.Int:
-			switch be.op.(type) {
+			switch op.(type) {
 			case tok.Add:
 				v = val.Int(x + y)
 			case tok.Sub:
@@ -99,6 +102,22 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 			case tok.Colon:
 				v = val.Range{L: int64(x), R: int64(y)}
 			}
+		case val.Float:
+			switch op.(type) {
+			case tok.Colon:
+				return nil, tok.Error{
+					Msg:  "right bound of range must be of type integer, current type float",
+					Toks: []tok.Token{be.ast.Y.Tok()},
+				}
+			}
+		}
+	case val.Range:
+		switch op.(type) {
+		case tok.Colon:
+			return nil, tok.Error{
+				Msg:  "left bound of range must be of type integer, current type range",
+				Toks: []tok.Token{be.ast.X.Tok()},
+			}
 		}
 	}
 
@@ -109,24 +128,24 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	return nil, tok.Error{
 		Msg: fmt.Sprintf(
 			"unimplemented binary expression evaluation for %s operator, left operand type %s, right operand type %s, please report this error on %s",
-			be.op.Name(), x.Type(), y.Type(), util.RepoIssueUrl,
+			op.Name(), x.Type(), y.Type(), util.RepoIssueUrl,
 		),
-		Toks: []tok.Token{be.op},
+		Toks: []tok.Token{op},
 	}
 }
 
-func MakeBinaryExpr(e ast.BinaryExpr, src []byte, s Scope) (BinaryExpr, error) {
-	x, err := MakeExpr(e.X, src, s)
+func MakeBinaryExpr(be ast.BinaryExpr, src []byte, s Scope) (BinaryExpr, error) {
+	x, err := MakeExpr(be.X, src, s)
 	if err != nil {
 		return BinaryExpr{}, fmt.Errorf("make binary expression: left operand: %v", err)
 	}
 
-	y, err := MakeExpr(e.Y, src, s)
+	y, err := MakeExpr(be.Y, src, s)
 	if err != nil {
 		return BinaryExpr{}, fmt.Errorf("make binary expression: right operand: %v", err)
 	}
 
-	return BinaryExpr{x: x, op: e.Op, y: y}, nil
+	return BinaryExpr{ast: be, x: x, op: be.Op, y: y}, nil
 }
 
 type BitString struct {

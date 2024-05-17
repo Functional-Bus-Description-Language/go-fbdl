@@ -1,0 +1,5 @@
+error: left bound of range must be of type integer, current type range
+bus.fbd +2:20
+   |
+ 2 | 	C config; range = 0:1:2
+   | 	                  ^^^

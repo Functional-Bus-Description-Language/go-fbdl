@@ -16,6 +16,7 @@ help:
 	@echo "  test-instantiating      Run instantiating tests."
 	@echo "  test-parsing            Run parsing tests."
 	@echo "  test-registerification  Run registerification tests."
+	@echo "  test-expr               Run expression evaluation tests."
 	@echo "Other targets:"
 	@echo "  help                Print help message."
 
@@ -47,7 +48,10 @@ test-instantiating:
 test-registerification:
 	@./scripts/reg-tests.sh
 
-test-all: test test-parsing test-instantiating test-registerification
+test-expr:
+	@./scripts/expr-tests.sh
+
+test-all: test test-parsing test-expr test-instantiating test-registerification
 
 
 # Installation targets
