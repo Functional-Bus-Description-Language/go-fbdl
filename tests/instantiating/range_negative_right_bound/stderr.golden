@@ -1,0 +1,5 @@
+error: negative range right bound -100
+bus.fbd +3:13
+   |
+ 3 |     range = 0:-100
+   |             ^^^^^^

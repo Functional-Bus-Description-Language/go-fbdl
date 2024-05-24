@@ -1,0 +1,5 @@
+error: range left bound greater than right bound, 12 > 1
+bus.fbd +3:13
+   |
+ 3 |     range = 12:1
+   |             ^^^^

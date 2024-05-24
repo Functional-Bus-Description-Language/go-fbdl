@@ -146,6 +146,18 @@ func checkProp(prop prs.Prop) error {
 					Toks: []tok.Token{prop.ValueTok},
 				}
 			}
+			if v.R < 0 {
+				return tok.Error{
+					Msg:  fmt.Sprintf("negative range right bound %d", v.R),
+					Toks: []tok.Token{prop.ValueTok},
+				}
+			}
+			if v.L > v.R {
+				return tok.Error{
+					Msg:  fmt.Sprintf("range left bound greater than right bound, %d > %d", v.L, v.R),
+					Toks: []tok.Token{prop.ValueTok},
+				}
+			}
 		case val.List:
 			if len(v) == 0 {
 				return tok.Error{
