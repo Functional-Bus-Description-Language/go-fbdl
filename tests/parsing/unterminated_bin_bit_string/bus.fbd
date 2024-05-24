@@ -1,2 +1,2 @@
 Main bus
-	c config; init-value = b"1100
+  c config; init-value = b"1100

@@ -1,5 +1,5 @@
 error: functionality 'S' has negative array size -1
-bus.fbd +2:2
+bus.fbd +2:3
    |
- 2 | 	S [-1] status
-   | 	^
+ 2 |   S [-1] status
+   |   ^

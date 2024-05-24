@@ -34,9 +34,9 @@ func TestBuildTypeSingleLine(t *testing.T) {
 
 func TestBuildTypeMultiLine(t *testing.T) {
 	toks, _ := tok.Parse([]byte(`type foo_t bar(1, N = 2)
-	const A = "a"
-	init-value = A
-	type cfg_t config`),
+  const A = "a"
+  init-value = A
+  type cfg_t config`),
 		"",
 	)
 	want := Type{

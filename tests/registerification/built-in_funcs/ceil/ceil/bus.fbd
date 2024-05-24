@@ -2,5 +2,5 @@ const int = 8
 const float = 15.8
 
 Main bus
-	c_int config; width = ceil(int)
-	c_float config; width = ceil(float)
+  c_int config; width = ceil(int)
+  c_float config; width = ceil(float)

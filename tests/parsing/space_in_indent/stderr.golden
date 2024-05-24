@@ -1,5 +1,5 @@
-error: space character ' ' not allowed for indent
+error: multi indent increase, previous indent 0 , current indent 2
 bus.fbd +2:1
    |
  2 |     width = 1
-   | ^
+   | ^^^^

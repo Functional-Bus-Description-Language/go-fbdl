@@ -1,9 +1,9 @@
-error: redefinition of type 't', first definition line 2 column 7
-bus.fbd +3:7
+error: redefinition of type 't', first definition line 2 column 8
+bus.fbd +3:8
    |
- 3 | 	type t static
-   | 	     ^
-bus.fbd +2:7
+ 3 |   type t static
+   |        ^
+bus.fbd +2:8
    |
- 2 | 	type t config
-   | 	     ^
+ 2 |   type t config
+   |        ^

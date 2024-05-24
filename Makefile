@@ -40,10 +40,10 @@ test:
 	go test ./...
 
 test-parsing:
-	@./scripts/test-parsing.sh
+	@./scripts/prs-tests.sh
 
 test-instantiating:
-	@./scripts/test-instantiating.sh
+	@./scripts/ins-tests.sh
 
 test-registerification:
 	@./scripts/reg-tests.sh

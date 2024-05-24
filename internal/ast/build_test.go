@@ -53,12 +53,12 @@ func TestBuildError(t *testing.T) {
 		},
 		{
 			8,
-			"const\n\tA 12",
+			"const\n  A 12",
 			"unexpected integer, expected '='",
 		},
 		{
 			9,
-			"const\n\t2.24 = A",
+			"const\n  2.24 = A",
 			"unexpected float, expected identifier",
 		},
 		{
@@ -113,12 +113,12 @@ func TestBuildError(t *testing.T) {
 		},
 		{
 			20,
-			"import\n\tabc 1",
+			"import\n  abc 1",
 			"unexpected integer, expected string",
 		},
 		{
 			21,
-			"import\n\t1",
+			"import\n  1",
 			"unexpected integer, expected identifier or string",
 		},
 	}

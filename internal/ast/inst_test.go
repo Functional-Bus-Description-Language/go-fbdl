@@ -36,10 +36,10 @@ func TestBuildInstSingleLine(t *testing.T) {
 
 func TestBuildInstMultiLine(t *testing.T) {
 	toks, _ := tok.Parse([]byte(`B pkg.Block_t(1, PI = 3.14)
-	masters = 2; reset = "Sync"
-	const FOO = true
-	C config
-		range = 8`),
+  masters = 2; reset = "Sync"
+  const FOO = true
+  C config
+    range = 8`),
 		"",
 	)
 	want := Inst{

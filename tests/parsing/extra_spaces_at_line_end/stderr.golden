@@ -1,0 +1,5 @@
+error: extra 5 spaces at line end
+bus.fbd +2:11
+   |
+ 2 |   C config     
+   |           ^^^^^

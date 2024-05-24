@@ -1,5 +1,5 @@
 error: clear property must be "Explicit" or "On Read", current value "Lorem"
-bus.fbd +3:11
+bus.fbd +3:13
    |
- 3 | 		clear = "Lorem"
-   | 		        ^^^^^^^
+ 3 |     clear = "Lorem"
+   |             ^^^^^^^

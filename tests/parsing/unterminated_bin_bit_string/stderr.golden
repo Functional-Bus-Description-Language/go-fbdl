@@ -1,5 +1,5 @@
 error: unterminated binary bit string, probably missing '"'
-bus.fbd +2:25
+bus.fbd +2:26
    |
- 2 | 	c config; init-value = b"1100
-   | 	                       ^^^^^^
+ 2 |   c config; init-value = b"1100
+   |                          ^^^^^^

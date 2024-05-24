@@ -1,5 +1,5 @@
 error: unterminated octal bit string, probably missing '"'
-bus.fbd +2:25
+bus.fbd +2:26
    |
- 2 | 	c config; init-value = o"1100 ; width = 64
-   | 	                       ^^^^^^
+ 2 |   c config; init-value = o"1100 ; width = 64
+   |                          ^^^^^^

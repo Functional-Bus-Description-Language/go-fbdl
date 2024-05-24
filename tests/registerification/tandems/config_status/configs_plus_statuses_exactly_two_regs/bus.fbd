@@ -2,7 +2,7 @@
 # C1 and S2 must get the first free address, and C2 and S1 must get the next address.
 # Access masks must not overlap.
 Main bus
-	C1 config; width = 20
-	C2 config; width = 14
-	S1 status; width = 18
-	S2 status; width = 12
+  C1 config; width = 20
+  C2 config; width = 14
+  S1 status; width = 18
+  S2 status; width = 12

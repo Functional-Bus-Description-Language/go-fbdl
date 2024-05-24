@@ -1,5 +1,5 @@
 error: 'memory' must have 'size' property set
-bus.fbd +2:2
+bus.fbd +2:3
    |
- 2 | 	M memory
-   | 	^
+ 2 |   M memory
+   |   ^

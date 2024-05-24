@@ -1,2 +1,2 @@
 Main bus
-	c config; init-value = o"1100 ; width = 64
+  c config; init-value = o"1100 ; width = 64

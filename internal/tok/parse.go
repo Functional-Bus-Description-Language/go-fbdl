@@ -69,7 +69,7 @@ func Parse(src []byte, path string) ([]Token, error) {
 		nb := ctx.nextByte() // Next byte
 
 		if b == ' ' {
-			err = parseSpace(&ctx, toks)
+			tok, err = parseSpace(&ctx, &toks)
 		} else if b == '\t' {
 			err = parseTab(&ctx, &toks)
 		} else if b == '\n' {
@@ -163,17 +163,15 @@ func Parse(src []byte, path string) ([]Token, error) {
 	return toks, nil
 }
 
-func parseSpace(ctx *context, toks []Token) error {
-	if t, ok := lastToken(toks); ok {
+func parseSpace(ctx *context, toks *[]Token) (Token, error) {
+	if t, ok := lastToken(*toks); ok {
 		if _, ok := t.(Newline); ok {
-			return Error{
-				"space character ' ' not allowed for indent",
-				[]Token{Indent{ctx.pos()}},
-			}
+			return parseIndent(ctx, toks)
 		}
 	}
 
 	// Eat all spaces
+	startIdx := ctx.idx
 	ctx.idx++
 	for {
 		if ctx.byte() == ' ' {
@@ -183,61 +181,95 @@ func parseSpace(ctx *context, toks []Token) error {
 		}
 	}
 
-	return nil
-}
+	spaceCount := ctx.idx - startIdx
 
-func parseTab(ctx *context, toks *[]Token) error {
-	tab := Indent{ctx.pos()}
-	start := ctx.idx
-	errMsg := "tab character '\\t' not allowed for alignment"
-
-	if t, ok := lastToken(*toks); ok {
-		if _, ok := t.(Newline); !ok {
-			return Error{errMsg, []Token{tab}}
+	if ctx.byte() == '\n' {
+		ctx.idx--
+		if spaceCount > 1 {
+			tok := None{ctx.pos()}
+			tok.position.start = startIdx
+			tok.position.column -= spaceCount - 1
+			return None{}, Error{
+				fmt.Sprintf("extra %d spaces at line end", spaceCount),
+				[]Token{tok},
+			}
+		} else {
+			return None{}, Error{
+				"extra space at line end",
+				[]Token{None{ctx.pos()}},
+			}
 		}
-	} else {
-		return Error{errMsg, []Token{tab}}
 	}
 
-	indent := 1
-	for {
-		ctx.idx++
-		if ctx.end() {
-			break
-		}
+	return None{}, nil
+}
 
-		b := ctx.byte()
-		if b == '\t' {
-			indent++
-		} else if b == ' ' {
-			return Error{
-				"space character ' ' right after tab character '\\t'",
-				[]Token{Indent{ctx.pos()}},
-			}
+func parseIndent(ctx *context, toks *[]Token) (Token, error) {
+	indent := Indent{ctx.pos()}
+
+	spaceCount := 0
+	// Eat all spaces
+	for {
+		if ctx.byte() == ' ' {
+			ctx.idx++
+			spaceCount++
 		} else {
 			break
 		}
 	}
 
-	if indent == ctx.indent+1 {
-		t := Indent{position{start, ctx.idx - 1, ctx.line, ctx.col(start), ctx.src, ctx.path}}
-		*toks = append(*toks, t)
-	} else if indent > ctx.indent+1 {
-		return Error{
-			"multi indent increase",
-			[]Token{Indent{position{start, start, ctx.line, ctx.col(start), ctx.src, ctx.path}}},
-		}
-	} else if indent < ctx.indent {
-		// Insert proper number of INDENT_DEC tokens.
-		t := Dedent{position{start, start, ctx.line, ctx.col(start), ctx.src, ctx.path}}
-		for i := 0; indent+i < ctx.indent; i++ {
-			*toks = append(*toks, t)
+	if ctx.byte() == '\n' {
+		if spaceCount > 1 {
+			indent.position.end += spaceCount - 1
+			return None{}, Error{
+				fmt.Sprintf("extra %d spaces at line end", spaceCount),
+				[]Token{indent},
+			}
+		} else {
+			return None{}, Error{
+				"extra space at line end",
+				[]Token{indent},
+			}
 		}
 	}
 
-	ctx.indent = indent
+	indent.position.end += spaceCount - 1
 
-	return nil
+	if spaceCount%2 != 0 {
+		return indent, Error{
+			fmt.Sprintf("odd number (%d) of spaces in indent, expected even number", spaceCount),
+			[]Token{indent},
+		}
+	}
+
+	indentLvl := spaceCount / 2
+	if indentLvl == ctx.indent+1 {
+		ctx.indent = indentLvl
+		return indent, nil
+	} else if indentLvl > ctx.indent+1 {
+		return indent, Error{
+			fmt.Sprintf("multi indent increase, previous indent %d , current indent %d", ctx.indent, indentLvl),
+			[]Token{indent},
+		}
+	} else if indentLvl < ctx.indent {
+		// Insert proper number of INDENT_DEC tokens.
+		t := Dedent(indent)
+		for i := 0; indentLvl+i < ctx.indent; i++ {
+			*toks = append(*toks, t)
+		}
+		ctx.indent = indentLvl
+		return None{}, nil
+	}
+
+	return None{}, nil
+}
+
+func parseTab(ctx *context, toks *[]Token) error {
+	tab := Indent{ctx.pos()}
+	return Error{
+		"tab character '\\t' allowed only in comments, use spaces",
+		[]Token{tab},
+	}
 }
 
 func parseNewline(ctx *context, toks *[]Token) error {
@@ -262,7 +294,7 @@ func parseNewline(ctx *context, toks *[]Token) error {
 
 	*toks = append(*toks, nl)
 
-	if !ctx.end() && ctx.byte() != '\t' && ctx.indent != 0 {
+	if !ctx.end() && ctx.byte() != ' ' && ctx.indent != 0 {
 		// Insert proper number of Dedent tokens.
 		t := Dedent{ctx.pos()}
 		for i := 0; i < ctx.indent; i++ {

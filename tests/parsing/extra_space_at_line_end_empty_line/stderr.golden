@@ -1,0 +1,5 @@
+error: extra space at line end
+bus.fbd +4:1
+   |
+ 4 |  
+   | ^

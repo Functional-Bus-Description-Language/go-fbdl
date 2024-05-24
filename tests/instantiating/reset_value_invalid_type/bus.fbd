@@ -1,2 +1,2 @@
 Main bus
-	C config; reset-value = 3.14
+  C config; reset-value = 3.14

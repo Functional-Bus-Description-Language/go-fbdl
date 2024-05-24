@@ -1,7 +1,7 @@
 # Status right after the proc must get next address when proc occupies exactly one register and has only params.
 Main bus
-	P proc
-		a param; width = 28
-		b param; width = 3
-		c param; width = 1
-	St status
+  P proc
+    a param; width = 28
+    b param; width = 3
+    c param; width = 1
+  St status

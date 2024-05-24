@@ -1,5 +1,5 @@
 error: 'Bb' of type 'blackbox' must have 'size' property set
-bus.fbd +2:2
+bus.fbd +2:3
    |
- 2 | 	Bb blackbox
-   | 	^^
+ 2 |   Bb blackbox
+   |   ^^

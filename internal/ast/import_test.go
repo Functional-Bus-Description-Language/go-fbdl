@@ -44,10 +44,10 @@ func TestBuildSingleImport(t *testing.T) {
 
 func TestBuildMultiImport(t *testing.T) {
 	toks, _ := tok.Parse([]byte(`import
-	"path1"
-	pkg "path2"
+  "path1"
+  pkg "path2"
 
-	"path3"`),
+  "path3"`),
 		"",
 	)
 	want := []Import{

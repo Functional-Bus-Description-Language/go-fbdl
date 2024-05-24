@@ -1,5 +1,5 @@
 error: clear property must be of type string, current type bit string
-bus.fbd +3:11
+bus.fbd +3:13
    |
- 3 | 		clear = b"1010"
-   | 		        ^^^^^^^
+ 3 |     clear = b"1010"
+   |             ^^^^^^^

@@ -1,5 +1,5 @@
 error: atomic property must be of type bool, current type time
-bus.fbd +3:12
+bus.fbd +3:14
    |
- 3 | 		atomic = 10 ns
-   | 		         ^^^^^
+ 3 |     atomic = 10 ns
+   |              ^^^^^

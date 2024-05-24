@@ -1,5 +1,5 @@
 error: reset property must be "Sync" or "Async", current value "Abc"
-bus.fbd +2:10
+bus.fbd +2:11
    |
- 2 | 	reset = "Abc"
-   | 	        ^^^^^
+ 2 |   reset = "Abc"
+   |           ^^^^^

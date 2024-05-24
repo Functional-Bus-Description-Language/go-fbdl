@@ -1,5 +1,5 @@
 error: unexpected newline, expected functionality type
-bus.fbd +2:6
+bus.fbd +2:7
    |
- 2 | 	Proc
-   | 	    ^
+ 2 |   Proc
+   |       ^

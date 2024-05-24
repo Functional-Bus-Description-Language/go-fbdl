@@ -2,8 +2,8 @@
 # In such case config cannot be put into the last proc register as config is readable.
 # A config read would lead to spurious acknowledgement generation.
 Main bus
-	P proc
-		p1 param; width = 30
-		p2 param; width = 2
-		r return; width = 8
-	C config; width = 8
+  P proc
+    p1 param; width = 30
+    p2 param; width = 2
+    r return; width = 8
+  C config; width = 8

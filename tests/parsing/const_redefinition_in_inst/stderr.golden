@@ -1,9 +1,9 @@
-error: redefinition of constant 'a', first definition line 2 column 8
-bus.fbd +3:8
+error: redefinition of constant 'a', first definition line 2 column 9
+bus.fbd +3:9
    |
- 3 | 	const a = 2
-   | 	      ^
-bus.fbd +2:8
+ 3 |   const a = 2
+   |         ^
+bus.fbd +2:9
    |
- 2 | 	const a = 1
-   | 	      ^
+ 2 |   const a = 1
+   |         ^

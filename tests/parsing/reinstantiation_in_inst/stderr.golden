@@ -1,5 +1,5 @@
-error: reinstantiation of 's', first instantiation line 2 column 2
-bus.fbd +3:2
+error: reinstantiation of 's', first instantiation line 2 column 3
+bus.fbd +3:3
    |
- 3 | 	s static
-   | 	^
+ 3 |   s static
+   |   ^

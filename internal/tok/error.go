@@ -75,14 +75,6 @@ func (err Error) code(tok Token) string {
 	}
 
 	line := src[lineStartIdx : lineEndIdx+1]
-	indent := 0
-	for i := 0; i < len(line); i++ {
-		if line[i] == '\t' {
-			indent++
-		} else {
-			break
-		}
-	}
 
 	b.WriteRune(' ')
 	b.WriteString(lineNum)
@@ -99,13 +91,6 @@ func (err Error) code(tok Token) string {
 	b.WriteRune(' ')
 
 	col := 1
-	if tok.Column() > 1 {
-		for i := 0; i < indent; i++ {
-			b.WriteRune('\t')
-			col++
-		}
-	}
-
 	for {
 		if col == tok.Column() {
 			break
@@ -115,7 +100,6 @@ func (err Error) code(tok Token) string {
 	}
 
 	colorPrefix, colorSuffix := err.getColor()
-
 	b.WriteString(colorPrefix)
 	for {
 		if col == tok.Column()+(tok.End()-tok.Start()+1) {

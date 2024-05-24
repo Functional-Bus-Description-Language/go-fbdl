@@ -1,0 +1,5 @@
+Main bus
+  C config
+    width = 10
+ 
+    atomic = false

@@ -1,2 +1,2 @@
 Main bus
-	c config; width = foo()
+  c config; width = foo()

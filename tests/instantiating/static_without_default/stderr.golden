@@ -1,5 +1,5 @@
 error: 's' static functionality must have init-value property set
-bus.fbd +2:2
+bus.fbd +2:3
    |
- 2 | 	s static
-   | 	^
+ 2 |   s static
+   |   ^

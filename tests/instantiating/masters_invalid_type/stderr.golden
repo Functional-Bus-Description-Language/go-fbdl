@@ -1,5 +1,5 @@
 error: masters property must be of type integer, current type float
-bus.fbd +2:12
+bus.fbd +2:13
    |
- 2 | 	masters = 3.14
-   | 	          ^^^^
+ 2 |   masters = 3.14
+   |             ^^^^

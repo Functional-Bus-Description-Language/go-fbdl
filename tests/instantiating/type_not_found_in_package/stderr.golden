@@ -1,1 +1,1 @@
-bus.fbd:2:2: type 'abc' not found in package 'main'
+bus.fbd:2:3: type 'abc' not found in package 'main'

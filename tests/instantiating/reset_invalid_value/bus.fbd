@@ -1,2 +1,2 @@
 Main bus
-	reset = "Abc"
+  reset = "Abc"

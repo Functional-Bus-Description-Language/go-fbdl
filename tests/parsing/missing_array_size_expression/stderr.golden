@@ -1,5 +1,5 @@
 error: unexpected ']', expected expression
-bus.fbd +2:6
+bus.fbd +2:7
    |
- 2 | 	st []status
-   | 	    ^
+ 2 |   st []status
+   |       ^

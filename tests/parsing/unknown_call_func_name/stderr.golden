@@ -1,5 +1,5 @@
 error: unknown function 'foo'
-bus.fbd +2:20
+bus.fbd +2:21
    |
- 2 | 	c config; width = foo()
-   | 	                  ^^^
+ 2 |   c config; width = foo()
+   |                     ^^^

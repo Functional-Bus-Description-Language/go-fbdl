@@ -1,5 +1,5 @@
 error: reassignment to 'width' property
-bus.fbd +3:2
+bus.fbd +3:3
    |
- 3 | 	width = 2
-   | 	^^^^^
+ 3 |   width = 2
+   |   ^^^^^

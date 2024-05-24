@@ -1,2 +1,2 @@
 Main bus
-	C config; range = [1, "7"]
+  C config; range = [1, "7"]

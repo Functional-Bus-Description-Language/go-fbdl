@@ -1,4 +1,4 @@
 # Second stauts must get the next address if the gap is not wide enough.
 Main bus
-	S1 status; width = 20
-	S2 status; width = 13
+  S1 status; width = 20
+  S2 status; width = 13

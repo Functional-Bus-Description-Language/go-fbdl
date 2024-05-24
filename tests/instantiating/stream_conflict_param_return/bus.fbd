@@ -1,6 +1,6 @@
 type my_param param
 
 Main bus
-	My_Stream stream
-		P my_param
-		R return
+  My_Stream stream
+    P my_param
+    R return

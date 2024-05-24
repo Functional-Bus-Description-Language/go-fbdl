@@ -27,12 +27,12 @@ func TestBuildSingleConst(t *testing.T) {
 
 func TestBuildMultiConst(t *testing.T) {
 	toks, _ := tok.Parse([]byte(`const
-	A = 1
-	B = 2 # Inline comment
-	# Doc comment
-	C = 3.14
+  A = 1
+  B = 2 # Inline comment
+  # Doc comment
+  C = 3.14
 
-	D = false`),
+  D = false`),
 		"",
 	)
 	want := []Const{

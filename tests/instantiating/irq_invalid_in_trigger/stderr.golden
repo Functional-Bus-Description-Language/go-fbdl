@@ -1,5 +1,5 @@
 error: in-trigger property must be "Edge" or "Level", current value "abc"
-bus.fbd +3:16
+bus.fbd +3:18
    |
- 3 | 		in-trigger = "abc"
-   | 		             ^^^^^
+ 3 |     in-trigger = "abc"
+   |                  ^^^^^

@@ -1,5 +1,5 @@
 error: delay property must be of type time, current type string
-bus.fbd +3:11
+bus.fbd +3:13
    |
- 3 | 		delay = "lorem"
-   | 		        ^^^^^^^
+ 3 |     delay = "lorem"
+   |             ^^^^^^^
