@@ -42,10 +42,10 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
-					"Range": [
-						10,
-						15
-					],
+					"Range": {
+						"Left": 0,
+						"Right": 15
+					},
 					"Width": 4,
 					"Access": {
 						"Type": "SingleOneReg",
@@ -60,10 +60,10 @@
 					"IsArray": false,
 					"Count": 1,
 					"Groups": null,
-					"Range": [
-						16,
-						128
-					],
+					"Range": {
+						"Left": 16,
+						"Right": 128
+					},
 					"Width": 8,
 					"Access": {
 						"Type": "SingleOneReg",
@@ -79,8 +79,10 @@
 					"Count": 1,
 					"Groups": null,
 					"Range": [
-						1,
-						65535
+						{
+							"Left": 1,
+							"Right": 65535
+						}
 					],
 					"Width": 16,
 					"Access": {
@@ -97,8 +99,10 @@
 					"Count": 1,
 					"Groups": null,
 					"Range": [
-						9,
-						14
+						{
+							"Left": 9,
+							"Right": 14
+						}
 					],
 					"Width": 4,
 					"Access": {

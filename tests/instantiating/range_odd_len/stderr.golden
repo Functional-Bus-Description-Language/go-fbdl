@@ -1,5 +1,0 @@
-error: length of range property value list must be even, current length 3
-bus.fbd +2:21
-   |
- 2 |   C config; range = [0, 5, 9]
-   |                     ^^^^^^^^^

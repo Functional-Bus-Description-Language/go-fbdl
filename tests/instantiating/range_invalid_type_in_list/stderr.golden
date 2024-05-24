@@ -1,5 +1,5 @@
-error: all values in range property list must be of type integer, value with index 1 is of type string
+error: all values in range property list must be of type range, value with index 1 is of type string
 bus.fbd +2:21
    |
- 2 |   C config; range = [1, "7"]
-   |                     ^^^^^^^^
+ 2 |   C config; range = [0:1, "7"]
+   |                     ^^^^^^^^^^

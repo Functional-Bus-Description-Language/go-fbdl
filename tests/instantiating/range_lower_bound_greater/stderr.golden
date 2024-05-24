@@ -1,5 +1,0 @@
-error: range property list, lower bound with index 2 (30) is greater than upper bound with index 3 (20)
-bus.fbd +2:21
-   |
- 2 |   C config; range = [0, 7, 30, 20]
-   |                     ^^^^^^^^^^^^^^

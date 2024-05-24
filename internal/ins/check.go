@@ -165,46 +165,42 @@ func checkProp(prop prs.Prop) error {
 					Toks: []tok.Token{prop.ValueTok},
 				}
 			}
-			if len(v)%2 != 0 {
-				return tok.Error{
-					Msg:  fmt.Sprintf("length of range property value list must be even, current length %d", len(v)),
-					Toks: []tok.Token{prop.ValueTok},
-				}
-			}
-			lower := true
-			var lowerBound, upperBound int64
-			for i, bound := range v {
-				boundVal, ok := bound.(val.Int)
+
+			for i, rng := range v {
+				r, ok := rng.(val.Range)
 				if !ok {
 					return tok.Error{
 						Msg: fmt.Sprintf(
-							"all values in range property list must be of type integer, value with index %d is of type %s",
-							i, bound.Type(),
+							"all values in range property list must be of type range, value with index %d is of type %s",
+							i, rng.Type(),
 						),
 						Toks: []tok.Token{prop.ValueTok},
 					}
 				}
-				if boundVal < 0 {
+
+				if r.L < 0 {
 					return tok.Error{
 						Msg: fmt.Sprintf(
-							"range property value must be natural, value with index %d is negative %d",
-							i, boundVal,
+							"negative range left bound %d in value with index %d",
+							r.L, i,
 						),
 						Toks: []tok.Token{prop.ValueTok},
 					}
 				}
-				if lower {
-					lowerBound = int64(boundVal)
-					lower = false
-				} else {
-					upperBound = int64(boundVal)
-					lower = true
-				}
-				if lower && lowerBound > upperBound {
+				if r.R < 0 {
 					return tok.Error{
 						Msg: fmt.Sprintf(
-							"range property list, lower bound with index %d (%d) is greater than upper bound with index %d (%d)",
-							i-1, lowerBound, i, upperBound,
+							"negative range right bound %d in value with index %d",
+							r.R, i,
+						),
+						Toks: []tok.Token{prop.ValueTok},
+					}
+				}
+				if r.L > r.R {
+					return tok.Error{
+						Msg: fmt.Sprintf(
+							"range left bound greater than right bound in value with index %d, %d > %d",
+							i, r.L, r.R,
 						),
 						Toks: []tok.Token{prop.ValueTok},
 					}

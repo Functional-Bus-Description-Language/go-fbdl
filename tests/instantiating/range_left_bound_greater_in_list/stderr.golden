@@ -1,0 +1,5 @@
+error: range left bound greater than right bound in value with index 1, 50 > 14
+bus.fbd +3:13
+   |
+ 3 |     range = [0:12, 50:14]
+   |             ^^^^^^^^^^^^^

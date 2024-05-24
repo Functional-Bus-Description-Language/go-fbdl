@@ -37,7 +37,7 @@ jobs:
           go-version: '^1.18.1'
       - run: go version
       - run: make build
-      - run: ./scripts/test-parsing.sh
+      - run: ./scripts/prs-tests.sh
 
   Instantiating-Tests:
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
           go-version: '^1.18.1'
       - run: go version
       - run: make build
-      - run: ./scripts/test-instantiating.sh
+      - run: ./scripts/ins-tests.sh
 
   Registerification-Tests:
     runs-on: ubuntu-latest
