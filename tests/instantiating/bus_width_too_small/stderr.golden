@@ -1,0 +1,5 @@
+error: invalid bus width 4, valid bus width must be greater than 7 and must be a power of 2
+bus.fbd +2:11
+   |
+ 2 |   width = 4
+   |           ^

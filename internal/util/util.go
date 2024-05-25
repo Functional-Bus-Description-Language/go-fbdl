@@ -101,3 +101,13 @@ func IsValidInnerType(it string, ot string) bool {
 func AlignToPowerOf2(n int64) int64 {
 	return int64(math.Pow(2, math.Ceil(math.Log2(float64(n)))))
 }
+
+// IsValidBusWidth checks whether given width is a valid bus width, that is:
+//   - width must be greater than 7,
+//   - width must be a power of 2.
+func IsValidBusWidth(w int64) bool {
+	if w < 8 {
+		return false
+	}
+	return w&(w-1) == 0
+}

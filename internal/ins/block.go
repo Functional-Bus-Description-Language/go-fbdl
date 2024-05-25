@@ -8,6 +8,7 @@ import (
 	"golang.org/x/exp/maps"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
@@ -81,7 +82,17 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 			if blk.Width != 0 {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
-			blk.Width = int64(v.(val.Int))
+			width := int64(v.(val.Int))
+			if !util.IsValidBusWidth(width) {
+				return tok.Error{
+					Msg: fmt.Sprintf(
+						"invalid bus width %d, valid bus width must be greater than 7 and must be a power of 2",
+						width,
+					),
+					Toks: []tok.Token{p.ValueTok},
+				}
+			}
+			blk.Width = width
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
 		}
