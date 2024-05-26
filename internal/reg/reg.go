@@ -21,19 +21,19 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 
 	// addr is currently block internal access address, not global address.
 	// 0 is reserved for ID, even if ID is not generated.
-	addr := int64(1)
+	addr := makeAddr(1, busWidth)
 
-	addr = regFunctionalities(bus, addr)
+	regFunctionalities(bus, &addr)
 
-	timestampAddr := addr
+	timestampAddr := addr.value
 	if addTimestamp {
-		addr += 1
+		addr.inc(1)
 	}
 
 	sizes := access.Sizes{}
 
-	sizes.Compact = addr
-	sizes.Own = addr
+	sizes.Compact = addr.value
+	sizes.Own = addr.value
 
 	for _, sb := range bus.Subblocks {
 		sbSizes := regBlock(sb)
@@ -72,26 +72,24 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	}
 }
 
-func regFunctionalities(blk *fn.Block, addr int64) int64 {
+func regFunctionalities(blk *fn.Block, addr *address) {
 	gp := gap.Pool{}
 
-	addr = regProcs(blk, addr)
-	addr = regStreams(blk, addr)
-	//addr = regGroups(blk, addr)
-	addr = regConfigs(blk, addr, &gp)
-	addr = regMasks(blk, addr)
-	addr = regStatics(blk, addr, &gp)
-	addr = regStatuses(blk, addr, &gp)
-
-	return addr
+	regProcs(blk, addr)
+	regStreams(blk, addr)
+	//regGroups(blk, addr)
+	regConfigs(blk, addr, &gp)
+	regMasks(blk, addr)
+	regStatics(blk, addr, &gp)
+	regStatuses(blk, addr, &gp)
 }
 
 /*
-func regGroups(blk *fn.Block, insBlk *ins.Element, addr int64) int64 {
+func regGroups(blk *fn.Block, insBlk *ins.Element, addr *address) {
 	var grp fn.Group
 	for _, g := range insBlk.Grps {
 		if g.IsStatus() && g.IsArray() {
-			grp, addr = regGroupStatusArray(blk, g, addr)
+			grp regGroupStatusArray(blk, g, addr)
 		} else {
 			panic("unimplemented")
 		}
@@ -102,35 +100,28 @@ func regGroups(blk *fn.Block, insBlk *ins.Element, addr int64) int64 {
 		}
 	}
 
-	return addr
 }
 */
 
-func regProcs(blk *fn.Block, addr int64) int64 {
+func regProcs(blk *fn.Block, addr *address) {
 	for _, fun := range blk.Procs {
-		addr = regProc(fun, addr)
+		regProc(fun, addr)
 	}
-
-	return addr
 }
 
-func regStreams(blk *fn.Block, addr int64) int64 {
+func regStreams(blk *fn.Block, addr *address) {
 	for _, stream := range blk.Streams {
-		addr = regStream(stream, addr)
+		regStream(stream, addr)
 	}
-
-	return addr
 }
 
-func regMasks(blk *fn.Block, addr int64) int64 {
+func regMasks(blk *fn.Block, addr *address) {
 	for _, mask := range blk.Masks {
-		addr = regMask(mask, addr)
+		regMask(mask, addr)
 	}
-
-	return addr
 }
 
-func regStatics(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
+func regStatics(blk *fn.Block, addr *address, gp *gap.Pool) {
 	statics := []*fn.Static{}
 
 	for _, st := range blk.Statics {
@@ -159,13 +150,11 @@ func regStatics(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	sort.SliceStable(statics, sortFunc(statics))
 
 	for _, st := range statics {
-		addr = regStatic(st, addr, gp)
+		regStatic(st, addr, gp)
 	}
-
-	return addr
 }
 
-func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
+func regStatuses(blk *fn.Block, addr *address, gp *gap.Pool) {
 	atomicSts := []*fn.Status{}
 	nonAtomicSts := []*fn.Status{}
 
@@ -201,16 +190,14 @@ func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	sort.SliceStable(nonAtomicSts, sortFunc(nonAtomicSts))
 
 	for _, st := range atomicSts {
-		addr = regAtomicStatus(st, addr, gp)
+		regAtomicStatus(st, addr, gp)
 	}
 	for _, st := range nonAtomicSts {
-		addr = regNonAtomicStatus(st, addr, gp)
+		regNonAtomicStatus(st, addr, gp)
 	}
-
-	return addr
 }
 
-func regConfigs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
+func regConfigs(blk *fn.Block, addr *address, gp *gap.Pool) {
 	atomicCfgs := []*fn.Config{}
 	nonAtomicCfgs := []*fn.Config{}
 
@@ -246,20 +233,18 @@ func regConfigs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	sort.SliceStable(nonAtomicCfgs, sortFunc(nonAtomicCfgs))
 
 	for _, cfg := range atomicCfgs {
-		addr = regAtomicConfig(cfg, addr, gp)
+		regAtomicConfig(cfg, addr, gp)
 	}
 	for _, cfg := range nonAtomicCfgs {
-		addr = regNonAtomicConfig(cfg, addr, gp)
+		regNonAtomicConfig(cfg, addr, gp)
 	}
-
-	return addr
 }
 
 func regBlock(blk *fn.Block) access.Sizes {
-	addr := int64(0)
+	addr := makeAddr(0, busWidth)
 
-	addr = regFunctionalities(blk, addr)
-	sizes := access.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
+	regFunctionalities(blk, &addr)
+	sizes := access.Sizes{BlockAligned: 0, Own: addr.value, Compact: addr.value}
 
 	for _, sb := range blk.Subblocks {
 		b := regBlock(sb)
@@ -267,7 +252,7 @@ func regBlock(blk *fn.Block) access.Sizes {
 		sizes.BlockAligned += sb.Count * b.BlockAligned
 	}
 
-	sizes.BlockAligned = util.AlignToPowerOf2(util.AlignToPowerOf2(addr) + sizes.BlockAligned)
+	sizes.BlockAligned = util.AlignToPowerOf2(util.AlignToPowerOf2(addr.value) + sizes.BlockAligned)
 
 	blk.Sizes = sizes
 

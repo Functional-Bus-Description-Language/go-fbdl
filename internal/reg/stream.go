@@ -6,40 +6,40 @@ import (
 )
 
 // regStream registerifies a Stream functionality.
-func regStream(s *fn.Stream, addr int64) int64 {
+func regStream(s *fn.Stream, addr *address) {
 	if len(s.Params) == 0 && len(s.Returns) == 0 {
-		return regEmptyStream(s, addr)
+		regEmptyStream(s, addr)
 	} else if len(s.Returns) > 0 {
-		return regUpstream(s, addr)
+		regUpstream(s, addr)
 	} else {
-		return regDownstream(s, addr)
+		regDownstream(s, addr)
 	}
 }
 
 // regEmptyStream registerifies empty stream.
 // Empty stream is treated as downstream.
-func regEmptyStream(s *fn.Stream, addr int64) int64 {
-	s.StbAddr = addr
-	return addr + 1
+func regEmptyStream(s *fn.Stream, addr *address) {
+	s.StbAddr = addr.value
+	addr.inc(1)
 }
 
-func regUpstream(s *fn.Stream, addr int64) int64 {
+func regUpstream(s *fn.Stream, addr *address) {
 	var acs access.Access
 
 	returns := s.Returns
 	baseBit := int64(0)
 	for _, r := range returns {
 		if r.IsArray {
-			acs = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
+			acs = access.MakeArrayNRegs(r.Count, addr.value, baseBit, r.Width)
 		} else {
-			acs = access.MakeSingle(addr, baseBit, r.Width)
+			acs = access.MakeSingle(addr.value, baseBit, r.Width)
 		}
 
 		if acs.GetEndBit() < busWidth-1 {
-			addr += acs.GetRegCount() - 1
+			addr.inc(acs.GetRegCount() - 1)
 			baseBit = acs.GetEndBit() + 1
 		} else {
-			addr += acs.GetRegCount()
+			addr.inc(acs.GetRegCount())
 			baseBit = 0
 		}
 
@@ -50,29 +50,27 @@ func regUpstream(s *fn.Stream, addr int64) int64 {
 
 	lastAccess := returns[len(returns)-1].Access
 	if lastAccess.GetEndBit() < busWidth-1 {
-		addr += 1
+		addr.inc(1)
 	}
-
-	return addr
 }
 
-func regDownstream(s *fn.Stream, addr int64) int64 {
+func regDownstream(s *fn.Stream, addr *address) {
 	var acs access.Access
 
 	params := s.Params
 	baseBit := int64(0)
 	for _, p := range params {
 		if p.IsArray {
-			acs = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
+			acs = access.MakeArrayNRegs(p.Count, addr.value, baseBit, p.Width)
 		} else {
-			acs = access.MakeSingle(addr, baseBit, p.Width)
+			acs = access.MakeSingle(addr.value, baseBit, p.Width)
 		}
 
 		if acs.GetEndBit() < busWidth-1 {
-			addr += acs.GetRegCount() - 1
+			addr.inc(acs.GetRegCount() - 1)
 			baseBit = acs.GetEndBit() + 1
 		} else {
-			addr += acs.GetRegCount()
+			addr.inc(acs.GetRegCount())
 			baseBit = 0
 		}
 
@@ -83,8 +81,6 @@ func regDownstream(s *fn.Stream, addr int64) int64 {
 
 	lastAccess := params[len(params)-1].Access
 	if lastAccess.GetEndBit() < busWidth-1 {
-		addr += 1
+		addr.inc(1)
 	}
-
-	return addr
 }
