@@ -6,23 +6,23 @@ import (
 )
 
 // regProc registerifies a Proc functionality.
-func regProc(proc *fn.Proc, addr *address) {
+func regProc(proc *fn.Proc, addr int64) int64 {
 	var acs access.Access
 
 	params := proc.Params
 	baseBit := int64(0)
 	for _, p := range params {
 		if p.IsArray {
-			acs = access.MakeArrayNRegs(p.Count, addr.value, baseBit, p.Width)
+			acs = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
 		} else {
-			acs = access.MakeSingle(addr.value, baseBit, p.Width)
+			acs = access.MakeSingle(addr, baseBit, p.Width)
 		}
 
 		if acs.GetEndBit() < busWidth-1 {
-			addr.inc(acs.GetRegCount() - 1)
+			addr += acs.GetRegCount() - 1
 			baseBit = acs.GetEndBit() + 1
 		} else {
-			addr.inc(acs.GetRegCount())
+			addr += acs.GetRegCount()
 			baseBit = 0
 		}
 
@@ -34,27 +34,27 @@ func regProc(proc *fn.Proc, addr *address) {
 		proc.CallAddr = &callAddr
 	} else if len(proc.Returns) > 0 {
 		if proc.Delay != nil {
-			callAddr := addr.value
+			callAddr := addr
 			proc.CallAddr = &callAddr
 		}
 	} else {
-		callAddr := addr.value
+		callAddr := addr
 		proc.CallAddr = &callAddr
 	}
 
 	returns := proc.Returns
 	for _, r := range returns {
 		if r.IsArray {
-			acs = access.MakeArrayNRegs(r.Count, addr.value, baseBit, r.Width)
+			acs = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
 		} else {
-			acs = access.MakeSingle(addr.value, baseBit, r.Width)
+			acs = access.MakeSingle(addr, baseBit, r.Width)
 		}
 
 		if acs.GetEndBit() < busWidth-1 {
-			addr.inc(acs.GetRegCount() - 1)
+			addr += acs.GetRegCount() - 1
 			baseBit = acs.GetEndBit() + 1
 		} else {
-			addr.inc(acs.GetRegCount())
+			addr += acs.GetRegCount()
 			baseBit = 0
 		}
 
@@ -72,7 +72,7 @@ func regProc(proc *fn.Proc, addr *address) {
 	}
 
 	if len(params) == 0 && len(returns) == 0 {
-		addr.inc(1)
+		addr += 1
 	} else {
 		var lastAccess access.Access
 		if len(returns) > 0 {
@@ -81,7 +81,9 @@ func regProc(proc *fn.Proc, addr *address) {
 			lastAccess = params[len(params)-1].Access
 		}
 		if lastAccess.GetEndBit() < busWidth-1 {
-			addr.inc(1)
+			addr += 1
 		}
 	}
+
+	return addr
 }

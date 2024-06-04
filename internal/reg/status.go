@@ -7,21 +7,21 @@ import (
 )
 
 // regAtomicStatus registerifies an atomic Status functionality.
-func regAtomicStatus(st *fn.Status, addr *address, gp *gap.Pool) {
+func regAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
-		regAtomicStatusArray(st, addr, gp)
+		return regAtomicStatusArray(st, addr, gp)
 	}
-	regAtomicStatusSingle(st, addr, gp)
+	return regAtomicStatusSingle(st, addr, gp)
 }
 
-func regAtomicStatusSingle(st *fn.Status, addr *address, gp *gap.Pool) {
+func regAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	var acs access.Access
 
 	if g, ok := gp.GetSingle(st.Width, false); ok {
 		acs = access.MakeSingle(g.Addr, g.StartBit, st.Width)
 	} else {
-		acs = access.MakeSingle(addr.value, 0, st.Width)
-		addr.inc(acs.GetRegCount())
+		acs = access.MakeSingle(addr, 0, st.Width)
+		addr += acs.GetRegCount()
 	}
 
 	if acs.GetEndBit() < busWidth-1 {
@@ -34,47 +34,51 @@ func regAtomicStatusSingle(st *fn.Status, addr *address, gp *gap.Pool) {
 	}
 
 	st.Access = acs
+
+	return addr
 }
 
-func regAtomicStatusArray(st *fn.Status, addr *address, gp *gap.Pool) {
+func regAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	var acs access.Access
 
 	// TODO: In all below branches a potential gap can be added.
 	if st.Count*st.Width <= busWidth {
-		acs = access.MakeArrayOneReg(st.Count, addr.value, 0, st.Width)
+		acs = access.MakeArrayOneReg(st.Count, addr, 0, st.Width)
 	} else if busWidth/2 < st.Width && st.Width <= busWidth {
-		acs = access.MakeArrayOneInReg(st.Count, addr.value, 0, st.Width)
+		acs = access.MakeArrayOneInReg(st.Count, addr, 0, st.Width)
 	} else if st.Width <= busWidth/2 && st.Count%(busWidth/st.Width) == 0 {
-		acs = access.MakeArrayNInReg(st.Count, addr.value, st.Width)
+		acs = access.MakeArrayNInReg(st.Count, addr, st.Width)
 	} else if st.Width <= busWidth/2 {
-		acs = access.MakeArrayNInRegMInEndReg(st.Count, addr.value, st.Width)
+		acs = access.MakeArrayNInRegMInEndReg(st.Count, addr, st.Width)
 	} else if st.Width > busWidth {
-		acs = access.MakeArrayOneInNRegs(st.Count, addr.value, st.Width)
+		acs = access.MakeArrayOneInNRegs(st.Count, addr, st.Width)
 	} else {
 		panic("unimplemented")
 	}
 
-	addr.inc(acs.GetRegCount())
+	addr += acs.GetRegCount()
 
 	st.Access = acs
+
+	return addr
 }
 
 // regNonAtomicStatus registerifies a Non-Atomic Status functionality.
-func regNonAtomicStatus(st *fn.Status, addr *address, gp *gap.Pool) {
+func regNonAtomicStatus(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	if st.IsArray {
-		regNonAtomicStatusArray(st, addr, gp)
+		return regNonAtomicStatusArray(st, addr, gp)
 	}
-	regNonAtomicStatusSingle(st, addr, gp)
+	return regNonAtomicStatusSingle(st, addr, gp)
 }
 
-func regNonAtomicStatusSingle(st *fn.Status, addr *address, gp *gap.Pool) {
+func regNonAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	var acs access.Access
 
 	if g, ok := gp.GetSingle(st.Width, false); ok {
 		acs = access.MakeSingle(g.Addr, g.StartBit, st.Width)
 	} else {
-		acs = access.MakeSingle(addr.value, 0, st.Width)
-		addr.inc(acs.GetRegCount())
+		acs = access.MakeSingle(addr, 0, st.Width)
+		addr += acs.GetRegCount()
 	}
 
 	if acs.GetEndBit() < busWidth-1 {
@@ -87,26 +91,30 @@ func regNonAtomicStatusSingle(st *fn.Status, addr *address, gp *gap.Pool) {
 	}
 
 	st.Access = acs
+
+	return addr
 }
 
-func regNonAtomicStatusArray(st *fn.Status, addr *address, gp *gap.Pool) {
+func regNonAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	var acs access.Access
 
 	if st.Count*st.Width <= busWidth {
-		acs = access.MakeArrayOneReg(st.Count, addr.value, 0, st.Width)
+		acs = access.MakeArrayOneReg(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth/2 < st.Width && st.Width <= busWidth {
-		acs = access.MakeArrayOneInReg(st.Count, addr.value, 0, st.Width)
+		acs = access.MakeArrayOneInReg(st.Count, addr, 0, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if busWidth%st.Width == 0 || st.Count <= busWidth/st.Width || st.Width < busWidth/2 {
-		acs = access.MakeArrayNInReg(st.Count, addr.value, st.Width)
+		acs = access.MakeArrayNInReg(st.Count, addr, st.Width)
 		// TODO: This is a place for adding a potential Gap.
 	} else if st.Width > busWidth {
-		acs = access.MakeArrayOneInNRegs(st.Count, addr.value, st.Width)
+		acs = access.MakeArrayOneInNRegs(st.Count, addr, st.Width)
 	} else {
 		panic("unimplemented")
 	}
-	addr.inc(acs.GetRegCount())
+	addr += acs.GetRegCount()
 
 	st.Access = acs
+
+	return addr
 }
