@@ -72,10 +72,10 @@ func extendBin(bs BitStr, width int64) BitStr {
 
 	widthDiff := width - bs.BitWidth()
 
-	for i := int64(0); i < widthDiff; i++ {
+	for i := range widthDiff {
 		s[2+i] = '0'
 	}
-	for i := int64(0); i < bs.BitWidth(); i++ {
+	for i := range bs.BitWidth() {
 		s[2+widthDiff+i] = string(bs)[2+i]
 	}
 
@@ -93,10 +93,10 @@ func extendHex(bs BitStr, width int64) BitStr {
 		s[0] = 'x'
 		s[1] = '"'
 
-		for i := int64(0); i < bitWidthDiff/4; i++ {
+		for i := range bitWidthDiff / 4 {
 			s[2+i] = '0'
 		}
-		for i := int64(0); i < bs.CharWidth(); i++ {
+		for i := range bs.CharWidth() {
 			s[2+bitWidthDiff/4+i] = string(bs)[2+i]
 		}
 
@@ -123,7 +123,7 @@ func (bs BitStr) ToBin() BitStr {
 		chunkWidth = 3
 	}
 
-	for i := int64(0); i < bs.CharWidth(); i++ {
+	for i := range bs.CharWidth() {
 		var chunk [4]byte
 		char := bs[2+i]
 		switch char {
@@ -160,7 +160,7 @@ func (bs BitStr) ToBin() BitStr {
 		case '0', 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
 			chunk = [4]byte{char, char, char, char}
 		}
-		for j := int64(0); j < chunkWidth; j++ {
+		for j := range chunkWidth {
 			s[2+chunkWidth*i+j] = chunk[chunkStart+j]
 		}
 	}

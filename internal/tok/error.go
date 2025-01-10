@@ -48,7 +48,7 @@ func (err Error) code(tok Token) string {
 
 	lineNum := strconv.FormatInt(int64(tok.Line()), 10)
 	lineNumWidth := len(lineNum)
-	for i := 0; i < lineNumWidth+2; i++ {
+	for range lineNumWidth + 2 {
 		b.WriteRune(' ')
 	}
 	b.WriteString("|\n")
@@ -84,7 +84,7 @@ func (err Error) code(tok Token) string {
 	b.Write(line)
 	b.WriteRune('\n')
 
-	for i := 0; i < lineNumWidth+2; i++ {
+	for range lineNumWidth + 2 {
 		b.WriteRune(' ')
 	}
 	b.WriteRune('|')

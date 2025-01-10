@@ -297,7 +297,7 @@ func parseNewline(ctx *context, toks *[]Token) error {
 	if !ctx.end() && ctx.byte() != ' ' && ctx.indent != 0 {
 		// Insert proper number of Dedent tokens.
 		t := Dedent{ctx.pos()}
-		for i := 0; i < ctx.indent; i++ {
+		for range ctx.indent {
 			*toks = append(*toks, t)
 		}
 		ctx.indent = 0
@@ -827,7 +827,7 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 		s := Sub{position{line: ctx.line}}
 		i2 := Ident{position{end: ctx.idx + len(word) - 1, line: ctx.line}}
 
-		for i := 0; i < len(word); i++ {
+		for i := range word {
 			if word[i] == '-' {
 				i1.end = ctx.idx + i - 1
 
