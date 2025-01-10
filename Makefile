@@ -1,4 +1,5 @@
-PROJECT_NAME=fbdl
+# Project name
+NAME=fbdl
 
 default: build
 
@@ -6,6 +7,7 @@ help:
 	@echo "Build targets:"
 	@echo "  all      Run lint fmt build."
 	@echo "  build    Build binary."
+	@echo "  debug    Build binary for debugging."
 	@echo "  default  Run build."
 	@echo "Quality targets:"
 	@echo "  fmt   Format files with go fmt."
@@ -25,7 +27,10 @@ help:
 all: lint fmt build
 
 build:
-	go build -v -o $(PROJECT_NAME) ./cmd/fbdl
+	go build -v -o $(NAME) ./cmd/$(NAME)
+
+debug:
+	go build -v -gcflags=all="-N -l" -o $(NAME) ./cmd/$(NAME)
 
 # Quality targets
 fmt:
@@ -56,7 +61,7 @@ test-all: test test-parsing test-expr test-instantiating test-registerification
 
 # Installation targets
 install:
-	cp $(PROJECT_NAME) /usr/bin
+	cp $(NAME) /usr/bin
 
 uninstall:
-	rm /usr/bin/$(PROJECT_NAME)
+	rm /usr/bin/$(NAME)
