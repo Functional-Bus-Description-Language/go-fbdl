@@ -64,7 +64,7 @@ func IsValidProperty(p string, t string) error {
 
 	msg = fmt.Sprintf(msg, p, t)
 
-	return fmt.Errorf(msg)
+	return fmt.Errorf("%s", msg)
 }
 
 // IsValidInnerType returns true if given inner type is valid for given outter type.
