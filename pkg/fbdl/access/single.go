@@ -36,14 +36,14 @@ func (sor SingleOneReg) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (sor SingleOneReg) GetRegCount() int64      { return 1 }
-func (sor SingleOneReg) GetStartAddr() int64     { return sor.addr }
-func (sor SingleOneReg) GetEndAddr() int64       { return sor.addr }
-func (sor SingleOneReg) GetStartBit() int64      { return sor.startBit }
-func (sor SingleOneReg) GetEndBit() int64        { return sor.endBit }
-func (sor SingleOneReg) GetWidth() int64         { return sor.endBit - sor.startBit + 1 }
-func (sor SingleOneReg) GetStartRegWidth() int64 { return sor.GetWidth() }
-func (sor SingleOneReg) GetEndRegWidth() int64   { return sor.GetWidth() }
+func (sor SingleOneReg) RegCount() int64      { return 1 }
+func (sor SingleOneReg) StartAddr() int64     { return sor.addr }
+func (sor SingleOneReg) EndAddr() int64       { return sor.addr }
+func (sor SingleOneReg) StartBit() int64      { return sor.startBit }
+func (sor SingleOneReg) EndBit() int64        { return sor.endBit }
+func (sor SingleOneReg) Width() int64         { return sor.endBit - sor.startBit + 1 }
+func (sor SingleOneReg) StartRegWidth() int64 { return sor.Width() }
+func (sor SingleOneReg) EndRegWidth() int64   { return sor.Width() }
 
 func MakeSingleOneReg(addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
@@ -93,15 +93,15 @@ func (snr SingleNRegs) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (snr SingleNRegs) GetRegCount() int64      { return snr.regCount }
-func (snr SingleNRegs) GetStartAddr() int64     { return snr.startAddr }
-func (snr SingleNRegs) GetEndAddr() int64       { return snr.startAddr + snr.regCount - 1 }
-func (snr SingleNRegs) GetStartBit() int64      { return snr.startBit }
-func (snr SingleNRegs) GetEndBit() int64        { return snr.endBit }
-func (snr SingleNRegs) GetStartRegWidth() int64 { return busWidth - snr.startBit }
-func (snr SingleNRegs) GetEndRegWidth() int64   { return snr.endBit + 1 }
+func (snr SingleNRegs) RegCount() int64      { return snr.regCount }
+func (snr SingleNRegs) StartAddr() int64     { return snr.startAddr }
+func (snr SingleNRegs) EndAddr() int64       { return snr.startAddr + snr.regCount - 1 }
+func (snr SingleNRegs) StartBit() int64      { return snr.startBit }
+func (snr SingleNRegs) EndBit() int64        { return snr.endBit }
+func (snr SingleNRegs) StartRegWidth() int64 { return busWidth - snr.startBit }
+func (snr SingleNRegs) EndRegWidth() int64   { return snr.endBit + 1 }
 
-func (snr SingleNRegs) GetWidth() int64 {
+func (snr SingleNRegs) Width() int64 {
 	w := busWidth - snr.startBit + snr.endBit + 1
 	if snr.regCount > 2 {
 		w += busWidth * (snr.regCount - 2)

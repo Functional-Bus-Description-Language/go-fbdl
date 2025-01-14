@@ -280,12 +280,12 @@ func TestMakeArrayOneInNRegs(t *testing.T) {
 			t.Errorf("[%d] got %v, want %v", i, got, test.want)
 		}
 
-		if got.GetRegCount() != test.wantRegCount {
-			t.Errorf("[%d] got %d, want %d", i, got.GetRegCount(), test.wantRegCount)
+		if got.RegCount() != test.wantRegCount {
+			t.Errorf("[%d] got %d, want %d", i, got.RegCount(), test.wantRegCount)
 		}
 
-		if got.GetEndBit() != test.wantEndBit {
-			t.Errorf("[%d] got %d, want %d", i, got.GetEndBit(), test.wantEndBit)
+		if got.EndBit() != test.wantEndBit {
+			t.Errorf("[%d] got %d, want %d", i, got.EndBit(), test.wantEndBit)
 		}
 	}
 }

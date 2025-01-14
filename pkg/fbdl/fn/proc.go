@@ -27,7 +27,7 @@ func (p *Proc) ParamsBufSize() int64 {
 		return 0
 	}
 
-	return params[l-1].Access.GetEndAddr() - params[0].Access.GetStartAddr() + 1
+	return params[l-1].Access.EndAddr() - params[0].Access.StartAddr() + 1
 }
 
 // ParamsStartAddr panics if proc has no params.
@@ -38,7 +38,7 @@ func (p *Proc) ParamsStartAddr() int64 {
 		)
 	}
 
-	return p.Params[0].Access.GetStartAddr()
+	return p.Params[0].Access.StartAddr()
 }
 
 func (p *Proc) ReturnsBufSize() int64 {
@@ -49,7 +49,7 @@ func (p *Proc) ReturnsBufSize() int64 {
 		return 0
 	}
 
-	return rets[l-1].Access.GetEndAddr() - rets[0].Access.GetStartAddr() + 1
+	return rets[l-1].Access.EndAddr() - rets[0].Access.StartAddr() + 1
 }
 
 // ReturnsStartAddr panics if proc has no returns.
@@ -60,7 +60,7 @@ func (p *Proc) ReturnsStartAddr() int64 {
 		)
 	}
 
-	return p.Returns[0].Access.GetStartAddr()
+	return p.Returns[0].Access.StartAddr()
 }
 
 // IsEmpty returns true if proc is empty proc (has no params and no returns).

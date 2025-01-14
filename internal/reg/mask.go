@@ -24,7 +24,7 @@ func regMask(mask *fn.Mask, addr int64) int64 {
 	} else {
 		a = access.MakeSingle(addr, 0, mask.Width)
 	}
-	addr += a.GetRegCount()
+	addr += a.RegCount()
 
 	mask.Access = a
 

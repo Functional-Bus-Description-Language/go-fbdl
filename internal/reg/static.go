@@ -18,18 +18,18 @@ func regStatic(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 func regStaticSingle(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	/*
 		var acs access.Access
-		if g, ok := gp.GetSingle(st.Width, false); ok {
+		if g, ok := gp.Single(st.Width, false); ok {
 			acs = access.MakeSingleSingle(g.EndAddr, g.StartBit, st.Width)
 		} else {
 	*/
 
 	acs := access.MakeSingle(addr, 0, st.Width)
-	addr += acs.GetRegCount()
+	addr += acs.RegCount()
 
-	if acs.GetEndBit() < busWidth-1 {
+	if acs.EndBit() < busWidth-1 {
 		gp.Add(gap.Single{
-			Addr:      acs.GetEndAddr(),
-			StartBit:  acs.GetEndBit() + 1,
+			Addr:      acs.EndAddr(),
+			StartBit:  acs.EndBit() + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
 		})
@@ -53,7 +53,7 @@ func regStaticArray(st *fn.Static, addr int64, gp *gap.Pool) int64 {
 	} else {
 		panic("unimplemented")
 	}
-	addr += acs.GetRegCount()
+	addr += acs.RegCount()
 
 	st.Access = acs
 

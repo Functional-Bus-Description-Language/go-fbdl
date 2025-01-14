@@ -18,11 +18,11 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 			acs = access.MakeSingle(addr, baseBit, p.Width)
 		}
 
-		if acs.GetEndBit() < busWidth-1 {
-			addr += acs.GetRegCount() - 1
-			baseBit = acs.GetEndBit() + 1
+		if acs.EndBit() < busWidth-1 {
+			addr += acs.RegCount() - 1
+			baseBit = acs.EndBit() + 1
 		} else {
-			addr += acs.GetRegCount()
+			addr += acs.RegCount()
 			baseBit = 0
 		}
 
@@ -30,7 +30,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	}
 
 	if len(params) > 0 {
-		callAddr := params[len(params)-1].Access.GetEndAddr()
+		callAddr := params[len(params)-1].Access.EndAddr()
 		proc.CallAddr = &callAddr
 	} else if len(proc.Returns) > 0 {
 		if proc.Delay != nil {
@@ -50,11 +50,11 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 			acs = access.MakeSingle(addr, baseBit, r.Width)
 		}
 
-		if acs.GetEndBit() < busWidth-1 {
-			addr += acs.GetRegCount() - 1
-			baseBit = acs.GetEndBit() + 1
+		if acs.EndBit() < busWidth-1 {
+			addr += acs.RegCount() - 1
+			baseBit = acs.EndBit() + 1
 		} else {
-			addr += acs.GetRegCount()
+			addr += acs.RegCount()
 			baseBit = 0
 		}
 
@@ -62,7 +62,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	}
 
 	if len(returns) > 0 {
-		exitAddr := returns[len(returns)-1].Access.GetEndAddr()
+		exitAddr := returns[len(returns)-1].Access.EndAddr()
 		proc.ExitAddr = &exitAddr
 	} else {
 		if proc.Delay != nil {
@@ -80,7 +80,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 		} else {
 			lastAccess = params[len(params)-1].Access
 		}
-		if lastAccess.GetEndBit() < busWidth-1 {
+		if lastAccess.EndBit() < busWidth-1 {
 			addr += 1
 		}
 	}

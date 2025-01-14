@@ -41,14 +41,14 @@ func (aor ArrayOneReg) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (aor ArrayOneReg) GetRegCount() int64      { return 1 }
-func (aor ArrayOneReg) GetStartAddr() int64     { return aor.addr }
-func (aor ArrayOneReg) GetEndAddr() int64       { return aor.addr }
-func (aor ArrayOneReg) GetStartBit() int64      { return aor.startBit }
-func (aor ArrayOneReg) GetEndBit() int64        { return aor.startBit*aor.itemCount*aor.itemWidth - 1 }
-func (aor ArrayOneReg) GetWidth() int64         { return aor.itemWidth }
-func (aor ArrayOneReg) GetStartRegWidth() int64 { return aor.itemCount * aor.itemWidth }
-func (aor ArrayOneReg) GetEndRegWidth() int64   { return aor.itemCount * aor.itemWidth }
+func (aor ArrayOneReg) RegCount() int64      { return 1 }
+func (aor ArrayOneReg) StartAddr() int64     { return aor.addr }
+func (aor ArrayOneReg) EndAddr() int64       { return aor.addr }
+func (aor ArrayOneReg) StartBit() int64      { return aor.startBit }
+func (aor ArrayOneReg) EndBit() int64        { return aor.startBit*aor.itemCount*aor.itemWidth - 1 }
+func (aor ArrayOneReg) Width() int64         { return aor.itemWidth }
+func (aor ArrayOneReg) StartRegWidth() int64 { return aor.itemCount * aor.itemWidth }
+func (aor ArrayOneReg) EndRegWidth() int64   { return aor.itemCount * aor.itemWidth }
 
 func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
 	if startBit+(width*itemCount) > busWidth {
@@ -104,14 +104,14 @@ func (aoir ArrayOneInReg) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (aoir ArrayOneInReg) GetRegCount() int64      { return aoir.regCount }
-func (aoir ArrayOneInReg) GetStartAddr() int64     { return aoir.startAddr }
-func (aoir ArrayOneInReg) GetEndAddr() int64       { return aoir.startAddr + aoir.regCount - 1 }
-func (aoir ArrayOneInReg) GetStartBit() int64      { return aoir.startBit }
-func (aoir ArrayOneInReg) GetEndBit() int64        { return aoir.endBit }
-func (aoir ArrayOneInReg) GetWidth() int64         { return aoir.endBit - aoir.startBit + 1 }
-func (aoir ArrayOneInReg) GetStartRegWidth() int64 { return aoir.GetWidth() }
-func (aoir ArrayOneInReg) GetEndRegWidth() int64   { return aoir.GetWidth() }
+func (aoir ArrayOneInReg) RegCount() int64      { return aoir.regCount }
+func (aoir ArrayOneInReg) StartAddr() int64     { return aoir.startAddr }
+func (aoir ArrayOneInReg) EndAddr() int64       { return aoir.startAddr + aoir.regCount - 1 }
+func (aoir ArrayOneInReg) StartBit() int64      { return aoir.startBit }
+func (aoir ArrayOneInReg) EndBit() int64        { return aoir.endBit }
+func (aoir ArrayOneInReg) Width() int64         { return aoir.endBit - aoir.startBit + 1 }
+func (aoir ArrayOneInReg) StartRegWidth() int64 { return aoir.Width() }
+func (aoir ArrayOneInReg) EndRegWidth() int64   { return aoir.Width() }
 
 func MakeArrayOneInReg(itemCount, addr, startBit, width int64) ArrayOneInReg {
 	if startBit+width > busWidth {
@@ -166,15 +166,15 @@ func (anr ArrayNRegs) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (anr ArrayNRegs) GetRegCount() int64      { return anr.regCount }
-func (anr ArrayNRegs) GetStartAddr() int64     { return anr.startAddr }
-func (anr ArrayNRegs) GetEndAddr() int64       { return anr.startAddr + anr.regCount - 1 }
-func (anr ArrayNRegs) GetWidth() int64         { return anr.itemWidth }
-func (anr ArrayNRegs) GetStartBit() int64      { return anr.startBit }
-func (anr ArrayNRegs) GetStartRegWidth() int64 { return busWidth - anr.startBit }
-func (anr ArrayNRegs) GetEndRegWidth() int64   { return anr.GetEndBit() + 1 }
+func (anr ArrayNRegs) RegCount() int64      { return anr.regCount }
+func (anr ArrayNRegs) StartAddr() int64     { return anr.startAddr }
+func (anr ArrayNRegs) EndAddr() int64       { return anr.startAddr + anr.regCount - 1 }
+func (anr ArrayNRegs) Width() int64         { return anr.itemWidth }
+func (anr ArrayNRegs) StartBit() int64      { return anr.startBit }
+func (anr ArrayNRegs) StartRegWidth() int64 { return busWidth - anr.startBit }
+func (anr ArrayNRegs) EndRegWidth() int64   { return anr.EndBit() + 1 }
 
-func (anr ArrayNRegs) GetEndBit() int64 {
+func (anr ArrayNRegs) EndBit() int64 {
 	return ((anr.startBit + anr.regCount*anr.itemWidth - 1) % busWidth)
 }
 
@@ -236,14 +236,14 @@ func (anir ArrayNInReg) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (anir ArrayNInReg) GetRegCount() int64      { return anir.regCount }
-func (anir ArrayNInReg) GetStartAddr() int64     { return anir.startAddr }
-func (anir ArrayNInReg) GetEndAddr() int64       { return anir.startAddr + anir.regCount - 1 }
-func (anir ArrayNInReg) GetWidth() int64         { return anir.itemWidth }
-func (anir ArrayNInReg) GetStartBit() int64      { return anir.startBit }
-func (anir ArrayNInReg) GetEndBit() int64        { return anir.startBit + anir.itemsInReg*anir.itemWidth - 1 }
-func (anir ArrayNInReg) GetStartRegWidth() int64 { return anir.GetWidth() }
-func (anir ArrayNInReg) GetEndRegWidth() int64   { return anir.GetWidth() }
+func (anir ArrayNInReg) RegCount() int64      { return anir.regCount }
+func (anir ArrayNInReg) StartAddr() int64     { return anir.startAddr }
+func (anir ArrayNInReg) EndAddr() int64       { return anir.startAddr + anir.regCount - 1 }
+func (anir ArrayNInReg) Width() int64         { return anir.itemWidth }
+func (anir ArrayNInReg) StartBit() int64      { return anir.startBit }
+func (anir ArrayNInReg) EndBit() int64        { return anir.startBit + anir.itemsInReg*anir.itemWidth - 1 }
+func (anir ArrayNInReg) StartRegWidth() int64 { return anir.Width() }
+func (anir ArrayNInReg) EndRegWidth() int64   { return anir.Width() }
 
 // MakeArrayNInReg makes ArrayNInReg starting from bit 0,
 // and placing as many items within single register as possible.
@@ -316,14 +316,14 @@ func (anm ArrayNInRegMInEndReg) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (anm ArrayNInRegMInEndReg) GetRegCount() int64      { return anm.regCount }
-func (anm ArrayNInRegMInEndReg) GetStartAddr() int64     { return anm.startAddr }
-func (anm ArrayNInRegMInEndReg) GetEndAddr() int64       { return anm.startAddr + anm.regCount - 1 }
-func (anm ArrayNInRegMInEndReg) GetWidth() int64         { return anm.itemWidth }
-func (anm ArrayNInRegMInEndReg) GetStartBit() int64      { return anm.startBit }
-func (anm ArrayNInRegMInEndReg) GetStartRegWidth() int64 { return anm.itemsInReg * anm.itemWidth }
-func (anm ArrayNInRegMInEndReg) GetEndRegWidth() int64   { return anm.itemsInEndReg * anm.itemWidth }
-func (anm ArrayNInRegMInEndReg) GetEndBit() int64 {
+func (anm ArrayNInRegMInEndReg) RegCount() int64      { return anm.regCount }
+func (anm ArrayNInRegMInEndReg) StartAddr() int64     { return anm.startAddr }
+func (anm ArrayNInRegMInEndReg) EndAddr() int64       { return anm.startAddr + anm.regCount - 1 }
+func (anm ArrayNInRegMInEndReg) Width() int64         { return anm.itemWidth }
+func (anm ArrayNInRegMInEndReg) StartBit() int64      { return anm.startBit }
+func (anm ArrayNInRegMInEndReg) StartRegWidth() int64 { return anm.itemsInReg * anm.itemWidth }
+func (anm ArrayNInRegMInEndReg) EndRegWidth() int64   { return anm.itemsInEndReg * anm.itemWidth }
+func (anm ArrayNInRegMInEndReg) EndBit() int64 {
 	return anm.startBit + anm.itemsInEndReg*anm.itemWidth - 1
 }
 
@@ -384,25 +384,25 @@ func (aoinr ArrayOneInNRegs) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (aoinr ArrayOneInNRegs) GetRegCount() int64 {
+func (aoinr ArrayOneInNRegs) RegCount() int64 {
 	if aoinr.itemWidth%busWidth == 0 {
 		return aoinr.itemCount * aoinr.itemWidth / busWidth
 	}
 	return aoinr.itemCount * (aoinr.itemWidth/busWidth + 1)
 }
-func (aoinr ArrayOneInNRegs) GetStartAddr() int64     { return aoinr.startAddr }
-func (aoinr ArrayOneInNRegs) GetEndAddr() int64       { return aoinr.startAddr + aoinr.GetRegCount() - 1 }
-func (aoinr ArrayOneInNRegs) GetWidth() int64         { return aoinr.itemWidth }
-func (aoinr ArrayOneInNRegs) GetStartBit() int64      { return 0 }
-func (aoinr ArrayOneInNRegs) GetStartRegWidth() int64 { return busWidth }
-func (aoinr ArrayOneInNRegs) GetEndRegWidth() int64   { return aoinr.GetEndBit() + 1 }
-func (aoinr ArrayOneInNRegs) GetEndBit() int64 {
+func (aoinr ArrayOneInNRegs) StartAddr() int64     { return aoinr.startAddr }
+func (aoinr ArrayOneInNRegs) EndAddr() int64       { return aoinr.startAddr + aoinr.RegCount() - 1 }
+func (aoinr ArrayOneInNRegs) Width() int64         { return aoinr.itemWidth }
+func (aoinr ArrayOneInNRegs) StartBit() int64      { return 0 }
+func (aoinr ArrayOneInNRegs) StartRegWidth() int64 { return busWidth }
+func (aoinr ArrayOneInNRegs) EndRegWidth() int64   { return aoinr.EndBit() + 1 }
+func (aoinr ArrayOneInNRegs) EndBit() int64 {
 	if aoinr.itemWidth%busWidth == 0 {
 		return busWidth - 1
 	}
 	return aoinr.itemWidth - (aoinr.itemWidth/busWidth)*busWidth - 1
 }
-func (aoinr ArrayOneInNRegs) GetRegsPerItem() int64 {
+func (aoinr ArrayOneInNRegs) RegsPerItem() int64 {
 	if aoinr.itemWidth%busWidth == 0 {
 		return aoinr.itemWidth / busWidth
 	}
