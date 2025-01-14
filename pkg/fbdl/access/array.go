@@ -50,6 +50,9 @@ func (aor ArrayOneReg) Width() int64         { return aor.itemWidth }
 func (aor ArrayOneReg) StartRegWidth() int64 { return aor.itemCount * aor.itemWidth }
 func (aor ArrayOneReg) EndRegWidth() int64   { return aor.itemCount * aor.itemWidth }
 
+func (aor ArrayOneReg) ItemWidth() int64 { return aor.itemWidth }
+func (aor ArrayOneReg) ItemCount() int64 { return aor.itemCount }
+
 func MakeArrayOneReg(itemCount, addr, startBit, width int64) ArrayOneReg {
 	if startBit+(width*itemCount) > busWidth {
 		panic(
@@ -178,6 +181,9 @@ func (anr ArrayNRegs) EndBit() int64 {
 	return ((anr.startBit + anr.regCount*anr.itemWidth - 1) % busWidth)
 }
 
+func (anr ArrayNRegs) ItemCount() int64 { return anr.itemCount }
+func (anr ArrayNRegs) ItemWidth() int64 { return anr.itemWidth }
+
 func MakeArrayNRegs(itemCount, startAddr, startBit, width int64) Access {
 	anr := ArrayNRegs{
 		typ:       "ArrayNRegs",
@@ -244,6 +250,10 @@ func (anir ArrayNInReg) StartBit() int64      { return anir.startBit }
 func (anir ArrayNInReg) EndBit() int64        { return anir.startBit + anir.itemsInReg*anir.itemWidth - 1 }
 func (anir ArrayNInReg) StartRegWidth() int64 { return anir.Width() }
 func (anir ArrayNInReg) EndRegWidth() int64   { return anir.Width() }
+
+func (anir ArrayNInReg) ItemCount() int64  { return anir.itemCount }
+func (anir ArrayNInReg) ItemWidth() int64  { return anir.itemWidth }
+func (anir ArrayNInReg) ItemsInReg() int64 { return anir.itemsInReg }
 
 // MakeArrayNInReg makes ArrayNInReg starting from bit 0,
 // and placing as many items within single register as possible.
@@ -327,6 +337,11 @@ func (anm ArrayNInRegMInEndReg) EndBit() int64 {
 	return anm.startBit + anm.itemsInEndReg*anm.itemWidth - 1
 }
 
+func (anm ArrayNInRegMInEndReg) ItemCount() int64     { return anm.itemCount }
+func (anm ArrayNInRegMInEndReg) ItemWidth() int64     { return anm.itemWidth }
+func (anm ArrayNInRegMInEndReg) ItemsInReg() int64    { return anm.itemsInReg }
+func (anm ArrayNInRegMInEndReg) ItemsInEndReg() int64 { return anm.itemsInEndReg }
+
 // MakeArrayNInRegMInEndReg makes ArrayNInRegMInEndReg starting from bit 0,
 // and placing as many items within single register as possible.
 func MakeArrayNInRegMInEndReg(itemCount, startAddr, width int64) Access {
@@ -408,6 +423,9 @@ func (aoinr ArrayOneInNRegs) RegsPerItem() int64 {
 	}
 	return aoinr.itemWidth/busWidth + 1
 }
+
+func (aoinr ArrayOneInNRegs) ItemCount() int64 { return aoinr.itemCount }
+func (aoinr ArrayOneInNRegs) ItemWidth() int64 { return aoinr.itemWidth }
 
 // MakeArrayOneInNRegs makes ArrayNInRegMInEndReg starting from bit 0,
 // and placing as many items within single register as possible.
