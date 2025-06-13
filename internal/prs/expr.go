@@ -79,23 +79,23 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 		case tok.Add:
 			switch y := y.(type) {
 			case val.Int:
-				v = val.Int(x + y)
+				v = x + y
 			}
 		case tok.Sub:
 			switch y := y.(type) {
 			case val.Int:
-				v = val.Int(x - y)
+				v = x - y
 			}
 		case tok.Mul:
 			switch y := y.(type) {
 			case val.Int:
-				v = val.Int(x * y)
+				v = x * y
 			}
 		case tok.Div:
 			switch y := y.(type) {
 			case val.Int:
 				if x%y == 0 {
-					v = val.Int(x / y)
+					v = x / y
 				} else {
 					v = val.Float(float64(x) / float64(y))
 				}
@@ -103,7 +103,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 		case tok.Rem:
 			switch y := y.(type) {
 			case val.Int:
-				v = val.Int(x % y)
+				v = x % y
 			}
 		case tok.Exp:
 			switch y := y.(type) {
@@ -119,7 +119,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 						Toks: []tok.Token{be.ast.Y.Tok()},
 					}
 				}
-				v = val.Int(x << y)
+				v = x << y
 			default:
 				return nil, tok.Error{
 					Msg:  fmt.Sprintf("right operand of left shift must be of type integer, current type %s", y.Type()),
@@ -135,7 +135,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 						Toks: []tok.Token{be.ast.Y.Tok()},
 					}
 				}
-				v = val.Int(x >> y)
+				v = x >> y
 			default:
 				return nil, tok.Error{
 					Msg:  fmt.Sprintf("right operand of right shift must be of type integer, current type %s", y.Type()),
@@ -478,9 +478,9 @@ func (ue UnaryExpr) Eval() (val.Value, error) {
 	if x, ok := x.(val.Int); ok {
 		switch ue.op {
 		case UnaryPlus:
-			return val.Int(x), nil
+			return x, nil
 		case UnaryMinus:
-			return val.Int(-x), nil
+			return -x, nil
 		default:
 			panic("operator not yet supported")
 		}

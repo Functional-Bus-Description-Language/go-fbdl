@@ -87,7 +87,7 @@ func makeBinBitStr(s string) (BitStr, error) {
 		switch s[i] {
 		case '0', '1':
 		case 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
-			break
+			continue
 		default:
 			return BitStr(""), fmt.Errorf("invalid character '%c' in binary bit literal", s[i])
 		}
@@ -101,7 +101,7 @@ func makeOctalBitStr(s string) (BitStr, error) {
 		switch s[i] {
 		case '0', '1', '2', '3', '4', '5', '6', '7':
 		case 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
-			break
+			continue
 		default:
 			return BitStr(""), fmt.Errorf("invalid character '%c' in hex bit literal", s[i])
 		}
@@ -117,7 +117,7 @@ func makeHexBitStr(s string) (BitStr, error) {
 		case 'a', 'b', 'c', 'd', 'e', 'f':
 		case 'A', 'B', 'C', 'D', 'E', 'F':
 		case 'h', 'H', 'l', 'L', 'u', 'U', 'x', 'X', 'w', 'W', 'z', 'Z', '-':
-			break
+			continue
 		default:
 			return BitStr(""), fmt.Errorf("invalid character '%c' in hex bit literal", s[i])
 		}

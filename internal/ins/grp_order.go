@@ -1,5 +1,6 @@
 package ins
 
+/*
 type grpNode map[string]bool
 
 type grpGraph struct {
@@ -80,3 +81,5 @@ func (g *grpGraph) sort() []string {
 
 	return sorted
 }
+
+*/

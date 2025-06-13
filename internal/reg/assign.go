@@ -17,7 +17,7 @@ func assignGlobalAccessAddresses(bus *fn.Block, baseAddr int64) {
 func assignGlobalAccessAddressesBlockAlign(blk *fn.Block, baseAddr int64) {
 	if blk.IsArray {
 		blk.AddrSpace = addrSpace.Array{
-			Start: baseAddr, Count: int64(blk.Count), BlockSize: blk.Sizes.BlockAligned,
+			Start: baseAddr, Count: blk.Count, BlockSize: blk.Sizes.BlockAligned,
 		}
 	} else {
 		blk.AddrSpace = addrSpace.Single{

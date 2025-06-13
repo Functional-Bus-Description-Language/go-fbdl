@@ -55,8 +55,8 @@ func (err Error) code(tok Token) string {
 
 	src := tok.Src()
 	lineStartIdx := tok.Start()
-	for {
-		if lineStartIdx == 0 || src[lineStartIdx-1] == '\n' {
+	for lineStartIdx > 0 {
+		if src[lineStartIdx-1] == '\n' {
 			break
 		}
 		lineStartIdx--
@@ -64,8 +64,8 @@ func (err Error) code(tok Token) string {
 
 	lineEndIdx := tok.End()
 	if _, ok := tok.(Newline); !ok {
-		for {
-			if lineEndIdx == len(src)-1 || src[lineEndIdx+1] == '\n' {
+		for lineEndIdx < len(src)-1 {
+			if src[lineEndIdx+1] == '\n' {
 				break
 			}
 			lineEndIdx++
@@ -91,20 +91,14 @@ func (err Error) code(tok Token) string {
 	b.WriteRune(' ')
 
 	col := 1
-	for {
-		if col == tok.Column() {
-			break
-		}
+	for col < tok.Column() {
 		b.WriteRune(' ')
 		col++
 	}
 
 	colorPrefix, colorSuffix := err.getColor()
 	b.WriteString(colorPrefix)
-	for {
-		if col == tok.Column()+(tok.End()-tok.Start()+1) {
-			break
-		}
+	for col < tok.Column()+(tok.End()-tok.Start()+1) {
 		b.WriteRune('^')
 		col++
 	}

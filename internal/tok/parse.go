@@ -32,9 +32,10 @@ func getWord(src []byte, idx int) ([]byte, bool, bool) {
 
 		b := src[endIdx]
 		if isLetter(b) || isDigit(b) || b == '_' || b == '-' || b == '.' {
-			if b == '-' {
+			switch b {
+			case '-':
 				hasHyphen = true
-			} else if b == '.' {
+			case '.':
 				hasDot = true
 			}
 			endIdx++
@@ -58,11 +59,7 @@ func Parse(src []byte, path string) ([]Token, error) {
 	ctx.src = src
 	ctx.path = path
 
-	for {
-		if ctx.end() {
-			break
-		}
-
+	for !ctx.end() {
 		tok = None{}
 		err = nil
 		b := ctx.byte()      // Current byte
@@ -187,8 +184,8 @@ func parseSpace(ctx *context, toks *[]Token) (Token, error) {
 		ctx.idx--
 		if spaceCount > 1 {
 			tok := None{ctx.pos()}
-			tok.position.start = startIdx
-			tok.position.column -= spaceCount - 1
+			tok.start = startIdx
+			tok.column -= spaceCount - 1
 			return None{}, Error{
 				fmt.Sprintf("extra %d spaces at line end", spaceCount),
 				[]Token{tok},
@@ -220,7 +217,7 @@ func parseIndent(ctx *context, toks *[]Token) (Token, error) {
 
 	if ctx.byte() == '\n' {
 		if spaceCount > 1 {
-			indent.position.end += spaceCount - 1
+			indent.end += spaceCount - 1
 			return None{}, Error{
 				fmt.Sprintf("extra %d spaces at line end", spaceCount),
 				[]Token{indent},
@@ -233,7 +230,7 @@ func parseIndent(ctx *context, toks *[]Token) (Token, error) {
 		}
 	}
 
-	indent.position.end += spaceCount - 1
+	indent.end += spaceCount - 1
 
 	if spaceCount%2 != 0 {
 		return indent, Error{
@@ -696,10 +693,7 @@ func parseBinInt(ctx *context) (Int, error) {
 
 	// Skip 0b
 	ctx.idx += 2
-	for {
-		if ctx.end() {
-			break
-		}
+	for !ctx.end() {
 		b := ctx.byte()
 		if b == '0' || b == '1' {
 			ctx.idx++
@@ -721,10 +715,7 @@ func parseOctalInt(ctx *context) (Int, error) {
 
 	// Skip 0o
 	ctx.idx += 2
-	for {
-		if ctx.end() {
-			break
-		}
+	for !ctx.end() {
 		b := ctx.byte()
 		if '0' <= b && b <= '7' {
 			ctx.idx++
@@ -746,11 +737,7 @@ func parseHexInt(ctx *context) (Int, error) {
 
 	// Skip 0x
 	ctx.idx += 2
-	for {
-		if ctx.end() {
-			break
-		}
-
+	for !ctx.end() {
 		b := ctx.byte()
 		if isHexDigit(b) {
 			ctx.idx++

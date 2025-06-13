@@ -17,7 +17,7 @@ func Build(src []byte, path string) (File, error) {
 		typ    Type
 	)
 
-	toks, err := tok.Parse([]byte(src), path)
+	toks, err := tok.Parse(src, path)
 	if err != nil {
 		return File{}, err
 	}
