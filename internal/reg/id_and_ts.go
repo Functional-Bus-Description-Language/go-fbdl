@@ -48,7 +48,7 @@ func id() *fn.Static {
 	id.Count = 1
 
 	width := busWidth
-	// Current implementaiton uses adler32 for hash, no sense to make ID wider.
+	// Current implementation uses adler32 for hash, no sense to make ID wider.
 	if width > 32 {
 		width = 32
 	}

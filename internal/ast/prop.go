@@ -23,7 +23,7 @@ func buildPropAssignments(ctx *context) ([]Prop, error) {
 	)
 	state := Prop
 
-	// Decrement context index as it is incremented at the beginnig of the for loop.
+	// Decrement context index as it is incremented at the beginning of the for loop.
 	ctx.idx--
 tokenLoop:
 	for {

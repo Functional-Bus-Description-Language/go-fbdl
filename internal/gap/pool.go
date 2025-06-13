@@ -39,7 +39,7 @@ func (p *Pool) Add(g Gap) {
 // GetSingle returns Single gap from the Pool if gap with desired parameters is found in the pool.
 // In such a case second return is true, otherwise second return is false.
 //
-// writeSafe parameter indicates wheter gap has to be write safe.
+// writeSafe parameter indicates whether gap has to be write safe.
 // If writeSafe = true, then gap must be write safe.
 // if writeSafe = false, then gap can be write safe, but does not have to.
 func (p *Pool) GetSingle(width int64, writeSafe bool) (Single, bool) {
