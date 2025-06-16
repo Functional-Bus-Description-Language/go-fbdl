@@ -51,23 +51,6 @@ func makeFunctionality(typeChain []prs.Functionality) (fn.Func, error) {
 	}, nil
 }
 
-func makeGroupList(propVal val.Value) []string {
-	var grps []string
-	switch v := propVal.(type) {
-	case val.Str:
-		grps = []string{string(v)}
-	case val.List:
-		grps = make([]string, 0, len(v))
-		for _, g := range v {
-			grps = append(grps, string(g.(val.Str)))
-		}
-	default:
-		panic("should never happen")
-	}
-
-	return grps
-}
-
 // processValue processes the '*-value' property.
 // If the value is BitStr, it checks whether its width is not greater than the width.
 // If the value is Int, it tries to convert it to the BitStr with width of width argument.

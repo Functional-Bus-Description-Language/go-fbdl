@@ -44,7 +44,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": null,
 					"Width": 32,
 					"Access": {
@@ -66,7 +65,6 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Groups": null,
 			"InitValue": "x\"38fd0340\"",
 			"ReadValue": "",
 			"ResetValue": "",

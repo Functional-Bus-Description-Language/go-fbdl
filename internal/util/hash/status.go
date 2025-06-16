@@ -16,11 +16,6 @@ func hashStatus(s *fn.Status) uint32 {
 	// Atomic
 	write(&buf, s.Atomic)
 
-	// Groups
-	for _, g := range s.Groups {
-		buf.Write([]byte(g))
-	}
-
 	// Width
 	write(&buf, s.Width)
 

@@ -7,12 +7,9 @@ import (
 type Return struct {
 	Func
 
-	Groups []string
-	Width  int64
+	Width int64
 
 	Access access.Access
 }
 
 func (r Return) Type() string { return "return" }
-
-func (r *Return) GroupNames() []string { return r.Groups }

@@ -77,31 +77,6 @@ func checkProp(prop prs.Prop) error {
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
-	case "groups":
-		switch v := pv.(type) {
-		case val.Str:
-			break
-		case val.List:
-			groups := v
-			if len(groups) == 0 {
-				return fmt.Errorf("groups list of length 0 makes no sense")
-			}
-			for i, v := range groups {
-				if _, ok := v.(val.Str); !ok {
-					return fmt.Errorf("all values in groups list must be of type 'string', item %d is of type '%s'", i, v.Type())
-				}
-			}
-			groupsMap := make(map[string]int)
-			for i, v := range groups {
-				g := v.(val.Str)
-				if firstIdx, exists := groupsMap[string(g)]; exists {
-					return fmt.Errorf("duplicated %q in groups list, first item %d, second item %d", g, firstIdx, i)
-				}
-				groupsMap[string(g)] = i
-			}
-		default:
-			return fmt.Errorf(invalidTypeMsg, name, "string or [string]", pv.Type())
-		}
 	case "in-trigger", "out-trigger":
 		v, ok := pv.(val.Str)
 		if !ok {

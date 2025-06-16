@@ -13,11 +13,6 @@ func hashReturn(r *fn.Return) uint32 {
 	// Func
 	write(&buf, Hash(&r.Func))
 
-	// Groups
-	for _, g := range r.Groups {
-		buf.Write([]byte(g))
-	}
-
 	// Width
 	write(&buf, r.Width)
 

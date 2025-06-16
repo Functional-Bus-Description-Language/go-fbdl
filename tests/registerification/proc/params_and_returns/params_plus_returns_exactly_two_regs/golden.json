@@ -41,7 +41,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": null,
 					"Width": 20,
 					"Access": {
@@ -56,7 +55,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": null,
 					"Width": 12,
 					"Access": {
@@ -71,7 +69,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": null,
 					"Width": 4,
 					"Access": {
@@ -86,7 +83,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": null,
 					"Width": 8,
 					"Access": {
@@ -103,7 +99,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Width": 7,
 					"Access": {
 						"Type": "SingleOneReg",
@@ -117,7 +112,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Width": 13,
 					"Access": {
 						"Type": "SingleOneReg",
@@ -137,7 +131,6 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Groups": null,
 			"InitValue": "x\"73b1060d\"",
 			"ReadValue": "",
 			"ResetValue": "",
@@ -157,7 +150,6 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Groups": null,
 			"ReadValue": "",
 			"Width": 32,
 			"Access": {

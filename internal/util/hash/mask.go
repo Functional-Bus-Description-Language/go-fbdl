@@ -19,11 +19,6 @@ func hashMask(m *fn.Mask) uint32 {
 	// InitValue
 	buf.Write([]byte(m.InitValue))
 
-	// Groups
-	for _, g := range m.Groups {
-		buf.Write([]byte(g))
-	}
-
 	// Width
 	write(&buf, m.Width)
 

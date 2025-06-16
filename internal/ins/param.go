@@ -11,9 +11,8 @@ import (
 )
 
 type paramDiary struct {
-	groupsSet bool
-	rangeSet  bool
-	widthSet  bool
+	rangeSet bool
+	widthSet bool
 }
 
 func insParam(typeChain []prs.Functionality) (*fn.Param, error) {
@@ -58,12 +57,6 @@ func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) e
 		}
 
 		switch p.Name {
-		case "groups":
-			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
-			}
-			param.Groups = makeGroupList(v)
-			diary.groupsSet = true
 		case "range":
 			if diary.rangeSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "range")

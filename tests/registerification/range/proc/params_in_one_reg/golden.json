@@ -41,7 +41,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": {
 						"Left": 0,
 						"Right": 15
@@ -59,7 +58,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": {
 						"Left": 16,
 						"Right": 128
@@ -77,7 +75,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": [
 						{
 							"Left": 1,
@@ -97,7 +94,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": [
 						{
 							"Left": 9,
@@ -124,7 +120,6 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Groups": null,
 			"InitValue": "x\"3108028c\"",
 			"ReadValue": "",
 			"ResetValue": "",

@@ -35,7 +35,6 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Groups": null,
 			"InitValue": "x\"abd5065a\"",
 			"ReadValue": "",
 			"ResetValue": "",
@@ -55,7 +54,6 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Groups": null,
 			"ReadValue": "",
 			"Width": 4,
 			"Access": {
@@ -71,7 +69,6 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Groups": null,
 			"ReadValue": "",
 			"Width": 16,
 			"Access": {
@@ -87,7 +84,6 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Groups": null,
 			"ReadValue": "",
 			"Width": 3,
 			"Access": {
@@ -103,7 +99,6 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Groups": null,
 			"ReadValue": "",
 			"Width": 9,
 			"Access": {

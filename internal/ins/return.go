@@ -10,8 +10,7 @@ import (
 )
 
 type returnDiary struct {
-	groupsSet bool
-	widthSet  bool
+	widthSet bool
 }
 
 func insReturn(typeChain []prs.Functionality) (*fn.Return, error) {
@@ -56,12 +55,6 @@ func applyReturnType(ret *fn.Return, typ prs.Functionality, diary *returnDiary) 
 		}
 
 		switch p.Name {
-		case "groups":
-			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
-			}
-			ret.Groups = makeGroupList(v)
-			diary.groupsSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")

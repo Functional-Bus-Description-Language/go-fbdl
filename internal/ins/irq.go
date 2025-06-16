@@ -15,7 +15,6 @@ type irqDiary struct {
 	clearSet          bool
 	enableInitValSet  bool
 	enableInitVal     val.Value
-	groupsSet         bool
 	enableResetValSet bool
 	enableResetVal    val.Value
 	inTriggerSet      bool
@@ -92,12 +91,6 @@ func applyIrqType(irq *fn.Irq, typ prs.Functionality, diary *irqDiary) error {
 			}
 			diary.enableResetVal = v
 			diary.enableResetValSet = true
-		case "groups":
-			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
-			}
-			irq.Groups = makeGroupList(v)
-			diary.groupsSet = true
 		case "in-trigger":
 			if diary.inTriggerSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "in-trigger")

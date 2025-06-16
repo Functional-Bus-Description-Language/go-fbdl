@@ -995,8 +995,6 @@ func parseProperty(word []byte, ctx *context) Token {
 		return EnableInitValue{pos}
 	case "enable-reset-value":
 		return EnableResetValue{pos}
-	case "groups":
-		return Groups{pos}
 	case "init-value":
 		return InitValue{pos}
 	case "in-trigger":

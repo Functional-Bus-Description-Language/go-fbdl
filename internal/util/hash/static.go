@@ -16,11 +16,6 @@ func hashStatic(s *fn.Static) uint32 {
 	// InitValue
 	buf.Write([]byte(s.InitValue))
 
-	// Groups
-	for _, g := range s.Groups {
-		buf.Write([]byte(g))
-	}
-
 	// Width
 	write(&buf, s.Width)
 

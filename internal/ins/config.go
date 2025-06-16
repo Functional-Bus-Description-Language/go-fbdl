@@ -14,7 +14,6 @@ type configDiary struct {
 	atomicSet   bool
 	initValSet  bool
 	initVal     val.Value
-	groupsSet   bool
 	rangeSet    bool
 	readValSet  bool
 	readVal     val.Value
@@ -108,12 +107,6 @@ func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) 
 				cfg.Range = mr
 			}
 			diary.rangeSet = true
-		case "groups":
-			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
-			}
-			cfg.Groups = makeGroupList(v)
-			diary.groupsSet = true
 		case "read-value":
 			if diary.readValSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-value")

@@ -9,7 +9,6 @@ type Mask struct {
 	Func
 
 	Atomic     bool
-	Groups     []string
 	InitValue  val.BitStr
 	ReadValue  val.BitStr
 	ResetValue val.BitStr
@@ -19,5 +18,3 @@ type Mask struct {
 }
 
 func (m Mask) Type() string { return "mask" }
-
-func (m *Mask) GroupNames() []string { return m.Groups }

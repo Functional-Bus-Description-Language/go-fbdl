@@ -9,7 +9,6 @@ type Status struct {
 	Func
 
 	Atomic    bool
-	Groups    []string
 	ReadValue val.BitStr
 	Width     int64
 
@@ -17,5 +16,3 @@ type Status struct {
 }
 
 func (s Status) Type() string { return "status" }
-
-func (s *Status) GroupNames() []string { return s.Groups }

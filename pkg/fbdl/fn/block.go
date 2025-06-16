@@ -32,28 +32,6 @@ type Block struct {
 
 func (b Block) Type() string { return "block" }
 
-func (b *Block) GroupedInsts() []Groupable {
-	instsWithGrps := []Groupable{}
-
-	for _, c := range b.Configs {
-		if len(c.Groups) > 0 {
-			instsWithGrps = append(instsWithGrps, c)
-		}
-	}
-	for _, m := range b.Masks {
-		if len(m.Groups) > 0 {
-			instsWithGrps = append(instsWithGrps, m)
-		}
-	}
-	for _, s := range b.Statuses {
-		if len(s.Groups) > 0 {
-			instsWithGrps = append(instsWithGrps, s)
-		}
-	}
-
-	return instsWithGrps
-}
-
 // StartAddr returns block start address.
 // In case of array of blocks it returns the start address of the first block.
 func (b *Block) StartAddr() int64 {

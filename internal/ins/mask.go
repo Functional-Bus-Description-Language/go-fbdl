@@ -14,7 +14,6 @@ type maskDiary struct {
 	atomicSet   bool
 	initValSet  bool
 	initVal     val.Value
-	groupsSet   bool
 	readValSet  bool
 	readVal     val.Value
 	resetValSet bool
@@ -74,12 +73,6 @@ func applyMaskType(mask *fn.Mask, typ prs.Functionality, diary *maskDiary) error
 			}
 			mask.Atomic = bool(v.(val.Bool))
 			diary.atomicSet = true
-		case "groups":
-			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
-			}
-			mask.Groups = makeGroupList(v)
-			diary.groupsSet = true
 		case "init-value":
 			if diary.initValSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "init-value")

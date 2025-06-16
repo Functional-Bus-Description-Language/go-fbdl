@@ -14,7 +14,6 @@ import (
 type staticDiary struct {
 	initValSet  bool
 	initVal     val.Value
-	groupsSet   bool
 	readValSet  bool
 	readVal     val.Value
 	resetValSet bool
@@ -72,12 +71,6 @@ func applyStaticType(st *fn.Static, typ prs.Functionality, diary *staticDiary) e
 		}
 
 		switch p.Name {
-		case "groups":
-			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
-			}
-			st.Groups = makeGroupList(v)
-			diary.groupsSet = true
 		case "init-value":
 			if diary.initValSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "init-value")

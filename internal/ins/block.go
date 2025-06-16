@@ -3,9 +3,6 @@ package ins
 import (
 	"fmt"
 	"log"
-	"sort"
-
-	"golang.org/x/exp/maps"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
@@ -42,12 +39,6 @@ func insBlock(typeChain []prs.Functionality) (*fn.Block, error) {
 	}
 
 	fillBlockProps(&blk)
-
-	err = checkBlockGroups(&blk)
-	if err != nil {
-		last := typeChain[len(typeChain)-1]
-		return nil, fmt.Errorf("%d:%d: %v", last.Line(), last.Col(), err)
-	}
 
 	return &blk, nil
 }
@@ -161,113 +152,4 @@ func addBlockInnerElement(blk *fn.Block, f any) {
 	default:
 		panic("should never happen")
 	}
-}
-
-func checkBlockGroups(blk *fn.Block) error {
-	instsWithGrps := blk.GroupedInsts()
-
-	if len(instsWithGrps) == 0 {
-		return nil
-	}
-
-	groups := make(map[string][]fn.Groupable)
-
-	for _, i := range instsWithGrps {
-		grps := i.GroupNames()
-		for _, g := range grps {
-			if _, ok := groups[g]; !ok {
-				groups[g] = []fn.Groupable{}
-			}
-			groups[g] = append(groups[g], i)
-		}
-	}
-
-	// Check for functionality and group names conflict.
-	for grpName := range groups {
-		if block.HasFunctionality(blk, grpName) {
-			return fmt.Errorf("invalid group name %q, there is inner functionality with the same name", grpName)
-		}
-	}
-
-	// Check for groups with single functionality.
-	for name, g := range groups {
-		if len(g) == 1 {
-			return fmt.Errorf("group %q has only one functionality '%s'", name, g[0].GetName())
-		}
-	}
-
-	// Check groups order.
-	for i, e1 := range instsWithGrps[:len(instsWithGrps)-1] {
-		grps1 := e1.GroupNames()
-		for _, e2 := range instsWithGrps[i+1:] {
-			grps2 := e2.GroupNames()
-			indexes := []int{}
-			for _, g1 := range grps1 {
-				for j2, g2 := range grps2 {
-					if g1 == g2 {
-						indexes = append(indexes, j2)
-					}
-				}
-			}
-
-			prevId := -1
-			for _, id := range indexes {
-				if id <= prevId {
-					return fmt.Errorf(
-						"conflicting order of groups, "+
-							"group %q is after group %q in functionality '%s', "+
-							"but before group %q in functionality '%s'",
-						grps2[id], grps2[id+1], e1.GetName(), grps2[id+1], e2.GetName(),
-					)
-				}
-				prevId = id
-			}
-		}
-	}
-
-	// Check for identical groups.
-	grpNames := maps.Keys(groups)
-	sort.Strings(grpNames)
-	for _, grpName1 := range grpNames {
-		g1 := groups[grpName1]
-		instNames1 := make([]string, 0, len(g1))
-		for _, i := range g1 {
-			instNames1 = append(instNames1, i.GetName())
-		}
-		for _, grpName2 := range grpNames {
-			g2 := groups[grpName2]
-			if grpName1 == grpName2 {
-				continue
-			}
-			instNames2 := make([]string, 0, len(g2))
-			for _, i := range g2 {
-				instNames2 = append(instNames2, i.GetName())
-			}
-			if len(instNames1) != len(instNames2) {
-				continue
-			}
-			identical := true
-			for _, name1 := range instNames1 {
-				found := false
-				for _, name2 := range instNames2 {
-					if name1 == name2 {
-						found = true
-						break
-					}
-				}
-				if !found {
-					identical = false
-					break
-				}
-			}
-			if identical {
-				return fmt.Errorf(
-					"groups %q and %q of '%s' functionality are identical",
-					grpName1, grpName2, blk.Name,
-				)
-			}
-		}
-	}
-
-	return nil
 }

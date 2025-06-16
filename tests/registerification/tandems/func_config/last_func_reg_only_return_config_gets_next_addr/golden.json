@@ -32,7 +32,6 @@
 			"Count": 1,
 			"Atomic": true,
 			"InitValue": "",
-			"Groups": null,
 			"Range": null,
 			"ReadValue": "",
 			"ResetValue": "",
@@ -61,7 +60,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": null,
 					"Width": 30,
 					"Access": {
@@ -76,7 +74,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Range": null,
 					"Width": 2,
 					"Access": {
@@ -93,7 +90,6 @@
 					"Doc": "",
 					"IsArray": false,
 					"Count": 1,
-					"Groups": null,
 					"Width": 8,
 					"Access": {
 						"Type": "SingleOneReg",
@@ -113,7 +109,6 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Groups": null,
 			"InitValue": "x\"58060439\"",
 			"ReadValue": "",
 			"ResetValue": "",

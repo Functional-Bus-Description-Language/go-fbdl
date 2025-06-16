@@ -115,7 +115,6 @@ type (
 	Delay            struct{ position }
 	EnableInitValue  struct{ position }
 	EnableResetValue struct{ position }
-	Groups           struct{ position }
 	InitValue        struct{ position }
 	InTrigger        struct{ position }
 	Masters          struct{ position }
@@ -307,9 +306,6 @@ func (eiv EnableInitValue) property()    {}
 
 func (erv EnableResetValue) Name() string { return "'enable-reset-value'" }
 func (erv EnableResetValue) property()    {}
-
-func (g Groups) Name() string { return "'groups'" }
-func (g Groups) property()    {}
 
 func (iv InitValue) Name() string { return "'init-value'" }
 func (iv InitValue) property()    {}

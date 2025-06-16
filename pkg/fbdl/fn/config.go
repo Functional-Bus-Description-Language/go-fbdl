@@ -10,7 +10,6 @@ type Config struct {
 
 	Atomic     bool
 	InitValue  val.BitStr
-	Groups     []string
 	Range      val.Range
 	ReadValue  val.BitStr
 	ResetValue val.BitStr
@@ -20,5 +19,3 @@ type Config struct {
 }
 
 func (c Config) Type() string { return "config" }
-
-func (c *Config) GroupNames() []string { return c.Groups }

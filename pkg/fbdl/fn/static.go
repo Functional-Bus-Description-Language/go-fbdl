@@ -8,7 +8,6 @@ import (
 type Static struct {
 	Func
 
-	Groups     []string
 	InitValue  val.BitStr
 	ReadValue  val.BitStr
 	ResetValue val.BitStr

@@ -13,11 +13,6 @@ func hashParam(p *fn.Param) uint32 {
 	// Func
 	write(&buf, Hash(&p.Func))
 
-	// Groups
-	for _, g := range p.Groups {
-		buf.Write([]byte(g))
-	}
-
 	// Width
 	write(&buf, p.Width)
 

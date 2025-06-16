@@ -25,11 +25,6 @@ func hashIrq(i *fn.Irq) uint32 {
 	// EnableResetValue
 	buf.Write([]byte(i.EnableResetValue))
 
-	// Groups
-	for _, g := range i.Groups {
-		buf.Write([]byte(g))
-	}
-
 	// InTrigger
 	buf.Write([]byte(i.InTrigger))
 

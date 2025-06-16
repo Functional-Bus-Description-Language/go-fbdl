@@ -19,11 +19,6 @@ func hashConfig(c *fn.Config) uint32 {
 	// InitValue
 	buf.Write([]byte(c.InitValue))
 
-	// Groups
-	for _, g := range c.Groups {
-		buf.Write([]byte(g))
-	}
-
 	// Width
 	write(&buf, c.Width)
 

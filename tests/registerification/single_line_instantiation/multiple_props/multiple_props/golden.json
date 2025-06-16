@@ -15,12 +15,15 @@
 		"Start": 0,
 		"End": 7
 	},
-	"BoolConsts": null,
-	"BoolListConsts": null,
-	"FloatConsts": null,
-	"IntConsts": null,
-	"IntListConsts": null,
-	"StrConsts": null,
+	"Consts": {
+		"Bools": null,
+		"BoolLists": null,
+		"Floats": null,
+		"Ints": null,
+		"IntLists": null,
+		"Strings": null
+	},
+	"Blackboxes": null,
 	"Configs": [
 		{
 			"Name": "C",
@@ -29,13 +32,12 @@
 			"Count": 1,
 			"Atomic": false,
 			"InitValue": "x\"0000000000000000000\"",
-			"Groups": null,
 			"Range": null,
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 76,
 			"Access": {
-				"Strategy": "Continuous",
+				"Type": "SingleNRegs",
 				"RegCount": 3,
 				"StartAddr": 1,
 				"StartBit": 0,
@@ -51,13 +53,12 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": false,
-			"Groups": null,
 			"InitValue": "",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 128,
 			"Access": {
-				"Strategy": "Continuous",
+				"Type": "SingleNRegs",
 				"RegCount": 4,
 				"StartAddr": 4,
 				"StartBit": 0,
@@ -73,13 +74,12 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"Groups": null,
-			"InitValue": "x\"769706aa\"",
+			"InitValue": "x\"6461050c\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 0,
 				"StartBit": 0,
 				"EndBit": 31
@@ -93,11 +93,10 @@
 			"IsArray": false,
 			"Count": 1,
 			"Atomic": true,
-			"Groups": null,
 			"ReadValue": "",
 			"Width": 17,
 			"Access": {
-				"Strategy": "Single",
+				"Type": "SingleOneReg",
 				"Addr": 3,
 				"StartBit": 12,
 				"EndBit": 28

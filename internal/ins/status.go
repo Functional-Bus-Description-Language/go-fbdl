@@ -12,7 +12,6 @@ import (
 
 type statusDiary struct {
 	atomicSet  bool
-	groupsSet  bool
 	readValSet bool
 	readVal    val.Value
 	widthSet   bool
@@ -74,12 +73,6 @@ func applyStatusType(st *fn.Status, typ prs.Functionality, diary *statusDiary) e
 			}
 			st.Atomic = bool(v.(val.Bool))
 			diary.atomicSet = true
-		case "groups":
-			if diary.groupsSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "groups")
-			}
-			st.Groups = makeGroupList(v)
-			diary.groupsSet = true
 		case "read-value":
 			if diary.readValSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-value")

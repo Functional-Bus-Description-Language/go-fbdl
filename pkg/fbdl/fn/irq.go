@@ -12,7 +12,6 @@ type Irq struct {
 	Clear            string
 	EnableInitValue  val.BitStr
 	EnableResetValue val.BitStr
-	Groups           []string
 	InTrigger        string
 	OutTrigger       string
 
@@ -20,5 +19,3 @@ type Irq struct {
 }
 
 func (i Irq) Type() string { return "irq" }
-
-func (i *Irq) GroupNames() []string { return i.Groups }
