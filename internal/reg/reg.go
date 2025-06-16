@@ -78,10 +78,15 @@ func regFunctionalities(blk *fn.Block, addr int64) int64 {
 	addr = regProcs(blk, addr)
 	addr = regStreams(blk, addr)
 	//addr = regGroups(blk, addr)
+
 	addr = regConfigs(blk, addr, &gp)
 	addr = regMasks(blk, addr)
 	addr = regStatics(blk, addr, &gp)
 	addr = regStatuses(blk, addr, &gp)
+
+	// Registerify irqs as the last ones.
+	// Single irqs have a width of 1, so they can easily fit gaps.
+	addr = regIrqs(blk, addr, &gp)
 
 	return addr
 }
@@ -132,14 +137,7 @@ func regMasks(blk *fn.Block, addr int64) int64 {
 
 func regStatics(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	statics := []*fn.Static{}
-
-	for _, st := range blk.Statics {
-		// Omit functionalities that have been already registerified as group members.
-		if st.Access != nil {
-			continue
-		}
-		statics = append(statics, st)
-	}
+	statics = append(statics, blk.Statics...)
 
 	sortFunc := func(sts []*fn.Static) func(int, int) bool {
 		return func(i, j int) bool {
@@ -170,11 +168,6 @@ func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	nonAtomicSts := []*fn.Status{}
 
 	for _, st := range blk.Statuses {
-		// Omit functionalities that have been already registerified as group members.
-		if st.Access != nil {
-			continue
-		}
-
 		if st.Atomic {
 			atomicSts = append(atomicSts, st)
 		} else {
@@ -210,16 +203,18 @@ func regStatuses(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
+func regIrqs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
+	for _, irq := range blk.Irqs {
+		addr = regIrq(irq, addr, gp)
+	}
+	return addr
+}
+
 func regConfigs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	atomicCfgs := []*fn.Config{}
 	nonAtomicCfgs := []*fn.Config{}
 
 	for _, cfg := range blk.Configs {
-		// Omit functionalities that have been already registerified as group members.
-		if cfg.Access != nil {
-			continue
-		}
-
 		if cfg.Atomic {
 			atomicCfgs = append(atomicCfgs, cfg)
 		} else {

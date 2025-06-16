@@ -1,0 +1,7 @@
+# Three irqs are explicitly cleared, so they can be put into register with a data
+# that is read only. However, irqs must not be placed in the same register.
+Main bus
+  S  status; width = 30
+  I1 irq
+  I2 irq
+  I3 irq

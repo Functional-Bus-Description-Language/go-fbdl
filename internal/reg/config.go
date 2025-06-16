@@ -1,9 +1,10 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 )
 
 // regAtomicConfig registerifies an atomic Config functionality.

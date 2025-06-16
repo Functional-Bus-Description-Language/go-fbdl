@@ -78,5 +78,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("marshal registerification results: %v", err)
 	}
-	fmt.Print(string(jsonBytes))
+	fmt.Printf("%s", string(jsonBytes))
 }
