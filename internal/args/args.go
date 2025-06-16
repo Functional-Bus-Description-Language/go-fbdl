@@ -1,16 +1,15 @@
 package args
 
-type Args struct {
+var (
+	MainBus  string
+	MainFile string
+
 	Debug        bool
 	AddTimestamp bool
 
-	Main string
-
 	DumpReg    string
 	DumpConsts string
-
-	MainFile string
-}
+)
 
 func isValidFlag(f string) bool {
 	flags := map[string]bool{

@@ -6,23 +6,21 @@ import (
 	"os"
 )
 
-func Parse() Args {
+func Parse() {
 	param := ""
 	val := false
 	maybeVal := false
 
-	args := Args{}
-
 	handleFlag := func(f string) {
 		switch f {
 		case "-debug":
-			args.Debug = true
+			Debug = true
 		case "-help":
 			printHelp()
 		case "-version":
 			printVersion()
 		case "-add-timestamp":
-			args.AddTimestamp = true
+			AddTimestamp = true
 		default:
 			panic(fmt.Sprintf("unhandled flag '%s', implement me", f))
 		}
@@ -36,9 +34,9 @@ func Parse() Args {
 			// Parameters default values.
 			switch param {
 			case "-r":
-				args.DumpReg = "reg.json"
+				DumpReg = "reg.json"
 			case "-c":
-				args.DumpConsts = "const.json"
+				DumpConsts = "const.json"
 			default:
 				maybeVal = false
 				val = true
@@ -61,7 +59,7 @@ func Parse() Args {
 				log.Fatalf("missing path to main file")
 			}
 
-			args.MainFile = arg
+			MainFile = arg
 			continue
 		}
 
@@ -70,7 +68,7 @@ func Parse() Args {
 
 			switch param {
 			case "-main":
-				args.Main = arg
+				MainBus = arg
 			default:
 				panic(fmt.Sprintf("unhandled param '%s', implement me", param))
 			}
@@ -87,9 +85,9 @@ func Parse() Args {
 
 			switch param {
 			case "-r":
-				args.DumpReg = arg
+				DumpReg = arg
 			case "-c":
-				args.DumpConsts = arg
+				DumpConsts = arg
 			}
 		} else {
 			if isValidFlag(arg) {
@@ -100,5 +98,8 @@ func Parse() Args {
 		}
 	}
 
-	return args
+	// Arguments post processing
+	if MainBus == "" {
+		MainBus = "Main"
+	}
 }

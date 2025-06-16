@@ -35,18 +35,14 @@ func main() {
 	log.SetOutput(logger)
 	log.SetFlags(0)
 
-	args := args.Parse()
+	args.Parse()
 
 	printDebug = args.Debug
 
 	packages := prs.DiscoverPackages(args.MainFile)
 	prs.ParsePackages(packages)
 
-	mainName := "Main"
-	if args.Main != "" {
-		mainName = args.Main
-	}
-	bus, pkgsConsts, err := ins.Instantiate(packages, mainName)
+	bus, pkgsConsts, err := ins.Instantiate(packages, args.MainBus)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
