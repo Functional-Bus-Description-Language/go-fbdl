@@ -51,28 +51,6 @@ func main() {
 		reg.Registerify(bus, args.AddTimestamp)
 	}
 
-	if args.DumpReg != "" {
-		f, err := os.Create(args.DumpReg)
-		if err != nil {
-			panic(err)
-		}
-
-		byteArray, err := json.MarshalIndent(bus, "", "\t")
-		if err != nil {
-			log.Fatalf("marshal registerification results: %v", err)
-		}
-
-		_, err = f.Write(byteArray)
-		if err != nil {
-			log.Fatalf("dump registerification results: %v", err)
-		}
-
-		err = f.Close()
-		if err != nil {
-			log.Fatalf("dump registerification results: %v", err)
-		}
-	}
-
 	if args.DumpConsts != "" {
 		f, err := os.Create(args.DumpConsts)
 		if err != nil {
@@ -94,4 +72,11 @@ func main() {
 			log.Fatalf("dump packages constants: %v", err)
 		}
 	}
+
+	// Dump registerification results to stdout
+	jsonBytes, err := json.MarshalIndent(bus, "", "\t")
+	if err != nil {
+		log.Fatalf("marshal registerification results: %v", err)
+	}
+	fmt.Print(string(jsonBytes))
 }

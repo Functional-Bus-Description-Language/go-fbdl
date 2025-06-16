@@ -99,7 +99,12 @@ func Parse() {
 	}
 
 	// Arguments post processing
+
 	if MainBus == "" {
 		MainBus = "Main"
+	}
+
+	if MainFile == "" {
+		log.Fatalf("missing path to main file")
 	}
 }

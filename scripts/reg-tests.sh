@@ -44,7 +44,7 @@ do
 
 	echo "  $dir"
 	cd "$dir"
-	../../../../../fbdl -r bus.fbd
+	../../../../../fbdl bus.fbd > reg.json
 	diff --color golden.json reg.json
 	if $update; then
 		cp reg.json golden.json
