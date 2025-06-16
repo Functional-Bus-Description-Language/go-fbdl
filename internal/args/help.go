@@ -21,8 +21,6 @@ Flags:
 
 Parameters:
   -main name  Name of the main bus. Useful for testbenches.
-  -p [path]   Dump parse results to a file (default path is prs.txt).
-  -i [path]   Dump instantiation results to a file (default path is ins.txt).
   -r [path]   Dump registerification results to a file (default path is reg.json).
   -c [path]   Dump packages constants to a file (default path is const.json).
 `
