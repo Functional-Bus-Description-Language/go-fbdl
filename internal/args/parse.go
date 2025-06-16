@@ -35,10 +35,6 @@ func Parse() Args {
 			maybeVal = true
 			// Parameters default values.
 			switch param {
-			case "-p":
-				args.DumpPrs = "prs.txt"
-			case "-i":
-				args.DumpIns = "ins.txt"
 			case "-r":
 				args.DumpReg = "reg.json"
 			case "-c":
@@ -90,10 +86,6 @@ func Parse() Args {
 			}
 
 			switch param {
-			case "-p":
-				args.DumpPrs = arg
-			case "-i":
-				args.DumpIns = arg
 			case "-r":
 				args.DumpReg = arg
 			case "-c":

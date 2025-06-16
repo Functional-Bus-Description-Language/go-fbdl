@@ -10,8 +10,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 var printDebug bool = false
@@ -41,25 +39,8 @@ func main() {
 
 	printDebug = args.Debug
 
-	spew.Config.Indent = "\t"
-	spew.Config.DisablePointerAddresses = true
-	spew.Config.DisableCapacities = true
-	spew.Config.SortKeys = true
-
 	packages := prs.DiscoverPackages(args.MainFile)
 	prs.ParsePackages(packages)
-
-	if args.DumpPrs != "" {
-		f, err := os.Create(args.DumpPrs)
-		if err != nil {
-			panic(err)
-		}
-		spew.Fdump(f, packages)
-		err = f.Close()
-		if err != nil {
-			log.Fatalf("dump parse results: %v", err)
-		}
-	}
 
 	mainName := "Main"
 	if args.Main != "" {
@@ -68,18 +49,6 @@ func main() {
 	bus, pkgsConsts, err := ins.Instantiate(packages, mainName)
 	if err != nil {
 		log.Fatalf("%v", err)
-	}
-
-	if args.DumpIns != "" {
-		f, err := os.Create(args.DumpIns)
-		if err != nil {
-			panic(err)
-		}
-		spew.Fdump(f, bus)
-		err = f.Close()
-		if err != nil {
-			log.Fatalf("dump instantiation results: %v", err)
-		}
 	}
 
 	if bus != nil {

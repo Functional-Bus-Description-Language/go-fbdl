@@ -6,8 +6,6 @@ type Args struct {
 
 	Main string
 
-	DumpPrs    string
-	DumpIns    string
 	DumpReg    string
 	DumpConsts string
 
@@ -26,7 +24,7 @@ func isValidFlag(f string) bool {
 
 func isValidParam(p string) bool {
 	params := map[string]bool{
-		"-main": true, "-p": true, "-i": true, "-r": true, "-c": true,
+		"-main": true, "-r": true, "-c": true,
 	}
 	if _, ok := params[p]; ok {
 		return true
