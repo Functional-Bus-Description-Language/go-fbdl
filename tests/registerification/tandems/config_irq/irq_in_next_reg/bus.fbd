@@ -1,0 +1,4 @@
+# Irq must not be placed in the same register with a config.
+Main bus
+  C config; width = 1
+  I irq

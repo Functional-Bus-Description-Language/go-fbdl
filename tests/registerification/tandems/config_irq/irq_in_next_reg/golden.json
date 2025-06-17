@@ -1,6 +1,6 @@
 {
 	"Name": "Main",
-	"Doc": "Three irqs are explicitly cleared, so they can be put into register with a data\nthat is read only. However, irqs must not be placed in the same register.",
+	"Doc": "Irq must not be placed in the same register with a config.",
 	"IsArray": false,
 	"Count": 1,
 	"Masters": 1,
@@ -8,8 +8,8 @@
 	"Width": 32,
 	"Sizes": {
 		"BlockAligned": 4,
-		"Compact": 4,
-		"Own": 4
+		"Compact": 3,
+		"Own": 3
 	},
 	"AddrSpace": {
 		"Start": 0,
@@ -24,30 +24,29 @@
 		"Strings": null
 	},
 	"Blackboxes": null,
-	"Configs": null,
-	"Irqs": [
+	"Configs": [
 		{
-			"Name": "I1",
+			"Name": "C",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
-			"AddEnable": false,
-			"Clear": "Explicit",
-			"EnableInitValue": "",
-			"EnableResetValue": "",
-			"InTrigger": "Level",
-			"OutTrigger": "Level",
+			"Atomic": true,
+			"InitValue": "",
+			"Range": null,
+			"ReadValue": "",
+			"ResetValue": "",
+			"Width": 1,
 			"Access": {
 				"Type": "SingleOneReg",
 				"Addr": 1,
-				"StartBit": 30,
-				"EndBit": 30
-			},
-			"EnableAccess": null,
-			"ClearAddr": 1
-		},
+				"StartBit": 0,
+				"EndBit": 0
+			}
+		}
+	],
+	"Irqs": [
 		{
-			"Name": "I2",
+			"Name": "I",
 			"Doc": "",
 			"IsArray": false,
 			"Count": 1,
@@ -65,26 +64,6 @@
 			},
 			"EnableAccess": null,
 			"ClearAddr": 2
-		},
-		{
-			"Name": "I3",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"AddEnable": false,
-			"Clear": "Explicit",
-			"EnableInitValue": "",
-			"EnableResetValue": "",
-			"InTrigger": "Level",
-			"OutTrigger": "Level",
-			"Access": {
-				"Type": "SingleOneReg",
-				"Addr": 3,
-				"StartBit": 0,
-				"EndBit": 0
-			},
-			"EnableAccess": null,
-			"ClearAddr": 3
 		}
 	],
 	"Masks": null,
@@ -96,7 +75,7 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"954f0754\"",
+			"InitValue": "x\"63fb0558\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
@@ -108,23 +87,7 @@
 			}
 		}
 	],
-	"Statuses": [
-		{
-			"Name": "S",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 30,
-			"Access": {
-				"Type": "SingleOneReg",
-				"Addr": 1,
-				"StartBit": 0,
-				"EndBit": 29
-			}
-		}
-	],
+	"Statuses": null,
 	"Streams": null,
 	"Subblocks": null
 }

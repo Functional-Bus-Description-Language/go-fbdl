@@ -14,30 +14,33 @@ func regIrq(irq *fn.Irq, addr int64, gp *gap.Pool) int64 {
 	return regIrqSingle(irq, addr, gp)
 }
 
+// Irq is potentially put into a gap only if it has no enable register and is explicitly cleared.
+// In all other cases saving some address space is not worth the extra complexity.
+//
+// As irqs are registerified as the last ones, the function doesn't add any gap to the pool.
 func regIrqSingle(irq *fn.Irq, addr int64, gp *gap.Pool) int64 {
-	// Irq can be put into a gap only if it is explicitly cleared.
-	if irq.Clear == "Explicit" {
-		var acs access.Access
+	if !irq.AddEnable && irq.Clear == "Explicit" {
 		if g, ok := gp.GetSingle(1, true); ok {
-			acs = access.MakeSingle(g.Addr, g.StartBit, 1)
-		} else {
-			acs = access.MakeSingle(addr, 0, 1)
-			addr++
+			irq.Access = access.MakeSingle(g.Addr, g.StartBit, 1)
+			clrAddr := g.Addr
+			irq.ClearAddr = &clrAddr
+			return addr
 		}
-		irq.Access = acs
+	}
 
-		if acs.EndBit() < busWidth-1 {
-			gp.Add(gap.Single{
-				Addr:      acs.EndAddr(),
-				StartBit:  acs.EndBit() + 1,
-				EndBit:    busWidth - 1,
-				WriteSafe: false,
-			})
-		}
-	} else {
-		irq.Access = access.MakeSingle(addr, 0, 1)
+	// Handle all remaining cases.
+
+	irq.Access = access.MakeSingle(addr, 0, 1)
+	if irq.AddEnable {
+		irq.EnableAccess = access.MakeSingle(addr, 1, 1)
 		addr++
 	}
+	if irq.Clear == "Explicit" {
+		clrAddr := addr
+		irq.ClearAddr = &clrAddr
+	}
+
+	addr++
 
 	return addr
 }
