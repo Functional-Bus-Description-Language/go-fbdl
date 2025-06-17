@@ -38,10 +38,6 @@ func hashBlock(b *fn.Block) uint32 {
 	for _, m := range b.Masks {
 		write(&buf, Hash(m))
 	}
-	// Memories
-	for _, m := range b.Memories {
-		write(&buf, Hash(m))
-	}
 	// Procs
 	for _, p := range b.Procs {
 		write(&buf, Hash(p))

@@ -8,7 +8,6 @@ func AddBlackbox(b *fn.Block, bb *fn.Blackbox) { b.Blackboxes = append(b.Blackbo
 func AddConfig(b *fn.Block, c *fn.Config)      { b.Configs = append(b.Configs, c) }
 func AddIrq(b *fn.Block, i *fn.Irq)            { b.Irqs = append(b.Irqs, i) }
 func AddMask(b *fn.Block, m *fn.Mask)          { b.Masks = append(b.Masks, m) }
-func AddMemory(b *fn.Block, m *fn.Memory)      { b.Memories = append(b.Memories, m) }
 func AddProc(b *fn.Block, f *fn.Proc)          { b.Procs = append(b.Procs, f) }
 func AddStatic(b *fn.Block, s *fn.Static)      { b.Statics = append(b.Statics, s) }
 func AddStatus(b *fn.Block, s *fn.Status)      { b.Statuses = append(b.Statuses, s) }

@@ -1,5 +1,0 @@
-error: 'memory' must have 'read-latency' property set when its access equals "Read Write"
-bus.fbd +2:3
-   |
- 2 |   M memory
-   |   ^

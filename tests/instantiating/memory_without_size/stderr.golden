@@ -1,5 +1,0 @@
-error: 'memory' must have 'size' property set
-bus.fbd +2:3
-   |
- 2 |   M memory
-   |   ^

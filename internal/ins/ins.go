@@ -109,8 +109,6 @@ func insFunctionality(pf prs.Functionality) fn.Functionality {
 		f, err = insIrq(typeChain)
 	case "mask":
 		f, err = insMask(typeChain)
-	case "memory":
-		f, err = insMemory(typeChain)
 	case "param":
 		f, err = insParam(typeChain)
 	case "proc":

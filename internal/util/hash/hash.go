@@ -42,8 +42,6 @@ func Hash(data any) uint32 {
 		return hashIrq(d)
 	case *fn.Mask:
 		return hashMask(d)
-	case *fn.Memory:
-		return hashMemory(d)
 	case *fn.Proc:
 		return hashProc(d)
 	case *fn.Param:

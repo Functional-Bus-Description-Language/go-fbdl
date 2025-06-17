@@ -46,7 +46,6 @@
 	],
 	"Irqs": null,
 	"Masks": null,
-	"Memories": null,
 	"Procs": [
 		{
 			"Name": "P",

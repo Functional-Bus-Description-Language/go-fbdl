@@ -22,7 +22,6 @@ type Block struct {
 	Configs    []*Config
 	Irqs       []*Irq
 	Masks      []*Mask
-	Memories   []*Memory
 	Procs      []*Proc
 	Statics    []*Static
 	Statuses   []*Status

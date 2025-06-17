@@ -137,8 +137,6 @@ func addBlockInnerElement(blk *fn.Block, f any) {
 		block.AddIrq(blk, f)
 	case (*fn.Mask):
 		block.AddMask(blk, f)
-	case (*fn.Memory):
-		block.AddMemory(blk, f)
 	case (*fn.Proc):
 		block.AddProc(blk, f)
 	case (*fn.Static):
