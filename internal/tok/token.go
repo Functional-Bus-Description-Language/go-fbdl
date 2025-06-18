@@ -97,6 +97,7 @@ type (
 	Block  struct{ position }
 	Bus    struct{ position }
 	Config struct{ position }
+	Group  struct{ position }
 	Irq    struct{ position }
 	Mask   struct{ position }
 	Memory struct{ position }
@@ -125,6 +126,7 @@ type (
 	Reset            struct{ position }
 	ResetValue       struct{ position }
 	Size             struct{ position }
+	Virtual          struct{ position }
 	Width            struct{ position }
 	// Currently unused tokens
 	Period struct{ position } // .
@@ -256,6 +258,9 @@ func (b Bus) functionality() {}
 func (c Config) Name() string   { return "'config'" }
 func (c Config) functionality() {}
 
+func (g Group) Name() string   { return "'group'" }
+func (g Group) functionality() {}
+
 func (i Irq) Name() string   { return "'irq'" }
 func (i Irq) functionality() {}
 
@@ -336,6 +341,9 @@ func (rv ResetValue) property()    {}
 
 func (s Size) Name() string { return "'size'" }
 func (s Size) property()    {}
+
+func (v Virtual) Name() string { return "'virtual'" }
+func (v Virtual) property()    {}
 
 func (w Width) Name() string { return "'width'" }
 func (w Width) property()    {}

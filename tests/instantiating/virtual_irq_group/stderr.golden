@@ -1,0 +1,5 @@
+error: cannot add irq 'i' to virtual group 'g', virtual irq group makes no sense
+bus.fbd +4:5
+   |
+ 4 |     i irq
+   |     ^

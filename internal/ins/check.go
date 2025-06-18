@@ -36,7 +36,7 @@ func checkProp(prop prs.Prop) error {
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
-	case "add-enable", "atomic", "byte-write-enable":
+	case "add-enable", "atomic", "byte-write-enable", "virtual":
 		if _, ok := pv.(val.Bool); !ok {
 			return tok.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "bool", pv.Type()),

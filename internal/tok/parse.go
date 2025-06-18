@@ -945,6 +945,8 @@ func parseKeyword(word []byte, ctx *context) Token {
 		return Const{pos}
 	case "import":
 		return Import{pos}
+	case "group":
+		return Group{pos}
 	case "irq":
 		return Irq{pos}
 	case "mask":
@@ -1015,6 +1017,8 @@ func parseProperty(word []byte, ctx *context) Token {
 		return ResetValue{pos}
 	case "size":
 		return Size{pos}
+	case "virtual":
+		return Virtual{pos}
 	case "width":
 		return Width{pos}
 	}

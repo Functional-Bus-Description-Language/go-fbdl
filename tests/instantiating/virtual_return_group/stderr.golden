@@ -1,0 +1,5 @@
+error: cannot add return 'r' to virtual group 'g', virtual return group makes no sense
+bus.fbd +4:5
+   |
+ 4 |     r return
+   |     ^

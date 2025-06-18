@@ -6,6 +6,7 @@ import (
 
 func AddBlackbox(b *fn.Block, bb *fn.Blackbox) { b.Blackboxes = append(b.Blackboxes, bb) }
 func AddConfig(b *fn.Block, c *fn.Config)      { b.Configs = append(b.Configs, c) }
+func AddGroup(b *fn.Block, g *fn.Group)        { b.Groups = append(b.Groups, g) }
 func AddIrq(b *fn.Block, i *fn.Irq)            { b.Irqs = append(b.Irqs, i) }
 func AddMask(b *fn.Block, m *fn.Mask)          { b.Masks = append(b.Masks, m) }
 func AddProc(b *fn.Block, f *fn.Proc)          { b.Procs = append(b.Procs, f) }

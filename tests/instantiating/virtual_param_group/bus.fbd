@@ -1,0 +1,4 @@
+Main bus
+  g group
+    virtual = true
+    p param

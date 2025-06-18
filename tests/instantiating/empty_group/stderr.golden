@@ -1,0 +1,5 @@
+error: group 'grp' is empty
+bus.fbd +3:3
+   |
+ 3 |   grp g_t
+   |   ^^^

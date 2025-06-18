@@ -133,6 +133,8 @@ func addBlockInnerElement(blk *fn.Block, f any) {
 		block.AddBlackbox(blk, f)
 	case (*fn.Config):
 		block.AddConfig(blk, f)
+	case (*fn.Group):
+		block.AddGroup(blk, f)
 	case (*fn.Irq):
 		block.AddIrq(blk, f)
 	case (*fn.Mask):

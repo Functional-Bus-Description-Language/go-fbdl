@@ -105,6 +105,8 @@ func insFunctionality(pf prs.Functionality) fn.Functionality {
 		f, err = insBlock(typeChain)
 	case "config":
 		f, err = insConfig(typeChain)
+	case "group":
+		f, err = insGroup(typeChain)
 	case "irq":
 		f, err = insIrq(typeChain)
 	case "mask":

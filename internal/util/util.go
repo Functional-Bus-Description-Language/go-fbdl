@@ -9,7 +9,7 @@ const RepoIssueUrl = "https://github.com/Functional-Bus-Description-Language/go-
 
 func IsBaseType(t string) bool {
 	baseTypes := [...]string{
-		"blackbox", "block", "bus", "config", "irq", "mask", "param", "proc", "return", "static", "status", "stream",
+		"blackbox", "block", "bus", "config", "group", "irq", "mask", "param", "proc", "return", "static", "status", "stream",
 	}
 
 	for i := range baseTypes {
@@ -28,6 +28,7 @@ func IsValidProperty(p string, t string) error {
 		"block":    []string{"masters", "reset"},
 		"bus":      []string{"masters", "reset", "width"},
 		"config":   []string{"atomic", "init-value", "range", "read-value", "reset-value", "width"},
+		"group":    []string{"virtual"},
 		"irq":      []string{"add-enable", "clear", "enable-init-value", "enable-reset-value", "in-trigger", "out-trigger"},
 		"mask":     []string{"atomic", "init-value", "read-value", "reset-value", "width"},
 		"param":    []string{"range", "width"},
@@ -70,9 +71,10 @@ func IsValidProperty(p string, t string) error {
 func IsValidInnerType(it string, ot string) bool {
 	validTypes := map[string][]string{
 		"blackbox": []string{},
-		"block":    []string{"blackbox", "block", "config", "irq", "mask", "proc", "static", "status", "stream"},
-		"bus":      []string{"block", "config", "irq", "mask", "proc", "static", "status", "stream"},
+		"block":    []string{"blackbox", "block", "config", "group", "irq", "mask", "proc", "static", "status", "stream"},
+		"bus":      []string{"blackbox", "block", "config", "group", "irq", "mask", "proc", "static", "status", "stream"},
 		"config":   []string{},
+		"group":    []string{"config", "irq", "mask", "param", "return", "static", "status"},
 		"irq":      []string{},
 		"mask":     []string{},
 		"param":    []string{},

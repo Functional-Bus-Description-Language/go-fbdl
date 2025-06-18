@@ -20,6 +20,7 @@ type Symbol interface {
 	Col() int
 	Doc() string
 	Tok() tok.Token
+	Loc() string
 
 	setScope(s Scope)
 	Scope() Scope
@@ -43,6 +44,10 @@ func (s symbol) Doc() string    { return s.doc }
 func (s symbol) Scope() Scope   { return s.scope }
 func (s symbol) File() *File    { return s.file }
 func (s symbol) Tok() tok.Token { return s.tok }
+
+func (sym symbol) Loc() string {
+	return fmt.Sprintf("%d:%d", sym.Line(), sym.Col())
+}
 
 func (sym *symbol) setScope(s Scope) {
 	if sym.scope != nil {

@@ -1,0 +1,5 @@
+error: cannot add param 'p' to virtual group 'g', virtual param group makes no sense
+bus.fbd +4:5
+   |
+ 4 |     p param
+   |     ^

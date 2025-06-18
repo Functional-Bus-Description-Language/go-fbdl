@@ -20,6 +20,7 @@ type Block struct {
 
 	Blackboxes []*Blackbox
 	Configs    []*Config
+	Groups     []*Group
 	Irqs       []*Irq
 	Masks      []*Mask
 	Procs      []*Proc
