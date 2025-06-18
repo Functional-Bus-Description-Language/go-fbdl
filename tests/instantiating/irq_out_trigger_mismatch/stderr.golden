@@ -1,0 +1,8 @@
+error: mismatched output trigger within irq group 'g'
+all irqs within irq group must have the same 'out-trigger' property value
+irq 'i1' 'out-trigger' = "Level"
+irq 'i2' 'out-trigger' = "Edge"
+bus.fbd +2:3
+   |
+ 2 |   g group
+   |   ^

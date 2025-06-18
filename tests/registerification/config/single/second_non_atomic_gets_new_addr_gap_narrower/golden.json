@@ -62,6 +62,7 @@
 			}
 		}
 	],
+	"Groups": null,
 	"Irqs": null,
 	"Masks": null,
 	"Procs": null,

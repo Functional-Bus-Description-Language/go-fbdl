@@ -25,6 +25,7 @@
 	},
 	"Blackboxes": null,
 	"Configs": null,
+	"Groups": null,
 	"Irqs": [
 		{
 			"Name": "I1",

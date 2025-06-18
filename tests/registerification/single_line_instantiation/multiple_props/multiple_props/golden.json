@@ -45,6 +45,7 @@
 			}
 		}
 	],
+	"Groups": null,
 	"Irqs": null,
 	"Masks": [
 		{

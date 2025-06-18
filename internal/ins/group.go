@@ -52,6 +52,14 @@ func insGroup(typeChain []prs.Functionality) (*fn.Group, error) {
 		}
 	}
 
+	err = checkGroup(grp)
+	if err != nil {
+		return &grp, tok.Error{
+			Msg:  fmt.Sprintf("%v", err),
+			Toks: []tok.Token{typeChain[len(typeChain)-1].Tok()},
+		}
+	}
+
 	return &grp, nil
 }
 
@@ -151,4 +159,29 @@ func addGroupInnerElement(grp *fn.Group, f any) error {
 	}
 
 	return err
+}
+
+func checkGroup(grp fn.Group) error {
+	if len(grp.Irqs) > 0 {
+		return checkIrqGroup(grp)
+	}
+	return nil
+}
+
+func checkIrqGroup(grp fn.Group) error {
+	// Make sure all irqs within the group have the same out-trigger.
+	irq0 := grp.Irqs[0]
+	for _, irq := range grp.Irqs[1:] {
+		if irq0.OutTrigger != irq.OutTrigger {
+			return fmt.Errorf(
+				"mismatched output trigger within irq group '%s'\n"+
+					"all irqs within irq group must have the same 'out-trigger' property value\n"+
+					"irq '%s' 'out-trigger' = %q\n"+
+					"irq '%s' 'out-trigger' = %q",
+				grp.Name, irq0.Name, irq0.OutTrigger, irq.Name, irq.OutTrigger,
+			)
+		}
+	}
+
+	return nil
 }

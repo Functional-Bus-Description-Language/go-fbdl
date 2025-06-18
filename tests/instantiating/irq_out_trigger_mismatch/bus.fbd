@@ -1,0 +1,4 @@
+Main bus
+  g group
+    i1 irq
+    i2 irq; out-trigger = "Edge"
