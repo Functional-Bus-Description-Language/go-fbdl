@@ -61,7 +61,7 @@ test-all: test test-parsing test-expr test-instantiating test-registerification
 
 # Installation targets
 install:
-	cp $(NAME) /usr/bin
+	cp $(NAME) /usr/local/bin
 
 uninstall:
-	rm /usr/bin/$(NAME)
+	rm /usr/local/bin/$(NAME)
