@@ -21,7 +21,7 @@ make
 make install
 ```
 
-Manual installation installs to `/usr/bin`.
+Manual installation installs to `/usr/local/bin`.
 
 ## Citation
 
