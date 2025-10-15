@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
 )
 
 type maskDiary struct {

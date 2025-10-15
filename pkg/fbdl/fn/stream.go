@@ -1,13 +1,13 @@
 package fn
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
 )
 
 type Stream struct {
 	Func
 
-	Delay *val.Time
+	Delay *value.Time
 
 	Params  []*Param
 	Returns []*Return

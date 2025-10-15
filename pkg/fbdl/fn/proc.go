@@ -2,13 +2,13 @@ package fn
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
 )
 
 type Proc struct {
 	Func
 
-	Delay *val.Time
+	Delay *value.Time
 
 	Params  []*Param
 	Returns []*Return

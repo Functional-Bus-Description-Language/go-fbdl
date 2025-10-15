@@ -2,16 +2,16 @@ package fn
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
 )
 
 type Mask struct {
 	Func
 
 	Atomic     bool
-	InitValue  val.BitStr
-	ReadValue  val.BitStr
-	ResetValue val.BitStr
+	InitValue  value.BitStr
+	ReadValue  value.BitStr
+	ResetValue value.BitStr
 	Width      int64
 
 	Access access.Access
