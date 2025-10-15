@@ -29,8 +29,8 @@ func write(buf io.Writer, data any) {
 
 func Hash(data any) uint32 {
 	switch d := data.(type) {
-	case addrSpace.AddrSpace:
-		return hashAddrSpace(d)
+	case addrSpace.Range:
+		return hashRange(d)
 	case access.Sizes:
 		return hashAccessSizes(d)
 	case access.Access:

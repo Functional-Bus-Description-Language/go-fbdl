@@ -14,7 +14,7 @@ type Block struct {
 	Width   int64
 
 	Sizes     access.Sizes
-	AddrSpace addrSpace.AddrSpace
+	AddrSpace addrSpace.Range
 
 	Consts cnst.Container
 
@@ -35,5 +35,5 @@ func (b Block) Type() string { return "block" }
 // StartAddr returns block start address.
 // In case of array of blocks it returns the start address of the first block.
 func (b *Block) StartAddr() int64 {
-	return addrSpace.Start(b.AddrSpace)
+	return b.AddrSpace.Start
 }

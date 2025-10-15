@@ -16,12 +16,14 @@ func assignGlobalAccessAddresses(bus *fn.Block, baseAddr int64) {
 
 func assignGlobalAccessAddressesBlockAlign(blk *fn.Block, baseAddr int64) {
 	if blk.IsArray {
-		blk.AddrSpace = addrSpace.Array{
-			Start: baseAddr, Count: blk.Count, BlockSize: blk.Sizes.BlockAligned,
+		blk.AddrSpace = addrSpace.Range{
+			Start: baseAddr,
+			End:   blk.Count*blk.Sizes.BlockAligned - 1,
 		}
 	} else {
-		blk.AddrSpace = addrSpace.Single{
-			Start: baseAddr, End: baseAddr + blk.Sizes.BlockAligned - 1,
+		blk.AddrSpace = addrSpace.Range{
+			Start: baseAddr,
+			End:   baseAddr + blk.Sizes.BlockAligned - 1,
 		}
 	}
 
@@ -50,7 +52,7 @@ func assignGlobalAccessAddressesBlockAlign(blk *fn.Block, baseAddr int64) {
 	}
 	sort.Slice(blk.Subblocks, sortFunc)
 
-	subblockBaseAddr := addrSpace.End(blk.AddrSpace) + 1
+	subblockBaseAddr := blk.AddrSpace.End + 1
 	// Iterate subblocks in decreasing size order.
 	for i := len(blk.Subblocks) - 1; i >= 0; i-- {
 		sb := blk.Subblocks[i]

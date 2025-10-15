@@ -11,7 +11,7 @@ type Blackbox struct {
 	Size int64
 
 	Sizes     access.Sizes
-	AddrSpace addrSpace.AddrSpace
+	AddrSpace addrSpace.Range
 }
 
 func (b Blackbox) Type() string { return "blackbox" }
