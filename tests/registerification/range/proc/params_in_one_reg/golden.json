@@ -48,9 +48,16 @@
 					"Width": 4,
 					"Access": {
 						"Type": "SingleOneReg",
-						"Addr": 1,
+						"RegCount": 1,
+						"RegWidth": 32,
+						"ItemCount": 1,
+						"ItemWidth": 4,
+						"StartAddr": 1,
+						"EndAddr": 1,
 						"StartBit": 0,
-						"EndBit": 3
+						"EndBit": 3,
+						"StartRegWidth": 4,
+						"EndRegWidth": 4
 					}
 				},
 				{
@@ -65,9 +72,16 @@
 					"Width": 8,
 					"Access": {
 						"Type": "SingleOneReg",
-						"Addr": 1,
+						"RegCount": 1,
+						"RegWidth": 32,
+						"ItemCount": 1,
+						"ItemWidth": 8,
+						"StartAddr": 1,
+						"EndAddr": 1,
 						"StartBit": 4,
-						"EndBit": 11
+						"EndBit": 11,
+						"StartRegWidth": 8,
+						"EndRegWidth": 8
 					}
 				},
 				{
@@ -84,9 +98,16 @@
 					"Width": 16,
 					"Access": {
 						"Type": "SingleOneReg",
-						"Addr": 1,
+						"RegCount": 1,
+						"RegWidth": 32,
+						"ItemCount": 1,
+						"ItemWidth": 16,
+						"StartAddr": 1,
+						"EndAddr": 1,
 						"StartBit": 12,
-						"EndBit": 27
+						"EndBit": 27,
+						"StartRegWidth": 16,
+						"EndRegWidth": 16
 					}
 				},
 				{
@@ -103,9 +124,16 @@
 					"Width": 4,
 					"Access": {
 						"Type": "SingleOneReg",
-						"Addr": 1,
+						"RegCount": 1,
+						"RegWidth": 32,
+						"ItemCount": 1,
+						"ItemWidth": 4,
+						"StartAddr": 1,
+						"EndAddr": 1,
 						"StartBit": 28,
-						"EndBit": 31
+						"EndBit": 31,
+						"StartRegWidth": 4,
+						"EndRegWidth": 4
 					}
 				}
 			],
@@ -120,15 +148,22 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"3108028c\"",
+			"InitValue": "x\"3b790385\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 0,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 32,
+				"StartAddr": 0,
+				"EndAddr": 0,
 				"StartBit": 0,
-				"EndBit": 31
+				"EndBit": 31,
+				"StartRegWidth": 32,
+				"EndRegWidth": 32
 			}
 		}
 	],

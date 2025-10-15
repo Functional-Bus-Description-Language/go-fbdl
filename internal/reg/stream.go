@@ -35,21 +35,21 @@ func regUpstream(s *fn.Stream, addr int64) int64 {
 			acs = access.MakeSingle(addr, baseBit, r.Width)
 		}
 
-		if acs.EndBit() < busWidth-1 {
-			addr += acs.RegCount() - 1
-			baseBit = acs.EndBit() + 1
+		if acs.EndBit < busWidth-1 {
+			addr += acs.RegCount - 1
+			baseBit = acs.EndBit + 1
 		} else {
-			addr += acs.RegCount()
+			addr += acs.RegCount
 			baseBit = 0
 		}
 
 		r.Access = acs
 	}
 
-	s.StbAddr = returns[len(returns)-1].Access.EndAddr()
+	s.StbAddr = returns[len(returns)-1].Access.EndAddr
 
 	lastAccess := returns[len(returns)-1].Access
-	if lastAccess.EndBit() < busWidth-1 {
+	if lastAccess.EndBit < busWidth-1 {
 		addr += 1
 	}
 
@@ -68,21 +68,21 @@ func regDownstream(s *fn.Stream, addr int64) int64 {
 			acs = access.MakeSingle(addr, baseBit, p.Width)
 		}
 
-		if acs.EndBit() < busWidth-1 {
-			addr += acs.RegCount() - 1
-			baseBit = acs.EndBit() + 1
+		if acs.EndBit < busWidth-1 {
+			addr += acs.RegCount - 1
+			baseBit = acs.EndBit + 1
 		} else {
-			addr += acs.RegCount()
+			addr += acs.RegCount
 			baseBit = 0
 		}
 
 		p.Access = acs
 	}
 
-	s.StbAddr = params[len(params)-1].Access.EndAddr()
+	s.StbAddr = params[len(params)-1].Access.EndAddr
 
 	lastAccess := params[len(params)-1].Access
-	if lastAccess.EndBit() < busWidth-1 {
+	if lastAccess.EndBit < busWidth-1 {
 		addr += 1
 	}
 

@@ -31,7 +31,7 @@ func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 		panic("unimplemented")
 	}
 
-	addr += acs.RegCount()
+	addr += acs.RegCount
 
 	cfg.Access = acs
 
@@ -40,15 +40,15 @@ func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 
 func regAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	acs := access.MakeSingle(addr, 0, cfg.Width)
-	if acs.EndBit() < busWidth-1 {
+	if acs.EndBit < busWidth-1 {
 		gp.Add(gap.Single{
-			Addr:      acs.EndAddr(),
-			StartBit:  acs.EndBit() + 1,
+			Addr:      acs.EndAddr,
+			StartBit:  acs.EndBit + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: false,
 		})
 	}
-	addr += acs.RegCount()
+	addr += acs.RegCount
 
 	cfg.Access = acs
 
@@ -65,15 +65,15 @@ func regNonAtomicConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 func regNonAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	// TODO: Check if there is write-safe gap at the end that can be utilized.
 	acs := access.MakeSingle(addr, 0, cfg.Width)
-	if acs.EndBit() < busWidth-1 {
+	if acs.EndBit < busWidth-1 {
 		gp.Add(gap.Single{
-			Addr:      acs.EndAddr(),
-			StartBit:  acs.EndBit() + 1,
+			Addr:      acs.EndAddr,
+			StartBit:  acs.EndBit + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: false,
 		})
 	}
-	addr += acs.RegCount()
+	addr += acs.RegCount
 
 	cfg.Access = acs
 

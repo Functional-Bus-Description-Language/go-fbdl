@@ -40,11 +40,30 @@
 			"OutTrigger": "Level",
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 1,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 1,
+				"StartAddr": 1,
+				"EndAddr": 1,
 				"StartBit": 30,
-				"EndBit": 30
+				"EndBit": 30,
+				"StartRegWidth": 1,
+				"EndRegWidth": 1
 			},
-			"EnableAccess": null,
+			"EnableAccess": {
+				"Type": "",
+				"RegCount": 0,
+				"RegWidth": 0,
+				"ItemCount": 0,
+				"ItemWidth": 0,
+				"StartAddr": 0,
+				"EndAddr": 0,
+				"StartBit": 0,
+				"EndBit": 0,
+				"StartRegWidth": 0,
+				"EndRegWidth": 0
+			},
 			"ClearAddr": 1
 		},
 		{
@@ -60,11 +79,30 @@
 			"OutTrigger": "Level",
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 2,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 1,
+				"StartAddr": 2,
+				"EndAddr": 2,
 				"StartBit": 0,
-				"EndBit": 0
+				"EndBit": 0,
+				"StartRegWidth": 1,
+				"EndRegWidth": 1
 			},
-			"EnableAccess": null,
+			"EnableAccess": {
+				"Type": "",
+				"RegCount": 0,
+				"RegWidth": 0,
+				"ItemCount": 0,
+				"ItemWidth": 0,
+				"StartAddr": 0,
+				"EndAddr": 0,
+				"StartBit": 0,
+				"EndBit": 0,
+				"StartRegWidth": 0,
+				"EndRegWidth": 0
+			},
 			"ClearAddr": 2
 		},
 		{
@@ -80,11 +118,30 @@
 			"OutTrigger": "Level",
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 3,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 1,
+				"StartAddr": 3,
+				"EndAddr": 3,
 				"StartBit": 0,
-				"EndBit": 0
+				"EndBit": 0,
+				"StartRegWidth": 1,
+				"EndRegWidth": 1
 			},
-			"EnableAccess": null,
+			"EnableAccess": {
+				"Type": "",
+				"RegCount": 0,
+				"RegWidth": 0,
+				"ItemCount": 0,
+				"ItemWidth": 0,
+				"StartAddr": 0,
+				"EndAddr": 0,
+				"StartBit": 0,
+				"EndBit": 0,
+				"StartRegWidth": 0,
+				"EndRegWidth": 0
+			},
 			"ClearAddr": 3
 		}
 	],
@@ -96,15 +153,22 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"954f0754\"",
+			"InitValue": "x\"92210755\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 0,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 32,
+				"StartAddr": 0,
+				"EndAddr": 0,
 				"StartBit": 0,
-				"EndBit": 31
+				"EndBit": 31,
+				"StartRegWidth": 32,
+				"EndRegWidth": 32
 			}
 		}
 	],
@@ -119,9 +183,16 @@
 			"Width": 30,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 1,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 30,
+				"StartAddr": 1,
+				"EndAddr": 1,
 				"StartBit": 0,
-				"EndBit": 29
+				"EndBit": 29,
+				"StartRegWidth": 30,
+				"EndRegWidth": 30
 			}
 		}
 	],

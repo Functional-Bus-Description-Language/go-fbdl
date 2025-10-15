@@ -7,7 +7,7 @@ import (
 
 // regMask registerifies a Mask functionality.
 func regMask(mask *fn.Mask, addr int64) int64 {
-	var a access.Access
+	var acs access.Access
 
 	if mask.IsArray {
 		panic("unimplemented")
@@ -22,11 +22,11 @@ func regMask(mask *fn.Mask, addr int64) int64 {
 		}
 		*/
 	} else {
-		a = access.MakeSingle(addr, 0, mask.Width)
+		acs = access.MakeSingle(addr, 0, mask.Width)
 	}
-	addr += a.RegCount()
+	addr += acs.RegCount
 
-	mask.Access = a
+	mask.Access = acs
 
 	return addr
 }

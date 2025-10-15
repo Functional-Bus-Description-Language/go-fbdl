@@ -21,13 +21,13 @@ func regAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 		acs = access.MakeSingle(g.Addr, g.StartBit, st.Width)
 	} else {
 		acs = access.MakeSingle(addr, 0, st.Width)
-		addr += acs.RegCount()
+		addr += acs.RegCount
 	}
 
-	if acs.EndBit() < busWidth-1 {
+	if acs.EndBit < busWidth-1 {
 		gp.Add(gap.Single{
-			Addr:      acs.EndAddr(),
-			StartBit:  acs.EndBit() + 1,
+			Addr:      acs.EndAddr,
+			StartBit:  acs.EndBit + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
 		})
@@ -56,7 +56,7 @@ func regAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 		panic("unimplemented")
 	}
 
-	addr += acs.RegCount()
+	addr += acs.RegCount
 
 	st.Access = acs
 
@@ -78,13 +78,13 @@ func regNonAtomicStatusSingle(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 		acs = access.MakeSingle(g.Addr, g.StartBit, st.Width)
 	} else {
 		acs = access.MakeSingle(addr, 0, st.Width)
-		addr += acs.RegCount()
+		addr += acs.RegCount
 	}
 
-	if acs.EndBit() < busWidth-1 {
+	if acs.EndBit < busWidth-1 {
 		gp.Add(gap.Single{
-			Addr:      acs.EndAddr(),
-			StartBit:  acs.EndBit() + 1,
+			Addr:      acs.EndAddr,
+			StartBit:  acs.EndBit + 1,
 			EndBit:    busWidth - 1,
 			WriteSafe: true,
 		})
@@ -112,7 +112,7 @@ func regNonAtomicStatusArray(st *fn.Status, addr int64, gp *gap.Pool) int64 {
 	} else {
 		panic("unimplemented")
 	}
-	addr += acs.RegCount()
+	addr += acs.RegCount
 
 	st.Access = acs
 

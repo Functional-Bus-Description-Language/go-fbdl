@@ -35,15 +35,22 @@
 			"Doc": "Bus identifier.",
 			"IsArray": false,
 			"Count": 1,
-			"InitValue": "x\"abd5065a\"",
+			"InitValue": "x\"ce4207a9\"",
 			"ReadValue": "",
 			"ResetValue": "",
 			"Width": 32,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 0,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 32,
+				"StartAddr": 0,
+				"EndAddr": 0,
 				"StartBit": 0,
-				"EndBit": 31
+				"EndBit": 31,
+				"StartRegWidth": 32,
+				"EndRegWidth": 32
 			}
 		}
 	],
@@ -58,9 +65,16 @@
 			"Width": 4,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 1,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 4,
+				"StartAddr": 1,
+				"EndAddr": 1,
 				"StartBit": 25,
-				"EndBit": 28
+				"EndBit": 28,
+				"StartRegWidth": 4,
+				"EndRegWidth": 4
 			}
 		},
 		{
@@ -73,9 +87,16 @@
 			"Width": 16,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 1,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 16,
+				"StartAddr": 1,
+				"EndAddr": 1,
 				"StartBit": 0,
-				"EndBit": 15
+				"EndBit": 15,
+				"StartRegWidth": 16,
+				"EndRegWidth": 16
 			}
 		},
 		{
@@ -88,9 +109,16 @@
 			"Width": 3,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 1,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 3,
+				"StartAddr": 1,
+				"EndAddr": 1,
 				"StartBit": 29,
-				"EndBit": 31
+				"EndBit": 31,
+				"StartRegWidth": 3,
+				"EndRegWidth": 3
 			}
 		},
 		{
@@ -103,9 +131,16 @@
 			"Width": 9,
 			"Access": {
 				"Type": "SingleOneReg",
-				"Addr": 1,
+				"RegCount": 1,
+				"RegWidth": 32,
+				"ItemCount": 1,
+				"ItemWidth": 9,
+				"StartAddr": 1,
+				"EndAddr": 1,
 				"StartBit": 16,
-				"EndBit": 24
+				"EndBit": 24,
+				"StartRegWidth": 9,
+				"EndRegWidth": 9
 			}
 		}
 	],

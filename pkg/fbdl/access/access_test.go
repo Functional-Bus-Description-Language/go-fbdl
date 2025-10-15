@@ -17,37 +17,63 @@ func TestMakeSingle(t *testing.T) {
 		want     Access
 	}{
 		{0, 0, 1,
-			SingleOneReg{
-				typ:      "SingleOneReg",
-				addr:     0,
-				startBit: 0,
-				endBit:   0,
+			Access{
+				Type:          "SingleOneReg",
+				RegCount:      1,
+				RegWidth:      32,
+				ItemCount:     1,
+				ItemWidth:     1,
+				StartAddr:     0,
+				EndAddr:       0,
+				StartBit:      0,
+				EndBit:        0,
+				StartRegWidth: 1,
+				EndRegWidth:   1,
 			},
 		},
 		{1, 31, 2,
-			SingleNRegs{
-				typ:       "SingleNRegs",
-				regCount:  2,
-				startAddr: 1,
-				startBit:  31,
-				endBit:    0,
+			Access{
+				Type:          "SingleNRegs",
+				RegCount:      2,
+				RegWidth:      32,
+				ItemCount:     1,
+				ItemWidth:     2,
+				StartAddr:     1,
+				EndAddr:       2,
+				StartBit:      31,
+				EndBit:        0,
+				StartRegWidth: 1,
+				EndRegWidth:   1,
 			},
 		},
 		{2, 30, 57,
-			SingleNRegs{
-				typ:       "SingleNRegs",
-				regCount:  3,
-				startAddr: 2,
-				startBit:  30,
-				endBit:    22,
+			Access{
+				Type:          "SingleNRegs",
+				RegCount:      3,
+				RegWidth:      32,
+				ItemCount:     1,
+				ItemWidth:     57,
+				StartAddr:     2,
+				EndAddr:       4,
+				StartBit:      30,
+				EndBit:        22,
+				StartRegWidth: 2,
+				EndRegWidth:   23,
 			},
 		},
 		{3, 0, 32,
-			SingleOneReg{
-				typ:      "SingleOneReg",
-				addr:     3,
-				startBit: 0,
-				endBit:   31,
+			Access{
+				Type:          "SingleOneReg",
+				RegCount:      1,
+				RegWidth:      32,
+				ItemCount:     1,
+				ItemWidth:     32,
+				StartAddr:     3,
+				EndAddr:       3,
+				StartBit:      0,
+				EndBit:        31,
+				StartRegWidth: 32,
+				EndRegWidth:   32,
 			},
 		},
 	}
@@ -74,43 +100,63 @@ func TestMakeArrayNRegs(t *testing.T) {
 		want      Access
 	}{
 		{0, 1, 0, 32,
-			ArrayNRegs{
-				typ:       "ArrayNRegs",
-				regCount:  1,
-				itemCount: 1,
-				itemWidth: 32,
-				startAddr: 0,
-				startBit:  0,
+			Access{
+				Type:          "ArrayNRegs",
+				RegCount:      1,
+				RegWidth:      32,
+				ItemCount:     1,
+				ItemWidth:     32,
+				StartAddr:     0,
+				EndAddr:       0,
+				StartBit:      0,
+				EndBit:        31,
+				StartRegWidth: 32,
+				EndRegWidth:   32,
 			},
 		},
 		{1, 4, 0, 5,
-			ArrayNRegs{
-				typ:       "ArrayNRegs",
-				regCount:  1,
-				itemCount: 4,
-				itemWidth: 5,
-				startAddr: 1,
-				startBit:  0,
+			Access{
+				Type:          "ArrayNRegs",
+				RegCount:      1,
+				RegWidth:      32,
+				ItemCount:     4,
+				ItemWidth:     5,
+				StartAddr:     1,
+				EndAddr:       1,
+				StartBit:      0,
+				EndBit:        19,
+				StartRegWidth: 20,
+				EndRegWidth:   20,
 			},
 		},
 		{2, 2, 20, 23,
-			ArrayNRegs{
-				typ:       "ArrayNRegs",
-				regCount:  3,
-				itemCount: 2,
-				itemWidth: 23,
-				startAddr: 2,
-				startBit:  20,
+			Access{
+				Type:          "ArrayNRegs",
+				RegCount:      3,
+				RegWidth:      32,
+				ItemCount:     2,
+				ItemWidth:     23,
+				StartAddr:     2,
+				EndAddr:       4,
+				StartBit:      20,
+				EndBit:        1,
+				StartRegWidth: 12,
+				EndRegWidth:   2,
 			},
 		},
 		{3, 2, 20, 22,
-			ArrayNRegs{
-				typ:       "ArrayNRegs",
-				regCount:  2,
-				itemCount: 2,
-				itemWidth: 22,
-				startAddr: 3,
-				startBit:  20,
+			Access{
+				Type:          "ArrayNRegs",
+				RegCount:      2,
+				RegWidth:      32,
+				ItemCount:     2,
+				ItemWidth:     22,
+				StartAddr:     3,
+				EndAddr:       4,
+				StartBit:      20,
+				EndBit:        31,
+				StartRegWidth: 12,
+				EndRegWidth:   32,
 			},
 		},
 	}
@@ -136,47 +182,63 @@ func TestMakeArrayNInReg(t *testing.T) {
 		want      Access
 	}{
 		{2, 4, 16,
-			ArrayNInReg{
-				typ:        "ArrayNInReg",
-				regCount:   2,
-				itemCount:  4,
-				itemWidth:  16,
-				itemsInReg: 2,
-				startAddr:  2,
-				startBit:   0,
+			Access{
+				Type:          "ArrayNInReg",
+				RegCount:      2,
+				RegWidth:      32,
+				ItemCount:     4,
+				ItemWidth:     16,
+				StartAddr:     2,
+				EndAddr:       3,
+				StartBit:      0,
+				EndBit:        31,
+				StartRegWidth: 32,
+				EndRegWidth:   32,
 			},
 		},
 		{4, 8, 8,
-			ArrayNInReg{
-				typ:        "ArrayNInReg",
-				regCount:   2,
-				itemCount:  8,
-				itemWidth:  8,
-				itemsInReg: 4,
-				startAddr:  4,
-				startBit:   0,
+			Access{
+				Type:          "ArrayNInReg",
+				RegCount:      2,
+				RegWidth:      32,
+				ItemCount:     8,
+				ItemWidth:     8,
+				StartAddr:     4,
+				EndAddr:       5,
+				StartBit:      0,
+				EndBit:        31,
+				StartRegWidth: 32,
+				EndRegWidth:   32,
 			},
 		},
 		{5, 12, 7,
-			ArrayNInReg{
-				typ:        "ArrayNInReg",
-				regCount:   3,
-				itemCount:  12,
-				itemWidth:  7,
-				itemsInReg: 4,
-				startAddr:  5,
-				startBit:   0,
+			Access{
+				Type:          "ArrayNInReg",
+				RegCount:      3,
+				RegWidth:      32,
+				ItemCount:     12,
+				ItemWidth:     7,
+				StartAddr:     5,
+				EndAddr:       7,
+				StartBit:      0,
+				EndBit:        27,
+				StartRegWidth: 28,
+				EndRegWidth:   28,
 			},
 		},
 		{6, 50, 3,
-			ArrayNInReg{
-				typ:        "ArrayNInReg",
-				regCount:   5,
-				itemCount:  50,
-				itemWidth:  3,
-				itemsInReg: 10,
-				startAddr:  6,
-				startBit:   0,
+			Access{
+				Type:          "ArrayNInReg",
+				RegCount:      5,
+				RegWidth:      32,
+				ItemCount:     50,
+				ItemWidth:     3,
+				StartAddr:     6,
+				EndAddr:       10,
+				StartBit:      0,
+				EndBit:        29,
+				StartRegWidth: 30,
+				EndRegWidth:   30,
 			},
 		},
 	}
@@ -202,27 +264,33 @@ func TestMakeArrayNInRegMInEndReg(t *testing.T) {
 		want      Access
 	}{
 		{0, 5, 7,
-			ArrayNInRegMInEndReg{
-				typ:           "ArrayNInRegMInEndReg",
-				regCount:      2,
-				itemCount:     5,
-				itemWidth:     7,
-				itemsInReg:    4,
-				itemsInEndReg: 1,
-				startAddr:     0,
-				startBit:      0,
+			Access{
+				Type:          "ArrayNInRegMInEndReg",
+				RegCount:      2,
+				RegWidth:      32,
+				ItemCount:     5,
+				ItemWidth:     7,
+				StartAddr:     0,
+				EndAddr:       1,
+				StartBit:      0,
+				EndBit:        6,
+				StartRegWidth: 28,
+				EndRegWidth:   7,
 			},
 		},
 		{1, 66, 1,
-			ArrayNInRegMInEndReg{
-				typ:           "ArrayNInRegMInEndReg",
-				regCount:      3,
-				itemCount:     66,
-				itemWidth:     1,
-				itemsInReg:    32,
-				itemsInEndReg: 2,
-				startAddr:     1,
-				startBit:      0,
+			Access{
+				Type:          "ArrayNInRegMInEndReg",
+				RegCount:      3,
+				RegWidth:      32,
+				ItemCount:     66,
+				ItemWidth:     1,
+				StartAddr:     1,
+				EndAddr:       3,
+				StartBit:      0,
+				EndBit:        1,
+				StartRegWidth: 32,
+				EndRegWidth:   2,
 			},
 		},
 	}
@@ -242,30 +310,40 @@ func TestMakeArrayNInRegMInEndReg(t *testing.T) {
 
 func TestMakeArrayOneInNRegs(t *testing.T) {
 	var tests = []struct {
-		startAddr    int64
-		count        int64
-		width        int64
-		want         Access
-		wantRegCount int64
-		wantEndBit   int64
+		startAddr int64
+		count     int64
+		width     int64
+		want      Access
 	}{
 		{0, 2, 33,
-			ArrayOneInNRegs{
-				typ:       "ArrayOneInNRegs",
-				itemCount: 2,
-				itemWidth: 33,
-				startAddr: 0,
+			Access{
+				Type:          "ArrayOneInNRegs",
+				RegCount:      4,
+				RegWidth:      32,
+				ItemCount:     2,
+				ItemWidth:     33,
+				StartAddr:     0,
+				EndAddr:       3,
+				StartBit:      0,
+				EndBit:        0,
+				StartRegWidth: 32,
+				EndRegWidth:   1,
 			},
-			4, 0,
 		},
 		{1, 3, 64,
-			ArrayOneInNRegs{
-				typ:       "ArrayOneInNRegs",
-				itemCount: 3,
-				itemWidth: 64,
-				startAddr: 1,
+			Access{
+				Type:          "ArrayOneInNRegs",
+				RegCount:      6,
+				RegWidth:      32,
+				ItemCount:     3,
+				ItemWidth:     64,
+				StartAddr:     1,
+				EndAddr:       6,
+				StartBit:      0,
+				EndBit:        31,
+				StartRegWidth: 32,
+				EndRegWidth:   32,
 			},
-			6, 31,
 		},
 	}
 
@@ -278,14 +356,6 @@ func TestMakeArrayOneInNRegs(t *testing.T) {
 
 		if got != test.want {
 			t.Errorf("[%d] got %v, want %v", i, got, test.want)
-		}
-
-		if got.RegCount() != test.wantRegCount {
-			t.Errorf("[%d] got %d, want %d", i, got.RegCount(), test.wantRegCount)
-		}
-
-		if got.EndBit() != test.wantEndBit {
-			t.Errorf("[%d] got %d, want %d", i, got.EndBit(), test.wantEndBit)
 		}
 	}
 }

@@ -17,16 +17,25 @@ func hashAccessSizes(sizes access.Sizes) uint32 {
 	return adler32.Checksum(buf.Bytes())
 }
 
-func hashAccessAccess(a access.Access) uint32 {
+func hashAccessAccess(acs access.Access) uint32 {
 	buf := bytes.Buffer{}
 
-	write(&buf, a.RegCount())
-	write(&buf, a.StartAddr())
-	write(&buf, a.EndAddr())
-	write(&buf, a.StartBit())
-	write(&buf, a.EndBit())
-	write(&buf, a.StartRegWidth())
-	write(&buf, a.EndRegWidth())
+	write(&buf, acs.Type)
+
+	write(&buf, acs.RegCount)
+	write(&buf, acs.RegWidth)
+
+	write(&buf, acs.ItemCount)
+	write(&buf, acs.ItemWidth)
+
+	write(&buf, acs.StartAddr)
+	write(&buf, acs.EndAddr)
+
+	write(&buf, acs.StartBit)
+	write(&buf, acs.EndBit)
+
+	write(&buf, acs.StartRegWidth)
+	write(&buf, acs.EndRegWidth)
 
 	return adler32.Checksum(buf.Bytes())
 }

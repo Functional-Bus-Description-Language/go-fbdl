@@ -14,7 +14,14 @@ import (
 )
 
 func write(buf io.Writer, data any) {
-	err := binary.Write(buf, binary.LittleEndian, data)
+	var err error
+
+	if str, ok := data.(string); ok {
+		_, err = buf.Write([]byte(str))
+	} else {
+		err = binary.Write(buf, binary.LittleEndian, data)
+	}
+
 	if err != nil {
 		panic(err)
 	}
