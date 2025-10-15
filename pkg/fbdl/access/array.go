@@ -35,7 +35,7 @@ func MakeArrayOneReg(itemCount, addr, startBit, width int64) Access {
 		StartAddr:     addr,
 		EndAddr:       addr,
 		StartBit:      startBit,
-		EndBit:        startBit*itemCount*width - 1,
+		EndBit:        startBit + itemCount*width - 1,
 		StartRegWidth: itemCount * width,
 		EndRegWidth:   itemCount * width,
 	}
