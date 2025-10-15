@@ -25,3 +25,17 @@ func End(as AddrSpace) int64 {
 		panic("should never happen")
 	}
 }
+
+func Readdress(as AddrSpace, offset int64) AddrSpace {
+	switch as := as.(type) {
+	case Single:
+		as.Start += offset
+		as.End += offset
+		return as
+	case Array:
+		as.Start += offset
+		return as
+	default:
+		panic("should never happen")
+	}
+}

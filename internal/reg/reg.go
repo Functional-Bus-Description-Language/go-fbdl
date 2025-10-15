@@ -48,6 +48,9 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(bus, 0)
 
+	// Readdress accesses by adding the block start address.
+	readrressAccesses(bus)
+
 	if block.HasFunctionality(bus, "ID") {
 		log.Fatalf("'ID' is reserved functionality name in main bus")
 	}
