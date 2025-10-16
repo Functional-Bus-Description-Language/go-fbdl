@@ -1,5 +1,7 @@
 package access
 
 type Sizes struct {
-	BlockAligned, Compact, Own int64
+	BlockAligned int64
+	Compact      int64
+	Own          int64
 }
