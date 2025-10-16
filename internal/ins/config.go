@@ -94,7 +94,7 @@ func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) 
 			case val.Range:
 				cfg.Range = types.SingleRange{Start: rng.L, End: rng.R}
 			case val.List:
-				mr := types.MultiRange{}
+				mr := types.ArrayRange{}
 				for _, r := range rng {
 					mr = append(
 						mr,

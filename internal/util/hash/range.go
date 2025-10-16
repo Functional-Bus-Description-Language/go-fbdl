@@ -11,7 +11,7 @@ func hashRange(ran types.Range) uint32 {
 	switch r := ran.(type) {
 	case types.SingleRange:
 		return hashSingleRange(r)
-	case types.MultiRange:
+	case types.ArrayRange:
 		panic("unimplemented")
 	default:
 		panic("unimplemented")

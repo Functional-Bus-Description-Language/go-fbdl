@@ -71,7 +71,7 @@ func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) e
 			case val.Range:
 				param.Range = types.SingleRange{Start: rng.L, End: rng.R}
 			case val.List:
-				mr := types.MultiRange{}
+				mr := types.ArrayRange{}
 				for _, r := range rng {
 					mr = append(
 						mr,

@@ -25,22 +25,22 @@ func (sr SingleRange) Shift(offset int64) SingleRange {
 	return sr
 }
 
-// MultiRange represents possible multiple value ranges.
+// ArrayRange represents possible multiple value ranges.
 // For example, [1:3, 8:10] means that the value can equal 1, 2, 3, 8, 9 or 10.
-type MultiRange []SingleRange
+type ArrayRange []SingleRange
 
-func (mr MultiRange) isRange() {}
+func (ar ArrayRange) isRange() {}
 
 // TODO: This function can potentially be removed.
-func (ml MultiRange) IsEmpty() bool {
-	return len(ml) == 0
+func (ar ArrayRange) IsEmpty() bool {
+	return len(ar) == 0
 }
 
-func (ml MultiRange) BitWidth() int64 {
+func (ar ArrayRange) BitWidth() int64 {
 	max := int64(0)
-	for _, r := range ml {
-		if r.BitWidth() > max {
-			max = r.BitWidth()
+	for _, sr := range ar {
+		if sr.BitWidth() > max {
+			max = sr.BitWidth()
 		}
 	}
 	return max

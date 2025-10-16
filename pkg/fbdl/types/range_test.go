@@ -22,25 +22,25 @@ func TestSingleRangeWidth(t *testing.T) {
 	}
 }
 
-func TestMultiRangeWidth(t *testing.T) {
+func TestArrayRangeWidth(t *testing.T) {
 	var tests = []struct {
-		mr   MultiRange
+		mr   ArrayRange
 		want int64
 	}{
 		{
-			MultiRange{
+			ArrayRange{
 				SingleRange{Start: 0, End: 1}, SingleRange{Start: 0, End: 15},
 			},
 			4,
 		},
 		{
-			MultiRange{
+			ArrayRange{
 				SingleRange{Start: 0, End: 1023}, SingleRange{Start: 400, End: 510},
 			},
 			10,
 		},
 		{
-			MultiRange{
+			ArrayRange{
 				SingleRange{Start: 0, End: 7}, SingleRange{Start: 10, End: 36}, SingleRange{Start: 40, End: 250},
 			},
 			8,
