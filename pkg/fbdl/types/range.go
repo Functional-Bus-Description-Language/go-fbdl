@@ -2,12 +2,19 @@ package types
 
 import "math"
 
+// The Range interface represents range type from the FBDL specification.
+//
+// Check SingleRange and ArrayRange structs documentation for more details.
 type Range interface {
 	isRange()
 	BitWidth() int64 // Returns bit width required to represent the range.
 }
 
-// SingleRange represents possible single value range.
+// The SingleRange struct represents possible single value range.
+//
+// This type is also used internally to represents address space.
+// It also might be useful in generators implementation to represent,
+// for example, address ranges.
 type SingleRange struct {
 	Start int64 // Left bound
 	End   int64 // Right bound

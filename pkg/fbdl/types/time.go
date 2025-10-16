@@ -1,5 +1,6 @@
 package types
 
+// The Time struct represents time type from the FBDL specification.
 type Time struct {
 	S  int64
 	Ns int64

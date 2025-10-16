@@ -2,10 +2,13 @@ package types
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"strconv"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
+// BitStr represents bit string type from the FBDL specification.
+//
 // BitStr (bit string) is used for representing init values.
 // BitStr type is needed for 2 reasons:
 //
