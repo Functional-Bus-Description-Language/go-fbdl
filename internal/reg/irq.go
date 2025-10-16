@@ -1,8 +1,8 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 )
@@ -21,7 +21,7 @@ func regIrq(irq *fn.Irq, addr int64, gp *gap.Pool) int64 {
 func regIrqSingle(irq *fn.Irq, addr int64, gp *gap.Pool) int64 {
 	if !irq.AddEnable && irq.Clear == "Explicit" {
 		if g, ok := gp.GetSingle(1, true); ok {
-			irq.Access = access.MakeSingle(g.Addr, g.StartBit, 1)
+			irq.Access = types.MakeSingleAccess(g.Addr, g.StartBit, 1)
 			clrAddr := g.Addr
 			irq.ClearAddr = &clrAddr
 			return addr
@@ -30,9 +30,9 @@ func regIrqSingle(irq *fn.Irq, addr int64, gp *gap.Pool) int64 {
 
 	// Handle all remaining cases.
 
-	irq.Access = access.MakeSingle(addr, 0, 1)
+	irq.Access = types.MakeSingleAccess(addr, 0, 1)
 	if irq.AddEnable {
-		irq.EnableAccess = access.MakeSingle(addr, 1, 1)
+		irq.EnableAccess = types.MakeSingleAccess(addr, 1, 1)
 		addr++
 	}
 	if irq.Clear == "Explicit" {

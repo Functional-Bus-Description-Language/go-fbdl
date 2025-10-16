@@ -9,7 +9,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -18,7 +17,7 @@ var busWidth int64
 
 func Registerify(bus *fn.Block, addTimestamp bool) {
 	busWidth = bus.Width
-	access.Init(busWidth)
+	types.Init(busWidth)
 
 	// addr is currently block internal access address, not global address.
 	// 0 is reserved for ID, even if ID is not generated.
@@ -31,7 +30,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 		addr += 1
 	}
 
-	sizes := access.Sizes{}
+	sizes := types.Sizes{}
 
 	sizes.Compact = addr
 	sizes.Own = addr
@@ -56,7 +55,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 		log.Fatalf("'ID' is reserved functionality name in main bus")
 	}
 	id := id()
-	id.Access = access.MakeSingle(0, 0, id.Width)
+	id.Access = types.MakeSingleAccess(0, 0, id.Width)
 	hash := int64(hash.Hash(bus))
 	if busWidth < 32 {
 		hash = hash & ((1 << busWidth) - 1)
@@ -71,7 +70,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 			log.Fatalf("'TIMESTAMP' is reserved functionality name in main bus")
 		}
 		ts := timestamp()
-		ts.Access = access.MakeSingle(timestampAddr, 0, busWidth)
+		ts.Access = types.MakeSingleAccess(timestampAddr, 0, busWidth)
 		bus.Statics = append(bus.Statics, ts)
 	}
 }
@@ -254,11 +253,11 @@ func regConfigs(blk *fn.Block, addr int64, gp *gap.Pool) int64 {
 	return addr
 }
 
-func regBlock(blk *fn.Block) access.Sizes {
+func regBlock(blk *fn.Block) types.Sizes {
 	addr := int64(0)
 
 	addr = regFunctionalities(blk, addr)
-	sizes := access.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
+	sizes := types.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
 
 	for _, sb := range blk.Subblocks {
 		b := regBlock(sb)

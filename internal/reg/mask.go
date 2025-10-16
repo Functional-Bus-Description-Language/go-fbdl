@@ -1,13 +1,13 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 // regMask registerifies a Mask functionality.
 func regMask(mask *fn.Mask, addr int64) int64 {
-	var acs access.Access
+	var acs types.Access
 
 	if mask.IsArray {
 		panic("unimplemented")
@@ -15,14 +15,14 @@ func regMask(mask *fn.Mask, addr int64) int64 {
 		if width == busWidth {
 
 		} else if busWidth%width == 0 || insMask.Count < busWidth/width {
-			mask.Access = access.MakeArrayMultiple(mask.Count, addr, width)
+			mask.Access = types.MakeArrayMultiple(mask.Count, addr, width)
 			// TODO: This is a place for adding a potential Gap.
 		} else {
 			panic("unimplemented")
 		}
 		*/
 	} else {
-		acs = access.MakeSingle(addr, 0, mask.Width)
+		acs = types.MakeSingleAccess(addr, 0, mask.Width)
 	}
 	addr += acs.RegCount
 

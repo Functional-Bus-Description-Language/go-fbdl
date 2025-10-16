@@ -1,21 +1,21 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 // regProc registerifies a Proc functionality.
 func regProc(proc *fn.Proc, addr int64) int64 {
-	var acs access.Access
+	var acs types.Access
 
 	params := proc.Params
 	baseBit := int64(0)
 	for _, p := range params {
 		if p.IsArray {
-			acs = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
+			acs = types.MakeArrayNRegsAccess(p.Count, addr, baseBit, p.Width)
 		} else {
-			acs = access.MakeSingle(addr, baseBit, p.Width)
+			acs = types.MakeSingleAccess(addr, baseBit, p.Width)
 		}
 
 		if acs.EndBit < busWidth-1 {
@@ -45,9 +45,9 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	returns := proc.Returns
 	for _, r := range returns {
 		if r.IsArray {
-			acs = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
+			acs = types.MakeArrayNRegsAccess(r.Count, addr, baseBit, r.Width)
 		} else {
-			acs = access.MakeSingle(addr, baseBit, r.Width)
+			acs = types.MakeSingleAccess(addr, baseBit, r.Width)
 		}
 
 		if acs.EndBit < busWidth-1 {
@@ -74,7 +74,7 @@ func regProc(proc *fn.Proc, addr int64) int64 {
 	if len(params) == 0 && len(returns) == 0 {
 		addr += 1
 	} else {
-		var lastAccess access.Access
+		var lastAccess types.Access
 		if len(returns) > 0 {
 			lastAccess = returns[len(returns)-1].Access
 		} else {

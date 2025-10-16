@@ -1,7 +1,6 @@
 package fn
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
@@ -15,8 +14,8 @@ type Irq struct {
 	InTrigger        string
 	OutTrigger       string
 
-	Access       access.Access
-	EnableAccess access.Access // Access to the irq enable register
+	Access       types.Access
+	EnableAccess types.Access // Access to the irq enable register
 
 	// Address that must be written to generate a strobe signal for explicit clear.
 	// The outer user logic must correctly handle the strobe clear signal.

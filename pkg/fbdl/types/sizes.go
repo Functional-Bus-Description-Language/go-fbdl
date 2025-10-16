@@ -1,4 +1,4 @@
-package access
+package types
 
 type Sizes struct {
 	BlockAligned int64

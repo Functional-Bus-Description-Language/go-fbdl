@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/cnst"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
@@ -31,9 +30,9 @@ func Hash(data any) uint32 {
 	switch d := data.(type) {
 	case types.Range:
 		return hashRange(d)
-	case access.Sizes:
+	case types.Sizes:
 		return hashAccessSizes(d)
-	case access.Access:
+	case types.Access:
 		return hashAccessAccess(d)
 	case *fn.Func:
 		return hashFunc(d)

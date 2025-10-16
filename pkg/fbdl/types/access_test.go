@@ -1,4 +1,4 @@
-package access
+package types
 
 import (
 	"reflect"
@@ -79,7 +79,7 @@ func TestMakeSingle(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := MakeSingle(test.baseAddr, test.baseBit, test.width)
+		got := MakeSingleAccess(test.baseAddr, test.baseBit, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
@@ -162,7 +162,7 @@ func TestMakeArrayNRegs(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := MakeArrayNRegs(test.count, test.startAddr, test.startBit, test.width)
+		got := MakeArrayNRegsAccess(test.count, test.startAddr, test.startBit, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
@@ -244,7 +244,7 @@ func TestMakeArrayNInReg(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := MakeArrayNInReg(test.count, test.startAddr, test.width)
+		got := MakeArrayNInRegAccess(test.count, test.startAddr, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
@@ -296,7 +296,7 @@ func TestMakeArrayNInRegMInEndReg(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := MakeArrayNInRegMInEndReg(test.count, test.startAddr, test.width)
+		got := MakeArrayNInRegMInEndRegAccess(test.count, test.startAddr, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
@@ -348,7 +348,7 @@ func TestMakeArrayOneInNRegs(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		got := MakeArrayOneInNRegs(test.count, test.startAddr, test.width)
+		got := MakeArrayOneInNRegsAccess(test.count, test.startAddr, test.width)
 
 		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
 			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)

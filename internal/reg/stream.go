@@ -1,8 +1,8 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 // regStream registerifies a Stream functionality.
@@ -24,15 +24,15 @@ func regEmptyStream(s *fn.Stream, addr int64) int64 {
 }
 
 func regUpstream(s *fn.Stream, addr int64) int64 {
-	var acs access.Access
+	var acs types.Access
 
 	returns := s.Returns
 	baseBit := int64(0)
 	for _, r := range returns {
 		if r.IsArray {
-			acs = access.MakeArrayNRegs(r.Count, addr, baseBit, r.Width)
+			acs = types.MakeArrayNRegsAccess(r.Count, addr, baseBit, r.Width)
 		} else {
-			acs = access.MakeSingle(addr, baseBit, r.Width)
+			acs = types.MakeSingleAccess(addr, baseBit, r.Width)
 		}
 
 		if acs.EndBit < busWidth-1 {
@@ -57,15 +57,15 @@ func regUpstream(s *fn.Stream, addr int64) int64 {
 }
 
 func regDownstream(s *fn.Stream, addr int64) int64 {
-	var acs access.Access
+	var acs types.Access
 
 	params := s.Params
 	baseBit := int64(0)
 	for _, p := range params {
 		if p.IsArray {
-			acs = access.MakeArrayNRegs(p.Count, addr, baseBit, p.Width)
+			acs = types.MakeArrayNRegsAccess(p.Count, addr, baseBit, p.Width)
 		} else {
-			acs = access.MakeSingle(addr, baseBit, p.Width)
+			acs = types.MakeSingleAccess(addr, baseBit, p.Width)
 		}
 
 		if acs.EndBit < busWidth-1 {

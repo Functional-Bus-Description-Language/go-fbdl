@@ -1,4 +1,4 @@
-package access
+package types
 
 import (
 	"fmt"
@@ -46,7 +46,7 @@ type Access struct {
 //	--------------------
 //	|| s | 9 bits gap ||
 //	--------------------
-func MakeSingleOneReg(addr, startBit, width int64) Access {
+func MakeSingleOneRegAccess(addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
 		msg := `cannot make SingleOneReg, startBit + width > busWidth, (%d + %d > %d)`
 		panic(fmt.Sprintf(msg, startBit, width, busWidth))
@@ -77,7 +77,7 @@ func MakeSingleOneReg(addr, startBit, width int64) Access {
 //	---------- ---------- ------------------------
 //	|| c(0) || || c(1) || || c(2) | 24 bits gap ||
 //	---------- ---------- ------------------------
-func MakeSingleNRegs(addr, startBit, width int64) Access {
+func MakeSingleNRegsAccess(addr, startBit, width int64) Access {
 	regCount := int64(1)
 
 	endBit := int64(0)
@@ -107,14 +107,14 @@ func MakeSingleNRegs(addr, startBit, width int64) Access {
 	}
 }
 
-// MakeSingle makes SingleOneReg or SingleNRegs depending on the argument values.
-func MakeSingle(addr, startBit, width int64) Access {
+// MakeSingleAccess makes SingleOneReg or SingleNRegs access depending on the argument values.
+func MakeSingleAccess(addr, startBit, width int64) Access {
 	firstRegRemainder := busWidth - startBit
 
 	if width <= firstRegRemainder {
-		return MakeSingleOneReg(addr, startBit, width)
+		return MakeSingleOneRegAccess(addr, startBit, width)
 	} else {
-		return MakeSingleNRegs(addr, startBit, width)
+		return MakeSingleNRegsAccess(addr, startBit, width)
 	}
 }
 
@@ -129,7 +129,7 @@ func MakeSingle(addr, startBit, width int64) Access {
 //	--------------------------------------------
 //	|| s[0] | s[1] | s[2] | s[3] | 4 bits gap ||
 //	--------------------------------------------
-func MakeArrayOneReg(itemCount, addr, startBit, width int64) Access {
+func MakeArrayOneRegAccess(itemCount, addr, startBit, width int64) Access {
 	if startBit+(width*itemCount) > busWidth {
 		panic(
 			fmt.Sprintf(
@@ -165,7 +165,7 @@ func MakeArrayOneReg(itemCount, addr, startBit, width int64) Access {
 //	----------------------- ----------------------- -----------------------
 //	|| c[0] | 7 bits gap || || c[1] | 7 bits gap || || c[2] | 7 bits gap ||
 //	----------------------- ----------------------- -----------------------
-func MakeArrayOneInReg(itemCount, addr, startBit, width int64) Access {
+func MakeArrayOneInRegAccess(itemCount, addr, startBit, width int64) Access {
 	if startBit+width > busWidth {
 		msg := `cannot make ArrayOneInReg, startBit + width > busWidth, (%d + %d > %d)`
 		panic(fmt.Sprintf(msg, startBit, width, busWidth))
@@ -197,7 +197,7 @@ func MakeArrayOneInReg(itemCount, addr, startBit, width int64) Access {
 //	--------------------------- ---------------------------------
 //	|| p[0] | p[1] | p[2](0) || || p[2](1) | p[3] | 8 bits gap ||
 //	--------------------------- ---------------------------------
-func MakeArrayNRegs(itemCount, startAddr, startBit, width int64) Access {
+func MakeArrayNRegsAccess(itemCount, startAddr, startBit, width int64) Access {
 	totalWidth := itemCount * width
 	firstRegWidth := busWidth - startBit
 
@@ -236,9 +236,9 @@ func MakeArrayNRegs(itemCount, startAddr, startBit, width int64) Access {
 //	|| c[0] | c[1] | 2 bits gap || || c[2] | c[3] | 2 bits gap || || c[4] | c[5] | 2 bits gap ||
 //	------------------------------ ------------------------------ ------------------------------
 //
-// MakeArrayNInReg makes ArrayNInReg starting from bit 0,
+// MakeArrayNInRegAccess makes ArrayNInReg starting from bit 0,
 // and placing as many items within single register as possible.
-func MakeArrayNInReg(itemCount, startAddr, width int64) Access {
+func MakeArrayNInRegAccess(itemCount, startAddr, width int64) Access {
 	itemsInReg := busWidth / width
 
 	if itemCount%itemsInReg != 0 {
@@ -279,9 +279,9 @@ func MakeArrayNInReg(itemCount, startAddr, width int64) Access {
 //	|| c[0] | c[1] | 2 bits gap || || c[2] | c[3] | 2 bits gap || || c[4] | 17 bits gap ||
 //	------------------------------ ------------------------------ ------------------------
 //
-// MakeArrayNInRegMInEndReg makes ArrayNInRegMInEndReg starting from bit 0,
+// MakeArrayNInRegMInEndRegAccess makes ArrayNInRegMInEndReg starting from bit 0,
 // and placing as many items within single register as possible.
-func MakeArrayNInRegMInEndReg(itemCount, startAddr, width int64) Access {
+func MakeArrayNInRegMInEndRegAccess(itemCount, startAddr, width int64) Access {
 	itemsInReg := busWidth / width
 	itemsInEndReg := itemCount % itemsInReg
 
@@ -319,9 +319,9 @@ func MakeArrayNInRegMInEndReg(itemCount, startAddr, width int64) Access {
 //	|| c[0](0) || || c[0](1) | 31 bits gap || || c[1](0) || || c[1](1) | 31 bits gap ||
 //	------------- --------------------------- ------------- ---------------------------
 //
-// MakeArrayOneInNRegs makes ArrayNInRegMInEndReg starting from bit 0,
+// MakeArrayOneInNRegsAccess makes ArrayNInRegMInEndReg starting from bit 0,
 // and placing as many items within single register as possible.
-func MakeArrayOneInNRegs(itemCount, startAddr, width int64) Access {
+func MakeArrayOneInNRegsAccess(itemCount, startAddr, width int64) Access {
 	if width <= busWidth {
 		panic(fmt.Sprintf("width <= busWidth, %d <= %d", width, busWidth))
 	}

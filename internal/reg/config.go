@@ -1,8 +1,8 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 )
@@ -16,17 +16,17 @@ func regAtomicConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 }
 
 func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
-	var acs access.Access
+	var acs types.Access
 
 	// TODO: In all below branches a potential gap can be added.
 	if cfg.Count*cfg.Width <= busWidth {
-		acs = access.MakeArrayOneReg(cfg.Count, addr, 0, cfg.Width)
+		acs = types.MakeArrayOneRegAccess(cfg.Count, addr, 0, cfg.Width)
 	} else if busWidth/2 < cfg.Width && cfg.Width <= busWidth {
-		acs = access.MakeArrayOneInReg(cfg.Count, addr, 0, cfg.Width)
+		acs = types.MakeArrayOneInRegAccess(cfg.Count, addr, 0, cfg.Width)
 	} else if cfg.Width <= busWidth/2 && cfg.Count%(busWidth/cfg.Width) == 0 {
-		acs = access.MakeArrayNInReg(cfg.Count, addr, cfg.Width)
+		acs = types.MakeArrayNInRegAccess(cfg.Count, addr, cfg.Width)
 	} else if cfg.Width <= busWidth/2 {
-		acs = access.MakeArrayNInRegMInEndReg(cfg.Count, addr, cfg.Width)
+		acs = types.MakeArrayNInRegMInEndRegAccess(cfg.Count, addr, cfg.Width)
 	} else {
 		panic("unimplemented")
 	}
@@ -39,7 +39,7 @@ func regAtomicConfigArray(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 }
 
 func regAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
-	acs := access.MakeSingle(addr, 0, cfg.Width)
+	acs := types.MakeSingleAccess(addr, 0, cfg.Width)
 	if acs.EndBit < busWidth-1 {
 		gp.Add(gap.Single{
 			Addr:      acs.EndAddr,
@@ -64,7 +64,7 @@ func regNonAtomicConfig(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 
 func regNonAtomicConfigSingle(cfg *fn.Config, addr int64, gp *gap.Pool) int64 {
 	// TODO: Check if there is write-safe gap at the end that can be utilized.
-	acs := access.MakeSingle(addr, 0, cfg.Width)
+	acs := types.MakeSingleAccess(addr, 0, cfg.Width)
 	if acs.EndBit < busWidth-1 {
 		gp.Add(gap.Single{
 			Addr:      acs.EndAddr,

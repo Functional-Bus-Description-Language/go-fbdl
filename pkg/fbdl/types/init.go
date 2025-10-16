@@ -1,4 +1,4 @@
-package access
+package types
 
 var busWidth int64
 

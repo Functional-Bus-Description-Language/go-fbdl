@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
-func hashAccessSizes(sizes access.Sizes) uint32 {
+func hashAccessSizes(sizes types.Sizes) uint32 {
 	buf := bytes.Buffer{}
 
 	write(&buf, sizes.BlockAligned)
@@ -17,7 +17,7 @@ func hashAccessSizes(sizes access.Sizes) uint32 {
 	return adler32.Checksum(buf.Bytes())
 }
 
-func hashAccessAccess(acs access.Access) uint32 {
+func hashAccessAccess(acs types.Access) uint32 {
 	buf := bytes.Buffer{}
 
 	write(&buf, acs.Type)
