@@ -9,7 +9,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type streamDiary struct {
@@ -61,7 +61,7 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality, diary *streamDiary)
 				return fmt.Errorf(propAlreadySetMsg, prop.Loc(), "delay")
 			}
 			t := v.(val.Time)
-			delay := fbdlVal.Time{S: t.S, Ns: t.Ns}
+			delay := types.Time{S: t.S, Ns: t.Ns}
 
 			strm.Delay = &delay
 			diary.delaySet = true

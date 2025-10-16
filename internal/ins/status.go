@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type statusDiary struct {
@@ -46,7 +46,7 @@ func insStatus(typeChain []prs.Functionality) (*fn.Status, error) {
 		if err != nil {
 			return nil, fmt.Errorf("'read-value': %v", err)
 		}
-		st.ReadValue = fbdlVal.MakeBitStr(val)
+		st.ReadValue = types.MakeBitStr(val)
 	}
 
 	return &st, nil

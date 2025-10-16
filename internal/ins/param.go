@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type paramDiary struct {
@@ -67,15 +67,15 @@ func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) e
 
 			switch rng := v.(type) {
 			case val.Int:
-				param.Range = fbdlVal.SingleRange{Start: 0, End: int64(rng)}
+				param.Range = types.SingleRange{Start: 0, End: int64(rng)}
 			case val.Range:
-				param.Range = fbdlVal.SingleRange{Start: rng.L, End: rng.R}
+				param.Range = types.SingleRange{Start: rng.L, End: rng.R}
 			case val.List:
-				mr := fbdlVal.MultiRange{}
+				mr := types.MultiRange{}
 				for _, r := range rng {
 					mr = append(
 						mr,
-						fbdlVal.SingleRange{
+						types.SingleRange{
 							Start: r.(val.Range).L,
 							End:   r.(val.Range).R,
 						},

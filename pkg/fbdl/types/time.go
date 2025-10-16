@@ -1,4 +1,4 @@
-package value
+package types
 
 type Time struct {
 	S  int64

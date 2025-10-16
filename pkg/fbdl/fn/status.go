@@ -2,14 +2,14 @@ package fn
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type Status struct {
 	Func
 
 	Atomic    bool
-	ReadValue value.BitStr
+	ReadValue types.BitStr
 	Width     int64
 
 	Access access.Access

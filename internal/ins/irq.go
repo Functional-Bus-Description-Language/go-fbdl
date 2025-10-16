@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type irqDiary struct {
@@ -135,7 +135,7 @@ func fillIrqValues(irq *fn.Irq, diary irqDiary) error {
 		if err != nil {
 			return fmt.Errorf("'enable-init-value': %v", err)
 		}
-		irq.EnableInitValue = fbdlVal.MakeBitStr(val)
+		irq.EnableInitValue = types.MakeBitStr(val)
 	}
 
 	if diary.enableResetValSet {
@@ -147,7 +147,7 @@ func fillIrqValues(irq *fn.Irq, diary irqDiary) error {
 		if err != nil {
 			return fmt.Errorf("'enable-reset-value': %v", err)
 		}
-		irq.EnableResetValue = fbdlVal.MakeBitStr(val)
+		irq.EnableResetValue = types.MakeBitStr(val)
 	}
 
 	return nil

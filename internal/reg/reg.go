@@ -1,6 +1,9 @@
 package reg
 
 import (
+	"log"
+	"sort"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
@@ -8,9 +11,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
-	"log"
-	"sort"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 var busWidth int64
@@ -62,7 +63,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	}
 	// Ignore error, the value has been trimmed to the proper width.
 	val, _ := val.BitStrFromInt(val.Int(hash), busWidth)
-	id.InitValue = fbdlVal.MakeBitStr(val)
+	id.InitValue = types.MakeBitStr(val)
 	bus.Statics = append(bus.Statics, id)
 
 	if addTimestamp {

@@ -8,7 +8,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/proc"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type procDiary struct {
@@ -60,7 +60,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 				return fmt.Errorf(propAlreadySetMsg, prop.Loc(), "delay")
 			}
 			t := v.(val.Time)
-			delay := fbdlVal.Time{S: t.S, Ns: t.Ns}
+			delay := types.Time{S: t.S, Ns: t.Ns}
 
 			p.Delay = &delay
 			diary.delaySet = true

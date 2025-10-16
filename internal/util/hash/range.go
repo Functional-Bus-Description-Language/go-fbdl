@@ -4,21 +4,21 @@ import (
 	"bytes"
 	"hash/adler32"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
-func hashRange(ran value.Range) uint32 {
+func hashRange(ran types.Range) uint32 {
 	switch r := ran.(type) {
-	case value.SingleRange:
+	case types.SingleRange:
 		return hashSingleRange(r)
-	case value.MultiRange:
+	case types.MultiRange:
 		panic("unimplemented")
 	default:
 		panic("unimplemented")
 	}
 }
 
-func hashSingleRange(sr value.SingleRange) uint32 {
+func hashSingleRange(sr types.SingleRange) uint32 {
 	buf := bytes.Buffer{}
 
 	write(&buf, sr.Start)

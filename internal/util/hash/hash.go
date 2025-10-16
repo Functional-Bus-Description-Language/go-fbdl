@@ -10,7 +10,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/cnst"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 func write(buf io.Writer, data any) {
@@ -29,7 +29,7 @@ func write(buf io.Writer, data any) {
 
 func Hash(data any) uint32 {
 	switch d := data.(type) {
-	case value.Range:
+	case types.Range:
 		return hashRange(d)
 	case access.Sizes:
 		return hashAccessSizes(d)

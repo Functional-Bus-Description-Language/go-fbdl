@@ -8,7 +8,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type staticDiary struct {
@@ -115,7 +115,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		if err != nil {
 			return fmt.Errorf("'init-value': %v", err)
 		}
-		st.InitValue = fbdlVal.MakeBitStr(val)
+		st.InitValue = types.MakeBitStr(val)
 	} else {
 		return fmt.Errorf("static functionality must have init-value property set")
 	}
@@ -125,7 +125,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		if err != nil {
 			return fmt.Errorf("'reset-value': %v", err)
 		}
-		st.ResetValue = fbdlVal.MakeBitStr(val)
+		st.ResetValue = types.MakeBitStr(val)
 	}
 
 	if diary.readValSet {
@@ -133,7 +133,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		if err != nil {
 			return fmt.Errorf("'read-value': %v", err)
 		}
-		st.ReadValue = fbdlVal.MakeBitStr(val)
+		st.ReadValue = types.MakeBitStr(val)
 	}
 
 	return nil

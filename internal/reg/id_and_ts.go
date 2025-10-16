@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 func timestamp() *fn.Static {
@@ -33,7 +33,7 @@ func timestamp() *fn.Static {
 		panic("TIMESTAMP")
 	}
 
-	ts.InitValue = fbdlVal.MakeBitStr(val)
+	ts.InitValue = types.MakeBitStr(val)
 
 	return &ts
 }

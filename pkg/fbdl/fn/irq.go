@@ -2,7 +2,7 @@ package fn
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type Irq struct {
@@ -10,8 +10,8 @@ type Irq struct {
 
 	AddEnable        bool
 	Clear            string
-	EnableInitValue  value.BitStr
-	EnableResetValue value.BitStr
+	EnableInitValue  types.BitStr
+	EnableResetValue types.BitStr
 	InTrigger        string
 	OutTrigger       string
 

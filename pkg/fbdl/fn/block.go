@@ -3,7 +3,7 @@ package fn
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/access"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/cnst"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type Block struct {
@@ -14,7 +14,7 @@ type Block struct {
 	Width   int64
 
 	Sizes     access.Sizes
-	AddrSpace value.SingleRange
+	AddrSpace types.SingleRange
 
 	Consts cnst.Container
 

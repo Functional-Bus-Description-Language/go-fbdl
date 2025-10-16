@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type maskDiary struct {
@@ -120,7 +120,7 @@ func fillMaskValues(mask *fn.Mask, diary maskDiary) error {
 		if err != nil {
 			return fmt.Errorf("'init-value': %v", err)
 		}
-		mask.InitValue = fbdlVal.MakeBitStr(val)
+		mask.InitValue = types.MakeBitStr(val)
 	}
 
 	if diary.resetValSet {
@@ -128,7 +128,7 @@ func fillMaskValues(mask *fn.Mask, diary maskDiary) error {
 		if err != nil {
 			return fmt.Errorf("'reset-value': %v", err)
 		}
-		mask.ResetValue = fbdlVal.MakeBitStr(val)
+		mask.ResetValue = types.MakeBitStr(val)
 	}
 
 	if diary.readValSet {
@@ -136,7 +136,7 @@ func fillMaskValues(mask *fn.Mask, diary maskDiary) error {
 		if err != nil {
 			return fmt.Errorf("'read-value': %v", err)
 		}
-		mask.ReadValue = fbdlVal.MakeBitStr(val)
+		mask.ReadValue = types.MakeBitStr(val)
 	}
 
 	return nil

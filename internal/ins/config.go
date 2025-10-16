@@ -7,7 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	fbdlVal "github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type configDiary struct {
@@ -90,15 +90,15 @@ func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) 
 
 			switch rng := v.(type) {
 			case val.Int:
-				cfg.Range = fbdlVal.SingleRange{Start: 0, End: int64(rng)}
+				cfg.Range = types.SingleRange{Start: 0, End: int64(rng)}
 			case val.Range:
-				cfg.Range = fbdlVal.SingleRange{Start: rng.L, End: rng.R}
+				cfg.Range = types.SingleRange{Start: rng.L, End: rng.R}
 			case val.List:
-				mr := fbdlVal.MultiRange{}
+				mr := types.MultiRange{}
 				for _, r := range rng {
 					mr = append(
 						mr,
-						fbdlVal.SingleRange{
+						types.SingleRange{
 							Start: r.(val.Range).L,
 							End:   r.(val.Range).R,
 						},
@@ -155,7 +155,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		if err != nil {
 			return fmt.Errorf("'init-value': %v", err)
 		}
-		cfg.InitValue = fbdlVal.MakeBitStr(val)
+		cfg.InitValue = types.MakeBitStr(val)
 	}
 
 	if diary.resetValSet {
@@ -163,7 +163,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		if err != nil {
 			return fmt.Errorf("'reset-value': %v", err)
 		}
-		cfg.ResetValue = fbdlVal.MakeBitStr(val)
+		cfg.ResetValue = types.MakeBitStr(val)
 	}
 
 	if diary.readValSet {
@@ -171,7 +171,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		if err != nil {
 			return fmt.Errorf("'read-value': %v", err)
 		}
-		cfg.ReadValue = fbdlVal.MakeBitStr(val)
+		cfg.ReadValue = types.MakeBitStr(val)
 	}
 
 	return nil
