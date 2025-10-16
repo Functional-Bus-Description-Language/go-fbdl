@@ -42,8 +42,8 @@
 					"IsArray": false,
 					"Count": 1,
 					"Range": {
-						"Left": 0,
-						"Right": 15
+						"Start": 0,
+						"End": 15
 					},
 					"Width": 4,
 					"Access": {
@@ -66,8 +66,8 @@
 					"IsArray": false,
 					"Count": 1,
 					"Range": {
-						"Left": 16,
-						"Right": 128
+						"Start": 16,
+						"End": 128
 					},
 					"Width": 8,
 					"Access": {
@@ -91,8 +91,8 @@
 					"Count": 1,
 					"Range": [
 						{
-							"Left": 1,
-							"Right": 65535
+							"Start": 1,
+							"End": 65535
 						}
 					],
 					"Width": 16,
@@ -117,8 +117,8 @@
 					"Count": 1,
 					"Range": [
 						{
-							"Left": 9,
-							"Right": 14
+							"Start": 9,
+							"End": 14
 						}
 					],
 					"Width": 4,

@@ -4,20 +4,25 @@ import "math"
 
 type Range interface {
 	isRange()
-	Width() int64
+	BitWidth() int64 // Returns bit width required to represent the range.
 }
 
 // SingleRange represents possible single value range.
 type SingleRange struct {
-	Left  int64 // Left bound
-	Right int64 // Right bound
+	Start int64 // Left bound
+	End   int64 // Right bound
 }
 
 func (sr SingleRange) isRange() {}
 
-// Width returns bit width required to represent the range.
-func (sr SingleRange) Width() int64 {
-	return int64(math.Ceil(math.Log2(float64(sr.Right + 1))))
+func (sr SingleRange) BitWidth() int64 {
+	return int64(math.Ceil(math.Log2(float64(sr.End + 1))))
+}
+
+func (sr SingleRange) Shift(offset int64) SingleRange {
+	sr.Start += offset
+	sr.End += offset
+	return sr
 }
 
 // MultiRange represents possible multiple value ranges.
@@ -31,12 +36,11 @@ func (ml MultiRange) IsEmpty() bool {
 	return len(ml) == 0
 }
 
-// Width returns bit width required to represent the range list.
-func (ml MultiRange) Width() int64 {
+func (ml MultiRange) BitWidth() int64 {
 	max := int64(0)
 	for _, r := range ml {
-		if r.Width() > max {
-			max = r.Width()
+		if r.BitWidth() > max {
+			max = r.BitWidth()
 		}
 	}
 	return max

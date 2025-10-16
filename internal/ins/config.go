@@ -90,17 +90,17 @@ func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) 
 
 			switch rng := v.(type) {
 			case val.Int:
-				cfg.Range = fbdlVal.SingleRange{Left: 0, Right: int64(rng)}
+				cfg.Range = fbdlVal.SingleRange{Start: 0, End: int64(rng)}
 			case val.Range:
-				cfg.Range = fbdlVal.SingleRange{Left: rng.L, Right: rng.R}
+				cfg.Range = fbdlVal.SingleRange{Start: rng.L, End: rng.R}
 			case val.List:
 				mr := fbdlVal.MultiRange{}
 				for _, r := range rng {
 					mr = append(
 						mr,
 						fbdlVal.SingleRange{
-							Left:  r.(val.Range).L,
-							Right: r.(val.Range).R,
+							Start: r.(val.Range).L,
+							End:   r.(val.Range).R,
 						},
 					)
 				}
@@ -144,7 +144,7 @@ func fillConfigProps(cfg *fn.Config, diary configDiary) {
 		if !diary.rangeSet {
 			cfg.Width = busWidth
 		} else {
-			cfg.Width = cfg.Range.Width()
+			cfg.Width = cfg.Range.BitWidth()
 		}
 	}
 }

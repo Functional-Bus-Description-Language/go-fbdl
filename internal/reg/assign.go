@@ -1,10 +1,11 @@
 package reg
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/addrSpace"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"sort"
 	"strings"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/value"
 )
 
 func assignGlobalAccessAddresses(bus *fn.Block, baseAddr int64) {
@@ -16,12 +17,12 @@ func assignGlobalAccessAddresses(bus *fn.Block, baseAddr int64) {
 
 func assignGlobalAccessAddressesBlockAlign(blk *fn.Block, baseAddr int64) {
 	if blk.IsArray {
-		blk.AddrSpace = addrSpace.Range{
+		blk.AddrSpace = value.SingleRange{
 			Start: baseAddr,
 			End:   blk.Count*blk.Sizes.BlockAligned - 1,
 		}
 	} else {
-		blk.AddrSpace = addrSpace.Range{
+		blk.AddrSpace = value.SingleRange{
 			Start: baseAddr,
 			End:   baseAddr + blk.Sizes.BlockAligned - 1,
 		}

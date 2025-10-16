@@ -7,17 +7,17 @@ func TestSingleRangeWidth(t *testing.T) {
 		sr   SingleRange
 		want int64
 	}{
-		{SingleRange{Left: 0, Right: 1}, 1},
-		{SingleRange{Left: 0, Right: 14}, 4},
-		{SingleRange{Left: 0, Right: 15}, 4},
-		{SingleRange{Left: 0, Right: 16}, 5},
-		{SingleRange{Left: 130, Right: 255}, 8},
-		{SingleRange{Left: 245, Right: 256}, 9},
+		{SingleRange{Start: 0, End: 1}, 1},
+		{SingleRange{Start: 0, End: 14}, 4},
+		{SingleRange{Start: 0, End: 15}, 4},
+		{SingleRange{Start: 0, End: 16}, 5},
+		{SingleRange{Start: 130, End: 255}, 8},
+		{SingleRange{Start: 245, End: 256}, 9},
 	}
 
 	for i, test := range tests {
-		if test.sr.Width() != test.want {
-			t.Fatalf("%d: got %d, want %d", i, test.sr.Width(), test.want)
+		if test.sr.BitWidth() != test.want {
+			t.Fatalf("%d: got %d, want %d", i, test.sr.BitWidth(), test.want)
 		}
 	}
 }
@@ -29,27 +29,27 @@ func TestMultiRangeWidth(t *testing.T) {
 	}{
 		{
 			MultiRange{
-				SingleRange{Left: 0, Right: 1}, SingleRange{Left: 0, Right: 15},
+				SingleRange{Start: 0, End: 1}, SingleRange{Start: 0, End: 15},
 			},
 			4,
 		},
 		{
 			MultiRange{
-				SingleRange{Left: 0, Right: 1023}, SingleRange{Left: 400, Right: 510},
+				SingleRange{Start: 0, End: 1023}, SingleRange{Start: 400, End: 510},
 			},
 			10,
 		},
 		{
 			MultiRange{
-				SingleRange{Left: 0, Right: 7}, SingleRange{Left: 10, Right: 36}, SingleRange{Left: 40, Right: 250},
+				SingleRange{Start: 0, End: 7}, SingleRange{Start: 10, End: 36}, SingleRange{Start: 40, End: 250},
 			},
 			8,
 		},
 	}
 
 	for i, test := range tests {
-		if test.mr.Width() != test.want {
-			t.Fatalf("%d: got %d, want %d", i, test.mr.Width(), test.want)
+		if test.mr.BitWidth() != test.want {
+			t.Fatalf("%d: got %d, want %d", i, test.mr.BitWidth(), test.want)
 		}
 	}
 }

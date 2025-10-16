@@ -67,17 +67,17 @@ func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) e
 
 			switch rng := v.(type) {
 			case val.Int:
-				param.Range = fbdlVal.SingleRange{Left: 0, Right: int64(rng)}
+				param.Range = fbdlVal.SingleRange{Start: 0, End: int64(rng)}
 			case val.Range:
-				param.Range = fbdlVal.SingleRange{Left: rng.L, Right: rng.R}
+				param.Range = fbdlVal.SingleRange{Start: rng.L, End: rng.R}
 			case val.List:
 				mr := fbdlVal.MultiRange{}
 				for _, r := range rng {
 					mr = append(
 						mr,
 						fbdlVal.SingleRange{
-							Left:  r.(val.Range).L,
-							Right: r.(val.Range).R,
+							Start: r.(val.Range).L,
+							End:   r.(val.Range).R,
 						},
 					)
 				}
@@ -106,7 +106,7 @@ func fillParamProps(param *fn.Param, diary paramDiary) {
 		if !diary.rangeSet {
 			param.Width = busWidth
 		} else {
-			param.Width = param.Range.Width()
+			param.Width = param.Range.BitWidth()
 		}
 	}
 }
