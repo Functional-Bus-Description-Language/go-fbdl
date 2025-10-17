@@ -36,6 +36,10 @@ type Access struct {
 	EndRegWidth   int64 // Width occupied in the last register.
 }
 
+func (acs Access) AddrRange() SingleRange {
+	return SingleRange{Start: acs.StartAddr, End: acs.EndAddr}
+}
+
 // SingleOneReg describes an access to a single functionality placed within single register.
 //
 //	Example:

@@ -1,7 +1,6 @@
 package types
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -80,10 +79,6 @@ func TestMakeSingle(t *testing.T) {
 
 	for i, test := range tests {
 		got := MakeSingleAccess(test.baseAddr, test.baseBit, test.width)
-
-		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
-			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
-		}
 
 		if got != test.want {
 			t.Errorf("[%d] got %v, want %v", i, got, test.want)
@@ -164,10 +159,6 @@ func TestMakeArrayNRegs(t *testing.T) {
 	for i, test := range tests {
 		got := MakeArrayNRegsAccess(test.count, test.startAddr, test.startBit, test.width)
 
-		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
-			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
-		}
-
 		if got != test.want {
 			t.Errorf("[%d] got %v, want %v", i, got, test.want)
 		}
@@ -246,10 +237,6 @@ func TestMakeArrayNInReg(t *testing.T) {
 	for i, test := range tests {
 		got := MakeArrayNInRegAccess(test.count, test.startAddr, test.width)
 
-		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
-			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
-		}
-
 		if got != test.want {
 			t.Errorf("[%d] got %v, want %v", i, got, test.want)
 		}
@@ -297,10 +284,6 @@ func TestMakeArrayNInRegMInEndReg(t *testing.T) {
 
 	for i, test := range tests {
 		got := MakeArrayNInRegMInEndRegAccess(test.count, test.startAddr, test.width)
-
-		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
-			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
-		}
 
 		if got != test.want {
 			t.Errorf("[%d] got %v, want %v", i, got, test.want)
@@ -350,9 +333,56 @@ func TestMakeArrayOneInNRegs(t *testing.T) {
 	for i, test := range tests {
 		got := MakeArrayOneInNRegsAccess(test.count, test.startAddr, test.width)
 
-		if reflect.TypeOf(got) != reflect.TypeOf(test.want) {
-			t.Errorf("[%d] invalid type, got %T, want %T", i, got, test.want)
+		if got != test.want {
+			t.Errorf("[%d] got %v, want %v", i, got, test.want)
 		}
+	}
+}
+
+func TestMakeArrayOneReg(t *testing.T) {
+	var tests = []struct {
+		itemCount int64
+		addr      int64
+		startBit  int64
+		width     int64
+		want      Access
+	}{
+		{7, 2, 0, 3,
+			Access{
+				Type:          "ArrayOneReg",
+				RegCount:      1,
+				RegWidth:      32,
+				ItemCount:     7,
+				ItemWidth:     3,
+				StartAddr:     2,
+				EndAddr:       2,
+				StartBit:      0,
+				EndBit:        20,
+				StartRegWidth: 21,
+				EndRegWidth:   21,
+			},
+		},
+		{4, 5, 0, 8,
+			Access{
+				Type:          "ArrayOneReg",
+				RegCount:      1,
+				RegWidth:      32,
+				ItemCount:     4,
+				ItemWidth:     8,
+				StartAddr:     5,
+				EndAddr:       5,
+				StartBit:      0,
+				EndBit:        31,
+				StartRegWidth: 32,
+				EndRegWidth:   32,
+			},
+		},
+	}
+
+	for i, test := range tests {
+		got := MakeArrayOneRegAccess(
+			test.itemCount, test.addr, test.startBit, test.width,
+		)
 
 		if got != test.want {
 			t.Errorf("[%d] got %v, want %v", i, got, test.want)
