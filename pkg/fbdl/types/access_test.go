@@ -389,3 +389,54 @@ func TestMakeArrayOneReg(t *testing.T) {
 		}
 	}
 }
+
+func TestMakeArrayOneInReg(t *testing.T) {
+	var tests = []struct {
+		itemCount int64
+		addr      int64
+		startBit  int64
+		width     int64
+		want      Access
+	}{
+		{7, 0, 0, 30,
+			Access{
+				Type:          "ArrayOneInReg",
+				RegCount:      7,
+				RegWidth:      32,
+				ItemCount:     7,
+				ItemWidth:     30,
+				StartAddr:     0,
+				EndAddr:       6,
+				StartBit:      0,
+				EndBit:        29,
+				StartRegWidth: 30,
+				EndRegWidth:   30,
+			},
+		},
+		{3, 45, 5, 21,
+			Access{
+				Type:          "ArrayOneInReg",
+				RegCount:      3,
+				RegWidth:      32,
+				ItemCount:     3,
+				ItemWidth:     21,
+				StartAddr:     45,
+				EndAddr:       47,
+				StartBit:      5,
+				EndBit:        25,
+				StartRegWidth: 21,
+				EndRegWidth:   21,
+			},
+		},
+	}
+
+	for i, test := range tests {
+		got := MakeArrayOneInRegAccess(
+			test.itemCount, test.addr, test.startBit, test.width,
+		)
+
+		if got != test.want {
+			t.Errorf("[%d] got %v, want %v", i, got, test.want)
+		}
+	}
+}
