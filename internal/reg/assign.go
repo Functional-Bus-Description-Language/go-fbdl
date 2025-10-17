@@ -19,7 +19,7 @@ func assignGlobalAccessAddressesBlockAlign(blk *fn.Block, baseAddr int64) {
 	if blk.IsArray {
 		blk.AddrSpace = types.SingleRange{
 			Start: baseAddr,
-			End:   blk.Count*blk.Sizes.BlockAligned - 1,
+			End:   baseAddr + blk.Count*blk.Sizes.BlockAligned - 1,
 		}
 	} else {
 		blk.AddrSpace = types.SingleRange{
