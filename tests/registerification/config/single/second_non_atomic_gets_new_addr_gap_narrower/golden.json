@@ -1,111 +1,111 @@
 {
-	"Name": "Main",
-	"Doc": "Second config must get the next address when the gap is narrower than the config even if it is non-atomic.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": [
-		{
-			"Name": "C1",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"InitValue": "",
-			"Range": null,
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 30,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 30,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 0,
-				"EndBit": 29,
-				"StartRegWidth": 30,
-				"EndRegWidth": 30
-			}
-		},
-		{
-			"Name": "C2",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": false,
-			"InitValue": "",
-			"Range": null,
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 8,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 8,
-				"StartAddr": 2,
-				"EndAddr": 2,
-				"StartBit": 0,
-				"EndBit": 7,
-				"StartRegWidth": 8,
-				"EndRegWidth": 8
-			}
-		}
-	],
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": null,
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"67fd0576\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": null,
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "Second config must get the next address when the gap is narrower than the config even if it is non-atomic.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 4,
+    "Compact": 3,
+    "Own": 3
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 3
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": [
+    {
+      "Name": "C1",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 30,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 30,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 0,
+        "EndBit": 29,
+        "StartRegWidth": 30,
+        "EndRegWidth": 30
+      }
+    },
+    {
+      "Name": "C2",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": false,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 8,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 8,
+        "StartAddr": 2,
+        "EndAddr": 2,
+        "StartBit": 0,
+        "EndBit": 7,
+        "StartRegWidth": 8,
+        "EndRegWidth": 8
+      }
+    }
+  ],
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": null,
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"67fd0576\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": null,
+  "Streams": null,
+  "Subblocks": null
 }

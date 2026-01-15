@@ -57,7 +57,7 @@ func main() {
 			panic(err)
 		}
 
-		byteArray, err := json.MarshalIndent(pkgsConsts, "", "\t")
+		byteArray, err := json.MarshalIndent(pkgsConsts, "", "  ")
 		if err != nil {
 			log.Fatalf("marshal packages constants: %v", err)
 		}
@@ -74,7 +74,7 @@ func main() {
 	}
 
 	// Dump registerification results to stdout
-	jsonBytes, err := json.MarshalIndent(bus, "", "\t")
+	jsonBytes, err := json.MarshalIndent(bus, "", "  ")
 	if err != nil {
 		log.Fatalf("marshal registerification results: %v", err)
 	}

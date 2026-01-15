@@ -1,156 +1,156 @@
 {
-	"Name": "Main",
-	"Doc": "Configs and statuses must occupy exactly two registers.\nC1 and S2 must get the first free address, and C2 and S1 must get the next address.\nAccess masks must not overlap.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": [
-		{
-			"Name": "C1",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"InitValue": "",
-			"Range": null,
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 20,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 20,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 0,
-				"EndBit": 19,
-				"StartRegWidth": 20,
-				"EndRegWidth": 20
-			}
-		},
-		{
-			"Name": "C2",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"InitValue": "",
-			"Range": null,
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 14,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 14,
-				"StartAddr": 2,
-				"EndAddr": 2,
-				"StartBit": 0,
-				"EndBit": 13,
-				"StartRegWidth": 14,
-				"EndRegWidth": 14
-			}
-		}
-	],
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": null,
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"919d0663\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": [
-		{
-			"Name": "S1",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 18,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 18,
-				"StartAddr": 2,
-				"EndAddr": 2,
-				"StartBit": 14,
-				"EndBit": 31,
-				"StartRegWidth": 18,
-				"EndRegWidth": 18
-			}
-		},
-		{
-			"Name": "S2",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 12,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 12,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 20,
-				"EndBit": 31,
-				"StartRegWidth": 12,
-				"EndRegWidth": 12
-			}
-		}
-	],
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "Configs and statuses must occupy exactly two registers.\nC1 and S2 must get the first free address, and C2 and S1 must get the next address.\nAccess masks must not overlap.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 4,
+    "Compact": 3,
+    "Own": 3
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 3
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": [
+    {
+      "Name": "C1",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 20,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 20,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 0,
+        "EndBit": 19,
+        "StartRegWidth": 20,
+        "EndRegWidth": 20
+      }
+    },
+    {
+      "Name": "C2",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 14,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 14,
+        "StartAddr": 2,
+        "EndAddr": 2,
+        "StartBit": 0,
+        "EndBit": 13,
+        "StartRegWidth": 14,
+        "EndRegWidth": 14
+      }
+    }
+  ],
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": null,
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"919d0663\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": [
+    {
+      "Name": "S1",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "ReadValue": "",
+      "Width": 18,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 18,
+        "StartAddr": 2,
+        "EndAddr": 2,
+        "StartBit": 14,
+        "EndBit": 31,
+        "StartRegWidth": 18,
+        "EndRegWidth": 18
+      }
+    },
+    {
+      "Name": "S2",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "ReadValue": "",
+      "Width": 12,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 12,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 20,
+        "EndBit": 31,
+        "StartRegWidth": 12,
+        "EndRegWidth": 12
+      }
+    }
+  ],
+  "Streams": null,
+  "Subblocks": null
 }

@@ -1,162 +1,162 @@
 {
-	"Name": "Main",
-	"Doc": "Config right after the proc must get new address even if the last proc register has only returns.\nIn such case config cannot be put into the last proc register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 4,
-		"Own": 4
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": [
-		{
-			"Name": "C",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"InitValue": "",
-			"Range": null,
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 8,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 8,
-				"StartAddr": 3,
-				"EndAddr": 3,
-				"StartBit": 0,
-				"EndBit": 7,
-				"StartRegWidth": 8,
-				"EndRegWidth": 8
-			}
-		}
-	],
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": [
-		{
-			"Name": "P",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Delay": null,
-			"Params": [
-				{
-					"Name": "p1",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Range": null,
-					"Width": 30,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 30,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 0,
-						"EndBit": 29,
-						"StartRegWidth": 30,
-						"EndRegWidth": 30
-					}
-				},
-				{
-					"Name": "p2",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Range": null,
-					"Width": 2,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 2,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 30,
-						"EndBit": 31,
-						"StartRegWidth": 2,
-						"EndRegWidth": 2
-					}
-				}
-			],
-			"Returns": [
-				{
-					"Name": "r",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Width": 8,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 8,
-						"StartAddr": 2,
-						"EndAddr": 2,
-						"StartBit": 0,
-						"EndBit": 7,
-						"StartRegWidth": 8,
-						"EndRegWidth": 8
-					}
-				}
-			],
-			"CallAddr": 1,
-			"ExitAddr": 2
-		}
-	],
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"6fe00627\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": null,
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "Config right after the proc must get new address even if the last proc register has only returns.\nIn such case config cannot be put into the last proc register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 4,
+    "Compact": 4,
+    "Own": 4
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 3
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": [
+    {
+      "Name": "C",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 8,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 8,
+        "StartAddr": 3,
+        "EndAddr": 3,
+        "StartBit": 0,
+        "EndBit": 7,
+        "StartRegWidth": 8,
+        "EndRegWidth": 8
+      }
+    }
+  ],
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": [
+    {
+      "Name": "P",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Delay": null,
+      "Params": [
+        {
+          "Name": "p1",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Range": null,
+          "Width": 30,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 30,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 0,
+            "EndBit": 29,
+            "StartRegWidth": 30,
+            "EndRegWidth": 30
+          }
+        },
+        {
+          "Name": "p2",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Range": null,
+          "Width": 2,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 2,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 30,
+            "EndBit": 31,
+            "StartRegWidth": 2,
+            "EndRegWidth": 2
+          }
+        }
+      ],
+      "Returns": [
+        {
+          "Name": "r",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Width": 8,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 8,
+            "StartAddr": 2,
+            "EndAddr": 2,
+            "StartBit": 0,
+            "EndBit": 7,
+            "StartRegWidth": 8,
+            "EndRegWidth": 8
+          }
+        }
+      ],
+      "CallAddr": 1,
+      "ExitAddr": 2
+    }
+  ],
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"6fe00627\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": null,
+  "Streams": null,
+  "Subblocks": null
 }

@@ -1,149 +1,149 @@
 {
-	"Name": "Main",
-	"Doc": "Multiple statuses narrower than the bus width must be placed in the same register.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 2,
-		"Compact": 2,
-		"Own": 2
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 1
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": null,
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": null,
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"ce4207a9\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": [
-		{
-			"Name": "S1",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 4,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 4,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 25,
-				"EndBit": 28,
-				"StartRegWidth": 4,
-				"EndRegWidth": 4
-			}
-		},
-		{
-			"Name": "S2",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 16,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 16,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 0,
-				"EndBit": 15,
-				"StartRegWidth": 16,
-				"EndRegWidth": 16
-			}
-		},
-		{
-			"Name": "S3",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 3,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 3,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 29,
-				"EndBit": 31,
-				"StartRegWidth": 3,
-				"EndRegWidth": 3
-			}
-		},
-		{
-			"Name": "S4",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 9,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 9,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 16,
-				"EndBit": 24,
-				"StartRegWidth": 9,
-				"EndRegWidth": 9
-			}
-		}
-	],
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "Multiple statuses narrower than the bus width must be placed in the same register.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 2,
+    "Compact": 2,
+    "Own": 2
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 1
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": null,
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": null,
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"ce4207a9\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": [
+    {
+      "Name": "S1",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "ReadValue": "",
+      "Width": 4,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 4,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 25,
+        "EndBit": 28,
+        "StartRegWidth": 4,
+        "EndRegWidth": 4
+      }
+    },
+    {
+      "Name": "S2",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "ReadValue": "",
+      "Width": 16,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 16,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 0,
+        "EndBit": 15,
+        "StartRegWidth": 16,
+        "EndRegWidth": 16
+      }
+    },
+    {
+      "Name": "S3",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "ReadValue": "",
+      "Width": 3,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 3,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 29,
+        "EndBit": 31,
+        "StartRegWidth": 3,
+        "EndRegWidth": 3
+      }
+    },
+    {
+      "Name": "S4",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "ReadValue": "",
+      "Width": 9,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 9,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 16,
+        "EndBit": 24,
+        "StartRegWidth": 9,
+        "EndRegWidth": 9
+      }
+    }
+  ],
+  "Streams": null,
+  "Subblocks": null
 }

@@ -1,72 +1,72 @@
 {
-	"Name": "Main",
-	"Doc": "",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 2,
-		"Compact": 2,
-		"Own": 2
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 1
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": null,
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": [
-		{
-			"Name": "P",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Delay": null,
-			"Params": null,
-			"Returns": null,
-			"CallAddr": 1,
-			"ExitAddr": null
-		}
-	],
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"381d0337\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": null,
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 2,
+    "Compact": 2,
+    "Own": 2
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 1
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": null,
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": [
+    {
+      "Name": "P",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Delay": null,
+      "Params": null,
+      "Returns": null,
+      "CallAddr": 1,
+      "ExitAddr": null
+    }
+  ],
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"381d0337\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": null,
+  "Streams": null,
+  "Subblocks": null
 }

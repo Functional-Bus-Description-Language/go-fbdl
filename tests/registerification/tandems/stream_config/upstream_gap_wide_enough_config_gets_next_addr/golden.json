@@ -1,138 +1,138 @@
 {
-	"Name": "Main",
-	"Doc": "Config right after the upstream must get next address even if the gap in the last stream address is wide enough.\nPutting the config into the upstream strobe address would lead to spurious stream strobes during config read.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": [
-		{
-			"Name": "C",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"InitValue": "",
-			"Range": null,
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 2,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 2,
-				"StartAddr": 2,
-				"EndAddr": 2,
-				"StartBit": 0,
-				"EndBit": 1,
-				"StartRegWidth": 2,
-				"EndRegWidth": 2
-			}
-		}
-	],
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": null,
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"810b062b\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": null,
-	"Streams": [
-		{
-			"Name": "S",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Delay": null,
-			"Params": null,
-			"Returns": [
-				{
-					"Name": "r1",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Width": 10,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 10,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 0,
-						"EndBit": 9,
-						"StartRegWidth": 10,
-						"EndRegWidth": 10
-					}
-				},
-				{
-					"Name": "r2",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Width": 8,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 8,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 10,
-						"EndBit": 17,
-						"StartRegWidth": 8,
-						"EndRegWidth": 8
-					}
-				}
-			],
-			"StbAddr": 1
-		}
-	],
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "Config right after the upstream must get next address even if the gap in the last stream address is wide enough.\nPutting the config into the upstream strobe address would lead to spurious stream strobes during config read.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 4,
+    "Compact": 3,
+    "Own": 3
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 3
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": [
+    {
+      "Name": "C",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 2,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 2,
+        "StartAddr": 2,
+        "EndAddr": 2,
+        "StartBit": 0,
+        "EndBit": 1,
+        "StartRegWidth": 2,
+        "EndRegWidth": 2
+      }
+    }
+  ],
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": null,
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"810b062b\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": null,
+  "Streams": [
+    {
+      "Name": "S",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Delay": null,
+      "Params": null,
+      "Returns": [
+        {
+          "Name": "r1",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Width": 10,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 10,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 0,
+            "EndBit": 9,
+            "StartRegWidth": 10,
+            "EndRegWidth": 10
+          }
+        },
+        {
+          "Name": "r2",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Width": 8,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 8,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 10,
+            "EndBit": 17,
+            "StartRegWidth": 8,
+            "EndRegWidth": 8
+          }
+        }
+      ],
+      "StbAddr": 1
+    }
+  ],
+  "Subblocks": null
 }

@@ -1,159 +1,159 @@
 {
-	"Name": "Main",
-	"Doc": "Status right after the proc must get next address when proc occupies exactly one register and has only params.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": null,
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": [
-		{
-			"Name": "P",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Delay": null,
-			"Params": [
-				{
-					"Name": "a",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Range": null,
-					"Width": 28,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 28,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 0,
-						"EndBit": 27,
-						"StartRegWidth": 28,
-						"EndRegWidth": 28
-					}
-				},
-				{
-					"Name": "b",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Range": null,
-					"Width": 3,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 3,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 28,
-						"EndBit": 30,
-						"StartRegWidth": 3,
-						"EndRegWidth": 3
-					}
-				},
-				{
-					"Name": "c",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Range": null,
-					"Width": 1,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 1,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 31,
-						"EndBit": 31,
-						"StartRegWidth": 1,
-						"EndRegWidth": 1
-					}
-				}
-			],
-			"Returns": null,
-			"CallAddr": 1,
-			"ExitAddr": null
-		}
-	],
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"3e68039a\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": [
-		{
-			"Name": "St",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"ReadValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 2,
-				"EndAddr": 2,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "Status right after the proc must get next address when proc occupies exactly one register and has only params.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 4,
+    "Compact": 3,
+    "Own": 3
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 3
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": null,
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": [
+    {
+      "Name": "P",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Delay": null,
+      "Params": [
+        {
+          "Name": "a",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Range": null,
+          "Width": 28,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 28,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 0,
+            "EndBit": 27,
+            "StartRegWidth": 28,
+            "EndRegWidth": 28
+          }
+        },
+        {
+          "Name": "b",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Range": null,
+          "Width": 3,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 3,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 28,
+            "EndBit": 30,
+            "StartRegWidth": 3,
+            "EndRegWidth": 3
+          }
+        },
+        {
+          "Name": "c",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Range": null,
+          "Width": 1,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 1,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 31,
+            "EndBit": 31,
+            "StartRegWidth": 1,
+            "EndRegWidth": 1
+          }
+        }
+      ],
+      "Returns": null,
+      "CallAddr": 1,
+      "ExitAddr": null
+    }
+  ],
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"3e68039a\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": [
+    {
+      "Name": "St",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "ReadValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 2,
+        "EndAddr": 2,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Streams": null,
+  "Subblocks": null
 }

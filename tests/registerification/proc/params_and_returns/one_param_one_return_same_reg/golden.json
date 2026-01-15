@@ -1,115 +1,115 @@
 {
-	"Name": "Main",
-	"Doc": "StbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 2,
-		"Compact": 2,
-		"Own": 2
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 1
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": null,
-	"Groups": null,
-	"Irqs": null,
-	"Masks": null,
-	"Procs": [
-		{
-			"Name": "P",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Delay": null,
-			"Params": [
-				{
-					"Name": "p",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Range": null,
-					"Width": 16,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 16,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 0,
-						"EndBit": 15,
-						"StartRegWidth": 16,
-						"EndRegWidth": 16
-					}
-				}
-			],
-			"Returns": [
-				{
-					"Name": "r",
-					"Doc": "",
-					"IsArray": false,
-					"Count": 1,
-					"Width": 16,
-					"Access": {
-						"Type": "SingleOneReg",
-						"RegCount": 1,
-						"RegWidth": 32,
-						"ItemCount": 1,
-						"ItemWidth": 16,
-						"StartAddr": 1,
-						"EndAddr": 1,
-						"StartBit": 16,
-						"EndBit": 31,
-						"StartRegWidth": 16,
-						"EndRegWidth": 16
-					}
-				}
-			],
-			"CallAddr": 1,
-			"ExitAddr": 1
-		}
-	],
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"4aba0424\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": null,
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "StbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 2,
+    "Compact": 2,
+    "Own": 2
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 1
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": null,
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": [
+    {
+      "Name": "P",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Delay": null,
+      "Params": [
+        {
+          "Name": "p",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Range": null,
+          "Width": 16,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 16,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 0,
+            "EndBit": 15,
+            "StartRegWidth": 16,
+            "EndRegWidth": 16
+          }
+        }
+      ],
+      "Returns": [
+        {
+          "Name": "r",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Width": 16,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 16,
+            "StartAddr": 1,
+            "EndAddr": 1,
+            "StartBit": 16,
+            "EndBit": 31,
+            "StartRegWidth": 16,
+            "EndRegWidth": 16
+          }
+        }
+      ],
+      "CallAddr": 1,
+      "ExitAddr": 1
+    }
+  ],
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"4aba0424\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": null,
+  "Streams": null,
+  "Subblocks": null
 }

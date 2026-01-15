@@ -1,126 +1,126 @@
 {
-	"Name": "Main",
-	"Doc": "Irq must not be placed in the same register with a config.",
-	"IsArray": false,
-	"Count": 1,
-	"Masters": 1,
-	"Reset": "",
-	"Width": 32,
-	"Sizes": {
-		"BlockAligned": 4,
-		"Compact": 3,
-		"Own": 3
-	},
-	"AddrSpace": {
-		"Start": 0,
-		"End": 3
-	},
-	"Consts": {
-		"Bools": null,
-		"BoolLists": null,
-		"Floats": null,
-		"Ints": null,
-		"IntLists": null,
-		"Strings": null
-	},
-	"Blackboxes": null,
-	"Configs": [
-		{
-			"Name": "C",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"Atomic": true,
-			"InitValue": "",
-			"Range": null,
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 1,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 1,
-				"StartAddr": 1,
-				"EndAddr": 1,
-				"StartBit": 0,
-				"EndBit": 0,
-				"StartRegWidth": 1,
-				"EndRegWidth": 1
-			}
-		}
-	],
-	"Groups": null,
-	"Irqs": [
-		{
-			"Name": "I",
-			"Doc": "",
-			"IsArray": false,
-			"Count": 1,
-			"AddEnable": false,
-			"Clear": "Explicit",
-			"EnableInitValue": "",
-			"EnableResetValue": "",
-			"InTrigger": "Level",
-			"OutTrigger": "Level",
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 1,
-				"StartAddr": 2,
-				"EndAddr": 2,
-				"StartBit": 0,
-				"EndBit": 0,
-				"StartRegWidth": 1,
-				"EndRegWidth": 1
-			},
-			"EnableAccess": {
-				"Type": "",
-				"RegCount": 0,
-				"RegWidth": 0,
-				"ItemCount": 0,
-				"ItemWidth": 0,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 0,
-				"StartRegWidth": 0,
-				"EndRegWidth": 0
-			},
-			"ClearAddr": 2
-		}
-	],
-	"Masks": null,
-	"Procs": null,
-	"Statics": [
-		{
-			"Name": "ID",
-			"Doc": "Bus identifier.",
-			"IsArray": false,
-			"Count": 1,
-			"InitValue": "x\"6df10606\"",
-			"ReadValue": "",
-			"ResetValue": "",
-			"Width": 32,
-			"Access": {
-				"Type": "SingleOneReg",
-				"RegCount": 1,
-				"RegWidth": 32,
-				"ItemCount": 1,
-				"ItemWidth": 32,
-				"StartAddr": 0,
-				"EndAddr": 0,
-				"StartBit": 0,
-				"EndBit": 31,
-				"StartRegWidth": 32,
-				"EndRegWidth": 32
-			}
-		}
-	],
-	"Statuses": null,
-	"Streams": null,
-	"Subblocks": null
+  "Name": "Main",
+  "Doc": "Irq must not be placed in the same register with a config.",
+  "IsArray": false,
+  "Count": 1,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 4,
+    "Compact": 3,
+    "Own": 3
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 3
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": [
+    {
+      "Name": "C",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 1,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 1,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 0,
+        "EndBit": 0,
+        "StartRegWidth": 1,
+        "EndRegWidth": 1
+      }
+    }
+  ],
+  "Groups": null,
+  "Irqs": [
+    {
+      "Name": "I",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "AddEnable": false,
+      "Clear": "Explicit",
+      "EnableInitValue": "",
+      "EnableResetValue": "",
+      "InTrigger": "Level",
+      "OutTrigger": "Level",
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 1,
+        "StartAddr": 2,
+        "EndAddr": 2,
+        "StartBit": 0,
+        "EndBit": 0,
+        "StartRegWidth": 1,
+        "EndRegWidth": 1
+      },
+      "EnableAccess": {
+        "Type": "",
+        "RegCount": 0,
+        "RegWidth": 0,
+        "ItemCount": 0,
+        "ItemWidth": 0,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 0,
+        "StartRegWidth": 0,
+        "EndRegWidth": 0
+      },
+      "ClearAddr": 2
+    }
+  ],
+  "Masks": null,
+  "Procs": null,
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"6df10606\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": null,
+  "Streams": null,
+  "Subblocks": null
 }
