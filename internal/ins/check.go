@@ -16,6 +16,7 @@ func checkProp(prop prs.Prop) error {
 	}
 
 	invalidTypeMsg := `%s property must be of type %s, current type %s`
+	mustBePositiveMsg := `%s property must be positive, current value %d`
 
 	name := prop.Name
 
@@ -91,7 +92,7 @@ func checkProp(prop prs.Prop) error {
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
-	case "masters":
+	case "align", "masters":
 		v, ok := pv.(val.Int)
 		if !ok {
 			return tok.Error{
@@ -101,7 +102,7 @@ func checkProp(prop prs.Prop) error {
 		}
 		if v < 1 {
 			return tok.Error{
-				Msg:  fmt.Sprintf("masters property must be positive, current value %d", v),
+				Msg:  fmt.Sprintf(mustBePositiveMsg, name, v),
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}

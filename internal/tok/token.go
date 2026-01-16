@@ -110,6 +110,7 @@ type (
 	// Property tokens
 	Access           struct{ position }
 	AddEnable        struct{ position }
+	Align            struct{ position }
 	Atomic           struct{ position }
 	ByteWriteEnable  struct{ position }
 	Clear            struct{ position }
@@ -293,6 +294,9 @@ func (a Access) property()    {}
 
 func (ae AddEnable) Name() string { return "'add-enable'" }
 func (ae AddEnable) property()    {}
+
+func (a Align) Name() string { return "'align'" }
+func (a Align) property()    {}
 
 func (a Atomic) Name() string { return "'atomic'" }
 func (a Atomic) property()    {}

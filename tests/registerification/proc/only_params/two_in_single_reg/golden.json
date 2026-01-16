@@ -3,6 +3,7 @@
   "Doc": "Params fitting single register must get the same address.\nElement after the proc must get the next address.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

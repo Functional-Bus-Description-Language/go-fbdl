@@ -3,6 +3,7 @@
   "Doc": "Multiple statuses narrower than the bus width must be placed in the same register.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

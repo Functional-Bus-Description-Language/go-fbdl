@@ -25,8 +25,8 @@ func IsBaseType(t string) bool {
 func IsValidProperty(p string, t string) error {
 	validProps := map[string][]string{
 		"blackbox": []string{"size"},
-		"block":    []string{"masters", "reset"},
-		"bus":      []string{"masters", "reset", "width"},
+		"block":    []string{"align", "masters", "reset"},
+		"bus":      []string{"align", "masters", "reset", "width"},
 		"config":   []string{"atomic", "init-value", "range", "read-value", "reset-value", "width"},
 		"group":    []string{"virtual"},
 		"irq":      []string{"add-enable", "clear", "enable-init-value", "enable-reset-value", "in-trigger", "out-trigger"},

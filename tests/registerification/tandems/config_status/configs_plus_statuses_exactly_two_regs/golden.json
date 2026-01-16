@@ -3,6 +3,7 @@
   "Doc": "Configs and statuses must occupy exactly two registers.\nC1 and S2 must get the first free address, and C2 and S1 must get the next address.\nAccess masks must not overlap.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

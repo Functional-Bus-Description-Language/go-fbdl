@@ -3,6 +3,7 @@
   "Doc": "Irq must not be placed in the same register with a config.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

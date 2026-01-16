@@ -985,6 +985,8 @@ func parseProperty(word []byte, ctx *context) Token {
 		return Access{pos}
 	case "add-enable":
 		return AddEnable{pos}
+	case "align":
+		return Align{pos}
 	case "atomic":
 		return Atomic{pos}
 	case "byte-write-enable":

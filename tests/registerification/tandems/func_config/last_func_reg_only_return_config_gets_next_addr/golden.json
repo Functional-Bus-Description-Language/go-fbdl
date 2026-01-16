@@ -3,6 +3,7 @@
   "Doc": "Config right after the proc must get new address even if the last proc register has only returns.\nIn such case config cannot be put into the last proc register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

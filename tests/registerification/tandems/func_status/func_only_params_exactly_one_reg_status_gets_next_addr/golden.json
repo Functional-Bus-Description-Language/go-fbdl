@@ -3,6 +3,7 @@
   "Doc": "Status right after the proc must get next address when proc occupies exactly one register and has only params.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

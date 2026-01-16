@@ -8,6 +8,7 @@ import (
 type Block struct {
 	Func
 
+	Align   int64
 	Masters int64
 	Reset   string
 	Width   int64

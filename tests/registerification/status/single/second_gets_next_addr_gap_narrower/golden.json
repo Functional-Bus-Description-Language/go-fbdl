@@ -3,6 +3,7 @@
   "Doc": "Second stauts must get the next address if the gap is not wide enough.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

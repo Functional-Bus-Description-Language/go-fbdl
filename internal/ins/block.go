@@ -58,6 +58,11 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 		}
 
 		switch p.Name {
+		case "align":
+			if blk.Align != 0 {
+				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "align")
+			}
+			blk.Align = int64(v.(val.Int))
 		case "masters":
 			if blk.Masters != 0 {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "masters")

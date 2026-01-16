@@ -1,0 +1,5 @@
+error: align property must be of type integer, current type float
+bus.fbd +2:11
+   |
+ 2 |   align = 3.14
+   |           ^^^^

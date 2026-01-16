@@ -3,6 +3,7 @@
   "Doc": "Three irqs are explicitly cleared, so they can be put into register with a data\nthat is read only. However, irqs must not be placed in the same register.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

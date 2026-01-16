@@ -3,6 +3,7 @@
   "Doc": "Config right after the upstream must get next address even if the gap in the last stream address is wide enough.\nPutting the config into the upstream strobe address would lead to spurious stream strobes during config read.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

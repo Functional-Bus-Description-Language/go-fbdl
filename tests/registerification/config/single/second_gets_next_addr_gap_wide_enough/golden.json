@@ -3,6 +3,7 @@
   "Doc": "Second config must get the next address even if the gap is wide enough.\nConfigs are readable and writable.\nPutting configs in the same register can significantly increase the round trip time, as writing one of them would require RMW operation.\nThe address space size decrease is simply not worth the round trip time increase.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

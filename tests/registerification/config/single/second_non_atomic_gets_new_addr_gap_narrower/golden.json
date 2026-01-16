@@ -3,6 +3,7 @@
   "Doc": "Second config must get the next address when the gap is narrower than the config even if it is non-atomic.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,

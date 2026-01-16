@@ -3,6 +3,7 @@
   "Doc": "All params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nStbAddr and AckAddr must be equal.\nElement after the proc must get next address.",
   "IsArray": false,
   "Count": 1,
+  "Align": 0,
   "Masters": 1,
   "Reset": "",
   "Width": 32,
