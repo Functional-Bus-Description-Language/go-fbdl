@@ -101,3 +101,12 @@ func IsValidInnerType(it string, ot string) bool {
 func AlignToPowerOf2(n int64) int64 {
 	return int64(math.Pow(2, math.Ceil(math.Log2(float64(n)))))
 }
+
+// Aligns n to multiple of m.
+func AlignToMultipleOf(n int64, m int64) int64 {
+	if n%m == 0 {
+		return n
+	}
+
+	return ((n / m) + 1) * m
+}

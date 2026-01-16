@@ -13,9 +13,11 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
+var busAlign int64
 var busWidth int64
 
 func Registerify(bus *fn.Block, addTimestamp bool) {
+	busAlign = bus.Align
 	busWidth = bus.Width
 	types.Init(busWidth)
 
@@ -41,9 +43,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 		sizes.BlockAligned += sb.Count * sbSizes.BlockAligned
 	}
 
-	sizes.BlockAligned = util.AlignToPowerOf2(sizes.BlockAligned + util.AlignToPowerOf2(sizes.Own))
-
-	bus.Sizes = sizes
+	bus.Sizes = alignBlockSize(sizes, bus.Align)
 
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(bus, 0)
@@ -262,9 +262,25 @@ func regBlock(blk *fn.Block) types.Sizes {
 		sizes.BlockAligned += sb.Count * b.BlockAligned
 	}
 
-	sizes.BlockAligned = util.AlignToPowerOf2(util.AlignToPowerOf2(addr) + sizes.BlockAligned)
+	align := blk.Align
+	if align == 0 {
+		align = busAlign
+	}
 
-	blk.Sizes = sizes
+	blk.Sizes = alignBlockSize(sizes, align)
+
+	return blk.Sizes
+}
+
+func alignBlockSize(sizes types.Sizes, align int64) types.Sizes {
+	if align == 0 {
+		sizes.BlockAligned = util.AlignToPowerOf2(util.AlignToPowerOf2(sizes.Own) + sizes.BlockAligned)
+	} else {
+		sizes.BlockAligned = util.AlignToMultipleOf(
+			util.AlignToMultipleOf(sizes.Own, align)+sizes.BlockAligned,
+			align,
+		)
+	}
 
 	return sizes
 }

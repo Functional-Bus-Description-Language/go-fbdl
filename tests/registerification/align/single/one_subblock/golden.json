@@ -1,0 +1,151 @@
+{
+  "Name": "Main",
+  "Doc": "Bus address space must be 0 to 2047, Subblock addres space must be 1024 to 2047.",
+  "IsArray": false,
+  "Count": 1,
+  "Align": 1024,
+  "Masters": 1,
+  "Reset": "",
+  "Width": 32,
+  "Sizes": {
+    "BlockAligned": 2048,
+    "Compact": 3,
+    "Own": 2
+  },
+  "AddrSpace": {
+    "Start": 0,
+    "End": 2047
+  },
+  "Consts": {
+    "Bools": null,
+    "BoolLists": null,
+    "Floats": null,
+    "Ints": null,
+    "IntLists": null,
+    "Strings": null
+  },
+  "Blackboxes": null,
+  "Configs": [
+    {
+      "Name": "C",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Atomic": true,
+      "InitValue": "",
+      "Range": null,
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 1,
+        "EndAddr": 1,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Groups": null,
+  "Irqs": null,
+  "Masks": null,
+  "Procs": null,
+  "Statics": [
+    {
+      "Name": "ID",
+      "Doc": "Bus identifier.",
+      "IsArray": false,
+      "Count": 1,
+      "InitValue": "x\"52710377\"",
+      "ReadValue": "",
+      "ResetValue": "",
+      "Width": 32,
+      "Access": {
+        "Type": "SingleOneReg",
+        "RegCount": 1,
+        "RegWidth": 32,
+        "ItemCount": 1,
+        "ItemWidth": 32,
+        "StartAddr": 0,
+        "EndAddr": 0,
+        "StartBit": 0,
+        "EndBit": 31,
+        "StartRegWidth": 32,
+        "EndRegWidth": 32
+      }
+    }
+  ],
+  "Statuses": null,
+  "Streams": null,
+  "Subblocks": [
+    {
+      "Name": "Subblock",
+      "Doc": "",
+      "IsArray": false,
+      "Count": 1,
+      "Align": 0,
+      "Masters": 1,
+      "Reset": "",
+      "Width": 32,
+      "Sizes": {
+        "BlockAligned": 1024,
+        "Compact": 1,
+        "Own": 1
+      },
+      "AddrSpace": {
+        "Start": 1024,
+        "End": 2047
+      },
+      "Consts": {
+        "Bools": null,
+        "BoolLists": null,
+        "Floats": null,
+        "Ints": null,
+        "IntLists": null,
+        "Strings": null
+      },
+      "Blackboxes": null,
+      "Configs": [
+        {
+          "Name": "C",
+          "Doc": "",
+          "IsArray": false,
+          "Count": 1,
+          "Atomic": true,
+          "InitValue": "",
+          "Range": null,
+          "ReadValue": "",
+          "ResetValue": "",
+          "Width": 32,
+          "Access": {
+            "Type": "SingleOneReg",
+            "RegCount": 1,
+            "RegWidth": 32,
+            "ItemCount": 1,
+            "ItemWidth": 32,
+            "StartAddr": 0,
+            "EndAddr": 0,
+            "StartBit": 0,
+            "EndBit": 31,
+            "StartRegWidth": 32,
+            "EndRegWidth": 32
+          }
+        }
+      ],
+      "Groups": null,
+      "Irqs": null,
+      "Masks": null,
+      "Procs": null,
+      "Statics": null,
+      "Statuses": null,
+      "Streams": null,
+      "Subblocks": null
+    }
+  ]
+}
