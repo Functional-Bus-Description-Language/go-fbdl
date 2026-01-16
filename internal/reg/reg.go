@@ -276,10 +276,13 @@ func alignBlockSize(sizes types.Sizes, align int64) types.Sizes {
 	if align == 0 {
 		sizes.BlockAligned = util.AlignToPowerOf2(util.AlignToPowerOf2(sizes.Own) + sizes.BlockAligned)
 	} else {
-		sizes.BlockAligned = util.AlignToMultipleOf(
-			util.AlignToMultipleOf(sizes.Own, align)+sizes.BlockAligned,
-			align,
-		)
+		/*
+			sizes.BlockAligned = util.AlignToMultipleOf(
+				util.AlignToMultipleOf(sizes.Own, align)+sizes.BlockAligned,
+				align,
+			)
+		*/
+		sizes.BlockAligned = util.AlignToMultipleOf(sizes.Own+sizes.BlockAligned, align)
 	}
 
 	return sizes
