@@ -5,6 +5,7 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
@@ -41,6 +42,28 @@ func checkProp(prop prs.Prop) error {
 		if _, ok := pv.(val.Bool); !ok {
 			return tok.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "bool", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
+		}
+	case "align":
+		v, ok := pv.(val.Int)
+		if !ok {
+			return tok.Error{
+				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),
+				Toks: []tok.Token{prop.ValueTok},
+			}
+		}
+		if v < 1 {
+			return tok.Error{
+				Msg:  fmt.Sprintf(mustBePositiveMsg, name, v),
+				Toks: []tok.Token{prop.ValueTok},
+			}
+		}
+		if util.AlignToPowerOf2(int64(v)) != int64(v) {
+			return tok.Error{
+				Msg: fmt.Sprintf(
+					"align property value must be a power of 2, current value %d", v,
+				),
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
@@ -92,7 +115,7 @@ func checkProp(prop prs.Prop) error {
 				Toks: []tok.Token{prop.ValueTok},
 			}
 		}
-	case "align", "masters":
+	case "masters":
 		v, ok := pv.(val.Int)
 		if !ok {
 			return tok.Error{
