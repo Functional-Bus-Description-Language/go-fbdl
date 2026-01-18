@@ -776,7 +776,12 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 			if bytes.Contains(chunk, []byte{'.'}) {
 				t = QualIdent{
 					position{
-						start: ctx.idx, end: ctx.idx + len(chunk) - 1, line: ctx.line, column: ctx.col(ctx.idx),
+						start:  ctx.idx,
+						end:    ctx.idx + len(chunk) - 1,
+						line:   ctx.line,
+						column: ctx.col(ctx.idx),
+						src:    ctx.src,
+						path:   ctx.path,
 					},
 				}
 				if !isValidQualifiedIdentifier(chunk) {
@@ -785,7 +790,12 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 			} else {
 				t = Ident{
 					position{
-						start: ctx.idx, end: ctx.idx + len(chunk) - 1, line: ctx.line, column: ctx.col(ctx.idx),
+						start:  ctx.idx,
+						end:    ctx.idx + len(chunk) - 1,
+						line:   ctx.line,
+						column: ctx.col(ctx.idx),
+						src:    ctx.src,
+						path:   ctx.path,
 					},
 				}
 			}
@@ -800,7 +810,14 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 		}
 	} else if hasDot {
 		// It is qualified identifier
-		t = QualIdent{position{start: ctx.idx, end: ctx.idx + len(word) - 1, line: ctx.line, column: ctx.col(ctx.idx)}}
+		t = QualIdent{position{
+			start:  ctx.idx,
+			end:    ctx.idx + len(word) - 1,
+			line:   ctx.line,
+			column: ctx.col(ctx.idx),
+			src:    ctx.src,
+			path:   ctx.path,
+		}}
 
 		if !isValidQualifiedIdentifier(word) {
 			return t, Error{qualIdentErrMsg, []Token{t}}
