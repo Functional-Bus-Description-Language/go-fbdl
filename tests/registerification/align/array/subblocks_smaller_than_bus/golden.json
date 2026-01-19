@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Bus address space must be 0 to 1023, Subblock addres space must be 512 to 1023.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C",
+      "Name": "c",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -62,7 +62,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"76790544\"",
+      "InitValue": "x\"6bce04f9\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -85,7 +85,7 @@
   "Streams": null,
   "Subblocks": [
     {
-      "Name": "Subblock",
+      "Name": "subblock",
       "Doc": "",
       "IsArray": true,
       "Count": 4,
@@ -113,7 +113,7 @@
       "Blackboxes": null,
       "Configs": [
         {
-          "Name": "C",
+          "Name": "c",
           "Doc": "",
           "IsArray": false,
           "Count": 1,

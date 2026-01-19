@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Params fitting single register must get the same address.\nElement after the proc must get the next address.",
   "IsArray": false,
   "Count": 1,
@@ -31,7 +31,7 @@
   "Masks": null,
   "Procs": [
     {
-      "Name": "P",
+      "Name": "p",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -91,7 +91,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"6ea5059f\"",
+      "InitValue": "x\"7396059f\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -112,7 +112,7 @@
   ],
   "Statuses": [
     {
-      "Name": "St",
+      "Name": "st",
       "Doc": "",
       "IsArray": false,
       "Count": 1,

@@ -1,4 +1,4 @@
-Main bus
-  My_Stream stream
-    R return
-    P param
+main bus
+  my_stream stream
+    r return
+    p param

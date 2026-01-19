@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Irq must not be placed in the same register with a config.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C",
+      "Name": "c",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -55,7 +55,7 @@
   "Groups": null,
   "Irqs": [
     {
-      "Name": "I",
+      "Name": "i",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -102,7 +102,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"6df10606\"",
+      "InitValue": "x\"5b200488\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

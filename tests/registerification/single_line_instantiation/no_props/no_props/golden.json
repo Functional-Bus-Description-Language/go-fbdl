@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C",
+      "Name": "c",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -62,7 +62,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"412203a7\"",
+      "InitValue": "x\"67770512\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -83,7 +83,7 @@
   ],
   "Statuses": [
     {
-      "Name": "S",
+      "Name": "s",
       "Doc": "",
       "IsArray": false,
       "Count": 1,

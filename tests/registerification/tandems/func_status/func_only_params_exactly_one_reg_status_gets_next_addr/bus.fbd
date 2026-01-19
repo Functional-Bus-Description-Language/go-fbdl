@@ -1,5 +1,5 @@
 # Status right after the proc must get next address when proc occupies exactly one register and has only params.
-Main bus
+main bus
   P proc
     a param; width = 28
     b param; width = 3

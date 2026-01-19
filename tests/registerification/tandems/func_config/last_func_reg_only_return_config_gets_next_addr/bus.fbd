@@ -1,9 +1,9 @@
 # Config right after the proc must get new address even if the last proc register has only returns.
 # In such case config cannot be put into the last proc register as config is readable.
 # A config read would lead to spurious acknowledgement generation.
-Main bus
-  P proc
+main bus
+  p proc
     p1 param; width = 30
     p2 param; width = 2
     r return; width = 8
-  C config; width = 8
+  c config; width = 8

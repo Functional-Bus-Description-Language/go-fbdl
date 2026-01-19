@@ -1,5 +1,5 @@
-error: cannot instantiate 'R' functionality: all stream inner functionalities must be of the same base type and must be param or return, 'R' base type is 'return'
+error: cannot instantiate 'r' functionality: all stream inner functionalities must be of the same base type and must be param or return, 'r' base type is 'return'
 bus.fbd +4:3
    |
- 4 |   My_Stream stream
+ 4 |   my_stream stream
    |   ^^^^^^^^^

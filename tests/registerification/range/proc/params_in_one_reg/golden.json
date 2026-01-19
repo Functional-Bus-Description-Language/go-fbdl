@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "",
   "IsArray": false,
   "Count": 1,
@@ -31,7 +31,7 @@
   "Masks": null,
   "Procs": [
     {
-      "Name": "P",
+      "Name": "p",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -149,7 +149,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"3b790385\"",
+      "InitValue": "x\"4f4503cb\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "StbAddr and AckAddr must be equal.\nAccess masks must not overlap.",
   "IsArray": false,
   "Count": 1,
@@ -31,7 +31,7 @@
   "Masks": null,
   "Procs": [
     {
-      "Name": "P",
+      "Name": "p",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -91,7 +91,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"4aba0424\"",
+      "InitValue": "x\"41ef0393\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

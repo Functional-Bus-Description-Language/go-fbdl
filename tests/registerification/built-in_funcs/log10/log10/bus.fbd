@@ -1,6 +1,6 @@
 const int = 10
 const float = 1000.1
 
-Main bus
+main bus
   c_int config; width = log10(int)
   c_float config; width = floor(log10(float))

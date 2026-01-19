@@ -1,7 +1,7 @@
 # Params fitting single register must get the same address.
 # Element after the proc must get the next address.
-Main bus
-  P proc
+main bus
+  p proc
     p1 param; width = 10
     p2 param; width = 22
-  St status
+  st status

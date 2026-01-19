@@ -1,5 +1,5 @@
-error: redeclaration of 'A' parameter
+error: redeclaration of 'a' parameter
 bus.fbd +1:17
    |
- 1 | type my_mask(A, A) mask
+ 1 | type my_mask(a, a) mask
    |                 ^

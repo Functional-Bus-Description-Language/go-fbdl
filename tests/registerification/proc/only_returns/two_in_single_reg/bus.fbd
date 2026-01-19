@@ -1,7 +1,7 @@
 # Returns fitting single register must get the same address.
 # Element after the proc must get the next address.
-Main bus
-  P proc
+main bus
+  p proc
     a return; width = 17
     b return; width = 15
-  St status
+  st status

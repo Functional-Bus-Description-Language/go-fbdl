@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Status right after the proc must get next address when proc occupies exactly one register and has only params.",
   "IsArray": false,
   "Count": 1,
@@ -112,7 +112,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"3e68039a\"",
+      "InitValue": "x\"53d30429\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

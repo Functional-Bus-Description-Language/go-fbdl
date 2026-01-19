@@ -1,2 +1,2 @@
-Main bus
-  C config; range = "str"
+main bus
+  c config; range = "str"

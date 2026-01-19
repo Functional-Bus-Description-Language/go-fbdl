@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Second config must get the next address even if the gap is wide enough.\nConfigs are readable and writable.\nPutting configs in the same register can significantly increase the round trip time, as writing one of them would require RMW operation.\nThe address space size decrease is simply not worth the round trip time increase.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C1",
+      "Name": "c1",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -52,7 +52,7 @@
       }
     },
     {
-      "Name": "C2",
+      "Name": "c2",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -87,7 +87,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"70030517\"",
+      "InitValue": "x\"82c4054e\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

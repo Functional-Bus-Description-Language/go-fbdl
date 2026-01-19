@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Status right after the proc must get new address even if there are only returns and there is enough space for the status.\nIn such case status cannot be put into the proc register as this would lead to spurious procedure acknowledgements during status read.",
   "IsArray": false,
   "Count": 1,
@@ -69,7 +69,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"5ee504fe\"",
+      "InitValue": "x\"5da404ee\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

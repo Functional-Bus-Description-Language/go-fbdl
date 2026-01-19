@@ -101,7 +101,7 @@ func Parse() {
 	// Arguments post processing
 
 	if MainBus == "" {
-		MainBus = "Main"
+		MainBus = "main"
 	}
 
 	if MainFile == "" {

@@ -1,5 +1,5 @@
-error: reinstantiation of 'Main', first instantiation line 1 column 1
+error: reinstantiation of 'main', first instantiation line 1 column 1
 bus.fbd +2:1
    |
- 2 | Main bus
+ 2 | main bus
    | ^^^^

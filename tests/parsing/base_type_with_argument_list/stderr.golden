@@ -1,5 +1,5 @@
 error: base type 'mask' does not accept argument list
 bus.fbd +1:18
    |
- 1 | type my_mask mask(A=2)
+ 1 | type my_mask mask(a=2)
    |                  ^^^^^

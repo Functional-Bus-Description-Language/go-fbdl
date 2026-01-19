@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Three irqs are explicitly cleared, so they can be put into register with a data\nthat is read only. However, irqs must not be placed in the same register.",
   "IsArray": false,
   "Count": 1,
@@ -29,7 +29,7 @@
   "Groups": null,
   "Irqs": [
     {
-      "Name": "I1",
+      "Name": "i1",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -68,7 +68,7 @@
       "ClearAddr": 1
     },
     {
-      "Name": "I2",
+      "Name": "i2",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -107,7 +107,7 @@
       "ClearAddr": 2
     },
     {
-      "Name": "I3",
+      "Name": "i3",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -154,7 +154,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"92210755\"",
+      "InitValue": "x\"c8a708d1\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -175,7 +175,7 @@
   ],
   "Statuses": [
     {
-      "Name": "S",
+      "Name": "s",
       "Doc": "",
       "IsArray": false,
       "Count": 1,

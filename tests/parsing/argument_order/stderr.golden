@@ -1,5 +1,5 @@
 error: positional argument follows keyword argument
 bus.fbd +4:18
    |
- 4 | Main my_bus(c=2, 1)
+ 4 | main my_bus(c=2, 1)
    |                  ^

@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Second stauts must get the next address if the gap is not wide enough.",
   "IsArray": false,
   "Count": 1,
@@ -36,7 +36,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"958d067b\"",
+      "InitValue": "x\"66a705b5\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -57,7 +57,7 @@
   ],
   "Statuses": [
     {
-      "Name": "S1",
+      "Name": "s1",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -79,7 +79,7 @@
       }
     },
     {
-      "Name": "S2",
+      "Name": "s2",
       "Doc": "",
       "IsArray": false,
       "Count": 1,

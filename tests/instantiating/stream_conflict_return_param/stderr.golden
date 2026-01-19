@@ -1,5 +1,5 @@
-error: cannot instantiate 'P' functionality: all stream inner functionalities must be of the same base type and must be param or return, 'P' base type is 'param'
+error: cannot instantiate 'p' functionality: all stream inner functionalities must be of the same base type and must be param or return, 'p' base type is 'param'
 bus.fbd +2:3
    |
- 2 |   My_Stream stream
+ 2 |   my_stream stream
    |   ^^^^^^^^^

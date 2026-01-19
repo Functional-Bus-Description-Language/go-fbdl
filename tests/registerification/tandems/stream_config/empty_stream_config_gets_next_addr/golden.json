@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Config right after the stream must get next address even if the stream is empty.\nPutting the config into the stream strobe addres would lead to spurious stream strobes.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C",
+      "Name": "c",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -62,7 +62,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"545d0436\"",
+      "InitValue": "x\"72c204d0\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -84,7 +84,7 @@
   "Statuses": null,
   "Streams": [
     {
-      "Name": "S",
+      "Name": "s",
       "Doc": "",
       "IsArray": false,
       "Count": 1,

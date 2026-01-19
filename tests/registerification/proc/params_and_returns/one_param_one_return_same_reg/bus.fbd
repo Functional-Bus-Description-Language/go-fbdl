@@ -1,6 +1,6 @@
 # StbAddr and AckAddr must be equal.
 # Access masks must not overlap.
-Main bus
-  P proc
+main bus
+  p proc
     p param;  width = 16
     r return; width = 16

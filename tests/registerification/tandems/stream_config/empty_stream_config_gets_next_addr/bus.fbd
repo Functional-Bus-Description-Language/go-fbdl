@@ -1,5 +1,5 @@
 # Config right after the stream must get next address even if the stream is empty.
 # Putting the config into the stream strobe addres would lead to spurious stream strobes.
-Main bus
-  S stream
-  C config
+main bus
+  s stream
+  c config

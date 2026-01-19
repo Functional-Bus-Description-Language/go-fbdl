@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "",
   "IsArray": false,
   "Count": 1,
@@ -87,7 +87,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"4c900469\"",
+      "InitValue": "x\"6975052a\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

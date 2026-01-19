@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Configs and statuses must occupy exactly two registers.\nC1 and S2 must get the first free address, and C2 and S1 must get the next address.\nAccess masks must not overlap.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C1",
+      "Name": "c1",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -52,7 +52,7 @@
       }
     },
     {
-      "Name": "C2",
+      "Name": "c2",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -87,7 +87,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"919d0663\"",
+      "InitValue": "x\"cd6a07d4\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -108,7 +108,7 @@
   ],
   "Statuses": [
     {
-      "Name": "S1",
+      "Name": "s1",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -130,7 +130,7 @@
       }
     },
     {
-      "Name": "S2",
+      "Name": "s2",
       "Doc": "",
       "IsArray": false,
       "Count": 1,

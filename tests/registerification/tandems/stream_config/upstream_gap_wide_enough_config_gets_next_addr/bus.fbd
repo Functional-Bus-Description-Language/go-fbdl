@@ -1,7 +1,7 @@
 # Config right after the upstream must get next address even if the gap in the last stream address is wide enough.
 # Putting the config into the upstream strobe address would lead to spurious stream strobes during config read.
-Main bus
-  S stream
+main bus
+  s stream
     r1 return; width = 10
     r2 return; width = 8
-  C config; width = 2
+  c config; width = 2

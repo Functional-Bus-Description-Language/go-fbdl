@@ -1,5 +1,5 @@
 error: empty range property value list
 bus.fbd +2:21
    |
- 2 |   C config; range = []
+ 2 |   c config; range = []
    |                     ^^

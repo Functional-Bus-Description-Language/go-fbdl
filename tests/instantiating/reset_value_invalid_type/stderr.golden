@@ -1,5 +1,5 @@
 error: reset-value property must be of type integer or bit string, current type float
 bus.fbd +2:27
    |
- 2 |   C config; reset-value = 3.14
+ 2 |   c config; reset-value = 3.14
    |                           ^^^^

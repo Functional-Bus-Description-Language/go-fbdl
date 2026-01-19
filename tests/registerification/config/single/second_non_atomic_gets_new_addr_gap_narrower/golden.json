@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Second config must get the next address when the gap is narrower than the config even if it is non-atomic.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C1",
+      "Name": "c1",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -52,7 +52,7 @@
       }
     },
     {
-      "Name": "C2",
+      "Name": "c2",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -87,7 +87,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"67fd0576\"",
+      "InitValue": "x\"58a60433\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

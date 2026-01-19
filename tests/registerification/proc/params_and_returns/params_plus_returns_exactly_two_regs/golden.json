@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "All params and returns have access of type SingleSingle.\nParams occupy more than one register, returns occupy less than one register.\nThe sum of all widths is exactly two registers.\nStbAddr and AckAddr must be equal.\nElement after the proc must get next address.",
   "IsArray": false,
   "Count": 1,
@@ -31,7 +31,7 @@
   "Masks": null,
   "Procs": [
     {
-      "Name": "P",
+      "Name": "p",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -174,7 +174,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"76a9062f\"",
+      "InitValue": "x\"5da504d3\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -195,7 +195,7 @@
   ],
   "Statuses": [
     {
-      "Name": "St",
+      "Name": "st",
       "Doc": "",
       "IsArray": false,
       "Count": 1,

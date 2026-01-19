@@ -1,5 +1,5 @@
 error: negative value of left shift -1
 bus.fbd +2:26
    |
- 2 |   C config; width = 1 << -1
+ 2 |   c config; width = 1 << -1
    |                          ^^

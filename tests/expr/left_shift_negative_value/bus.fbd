@@ -1,2 +1,2 @@
-Main bus
-  C config; width = 1 << -1
+main bus
+  c config; width = 1 << -1

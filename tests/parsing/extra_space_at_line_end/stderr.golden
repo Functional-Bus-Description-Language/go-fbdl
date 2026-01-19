@@ -1,5 +1,5 @@
 error: extra space at line end
 bus.fbd +1:9
    |
- 1 | Main bus 
+ 1 | main bus 
    |         ^

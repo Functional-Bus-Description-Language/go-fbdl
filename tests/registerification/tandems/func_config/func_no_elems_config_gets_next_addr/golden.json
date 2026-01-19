@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Config right after the proc must get new address even if the proc has no params and returns.\nIn such case config cannot be put into the proc register as this would lead to spurious procedure strobes during config write.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C",
+      "Name": "c",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -57,7 +57,7 @@
   "Masks": null,
   "Procs": [
     {
-      "Name": "P",
+      "Name": "p",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -74,7 +74,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"5ba304cd\"",
+      "InitValue": "x\"654904ce\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

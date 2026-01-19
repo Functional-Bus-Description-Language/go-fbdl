@@ -3,12 +3,12 @@
 # The sum of all widths is exactly two registers.
 # StbAddr and AckAddr must be equal.
 # Element after the proc must get next address.
-Main bus
-  P proc
+main bus
+  p proc
     p1 param; width = 20
     p2 param; width = 12
     p3 param; width = 4
     p4 param; width = 8
     r1 return; width = 7
     r2 return; width = 13
-  St status
+  st status

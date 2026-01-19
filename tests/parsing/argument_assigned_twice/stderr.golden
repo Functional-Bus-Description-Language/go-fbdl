@@ -1,5 +1,5 @@
 error: reassignment to 'm' argument
 bus.fbd +4:18
    |
- 4 | Main my_bus(m=1, m=2)
+ 4 | main my_bus(m=1, m=2)
    |                  ^

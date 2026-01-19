@@ -1,4 +1,4 @@
-Main bus
+main bus
   g group
     virtual = true
     i irq

@@ -1,4 +1,4 @@
-Main bus
-  C config; atomic = false; width = 76; init-value = 0
-  S status; atomic = true; width = 17
-  M mask; atomic = false; width = 128
+main bus
+  c config; atomic = false; width = 76; init-value = 0
+  s status; atomic = true; width = 17
+  m mask; atomic = false; width = 128

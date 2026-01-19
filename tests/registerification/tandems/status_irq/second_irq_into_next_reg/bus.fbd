@@ -1,7 +1,7 @@
 # Three irqs are explicitly cleared, so they can be put into register with a data
 # that is read only. However, irqs must not be placed in the same register.
-Main bus
-  S  status; width = 30
-  I1 irq
-  I2 irq
-  I3 irq
+main bus
+  s  status; width = 30
+  i1 irq
+  i2 irq
+  i3 irq

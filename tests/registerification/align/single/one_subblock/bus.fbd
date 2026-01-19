@@ -1,6 +1,6 @@
 # Bus address space must be 0 to 2047, Subblock addres space must be 1024 to 2047.
-Main bus
+main bus
   align = 1024
-  C config
-  Subblock block
-    C config
+  c config
+  subblock block
+    c config

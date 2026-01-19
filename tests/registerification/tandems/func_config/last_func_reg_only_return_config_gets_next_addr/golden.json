@@ -1,5 +1,5 @@
 {
-  "Name": "Main",
+  "Name": "main",
   "Doc": "Config right after the proc must get new address even if the last proc register has only returns.\nIn such case config cannot be put into the last proc register as config is readable.\nA config read would lead to spurious acknowledgement generation.",
   "IsArray": false,
   "Count": 1,
@@ -27,7 +27,7 @@
   "Blackboxes": null,
   "Configs": [
     {
-      "Name": "C",
+      "Name": "c",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -57,7 +57,7 @@
   "Masks": null,
   "Procs": [
     {
-      "Name": "P",
+      "Name": "p",
       "Doc": "",
       "IsArray": false,
       "Count": 1,
@@ -138,7 +138,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"6fe00627\"",
+      "InitValue": "x\"612c0548\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

@@ -1,6 +1,6 @@
 # Multiple statuses narrower than the bus width must be placed in the same register.
-Main bus
-  S1 status; width = 4
-  S2 status; width = 16
-  S3 status; width = 3
-  S4 status; width = 9
+main bus
+  s1 status; width = 4
+  s2 status; width = 16
+  s3 status; width = 3
+  s4 status; width = 9
