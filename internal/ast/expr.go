@@ -46,6 +46,10 @@ type (
 		Name tok.Token
 	}
 
+	QualIdent struct {
+		Name tok.Token
+	}
+
 	Int struct {
 		X tok.Int
 	}
@@ -92,6 +96,9 @@ func (l List) Tok() tok.Token { return tok.Join(l.LBracket, l.RBracket) }
 func (i Ident) expr()          {}
 func (i Ident) Tok() tok.Token { return i.Name }
 
+func (qi QualIdent) expr()          {}
+func (qi QualIdent) Tok() tok.Token { return qi.Name }
+
 func (i Int) expr()          {}
 func (i Int) Tok() tok.Token { return i.X }
 
@@ -126,6 +133,13 @@ func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
 			expr, err = buildCallExpr(ctx)
 		default:
 			expr, err = buildIdent(ctx)
+		}
+	case tok.QualIdent:
+		switch ctx.nextTok().(type) {
+		case tok.LParen:
+			expr, err = buildCallExpr(ctx)
+		default:
+			expr, err = buildQualIdent(ctx)
 		}
 	case tok.Bool:
 		expr, err = buildBool(ctx)
@@ -177,6 +191,12 @@ func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
 
 func buildIdent(ctx *context) (Ident, error) {
 	id := Ident{Name: ctx.tok()}
+	ctx.idx++
+	return id, nil
+}
+
+func buildQualIdent(ctx *context) (QualIdent, error) {
+	id := QualIdent{Name: ctx.tok()}
 	ctx.idx++
 	return id, nil
 }

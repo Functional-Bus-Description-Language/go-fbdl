@@ -29,6 +29,8 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
 		expr, err = MakeCall(e, src, s)
 	case ast.Ident:
 		expr = MakeDeclaredIdentifier(e, src, s)
+	case ast.QualIdent:
+		expr = MakeQualifiedIdentifier(e, src, s)
 	case ast.Int:
 		expr, err = MakeInt(e, src)
 	case ast.List:
@@ -349,6 +351,28 @@ func (di DeclaredIdentifier) Eval() (val.Value, error) {
 
 func MakeDeclaredIdentifier(e ast.Ident, src []byte, s Scope) DeclaredIdentifier {
 	return DeclaredIdentifier{x: tok.Text(e.Name, src), s: s}
+}
+
+type QualifiedIdentifier struct {
+	x string
+	s Scope
+}
+
+func (qi QualifiedIdentifier) Eval() (val.Value, error) {
+	c, err := qi.s.GetConst(qi.x)
+	if err != nil {
+		return val.Int(0), fmt.Errorf("evaluating qualified identifier '%s': %v", qi.x, err)
+	}
+
+	x, err := c.Value.Eval()
+	if err != nil {
+		return val.Int(0), fmt.Errorf("evaluating constant qualified identifier '%s': %v", qi.x, err)
+	}
+	return x, nil
+}
+
+func MakeQualifiedIdentifier(e ast.QualIdent, src []byte, s Scope) QualifiedIdentifier {
+	return QualifiedIdentifier{x: tok.Text(e.Name, src), s: s}
 }
 
 type String struct {

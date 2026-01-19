@@ -137,7 +137,7 @@ func Parse(src []byte, path string) ([]Token, error) {
 			tok, err = parseHexBitString(&ctx)
 		} else if isDigit(b) {
 			tok, err = parseNumber(&ctx)
-		} else if isLetter(b) {
+		} else if isLetter(b) || b == '_' {
 			tok, err = parseWord(&ctx, &toks)
 		} else {
 			return nil, Error{
@@ -759,7 +759,8 @@ func parseHexInt(ctx *context) (Int, error) {
 func isValidQualifiedIdentifier(qi []byte) bool {
 	aux := bytes.Split(qi, []byte("."))
 	sym := aux[1]
-	return unicode.IsUpper([]rune(string(sym))[0])
+	r := []rune(string(sym))[0]
+	return unicode.IsUpper(r) || unicode.IsLower(r)
 }
 
 // TODO: Refactor, too complex, split into 2 (or more) functions.
@@ -768,7 +769,7 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 	defer func() { ctx.idx = t.End() + 1 }()
 	word, hasHyphen, hasDot := getWord(ctx.src, ctx.idx)
 
-	qualIdentErrMsg := "symbol name in qualified identifier must start with upper case letter"
+	qualIdentErrMsg := "symbol name in qualified identifier must start with letter"
 	if hasHyphen && hasDot {
 		// This is for sure part of an expression
 		chunks := bytes.Split(word, []byte{'-'})

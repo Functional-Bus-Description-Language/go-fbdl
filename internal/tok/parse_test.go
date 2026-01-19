@@ -487,13 +487,18 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			19,
-			"pkg.sym",
-			"symbol name in qualified identifier must start with upper case letter",
+			"pkg._sym",
+			"symbol name in qualified identifier must start with letter",
 		},
 		{
 			20,
-			"a-b.c",
-			"symbol name in qualified identifier must start with upper case letter",
+			"a-b._c",
+			"symbol name in qualified identifier must start with letter",
+		},
+		{
+			21,
+			"pkg.3c",
+			"symbol name in qualified identifier must start with letter",
 		},
 	}
 
