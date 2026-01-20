@@ -10,9 +10,9 @@ import (
 func hashAccessSizes(sizes types.Sizes) uint32 {
 	buf := bytes.Buffer{}
 
-	write(&buf, sizes.BlockAligned)
-	write(&buf, sizes.Compact)
 	write(&buf, sizes.Own)
+	write(&buf, sizes.Cumulated)
+	write(&buf, sizes.Aligned)
 
 	return adler32.Checksum(buf.Bytes())
 }

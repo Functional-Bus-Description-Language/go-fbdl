@@ -34,13 +34,13 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 
 	sizes := types.Sizes{}
 
-	sizes.Compact = addr
 	sizes.Own = addr
+	sizes.Cumulated = addr
 
 	for _, sb := range bus.Subblocks {
 		sbSizes := regBlock(sb)
-		sizes.Compact += sb.Count * sbSizes.Compact
-		sizes.BlockAligned += sb.Count * sbSizes.BlockAligned
+		sizes.Cumulated += sb.Count * sbSizes.Cumulated
+		sizes.Aligned += sb.Count * sbSizes.Aligned
 	}
 
 	bus.Sizes = alignBlockSize(sizes, bus.Align)
@@ -254,12 +254,12 @@ func regBlock(blk *fn.Block) types.Sizes {
 	addr := int64(0)
 
 	addr = regFunctionalities(blk, addr)
-	sizes := types.Sizes{BlockAligned: 0, Own: addr, Compact: addr}
+	sizes := types.Sizes{Own: addr, Cumulated: addr, Aligned: 0}
 
 	for _, sb := range blk.Subblocks {
 		b := regBlock(sb)
-		sizes.Compact += sb.Count * b.Compact
-		sizes.BlockAligned += sb.Count * b.BlockAligned
+		sizes.Cumulated += sb.Count * b.Cumulated
+		sizes.Aligned += sb.Count * b.Aligned
 	}
 
 	align := blk.Align
@@ -274,15 +274,9 @@ func regBlock(blk *fn.Block) types.Sizes {
 
 func alignBlockSize(sizes types.Sizes, align int64) types.Sizes {
 	if align == 0 {
-		sizes.BlockAligned = util.AlignToPowerOf2(util.AlignToPowerOf2(sizes.Own) + sizes.BlockAligned)
+		sizes.Aligned = util.AlignToPowerOf2(util.AlignToPowerOf2(sizes.Own) + sizes.Aligned)
 	} else {
-		/*
-			sizes.BlockAligned = util.AlignToMultipleOf(
-				util.AlignToMultipleOf(sizes.Own, align)+sizes.BlockAligned,
-				align,
-			)
-		*/
-		sizes.BlockAligned = util.AlignToMultipleOf(sizes.Own+sizes.BlockAligned, align)
+		sizes.Aligned = util.AlignToMultipleOf(sizes.Own+sizes.Aligned, align)
 	}
 
 	return sizes

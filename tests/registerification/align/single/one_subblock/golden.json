@@ -8,9 +8,9 @@
   "Reset": "",
   "Width": 32,
   "Sizes": {
-    "BlockAligned": 2048,
-    "Compact": 3,
-    "Own": 2
+    "Own": 2,
+    "Cumulated": 3,
+    "Aligned": 2048
   },
   "AddrSpace": {
     "Start": 0,
@@ -62,7 +62,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"587b044b\"",
+      "InitValue": "x\"58ad0499\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
@@ -94,9 +94,9 @@
       "Reset": "",
       "Width": 32,
       "Sizes": {
-        "BlockAligned": 1024,
-        "Compact": 1,
-        "Own": 1
+        "Own": 1,
+        "Cumulated": 1,
+        "Aligned": 1024
       },
       "AddrSpace": {
         "Start": 1024,

@@ -8,9 +8,9 @@
   "Reset": "",
   "Width": 32,
   "Sizes": {
-    "BlockAligned": 4,
-    "Compact": 4,
-    "Own": 4
+    "Own": 4,
+    "Cumulated": 4,
+    "Aligned": 4
   },
   "AddrSpace": {
     "Start": 0,

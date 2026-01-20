@@ -8,9 +8,9 @@
   "Reset": "",
   "Width": 32,
   "Sizes": {
-    "BlockAligned": 4,
-    "Compact": 3,
-    "Own": 3
+    "Own": 3,
+    "Cumulated": 3,
+    "Aligned": 4
   },
   "AddrSpace": {
     "Start": 0,
@@ -87,7 +87,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"6ea4057e\"",
+      "InitValue": "x\"6e44056e\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,
