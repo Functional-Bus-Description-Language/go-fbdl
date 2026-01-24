@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
 func DiscoverPackages(main string) Packages {
@@ -29,12 +31,10 @@ func DiscoverPackages(main string) Packages {
 	log.Print(dbgMsg)
 
 	packages := make(Packages)
+	visitedDirs := make(map[util.DirID]struct{})
 
 	for _, path := range pathsToLook {
-		pkgs := checkDir(path)
-		for name, ps := range pkgs {
-			packages[name] = append(packages[name], ps...)
-		}
+		findPkgsInDir(path, packages, visitedDirs)
 	}
 
 	// Add main file.
@@ -58,8 +58,17 @@ func DiscoverPackages(main string) Packages {
 	return packages
 }
 
-func checkDir(dirPath string) Packages {
-	packages := make(Packages)
+func findPkgsInDir(dirPath string, pkgs Packages, visitedDirs map[util.DirID]struct{}) {
+	dirID, err := util.GetDirID(dirPath)
+	if err != nil {
+		return
+	}
+
+	if _, ok := visitedDirs[dirID]; ok {
+		return
+	}
+
+	visitedDirs[dirID] = struct{}{}
 
 	dirEntires, err := os.ReadDir(dirPath)
 	if err != nil {
@@ -79,8 +88,9 @@ func checkDir(dirPath string) Packages {
 		}
 		if fileInfo.Mode()&os.ModeSymlink != 0 {
 			dePath, err = filepath.EvalSymlinks(dePath)
+			// If symlink returns an error, just ignore it.
 			if err != nil {
-				panic(err)
+				return
 			}
 		}
 
@@ -90,10 +100,7 @@ func checkDir(dirPath string) Packages {
 		}
 
 		if fileInfo.IsDir() {
-			pkgs := checkDir(dePath)
-			for name, ps := range pkgs {
-				packages[name] = append(packages[name], ps...)
-			}
+			findPkgsInDir(dePath, pkgs, visitedDirs)
 			continue
 		}
 
@@ -110,8 +117,6 @@ func checkDir(dirPath string) Packages {
 	if isPkgDir {
 		pkgName := strings.TrimPrefix(base, "fbd-")
 		pkg := Package{Name: pkgName, Path: pkgPath}
-		packages[pkgName] = append(packages[pkgName], &pkg)
+		pkgs[pkgName] = append(pkgs[pkgName], &pkg)
 	}
-
-	return packages
 }
