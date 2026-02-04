@@ -9,6 +9,7 @@
   "Width": 32,
   "Sizes": {
     "Own": 8,
+    "OwnAligned": 8,
     "Cumulated": 8,
     "Aligned": 8
   },
@@ -87,7 +88,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"79d80553\"",
+      "InitValue": "x\"7a4d0564\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

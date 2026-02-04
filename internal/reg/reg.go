@@ -43,7 +43,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 		sizes.Aligned += sb.Count * sbSizes.Aligned
 	}
 
-	bus.Sizes = alignBlockSize(sizes, bus.Align)
+	bus.Sizes = alignBlockSizes(sizes, bus.Align)
 
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(bus, 0)
@@ -267,16 +267,18 @@ func regBlock(blk *fn.Block) types.Sizes {
 		align = busAlign
 	}
 
-	blk.Sizes = alignBlockSize(sizes, align)
+	blk.Sizes = alignBlockSizes(sizes, align)
 
 	return blk.Sizes
 }
 
-func alignBlockSize(sizes types.Sizes, align int64) types.Sizes {
+func alignBlockSizes(sizes types.Sizes, align int64) types.Sizes {
 	if align == 0 {
-		sizes.Aligned = util.AlignToPowerOf2(util.AlignToPowerOf2(sizes.Own) + sizes.Aligned)
+		sizes.OwnAligned = util.AlignToPowerOf2(sizes.Own)
+		sizes.Aligned = util.AlignToPowerOf2(sizes.OwnAligned + sizes.Aligned)
 	} else {
-		sizes.Aligned = util.AlignToMultipleOf(sizes.Own+sizes.Aligned, align)
+		sizes.OwnAligned = util.AlignToMultipleOf(sizes.Own, align)
+		sizes.Aligned = util.AlignToMultipleOf(sizes.OwnAligned+sizes.Aligned, align)
 	}
 
 	return sizes

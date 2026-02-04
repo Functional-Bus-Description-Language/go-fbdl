@@ -11,6 +11,7 @@ func hashAccessSizes(sizes types.Sizes) uint32 {
 	buf := bytes.Buffer{}
 
 	write(&buf, sizes.Own)
+	write(&buf, sizes.OwnAligned)
 	write(&buf, sizes.Cumulated)
 	write(&buf, sizes.Aligned)
 
