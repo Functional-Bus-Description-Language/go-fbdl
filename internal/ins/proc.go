@@ -5,7 +5,6 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/proc"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -81,16 +80,16 @@ func applyProcType(p *fn.Proc, typ parser.Functionality, diary *procDiary) error
 			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "proc")
 		}
 
-		if proc.HasFunctionality(p, f.GetName()) {
+		if p.HasFunctionality(f.GetName()) {
 			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
-		addProcInnerFunctionality(p, f)
+		addProcInnerFunc(p, f)
 	}
 
 	return nil
 }
 
-func addProcInnerFunctionality(p *fn.Proc, f fn.Functionality) {
+func addProcInnerFunc(p *fn.Proc, f fn.Functionality) {
 	switch f := f.(type) {
 	case (*fn.Param):
 		p.Params = append(p.Params, f)

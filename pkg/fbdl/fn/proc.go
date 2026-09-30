@@ -77,3 +77,17 @@ func (p *Proc) IsParam() bool {
 func (p *Proc) IsReturn() bool {
 	return len(p.Params) == 0 && len(p.Returns) > 0
 }
+
+func (p *Proc) HasFunctionality(name string) bool {
+	for i := range p.Params {
+		if p.Params[i].Name == name {
+			return true
+		}
+	}
+	for i := range p.Returns {
+		if p.Returns[i].Name == name {
+			return true
+		}
+	}
+	return false
+}
