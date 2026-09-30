@@ -1,4 +1,4 @@
-package tok
+package token
 
 import (
 	"fmt"
@@ -39,11 +39,10 @@ func (err Error) Error() string {
 func (err Error) code(tok Token) string {
 	b := strings.Builder{}
 
-	b.WriteString(
-		fmt.Sprintf(
-			"%s +%d:%d\n",
-			tok.Path(), tok.Line(), tok.Column(),
-		),
+	fmt.Fprintf(
+		&b,
+		"%s +%d:%d\n",
+		tok.Path(), tok.Line(), tok.Column(),
 	)
 
 	lineNum := strconv.FormatInt(int64(tok.Line()), 10)

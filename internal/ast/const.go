@@ -1,21 +1,21 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Const represents a constant.
 type Const struct {
 	Doc   Doc
-	Name  tok.Ident
+	Name  token.Ident
 	Value Expr
 }
 
 func buildConst(ctx *context) ([]Const, error) {
 	switch t := ctx.nextTok().(type) {
-	case tok.Ident:
+	case token.Ident:
 		return buildSingleConst(ctx)
-	case tok.Newline:
+	case token.Newline:
 		return buildMultiConst(ctx)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
@@ -23,11 +23,11 @@ func buildConst(ctx *context) ([]Const, error) {
 }
 
 func buildSingleConst(ctx *context) ([]Const, error) {
-	con := Const{Name: ctx.nextTok().(tok.Ident)}
+	con := Const{Name: ctx.nextTok().(token.Ident)}
 
 	ctx.idx += 2
-	if _, ok := ctx.tok().(tok.Ass); !ok {
-		return nil, unexpected(ctx.tok(), "'='")
+	if _, ok := ctx.token().(token.Ass); !ok {
+		return nil, unexpected(ctx.token(), "'='")
 	}
 
 	ctx.idx++
@@ -60,25 +60,25 @@ tokenLoop:
 		ctx.idx++
 		switch state {
 		case Indent:
-			switch t := ctx.tok().(type) {
-			case tok.Newline:
+			switch t := ctx.token().(type) {
+			case token.Newline:
 				continue
-			case tok.Indent:
+			case token.Indent:
 				state = FirstId
 			default:
 				return nil, unexpected(t, "indent or newline")
 			}
 		case FirstId:
-			switch t := ctx.tok().(type) {
-			case tok.Ident:
+			switch t := ctx.token().(type) {
+			case token.Ident:
 				con.Name = t
 				state = Ass
 			default:
 				return nil, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := ctx.tok().(type) {
-			case tok.Ass:
+			switch t := ctx.token().(type) {
+			case token.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "'='")
@@ -94,20 +94,20 @@ tokenLoop:
 			ctx.idx--
 			state = Id
 		case Id:
-			switch t := ctx.tok().(type) {
-			case tok.Ident:
+			switch t := ctx.token().(type) {
+			case token.Ident:
 				con.Name = t
 				state = Ass
-			case tok.Comment:
+			case token.Comment:
 				doc := buildDoc(ctx)
 				con.Doc = doc
 				ctx.idx--
-			case tok.Newline:
+			case token.Newline:
 				continue
-			case tok.Dedent:
+			case token.Dedent:
 				ctx.idx++
 				break tokenLoop
-			case tok.Eof:
+			case token.Eof:
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "identifier or dedent")

@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // The Expr interface represents generic expression.
@@ -11,151 +11,151 @@ import (
 // No assumptions shall be made on the returned token type.
 type Expr interface {
 	expr()
-	Tok() tok.Token
+	Tok() token.Token
 }
 
 // Expression nodes
 type (
 	BinaryExpr struct {
 		X  Expr
-		Op tok.Operator
+		Op token.Operator
 		Y  Expr
 	}
 
 	BitString struct {
-		X tok.BitString
+		X token.BitString
 	}
 
 	Bool struct {
-		X tok.Bool
+		X token.Bool
 	}
 
 	// Function Call
 	Call struct {
-		Name tok.Ident
+		Name token.Ident
 		Args []Expr
 	}
 
 	List struct {
-		LBracket tok.LBracket
+		LBracket token.LBracket
 		Xs       []Expr
-		RBracket tok.RBracket
+		RBracket token.RBracket
 	}
 
 	Ident struct {
-		Name tok.Token
+		Name token.Token
 	}
 
 	QualIdent struct {
-		Name tok.Token
+		Name token.Token
 	}
 
 	Int struct {
-		X tok.Int
+		X token.Int
 	}
 
 	Float struct {
-		X tok.Float
+		X token.Float
 	}
 
 	String struct {
-		X tok.String
+		X token.String
 	}
 
 	Time struct {
-		X tok.Time
+		X token.Time
 	}
 
 	UnaryExpr struct {
-		Op tok.Token
+		Op token.Token
 		X  Expr
 	}
 
 	ParenExpr struct {
-		LParen tok.LParen
+		LParen token.LParen
 		X      Expr
-		RParen tok.RParen
+		RParen token.RParen
 	}
 )
 
-func (be BinaryExpr) expr()          {}
-func (be BinaryExpr) Tok() tok.Token { return tok.Join(be.X.Tok(), be.Y.Tok()) }
+func (be BinaryExpr) expr()            {}
+func (be BinaryExpr) Tok() token.Token { return token.Join(be.X.Tok(), be.Y.Tok()) }
 
-func (bs BitString) expr()          {}
-func (bs BitString) Tok() tok.Token { return bs.X }
+func (bs BitString) expr()            {}
+func (bs BitString) Tok() token.Token { return bs.X }
 
-func (b Bool) expr()          {}
-func (b Bool) Tok() tok.Token { return b.X }
+func (b Bool) expr()            {}
+func (b Bool) Tok() token.Token { return b.X }
 
-func (c Call) expr()          {}
-func (c Call) Tok() tok.Token { return c.Name }
+func (c Call) expr()            {}
+func (c Call) Tok() token.Token { return c.Name }
 
-func (l List) expr()          {}
-func (l List) Tok() tok.Token { return tok.Join(l.LBracket, l.RBracket) }
+func (l List) expr()            {}
+func (l List) Tok() token.Token { return token.Join(l.LBracket, l.RBracket) }
 
-func (i Ident) expr()          {}
-func (i Ident) Tok() tok.Token { return i.Name }
+func (i Ident) expr()            {}
+func (i Ident) Tok() token.Token { return i.Name }
 
-func (qi QualIdent) expr()          {}
-func (qi QualIdent) Tok() tok.Token { return qi.Name }
+func (qi QualIdent) expr()            {}
+func (qi QualIdent) Tok() token.Token { return qi.Name }
 
-func (i Int) expr()          {}
-func (i Int) Tok() tok.Token { return i.X }
+func (i Int) expr()            {}
+func (i Int) Tok() token.Token { return i.X }
 
-func (f Float) expr()          {}
-func (f Float) Tok() tok.Token { return f.X }
+func (f Float) expr()            {}
+func (f Float) Tok() token.Token { return f.X }
 
-func (s String) expr()          {}
-func (s String) Tok() tok.Token { return s.X }
+func (s String) expr()            {}
+func (s String) Tok() token.Token { return s.X }
 
-func (t Time) expr()          {}
-func (t Time) Tok() tok.Token { return t.X }
+func (t Time) expr()            {}
+func (t Time) Tok() token.Token { return t.X }
 
-func (ue UnaryExpr) expr()          {}
-func (ue UnaryExpr) Tok() tok.Token { return tok.Join(ue.Op, ue.X.Tok()) }
+func (ue UnaryExpr) expr()            {}
+func (ue UnaryExpr) Tok() token.Token { return token.Join(ue.Op, ue.X.Tok()) }
 
-func (pe ParenExpr) expr()          {}
-func (pe ParenExpr) Tok() tok.Token { return tok.Join(pe.LParen, pe.RParen) }
+func (pe ParenExpr) expr()            {}
+func (pe ParenExpr) Tok() token.Token { return token.Join(pe.LParen, pe.RParen) }
 
 // leftOp is the operator on the left side of the expression.
-func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
+func buildExpr(ctx *context, leftOp token.Operator) (Expr, error) {
 	var (
 		err  error
 		expr Expr
 	)
 
-	switch t := ctx.tok().(type) {
-	case tok.Neg, tok.Sub, tok.Add:
+	switch t := ctx.token().(type) {
+	case token.Neg, token.Sub, token.Add:
 		expr, err = buildUnaryExpr(ctx)
-	case tok.Ident:
+	case token.Ident:
 		switch ctx.nextTok().(type) {
-		case tok.LParen:
+		case token.LParen:
 			expr, err = buildCallExpr(ctx)
 		default:
 			expr, err = buildIdent(ctx)
 		}
-	case tok.QualIdent:
+	case token.QualIdent:
 		switch ctx.nextTok().(type) {
-		case tok.LParen:
+		case token.LParen:
 			expr, err = buildCallExpr(ctx)
 		default:
 			expr, err = buildQualIdent(ctx)
 		}
-	case tok.Bool:
+	case token.Bool:
 		expr, err = buildBool(ctx)
-	case tok.Int:
+	case token.Int:
 		expr, err = buildInt(ctx)
-	case tok.Float:
+	case token.Float:
 		expr, err = buildFloat(ctx)
-	case tok.String:
+	case token.String:
 		expr, err = buildString(ctx)
-	case tok.Time:
+	case token.Time:
 		expr, err = buildTime(ctx)
-	case tok.BitString:
+	case token.BitString:
 		expr, err = buildBitString(ctx)
-	case tok.LParen:
+	case token.LParen:
 		expr, err = buildParenExpr(ctx)
-	case tok.LBracket:
+	case token.LBracket:
 		expr, err = buildList(ctx)
 	default:
 		return Ident{}, unexpected(t, "expression")
@@ -166,8 +166,8 @@ func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
 	}
 
 	for {
-		var rightOp tok.Operator
-		if op, ok := ctx.tok().(tok.Operator); ok {
+		var rightOp token.Operator
+		if op, ok := ctx.token().(token.Operator); ok {
 			rightOp = op
 		} else {
 			return expr, nil
@@ -190,49 +190,49 @@ func buildExpr(ctx *context, leftOp tok.Operator) (Expr, error) {
 }
 
 func buildIdent(ctx *context) (Ident, error) {
-	id := Ident{Name: ctx.tok()}
+	id := Ident{Name: ctx.token()}
 	ctx.idx++
 	return id, nil
 }
 
 func buildQualIdent(ctx *context) (QualIdent, error) {
-	id := QualIdent{Name: ctx.tok()}
+	id := QualIdent{Name: ctx.token()}
 	ctx.idx++
 	return id, nil
 }
 
 func buildBool(ctx *context) (Bool, error) {
-	b := Bool{ctx.tok().(tok.Bool)}
+	b := Bool{ctx.token().(token.Bool)}
 	ctx.idx++
 	return b, nil
 }
 
 func buildInt(ctx *context) (Int, error) {
-	int_ := Int{ctx.tok().(tok.Int)}
+	int_ := Int{ctx.token().(token.Int)}
 	ctx.idx++
 	return int_, nil
 }
 
 func buildFloat(ctx *context) (Float, error) {
-	r := Float{ctx.tok().(tok.Float)}
+	r := Float{ctx.token().(token.Float)}
 	ctx.idx++
 	return r, nil
 }
 
 func buildString(ctx *context) (String, error) {
-	s := String{ctx.tok().(tok.String)}
+	s := String{ctx.token().(token.String)}
 	ctx.idx++
 	return s, nil
 }
 
 func buildTime(ctx *context) (Time, error) {
-	t := Time{ctx.tok().(tok.Time)}
+	t := Time{ctx.token().(token.Time)}
 	ctx.idx++
 	return t, nil
 }
 
 func buildBitString(ctx *context) (BitString, error) {
-	s := BitString{ctx.tok().(tok.BitString)}
+	s := BitString{ctx.token().(token.BitString)}
 	ctx.idx++
 	return s, nil
 }
@@ -244,7 +244,7 @@ func buildParenExpr(ctx *context) (ParenExpr, error) {
 		expr Expr
 	)
 
-	pe.LParen = ctx.tok().(tok.LParen)
+	pe.LParen = ctx.token().(token.LParen)
 
 	ctx.idx++
 	expr, err = buildExpr(ctx, nil)
@@ -253,11 +253,11 @@ func buildParenExpr(ctx *context) (ParenExpr, error) {
 	}
 	pe.X = expr
 
-	if rp, ok := ctx.tok().(tok.RParen); ok {
+	if rp, ok := ctx.token().(token.RParen); ok {
 		pe.RParen = rp
 		ctx.idx++
 	} else {
-		return pe, unexpected(ctx.tok(), "')'")
+		return pe, unexpected(ctx.token(), "')'")
 	}
 
 	return pe, nil
@@ -266,18 +266,18 @@ func buildParenExpr(ctx *context) (ParenExpr, error) {
 func buildList(ctx *context) (List, error) {
 	l := List{}
 	prevExpr := false
-	l.LBracket = ctx.tok().(tok.LBracket)
+	l.LBracket = ctx.token().(token.LBracket)
 	lbi := ctx.idx // Left bracket token index
 	ctx.idx++
 
 tokenLoop:
 	for {
-		switch t := ctx.tok().(type) {
-		case tok.RBracket:
+		switch t := ctx.token().(type) {
+		case token.RBracket:
 			l.RBracket = t
 			ctx.idx++
 			break tokenLoop
-		case tok.Comma:
+		case token.Comma:
 			if ctx.idx == lbi+1 {
 				return l, unexpected(t, "expression")
 			}
@@ -305,7 +305,7 @@ tokenLoop:
 }
 
 func buildCallExpr(ctx *context) (Call, error) {
-	call := Call{Name: ctx.tok().(tok.Ident)}
+	call := Call{Name: ctx.token().(token.Ident)}
 	lpi := ctx.idx // Left parenthesis token index
 	ctx.idx += 2
 
@@ -313,11 +313,11 @@ func buildCallExpr(ctx *context) (Call, error) {
 
 tokenLoop:
 	for {
-		switch t := ctx.tok().(type) {
-		case tok.RParen:
+		switch t := ctx.token().(type) {
+		case token.RParen:
 			ctx.idx++
 			break tokenLoop
-		case tok.Comma:
+		case token.Comma:
 			if ctx.idx == lpi+2 {
 				return call, unexpected(t, "expression")
 			}
@@ -345,7 +345,7 @@ tokenLoop:
 }
 
 func buildUnaryExpr(ctx *context) (UnaryExpr, error) {
-	op := ctx.tok().(tok.Operator)
+	op := ctx.token().(token.Operator)
 	un := UnaryExpr{Op: op}
 	ctx.idx++
 	x, err := buildExpr(ctx, op)

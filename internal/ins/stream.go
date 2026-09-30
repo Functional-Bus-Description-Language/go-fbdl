@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
@@ -89,9 +89,9 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality, diary *streamDiary)
 
 		err := addStreamInnerFunctionality(strm, f)
 		if err != nil {
-			return tok.Error{
+			return token.Error{
 				Msg:  fmt.Sprintf("cannot instantiate '%s' functionality: %v", f.GetName(), err),
-				Toks: []tok.Token{typ.Tok()},
+				Toks: []token.Token{typ.Tok()},
 			}
 		}
 	}

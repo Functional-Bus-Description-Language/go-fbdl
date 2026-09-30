@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Const represents constant definition.
@@ -23,8 +23,8 @@ func buildConsts(astConsts []ast.Const, src []byte, scope Scope) ([]*Const, erro
 	for _, ac := range astConsts {
 		c := &Const{}
 
-		c.tok = ac.Name
-		c.name = tok.Text(ac.Name, src)
+		c.token = ac.Name
+		c.name = token.Text(ac.Name, src)
 		v, err := MakeExpr(ac.Value, src, scope)
 		if err != nil {
 			return nil, err
@@ -33,12 +33,12 @@ func buildConsts(astConsts []ast.Const, src []byte, scope Scope) ([]*Const, erro
 		c.doc = ac.Doc.Text(src)
 
 		if first, ok := cache[c.name]; ok {
-			return nil, tok.Error{
+			return nil, token.Error{
 				Msg: fmt.Sprintf(
 					"redefinition of constant '%s', first definition line %d column %d",
 					c.name, first.Line(), first.Col(),
 				),
-				Toks: []tok.Token{ac.Name, first.tok},
+				Toks: []token.Token{ac.Name, first.token},
 			}
 		}
 

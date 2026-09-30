@@ -1,16 +1,16 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"reflect"
 	"testing"
 )
 
 func TestBuildSingleImport(t *testing.T) {
-	toks, _ := tok.Parse([]byte(`import "some/path"`), "")
+	toks, _ := token.Parse([]byte(`import "some/path"`), "")
 	want := Import{
 		Name: nil,
-		Path: toks[1].(tok.String),
+		Path: toks[1].(token.String),
 	}
 	ctx := context{toks: toks}
 	got, err := buildSingleImport(&ctx)
@@ -24,10 +24,10 @@ func TestBuildSingleImport(t *testing.T) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
 	}
 
-	toks, _ = tok.Parse([]byte(`import pkg "path"`), "")
+	toks, _ = token.Parse([]byte(`import pkg "path"`), "")
 	want = Import{
-		Name: toks[1].(tok.Ident),
-		Path: toks[2].(tok.String),
+		Name: toks[1].(token.Ident),
+		Path: toks[2].(token.String),
 	}
 	ctx = context{toks: toks}
 	got, err = buildSingleImport(&ctx)
@@ -43,7 +43,7 @@ func TestBuildSingleImport(t *testing.T) {
 }
 
 func TestBuildMultiImport(t *testing.T) {
-	toks, _ := tok.Parse([]byte(`import
+	toks, _ := token.Parse([]byte(`import
   "path1"
   pkg "path2"
 
@@ -51,9 +51,9 @@ func TestBuildMultiImport(t *testing.T) {
 		"",
 	)
 	want := []Import{
-		Import{Path: toks[3].(tok.String)},
-		Import{Name: toks[5].(tok.Ident), Path: toks[6].(tok.String)},
-		Import{Path: toks[8].(tok.String)},
+		Import{Path: toks[3].(token.String)},
+		Import{Name: toks[5].(token.Ident), Path: toks[6].(token.String)},
+		Import{Path: toks[8].(token.String)},
 	}
 
 	ctx := context{toks: toks}

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
@@ -58,7 +58,7 @@ type BinaryExpr struct {
 	ast ast.BinaryExpr
 
 	x  Expr
-	op tok.Operator
+	op token.Operator
 	y  Expr
 }
 
@@ -78,22 +78,22 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	switch x := x.(type) {
 	case val.Int:
 		switch op.(type) {
-		case tok.Add:
+		case token.Add:
 			switch y := y.(type) {
 			case val.Int:
 				v = x + y
 			}
-		case tok.Sub:
+		case token.Sub:
 			switch y := y.(type) {
 			case val.Int:
 				v = x - y
 			}
-		case tok.Mul:
+		case token.Mul:
 			switch y := y.(type) {
 			case val.Int:
 				v = x * y
 			}
-		case tok.Div:
+		case token.Div:
 			switch y := y.(type) {
 			case val.Int:
 				if x%y == 0 {
@@ -102,65 +102,65 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 					v = val.Float(float64(x) / float64(y))
 				}
 			}
-		case tok.Rem:
+		case token.Rem:
 			switch y := y.(type) {
 			case val.Int:
 				v = x % y
 			}
-		case tok.Exp:
+		case token.Exp:
 			switch y := y.(type) {
 			case val.Int:
 				v = val.Int(int64(math.Pow(float64(x), float64(y))))
 			}
-		case tok.LShift:
+		case token.LShift:
 			switch y := y.(type) {
 			case val.Int:
 				if y < 0 {
-					return nil, tok.Error{
+					return nil, token.Error{
 						Msg:  fmt.Sprintf("negative value of left shift %d", y),
-						Toks: []tok.Token{be.ast.Y.Tok()},
+						Toks: []token.Token{be.ast.Y.Tok()},
 					}
 				}
 				v = x << y
 			default:
-				return nil, tok.Error{
+				return nil, token.Error{
 					Msg:  fmt.Sprintf("right operand of left shift must be of type integer, current type %s", y.Type()),
-					Toks: []tok.Token{be.ast.Y.Tok()},
+					Toks: []token.Token{be.ast.Y.Tok()},
 				}
 			}
-		case tok.RShift:
+		case token.RShift:
 			switch y := y.(type) {
 			case val.Int:
 				if y < 0 {
-					return nil, tok.Error{
+					return nil, token.Error{
 						Msg:  fmt.Sprintf("negative value of right shift %d", y),
-						Toks: []tok.Token{be.ast.Y.Tok()},
+						Toks: []token.Token{be.ast.Y.Tok()},
 					}
 				}
 				v = x >> y
 			default:
-				return nil, tok.Error{
+				return nil, token.Error{
 					Msg:  fmt.Sprintf("right operand of right shift must be of type integer, current type %s", y.Type()),
-					Toks: []tok.Token{be.ast.Y.Tok()},
+					Toks: []token.Token{be.ast.Y.Tok()},
 				}
 			}
-		case tok.Colon:
+		case token.Colon:
 			switch y := y.(type) {
 			case val.Int:
 				v = val.Range{L: int64(x), R: int64(y)}
 			default:
-				return nil, tok.Error{
+				return nil, token.Error{
 					Msg:  fmt.Sprintf("right bound of range must be of type integer, current type %s", y.Type()),
-					Toks: []tok.Token{be.ast.Y.Tok()},
+					Toks: []token.Token{be.ast.Y.Tok()},
 				}
 			}
 		}
 	case val.Range:
 		switch op.(type) {
-		case tok.Colon:
-			return nil, tok.Error{
+		case token.Colon:
+			return nil, token.Error{
 				Msg:  "left bound of range must be of type integer, current type range",
-				Toks: []tok.Token{be.ast.X.Tok()},
+				Toks: []token.Token{be.ast.X.Tok()},
 			}
 		}
 	}
@@ -169,12 +169,12 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 		return v, nil
 	}
 
-	return nil, tok.Error{
+	return nil, token.Error{
 		Msg: fmt.Sprintf(
 			"unimplemented binary expression evaluation for %s operator, left operand type %s, right operand type %s, please report this error on %s",
 			op.Name(), x.Type(), y.Type(), util.RepoIssueUrl,
 		),
-		Toks: []tok.Token{op},
+		Toks: []token.Token{op},
 	}
 }
 
@@ -201,7 +201,7 @@ func (bs BitString) Eval() (val.Value, error) {
 }
 
 func MakeBitString(e ast.BitString, src []byte) (BitString, error) {
-	x, err := val.MakeBitStr(tok.Text(e.X, src))
+	x, err := val.MakeBitStr(token.Text(e.X, src))
 	if err != nil {
 		return BitString{}, fmt.Errorf("make bit string: %v", err)
 	}
@@ -232,7 +232,7 @@ func (c Call) Eval() (val.Value, error) {
 }
 
 func MakeCall(e ast.Call, src []byte, s Scope) (Call, error) {
-	c := Call{funcName: tok.Text(e.Name, src), args: []Expr{}}
+	c := Call{funcName: token.Text(e.Name, src), args: []Expr{}}
 
 	for i, a := range e.Args {
 		expr, err := MakeExpr(a, src, s)
@@ -244,7 +244,7 @@ func MakeCall(e ast.Call, src []byte, s Scope) (Call, error) {
 
 	err := assertCall(c)
 	if err != nil {
-		return c, tok.Error{Msg: err.Error(), Toks: []tok.Token{e.Name}}
+		return c, token.Error{Msg: err.Error(), Toks: []token.Token{e.Name}}
 	}
 
 	return c, nil
@@ -259,7 +259,7 @@ func (i Int) Eval() (val.Value, error) {
 }
 
 func MakeInt(e ast.Int, src []byte) (Int, error) {
-	x, err := strconv.ParseInt(tok.Text(e.X, src), 0, 64)
+	x, err := strconv.ParseInt(token.Text(e.X, src), 0, 64)
 	if err != nil {
 		return Int{}, fmt.Errorf("make int: %v", err)
 	}
@@ -309,7 +309,7 @@ func (b Bool) Eval() (val.Value, error) {
 }
 
 func MakeBool(e ast.Bool, src []byte) Bool {
-	text := tok.Text(e.X, src)
+	text := token.Text(e.X, src)
 	return Bool{x: text == "true"}
 }
 
@@ -322,7 +322,7 @@ func (f Float) Eval() (val.Value, error) {
 }
 
 func MakeFloat(e ast.Float, src []byte) (Float, error) {
-	text := tok.Text(e.X, src)
+	text := token.Text(e.X, src)
 	x, err := strconv.ParseFloat(text, 64)
 	if err != nil {
 		return Float{}, fmt.Errorf("make float: %v", err)
@@ -350,7 +350,7 @@ func (di DeclaredIdentifier) Eval() (val.Value, error) {
 }
 
 func MakeDeclaredIdentifier(e ast.Ident, src []byte, s Scope) DeclaredIdentifier {
-	return DeclaredIdentifier{x: tok.Text(e.Name, src), s: s}
+	return DeclaredIdentifier{x: token.Text(e.Name, src), s: s}
 }
 
 type QualifiedIdentifier struct {
@@ -372,7 +372,7 @@ func (qi QualifiedIdentifier) Eval() (val.Value, error) {
 }
 
 func MakeQualifiedIdentifier(e ast.QualIdent, src []byte, s Scope) QualifiedIdentifier {
-	return QualifiedIdentifier{x: tok.Text(e.Name, src), s: s}
+	return QualifiedIdentifier{x: token.Text(e.Name, src), s: s}
 }
 
 type String struct {
@@ -384,7 +384,7 @@ func (s String) Eval() (val.Value, error) {
 }
 
 func MakeString(e ast.String, src []byte) String {
-	txt := tok.Text(e.X, src)
+	txt := token.Text(e.X, src)
 	return String{x: txt[1 : len(txt)-1]}
 }
 
@@ -447,7 +447,7 @@ type Time struct {
 }
 
 func MakeTime(e ast.Time, src []byte, s Scope) (Time, error) {
-	txt := tok.Text(e.X, src)
+	txt := token.Text(e.X, src)
 
 	aux := strings.Fields(txt)
 	intLiteral := aux[0]
@@ -515,7 +515,7 @@ func (ue UnaryExpr) Eval() (val.Value, error) {
 
 func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Scope) (UnaryExpr, error) {
 	var op UnaryOperator
-	switch text := tok.Text(e.Op, src); text {
+	switch text := token.Text(e.Op, src); text {
 	case "+":
 		op = UnaryPlus
 	case "-":

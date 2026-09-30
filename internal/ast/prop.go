@@ -1,12 +1,12 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Prop represents functionality property.
 type Prop struct {
-	Name  tok.Property
+	Name  token.Property
 	Value Expr
 }
 
@@ -30,16 +30,16 @@ tokenLoop:
 		ctx.idx++
 		switch state {
 		case Prop:
-			switch t := ctx.tok().(type) {
-			case tok.Property:
+			switch t := ctx.token().(type) {
+			case token.Property:
 				p.Name = t
 				state = Ass
 			default:
 				return nil, unexpected(t, "property name")
 			}
 		case Ass:
-			switch t := ctx.tok().(type) {
-			case tok.Ass:
+			switch t := ctx.token().(type) {
+			case token.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "'='")
@@ -54,10 +54,10 @@ tokenLoop:
 			props = append(props, p)
 			state = Semicolon
 		case Semicolon:
-			switch t := ctx.tok().(type) {
-			case tok.Newline, tok.Eof:
+			switch t := ctx.token().(type) {
+			case token.Newline, token.Eof:
 				break tokenLoop
-			case tok.Semicolon:
+			case token.Semicolon:
 				state = Prop
 			default:
 				return nil, unexpected(t, "';' or newline")

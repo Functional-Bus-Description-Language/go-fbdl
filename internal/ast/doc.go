@@ -1,12 +1,12 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Doc represents a documentation comment.
 type Doc struct {
-	Lines []tok.Comment
+	Lines []token.Comment
 }
 
 // endLine returns line number of the last line in the documentation comment.
@@ -21,7 +21,7 @@ func (d Doc) endLine() int {
 func (d Doc) Text(src []byte) string {
 	text := ""
 	for i, l := range d.Lines {
-		t := tok.Text(l, src)
+		t := token.Text(l, src)
 		start := 1
 		if len(t) > 1 {
 			if t[1] == ' ' {
@@ -42,19 +42,19 @@ func (d Doc) Text(src []byte) string {
 
 func buildDoc(ctx *context) Doc {
 	doc := Doc{}
-	doc.Lines = append(doc.Lines, ctx.tok().(tok.Comment))
+	doc.Lines = append(doc.Lines, ctx.token().(token.Comment))
 
 	prevNewline := false
 	for {
 		ctx.idx++
-		switch t := ctx.tok().(type) {
-		case tok.Newline:
+		switch t := ctx.token().(type) {
+		case token.Newline:
 			if prevNewline {
 				break
 			} else {
 				prevNewline = true
 			}
-		case tok.Comment:
+		case token.Comment:
 			doc.Lines = append(doc.Lines, t)
 			prevNewline = false
 		default:

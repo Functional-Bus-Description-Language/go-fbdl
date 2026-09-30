@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"testing"
 )
 
@@ -133,7 +133,7 @@ func TestBuildError(t *testing.T) {
 			t.Fatalf("%d: err == nil, expected != nil", i)
 		}
 
-		tokErr := err.(tok.Error)
+		tokErr := err.(token.Error)
 		if tokErr.Msg != test.err {
 			t.Fatalf("\nTest %d:\n\ngot:\n%v\nwant:\n%v", i, tokErr.Msg, test.err)
 		}

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 type Import struct {
@@ -25,7 +25,7 @@ func buildImports(astImports []ast.Import, src []byte) []Import {
 
 	for _, ai := range astImports {
 		if ai.Name == nil {
-			path = tok.Text(ai.Path, src)
+			path = token.Text(ai.Path, src)
 			path = path[1 : len(path)-1]
 			// TODO: Should it be [0] or the last element?
 			name = strings.Split(path, string(os.PathSeparator))[0]
@@ -33,8 +33,8 @@ func buildImports(astImports []ast.Import, src []byte) []Import {
 				name = name[4:]
 			}
 		} else {
-			name = tok.Text(ai.Name, src)
-			path = tok.Text(ai.Path, src)
+			name = token.Text(ai.Name, src)
+			path = token.Text(ai.Path, src)
 			path = path[1 : len(path)-1]
 		}
 		imports = append(

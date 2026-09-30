@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -39,9 +39,9 @@ func insBlackbox(typeChain []prs.Functionality) (*fn.Blackbox, error) {
 
 	if bb.Size == 0 {
 		last := typeChain[len(typeChain)-1]
-		return &bb, tok.Error{
+		return &bb, token.Error{
 			Msg:  fmt.Sprintf("'%s' of type 'blackbox' must have 'size' property set", last.Name()),
-			Toks: []tok.Token{last.Tok()},
+			Toks: []token.Token{last.Tok()},
 		}
 	}
 

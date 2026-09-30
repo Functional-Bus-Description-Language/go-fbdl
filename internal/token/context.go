@@ -1,4 +1,4 @@
-package tok
+package token
 
 // Parsing context
 type context struct {

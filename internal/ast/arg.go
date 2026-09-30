@@ -1,22 +1,22 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Arg represents instantiation or type argument.
 // ValueFirstTok token might be useful to get argument location when Name is nil.
 type Arg struct {
-	Name          tok.Token // tok.Ident or nil
+	Name          token.Token // token.Ident or nil
 	Value         Expr
-	ValueFirstTok tok.Token
+	ValueFirstTok token.Token
 }
 
 // ArgList represents argument list.
 type ArgList struct {
-	LParen tok.LParen
+	LParen token.LParen
 	Args   []Arg
-	RParen tok.RParen
+	RParen token.RParen
 }
 
 func (al ArgList) Len() int {
@@ -24,19 +24,19 @@ func (al ArgList) Len() int {
 }
 
 func buildArgList(ctx *context) (ArgList, error) {
-	if _, ok := ctx.tok().(tok.LParen); !ok {
+	if _, ok := ctx.token().(token.LParen); !ok {
 		return ArgList{}, nil
 	}
 
 	argList := ArgList{
-		LParen: ctx.tok().(tok.LParen),
+		LParen: ctx.token().(token.LParen),
 		Args:   []Arg{},
 	}
 
-	if _, ok := ctx.nextTok().(tok.RParen); ok {
-		return argList, tok.Error{
+	if _, ok := ctx.nextTok().(token.RParen); ok {
+		return argList, token.Error{
 			Msg:  "empty argument list",
-			Toks: []tok.Token{tok.Join(ctx.tok(), ctx.nextTok())},
+			Toks: []token.Token{token.Join(ctx.token(), ctx.nextTok())},
 		}
 	}
 
@@ -56,10 +56,10 @@ tokenLoop:
 		ctx.idx++
 		switch state {
 		case Name:
-			switch t := ctx.tok().(type) {
-			case tok.Ident:
+			switch t := ctx.token().(type) {
+			case token.Ident:
 				switch ctx.nextTok().(type) {
-				case tok.Ass:
+				case token.Ass:
 					arg.Name = t
 					state = Ass
 				default:
@@ -76,7 +76,7 @@ tokenLoop:
 				}
 			default:
 				arg.Name = nil
-				arg.ValueFirstTok = ctx.tok()
+				arg.ValueFirstTok = ctx.token()
 				expr, err := buildExpr(ctx, nil)
 				if err != nil {
 					return argList, err
@@ -87,17 +87,17 @@ tokenLoop:
 				state = Comma
 			}
 		case Ass:
-			switch t := ctx.tok().(type) {
-			case tok.Ass:
+			switch t := ctx.token().(type) {
+			case token.Ass:
 				state = Val
 			default:
 				return argList, unexpected(t, "'='")
 			}
 		case Comma:
-			switch t := ctx.tok().(type) {
-			case tok.Comma:
+			switch t := ctx.token().(type) {
+			case token.Comma:
 				state = Name
-			case tok.RParen:
+			case token.RParen:
 				argList.RParen = t
 				ctx.idx++
 				break tokenLoop
@@ -105,7 +105,7 @@ tokenLoop:
 				return argList, unexpected(t, "',' or ')'")
 			}
 		case Val:
-			arg.ValueFirstTok = ctx.tok()
+			arg.ValueFirstTok = ctx.token()
 			expr, err := buildExpr(ctx, nil)
 			if err != nil {
 				return argList, err

@@ -1,23 +1,23 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Param represents type parameter.
 type Param struct {
-	Name  tok.Ident
+	Name  token.Ident
 	Value Expr // Default value of the parameter
 }
 
 func buildParamList(ctx *context) ([]Param, error) {
-	if _, ok := ctx.tok().(tok.LParen); !ok {
+	if _, ok := ctx.token().(token.LParen); !ok {
 		return nil, nil
 	}
-	if _, ok := ctx.nextTok().(tok.RParen); ok {
-		return nil, tok.Error{
+	if _, ok := ctx.nextTok().(token.RParen); ok {
+		return nil, token.Error{
 			Msg:  "empty parameter list",
-			Toks: []tok.Token{tok.Join(ctx.tok(), ctx.nextTok())},
+			Toks: []token.Token{token.Join(ctx.token(), ctx.nextTok())},
 		}
 	}
 
@@ -38,22 +38,22 @@ tokenLoop:
 		ctx.idx++
 		switch state {
 		case Name:
-			switch t := ctx.tok().(type) {
-			case tok.Ident:
+			switch t := ctx.token().(type) {
+			case token.Ident:
 				p.Name = t
 				state = Ass
 			default:
 				return nil, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := ctx.tok().(type) {
-			case tok.Ass:
+			switch t := ctx.token().(type) {
+			case token.Ass:
 				state = Val
-			case tok.Comma:
+			case token.Comma:
 				params = append(params, p)
 				p = Param{}
 				state = Name
-			case tok.RParen:
+			case token.RParen:
 				params = append(params, p)
 				ctx.idx++
 				break tokenLoop
@@ -71,10 +71,10 @@ tokenLoop:
 			p = Param{}
 			state = Comma
 		case Comma:
-			switch t := ctx.tok().(type) {
-			case tok.Comma:
+			switch t := ctx.token().(type) {
+			case token.Comma:
 				state = Name
-			case tok.RParen:
+			case token.RParen:
 				ctx.idx++
 				break tokenLoop
 			default:

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -47,9 +47,9 @@ func insStatic(typeChain []prs.Functionality) (*fn.Static, error) {
 	err = fillStaticValues(&st, diary)
 	if err != nil {
 		last := typeChain[len(typeChain)-1]
-		return nil, tok.Error{
+		return nil, token.Error{
 			Msg:  fmt.Sprintf("'%s' %v", last.Name(), err),
-			Toks: []tok.Token{last.Tok()},
+			Toks: []token.Token{last.Tok()},
 		}
 	}
 

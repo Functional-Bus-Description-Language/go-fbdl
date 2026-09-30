@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Arg struct represents an argument in the argument list.
@@ -14,9 +14,9 @@ type Arg struct {
 }
 
 type ArgList struct {
-	LParen tok.LParen
+	LParen token.LParen
 	Args   []Arg
-	RParen tok.RParen
+	RParen token.RParen
 }
 
 func (al ArgList) Len() int {
@@ -39,11 +39,11 @@ func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, err
 		arg := Arg{}
 
 		if aal.Name != nil {
-			name := tok.Text(aal.Name, src)
+			name := token.Text(aal.Name, src)
 			if names[name] {
-				return argList, tok.Error{
+				return argList, token.Error{
 					Msg:  fmt.Sprintf("reassignment to '%s' argument", name),
-					Toks: []tok.Token{aal.Name},
+					Toks: []token.Token{aal.Name},
 				}
 			}
 			names[name] = true
@@ -63,9 +63,9 @@ func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, err
 	withName := false
 	for i, arg := range argList.Args {
 		if withName && arg.Name == "" {
-			return argList, tok.Error{
+			return argList, token.Error{
 				Msg:  "positional argument follows keyword argument",
-				Toks: []tok.Token{astArgList.Args[i].ValueFirstTok},
+				Toks: []token.Token{astArgList.Args[i].ValueFirstTok},
 			}
 		}
 

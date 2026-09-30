@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"testing"
 )
 
@@ -10,7 +10,7 @@ func TestDoc(t *testing.T) {
 #Line 2
 #
 # Line 4`
-	toks, _ := tok.Parse([]byte(src), "")
+	toks, _ := token.Parse([]byte(src), "")
 
 	ctx := context{toks: toks}
 	doc := buildDoc(&ctx)

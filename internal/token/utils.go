@@ -1,4 +1,4 @@
-package tok
+package token
 
 func isDigit(b byte) bool {
 	return '0' <= b && b <= '9'

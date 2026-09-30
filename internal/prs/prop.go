@@ -2,16 +2,16 @@ package prs
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Prop struct represents functionality property.
 type Prop struct {
-	NameTok tok.Token
+	NameTok token.Token
 	Name    string
 
 	Value    Expr
-	ValueTok tok.Token
+	ValueTok token.Token
 }
 
 func (p Prop) Line() int { return p.NameTok.Line() }

@@ -2,12 +2,12 @@ package ast
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-func unexpected(t tok.Token, expected string) error {
-	return tok.Error{
+func unexpected(t token.Token, expected string) error {
+	return token.Error{
 		Msg:  fmt.Sprintf("unexpected %s, expected "+expected, t.Name()),
-		Toks: []tok.Token{t},
+		Toks: []token.Token{t},
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/group"
@@ -46,17 +46,17 @@ func insGroup(typeChain []prs.Functionality) (*fn.Group, error) {
 	}
 
 	if group.IsEmpty(grp) {
-		return &grp, tok.Error{
+		return &grp, token.Error{
 			Msg:  fmt.Sprintf("group '%s' is empty", grp.Name),
-			Toks: []tok.Token{typeChain[len(typeChain)-1].Tok()},
+			Toks: []token.Token{typeChain[len(typeChain)-1].Tok()},
 		}
 	}
 
 	err = checkGroup(grp)
 	if err != nil {
-		return &grp, tok.Error{
+		return &grp, token.Error{
 			Msg:  fmt.Sprintf("%v", err),
-			Toks: []tok.Token{typeChain[len(typeChain)-1].Tok()},
+			Toks: []token.Token{typeChain[len(typeChain)-1].Tok()},
 		}
 	}
 
@@ -126,9 +126,9 @@ func applyGroupType(grp *fn.Group, typ prs.Functionality, diary *groupDiary) err
 
 		err := addGroupInnerElement(grp, f)
 		if err != nil {
-			return tok.Error{
+			return token.Error{
 				Msg:  fmt.Sprintf("%v", err),
-				Toks: []tok.Token{sym.Tok()},
+				Toks: []token.Token{sym.Tok()},
 			}
 		}
 	}

@@ -2,7 +2,7 @@ package prs
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 func checkPropConflict(typ string, prop Prop, props PropContainer) error {
@@ -10,9 +10,9 @@ func checkPropConflict(typ string, prop Prop, props PropContainer) error {
 
 	if w, ok := props.Get("width"); ok {
 		if prop.Name == "range" {
-			return tok.Error{
+			return token.Error{
 				Msg:  fmt.Sprintf(msg, "range", "width", w.Line(), w.Col()),
-				Toks: []tok.Token{prop.NameTok, w.NameTok},
+				Toks: []token.Token{prop.NameTok, w.NameTok},
 			}
 		}
 	}

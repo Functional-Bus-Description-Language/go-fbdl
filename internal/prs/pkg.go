@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 type Packages map[string][]*Package
@@ -51,7 +51,7 @@ func (p *Package) addConst(c *Const) error {
 			"redefinition of constant '%s' in package '%s'", c.name, p.Name,
 		)
 		first, _ := p.symbolContainer.GetConst(c.name)
-		return tok.Error{Msg: msg, Toks: []tok.Token{c.tok, first.tok}}
+		return token.Error{Msg: msg, Toks: []token.Token{c.token, first.token}}
 	}
 
 	return nil
@@ -85,7 +85,7 @@ func (p *Package) addType(t *Type) error {
 			"redefinition of type '%s' in package '%s'", t.name, p.Name,
 		)
 		first, _ := p.symbolContainer.GetType(t.name)
-		return tok.Error{Msg: msg, Toks: []tok.Token{t.tok, first.tok}}
+		return token.Error{Msg: msg, Toks: []token.Token{t.token, first.token}}
 	}
 
 	return nil

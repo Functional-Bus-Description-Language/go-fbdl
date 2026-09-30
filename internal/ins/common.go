@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
@@ -36,9 +36,9 @@ func makeFunctionality(typeChain []prs.Functionality) (fn.Func, error) {
 		}
 		count = int64(v.(val.Int))
 		if count < 0 {
-			return fn.Func{}, tok.Error{
+			return fn.Func{}, token.Error{
 				Msg:  fmt.Sprintf("functionality '%s' has negative array size %d", inst.Name(), count),
-				Toks: []tok.Token{inst.Tok()},
+				Toks: []token.Token{inst.Tok()},
 			}
 		}
 	}

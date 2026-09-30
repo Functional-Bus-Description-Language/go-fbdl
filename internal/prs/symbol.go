@@ -2,7 +2,7 @@ package prs
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 type SymbolKind uint8
@@ -19,7 +19,7 @@ type Symbol interface {
 	Line() int
 	Col() int
 	Doc() string
-	Tok() tok.Token
+	Tok() token.Token
 	Loc() string
 
 	setScope(s Scope)
@@ -31,19 +31,19 @@ type Symbol interface {
 
 type symbol struct {
 	file  *File
-	tok   tok.Token // Symbol name token
+	token token.Token // Symbol name token
 	name  string
 	doc   string
 	scope Scope
 }
 
-func (s symbol) Name() string   { return s.name }
-func (s symbol) Line() int      { return s.tok.Line() }
-func (s symbol) Col() int       { return s.tok.Column() }
-func (s symbol) Doc() string    { return s.doc }
-func (s symbol) Scope() Scope   { return s.scope }
-func (s symbol) File() *File    { return s.file }
-func (s symbol) Tok() tok.Token { return s.tok }
+func (s symbol) Name() string     { return s.name }
+func (s symbol) Line() int        { return s.token.Line() }
+func (s symbol) Col() int         { return s.token.Column() }
+func (s symbol) Doc() string      { return s.doc }
+func (s symbol) Scope() Scope     { return s.scope }
+func (s symbol) File() *File      { return s.file }
+func (s symbol) Tok() token.Token { return s.token }
 
 func (sym symbol) Loc() string {
 	return fmt.Sprintf("%d:%d", sym.Line(), sym.Col())

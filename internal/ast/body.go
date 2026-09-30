@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Body represents a functionality body.
@@ -25,16 +25,16 @@ func buildBody(ctx *context) (Body, error) {
 
 tokenLoop:
 	for {
-		if _, ok := ctx.tok().(tok.Eof); ok {
+		if _, ok := ctx.token().(token.Eof); ok {
 			break
 		}
 
-		switch t := ctx.tok().(type) {
-		case tok.Newline:
+		switch tok := ctx.token().(type) {
+		case token.Newline:
 			ctx.idx++
-		case tok.Comment:
+		case token.Comment:
 			doc = buildDoc(ctx)
-		case tok.Const:
+		case token.Const:
 			consts, err = buildConst(ctx)
 			if len(consts) > 0 {
 				if doc.endLine() == consts[0].Name.Line()+1 {
@@ -42,10 +42,10 @@ tokenLoop:
 				}
 				body.Consts = append(body.Consts, consts...)
 			}
-		case tok.Ident:
+		case token.Ident:
 			ins, err = buildInst(ctx)
 			body.Insts = append(body.Insts, ins)
-		case tok.Property:
+		case token.Property:
 			props, err = buildPropAssignments(ctx)
 			if err != nil {
 				return body, err
@@ -53,14 +53,14 @@ tokenLoop:
 			if props != nil {
 				body.Props = append(body.Props, props...)
 			}
-		case tok.Type:
+		case token.Type:
 			typ, err = buildType(ctx)
 			body.Types = append(body.Types, typ)
-		case tok.Dedent:
+		case token.Dedent:
 			ctx.idx++
 			break tokenLoop
 		default:
-			return body, unexpected(t, "const, type, identifier, or comment")
+			return body, unexpected(tok, "const, type, identifier, or comment")
 		}
 
 		if err != nil {

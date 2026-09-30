@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
@@ -77,12 +77,12 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 		}
 
 		if first, ok := cache[t.name]; ok {
-			return nil, tok.Error{
+			return nil, token.Error{
 				Msg: fmt.Sprintf(
 					"redefinition of type '%s', first definition line %d column %d",
 					t.name, first.Line(), first.Col(),
 				),
-				Toks: []tok.Token{at.Name, first.tok},
+				Toks: []token.Token{at.Name, first.token},
 			}
 		}
 
@@ -96,8 +96,8 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 func buildType(at ast.Type, src []byte) (*Type, error) {
 	t := &Type{}
 
-	t.tok = at.Name
-	t.name = tok.Text(at.Name, src)
+	t.token = at.Name
+	t.name = token.Text(at.Name, src)
 	t.doc = at.Doc.Text(src)
 
 	params, err := buildParamList(at.Params, src, t)
@@ -112,7 +112,7 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	}
 	t.count = v
 
-	t.typ = tok.Text(at.Type, src)
+	t.typ = token.Text(at.Type, src)
 
 	args, err := buildArgList(at.Args, src, t)
 	if err != nil {
@@ -121,9 +121,9 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	t.args = args
 
 	if util.IsBaseType(t.typ) && len(t.args.Args) > 0 {
-		return nil, tok.Error{
+		return nil, token.Error{
 			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", t.typ),
-			Toks: []tok.Token{tok.Join(t.args.LParen, t.args.RParen)},
+			Toks: []token.Token{token.Join(t.args.LParen, t.args.RParen)},
 		}
 	}
 
@@ -135,16 +135,16 @@ func buildType(at ast.Type, src []byte) (*Type, error) {
 	if util.IsBaseType(t.typ) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, t.typ); err != nil {
-				return nil, tok.Error{
+				return nil, token.Error{
 					Msg:  err.Error(),
-					Toks: []tok.Token{at.Body.Props[j].Name},
+					Toks: []token.Token{at.Body.Props[j].Name},
 				}
 			}
 
 			if err := checkPropConflict(t.typ, p, props[0:j]); err != nil {
-				return nil, tok.Error{
+				return nil, token.Error{
 					Msg:  err.Error(),
-					Toks: []tok.Token{at.Body.Props[j].Name},
+					Toks: []token.Token{at.Body.Props[j].Name},
 				}
 			}
 		}

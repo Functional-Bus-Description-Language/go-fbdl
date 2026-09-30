@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbolContainer, error) {
@@ -15,7 +15,7 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 		p := Prop{}
 
 		p.NameTok = ap.Name
-		p.Name = tok.Text(ap.Name, src)
+		p.Name = token.Text(ap.Name, src)
 		v, err := MakeExpr(ap.Value, src, scope)
 		if err != nil {
 			return nil, sc, err
@@ -24,9 +24,9 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 		p.ValueTok = ap.Value.Tok()
 
 		if ok := pc.Add(p); !ok {
-			return nil, sc, tok.Error{
+			return nil, sc, token.Error{
 				Msg:  fmt.Sprintf("reassignment to '%s' property", p.Name),
-				Toks: []tok.Token{ap.Name},
+				Toks: []token.Token{ap.Name},
 			}
 		}
 	}
@@ -38,9 +38,9 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	}
 	for i, c := range consts {
 		if ok := sc.addConst(c); !ok {
-			return nil, sc, tok.Error{
+			return nil, sc, token.Error{
 				Msg:  fmt.Sprintf("redefinition of symbol '%s'", c.Name()),
-				Toks: []tok.Token{astBody.Consts[i].Name},
+				Toks: []token.Token{astBody.Consts[i].Name},
 			}
 		}
 	}
@@ -52,9 +52,9 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	}
 	for i, t := range types {
 		if ok := sc.addType(t); !ok {
-			return nil, sc, tok.Error{
+			return nil, sc, token.Error{
 				Msg:  fmt.Sprintf("redefinition of symbol '%s'", t.Name()),
-				Toks: []tok.Token{astBody.Types[i].Name},
+				Toks: []token.Token{astBody.Types[i].Name},
 			}
 		}
 	}
@@ -66,9 +66,9 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	}
 	for i, ins := range insts {
 		if ok := sc.addInst(ins); !ok {
-			return nil, sc, tok.Error{
+			return nil, sc, token.Error{
 				Msg:  fmt.Sprintf("redefinition of symbol '%s'", ins.Name()),
-				Toks: []tok.Token{astBody.Insts[i].Name},
+				Toks: []token.Token{astBody.Insts[i].Name},
 			}
 		}
 	}

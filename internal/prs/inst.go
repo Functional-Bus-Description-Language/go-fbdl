@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
@@ -92,12 +92,12 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 		}
 
 		if first, ok := cache[i.name]; ok {
-			return nil, tok.Error{
+			return nil, token.Error{
 				Msg: fmt.Sprintf(
 					"reinstantiation of '%s', first instantiation line %d column %d",
 					i.name, first.Line(), first.Col(),
 				),
-				Toks: []tok.Token{ai.Name},
+				Toks: []token.Token{ai.Name},
 			}
 		}
 
@@ -111,8 +111,8 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	i := &Inst{}
 
-	i.tok = ai.Name
-	i.name = tok.Text(ai.Name, src)
+	i.token = ai.Name
+	i.name = token.Text(ai.Name, src)
 	i.doc = ai.Doc.Text(src)
 
 	v, err := MakeExpr(ai.Count, src, i)
@@ -121,7 +121,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	}
 	i.count = v
 
-	i.typ = tok.Text(ai.Type, src)
+	i.typ = token.Text(ai.Type, src)
 
 	argList, err := buildArgList(ai.ArgList, src, i)
 	if err != nil {
@@ -130,9 +130,9 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	i.argList = argList
 
 	if util.IsBaseType(i.typ) && i.argList.Len() > 0 {
-		return nil, tok.Error{
+		return nil, token.Error{
 			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
-			Toks: []tok.Token{tok.Join(i.argList.LParen, i.argList.RParen)},
+			Toks: []token.Token{token.Join(i.argList.LParen, i.argList.RParen)},
 		}
 	}
 
@@ -144,9 +144,9 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	if util.IsBaseType(i.typ) {
 		for j, p := range props {
 			if err := util.IsValidProperty(p.Name, i.typ); err != nil {
-				return nil, tok.Error{
+				return nil, token.Error{
 					Msg:  err.Error(),
-					Toks: []tok.Token{ai.Body.Props[j].Name},
+					Toks: []token.Token{ai.Body.Props[j].Name},
 				}
 			}
 

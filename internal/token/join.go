@@ -1,4 +1,4 @@
-package tok
+package token
 
 // Join joins two tokens and returns None token with position spanning both of them.
 // It is useful for reporting errors spanning multiple tokens.

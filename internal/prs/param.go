@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Param struct represents parameter in the type definition parameter list,
@@ -25,11 +25,11 @@ func buildParamList(astParams []ast.Param, src []byte, scope Scope) ([]Param, er
 	for _, ap := range astParams {
 		p := Param{}
 
-		name := tok.Text(ap.Name, src)
+		name := token.Text(ap.Name, src)
 		if names[name] {
-			return nil, tok.Error{
+			return nil, token.Error{
 				Msg:  fmt.Sprintf("redeclaration of '%s' parameter", name),
-				Toks: []tok.Token{ap.Name},
+				Toks: []token.Token{ap.Name},
 			}
 		}
 		names[name] = true
@@ -50,9 +50,9 @@ func buildParamList(astParams []ast.Param, src []byte, scope Scope) ([]Param, er
 	withDflt := false
 	for i, p := range params {
 		if withDflt && p.DfltValue == nil {
-			return nil, tok.Error{
+			return nil, token.Error{
 				Msg:  "parameters without default value must precede the ones with default value",
-				Toks: []tok.Token{astParams[i].Name},
+				Toks: []token.Token{astParams[i].Name},
 			}
 		}
 

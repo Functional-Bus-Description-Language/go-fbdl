@@ -1,14 +1,14 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/tok"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 // Building context
 type context struct {
 	idx  int // Current token index
-	toks []tok.Token
+	toks []token.Token
 }
 
-func (ctx context) tok() tok.Token     { return ctx.toks[ctx.idx] }
-func (ctx context) nextTok() tok.Token { return ctx.toks[ctx.idx+1] }
+func (ctx context) token() token.Token   { return ctx.toks[ctx.idx] }
+func (ctx context) nextTok() token.Token { return ctx.toks[ctx.idx+1] }
