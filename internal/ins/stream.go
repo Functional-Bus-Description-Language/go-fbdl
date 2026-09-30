@@ -6,7 +6,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -82,11 +81,11 @@ func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDia
 			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "stream")
 		}
 
-		if stream.HasFunctionality(strm, f.GetName()) {
+		if strm.HasFunctionality(f.GetName()) {
 			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
 
-		err := addStreamInnerFunctionality(strm, f)
+		err := addStreamInnerFunc(strm, f)
 		if err != nil {
 			return token.Error{
 				Msg:  fmt.Sprintf("cannot instantiate '%s' functionality: %v", f.GetName(), err),
@@ -98,7 +97,7 @@ func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDia
 	return nil
 }
 
-func addStreamInnerFunctionality(s *fn.Stream, f fn.Functionality) error {
+func addStreamInnerFunc(s *fn.Stream, f fn.Functionality) error {
 	if (f.Type() == "return" && len(s.Params) > 0) ||
 		(f.Type() == "param" && len(s.Returns) > 0) {
 		return fmt.Errorf(

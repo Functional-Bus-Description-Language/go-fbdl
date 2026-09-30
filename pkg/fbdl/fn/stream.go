@@ -43,3 +43,17 @@ func (s *Stream) StartAddr() int64 {
 	// For empty stream return strobe address.
 	return s.StbAddr
 }
+
+func (s *Stream) HasFunctionality(name string) bool {
+	for i := range s.Params {
+		if s.Params[i].Name == name {
+			return true
+		}
+	}
+	for i := range s.Returns {
+		if s.Returns[i].Name == name {
+			return true
+		}
+	}
+	return false
+}
