@@ -45,56 +45,35 @@ func buildSingleImport(ctx *context) ([]Import, error) {
 }
 
 func buildMultiImport(ctx *context) ([]Import, error) {
-	imps := []Import{}
-	i := Import{}
-
 	ctx.idx += 2
 	if _, ok := ctx.token().(token.Indent); !ok {
 		return nil, unexpected(ctx.token(), "indent increase")
 	}
 
-	type State int
-	const (
-		Name State = iota
-		Path
-	)
-	state := Name
+	var imps []Import
 
-tokenLoop:
 	for {
 		ctx.idx++
-		switch state {
-		case Name:
-			switch t := ctx.token().(type) {
-			case token.Ident:
-				i.Name = t
-				state = Path
-			case token.String:
-				i.Path = t
-				imps = append(imps, i)
-				i = Import{}
-			case token.Newline:
-				// Do nothing
-			case token.Dedent:
-				ctx.idx++
-				break tokenLoop
-			case token.Eof:
-				break tokenLoop
-			default:
-				return nil, unexpected(t, "identifier or string")
+
+		switch t := ctx.token().(type) {
+		case token.Newline:
+			// Go to next line
+		case token.Dedent:
+			ctx.idx++
+			return imps, nil
+		case token.Eof:
+			return imps, nil
+		case token.String:
+			imps = append(imps, Import{Path: t})
+		case token.Ident:
+			ctx.idx++
+			path, ok := ctx.token().(token.String)
+			if !ok {
+				return nil, unexpected(ctx.token(), "string")
 			}
-		case Path:
-			switch t := ctx.token().(type) {
-			case token.String:
-				i.Path = t
-				imps = append(imps, i)
-				i = Import{}
-				state = Name
-			default:
-				return nil, unexpected(t, "string")
-			}
+			imps = append(imps, Import{Name: t, Path: path})
+		default:
+			return nil, unexpected(t, "identifier or string")
 		}
 	}
-
-	return imps, nil
 }
