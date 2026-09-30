@@ -30,10 +30,50 @@ type Block struct {
 	Subblocks  []*Block
 }
 
-func (b Block) Type() string { return "block" }
+func (blk Block) Type() string { return "block" }
 
 // StartAddr returns block start address.
 // In case of array of blocks it returns the start address of the first block.
-func (b *Block) StartAddr() int64 {
-	return b.AddrSpace.Start
+func (blk *Block) StartAddr() int64 {
+	return blk.AddrSpace.Start
+}
+
+func (blk *Block) HasFunctionality(name string) bool {
+	for i := range blk.Configs {
+		if blk.Configs[i].Name == name {
+			return true
+		}
+	}
+	for i := range blk.Masks {
+		if blk.Masks[i].Name == name {
+			return true
+		}
+	}
+	for i := range blk.Procs {
+		if blk.Procs[i].Name == name {
+			return true
+		}
+	}
+	for i := range blk.Statics {
+		if blk.Statics[i].Name == name {
+			return true
+		}
+	}
+	for i := range blk.Statuses {
+		if blk.Statuses[i].Name == name {
+			return true
+		}
+	}
+	for i := range blk.Streams {
+		if blk.Streams[i].Name == name {
+			return true
+		}
+	}
+	for i := range blk.Subblocks {
+		if blk.Subblocks[i].Name == name {
+			return true
+		}
+	}
+
+	return false
 }

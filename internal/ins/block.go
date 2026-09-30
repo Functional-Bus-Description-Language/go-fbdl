@@ -8,7 +8,6 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
@@ -115,10 +114,10 @@ func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 			)
 		}
 
-		if block.HasFunctionality(blk, f.GetName()) {
+		if blk.HasFunctionality(f.GetName()) {
 			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
-		addBlockInnerElement(blk, f)
+		addBlockInnerFunc(blk, f)
 	}
 
 	return nil
@@ -133,28 +132,28 @@ func fillBlockProps(blk *fn.Block) {
 	}
 }
 
-func addBlockInnerElement(blk *fn.Block, f any) {
+func addBlockInnerFunc(blk *fn.Block, f any) {
 	switch f := f.(type) {
 	case (*fn.Blackbox):
-		block.AddBlackbox(blk, f)
+		blk.Blackboxes = append(blk.Blackboxes, f)
 	case (*fn.Config):
-		block.AddConfig(blk, f)
+		blk.Configs = append(blk.Configs, f)
 	case (*fn.Group):
-		block.AddGroup(blk, f)
+		blk.Groups = append(blk.Groups, f)
 	case (*fn.Irq):
-		block.AddIrq(blk, f)
+		blk.Irqs = append(blk.Irqs, f)
 	case (*fn.Mask):
-		block.AddMask(blk, f)
+		blk.Masks = append(blk.Masks, f)
 	case (*fn.Proc):
-		block.AddProc(blk, f)
+		blk.Procs = append(blk.Procs, f)
 	case (*fn.Static):
-		block.AddStatic(blk, f)
+		blk.Statics = append(blk.Statics, f)
 	case (*fn.Status):
-		block.AddStatus(blk, f)
+		blk.Statuses = append(blk.Statuses, f)
 	case (*fn.Stream):
-		block.AddStream(blk, f)
+		blk.Streams = append(blk.Streams, f)
 	case (*fn.Block):
-		block.AddSubblock(blk, f)
+		blk.Subblocks = append(blk.Subblocks, f)
 	default:
 		panic("should never happen")
 	}

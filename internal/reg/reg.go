@@ -9,7 +9,6 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 )
 
@@ -48,7 +47,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	// Base address property is not yet supported, so it starts from 0.
 	assignGlobalAccessAddresses(bus, 0)
 
-	if block.HasFunctionality(bus, "ID") {
+	if bus.HasFunctionality("ID") {
 		log.Fatalf("'ID' is reserved functionality name in main bus")
 	}
 	id := id()
@@ -62,7 +61,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	bus.Statics = append(bus.Statics, id)
 
 	if addTimestamp {
-		if block.HasFunctionality(bus, "TIMESTAMP") {
+		if bus.HasFunctionality("TIMESTAMP") {
 			log.Fatalf("'TIMESTAMP' is reserved functionality name in main bus")
 		}
 		ts := timestamp()
