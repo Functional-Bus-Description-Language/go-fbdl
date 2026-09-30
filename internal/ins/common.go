@@ -3,9 +3,10 @@ package ins
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
@@ -34,7 +35,7 @@ func makeFunctionality(typeChain []parser.Functionality) (fn.Func, error) {
 		if err != nil {
 			return fn.Func{}, fmt.Errorf("%v", err)
 		}
-		count = int64(v.(val.Int))
+		count = int64(v.(types.Int))
 		if count < 0 {
 			return fn.Func{}, token.Error{
 				Msg:  fmt.Sprintf("functionality '%s' has negative array size %d", inst.Name(), count),
@@ -54,10 +55,10 @@ func makeFunctionality(typeChain []parser.Functionality) (fn.Func, error) {
 // processValue processes the '*-value' property.
 // If the value is BitStr, it checks whether its width is not greater than the width.
 // If the value is Int, it tries to convert it to the BitStr with width of width argument.
-func processValue(v val.Value, width int64) (val.BitStr, error) {
-	dflt := val.BitStr("")
+func processValue(v types.Value, width int64) (types.BitStr, error) {
+	dflt := types.BitStr("")
 
-	if bs, ok := v.(val.BitStr); ok {
+	if bs, ok := v.(types.BitStr); ok {
 		if bs.BitWidth() > width {
 			return dflt, fmt.Errorf(
 				"width of bit string (%d) is greater than value of 'width' property (%d)",
@@ -66,8 +67,8 @@ func processValue(v val.Value, width int64) (val.BitStr, error) {
 		}
 		dflt = bs
 	}
-	if i, ok := v.(val.Int); ok {
-		bs, err := val.BitStrFromInt(i, width)
+	if i, ok := v.(types.Int); ok {
+		bs, err := types.BitStrFromInt(i, width)
 		if err != nil {
 			return dflt, err
 		}

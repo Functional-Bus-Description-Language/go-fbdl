@@ -5,7 +5,6 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -66,20 +65,14 @@ func applyParamType(param *fn.Param, typ parser.Functionality, diary *paramDiary
 			}
 
 			switch rng := v.(type) {
-			case val.Int:
+			case types.Int:
 				param.Range = types.SingleRange{Start: 0, End: int64(rng)}
-			case val.Range:
-				param.Range = types.SingleRange{Start: rng.L, End: rng.R}
-			case val.List:
+			case types.SingleRange:
+				param.Range = rng
+			case types.List:
 				mr := types.ArrayRange{}
 				for _, r := range rng {
-					mr = append(
-						mr,
-						types.SingleRange{
-							Start: r.(val.Range).L,
-							End:   r.(val.Range).R,
-						},
-					)
+					mr = append(mr, r.(types.SingleRange))
 				}
 				param.Range = mr
 			}
@@ -91,7 +84,7 @@ func applyParamType(param *fn.Param, typ parser.Functionality, diary *paramDiary
 			if diary.rangeSet {
 				return fmt.Errorf(propConflictMsg, p.Loc(), "width", "range")
 			}
-			param.Width = int64(v.(val.Int))
+			param.Width = int64(v.(types.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")

@@ -3,10 +3,11 @@ package ins
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
 // Check property value type and value.
@@ -23,7 +24,7 @@ func checkProp(prop parser.Prop) error {
 
 	switch name {
 	case "access":
-		v, ok := pv.(val.Str)
+		v, ok := pv.(types.Str)
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
@@ -39,14 +40,14 @@ func checkProp(prop parser.Prop) error {
 			}
 		}
 	case "add-enable", "atomic", "byte-write-enable", "virtual":
-		if _, ok := pv.(val.Bool); !ok {
+		if _, ok := pv.(types.Bool); !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "bool", pv.Type()),
 				Toks: []token.Token{prop.ValueTok},
 			}
 		}
 	case "align":
-		v, ok := pv.(val.Int)
+		v, ok := pv.(types.Int)
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),
@@ -68,7 +69,7 @@ func checkProp(prop parser.Prop) error {
 			}
 		}
 	case "clear":
-		v, ok := pv.(val.Str)
+		v, ok := pv.(types.Str)
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
@@ -83,7 +84,7 @@ func checkProp(prop parser.Prop) error {
 		}
 	case "delay":
 		switch pv.(type) {
-		case val.Time:
+		case types.Time:
 			break
 		default:
 			return token.Error{
@@ -93,7 +94,7 @@ func checkProp(prop parser.Prop) error {
 		}
 	case "enable-init-value", "enable-reset-value", "init-value", "read-value", "reset-value":
 		switch pv.(type) {
-		case val.Int, val.BitStr:
+		case types.Int, types.BitStr:
 			break
 		default:
 			return token.Error{
@@ -102,7 +103,7 @@ func checkProp(prop parser.Prop) error {
 			}
 		}
 	case "in-trigger", "out-trigger":
-		v, ok := pv.(val.Str)
+		v, ok := pv.(types.Str)
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
@@ -116,7 +117,7 @@ func checkProp(prop parser.Prop) error {
 			}
 		}
 	case "masters":
-		v, ok := pv.(val.Int)
+		v, ok := pv.(types.Int)
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),
@@ -131,33 +132,33 @@ func checkProp(prop parser.Prop) error {
 		}
 	case "range":
 		switch v := pv.(type) {
-		case val.Int:
+		case types.Int:
 			if v < 0 {
 				return token.Error{
 					Msg:  fmt.Sprintf("range property value must be natural, value %d is negative", v),
 					Toks: []token.Token{prop.ValueTok},
 				}
 			}
-		case val.Range:
-			if v.L < 0 {
+		case types.SingleRange:
+			if v.Start < 0 {
 				return token.Error{
-					Msg:  fmt.Sprintf("negative range left bound %d", v.L),
+					Msg:  fmt.Sprintf("negative range left bound %d", v.Start),
 					Toks: []token.Token{prop.ValueTok},
 				}
 			}
-			if v.R < 0 {
+			if v.End < 0 {
 				return token.Error{
-					Msg:  fmt.Sprintf("negative range right bound %d", v.R),
+					Msg:  fmt.Sprintf("negative range right bound %d", v.End),
 					Toks: []token.Token{prop.ValueTok},
 				}
 			}
-			if v.L > v.R {
+			if v.Start > v.End {
 				return token.Error{
-					Msg:  fmt.Sprintf("range left bound greater than right bound, %d > %d", v.L, v.R),
+					Msg:  fmt.Sprintf("range left bound greater than right bound, %d > %d", v.Start, v.End),
 					Toks: []token.Token{prop.ValueTok},
 				}
 			}
-		case val.List:
+		case types.List:
 			if len(v) == 0 {
 				return token.Error{
 					Msg:  "empty range property value list",
@@ -166,7 +167,7 @@ func checkProp(prop parser.Prop) error {
 			}
 
 			for i, rng := range v {
-				r, ok := rng.(val.Range)
+				r, ok := rng.(types.SingleRange)
 				if !ok {
 					return token.Error{
 						Msg: fmt.Sprintf(
@@ -177,29 +178,29 @@ func checkProp(prop parser.Prop) error {
 					}
 				}
 
-				if r.L < 0 {
+				if r.Start < 0 {
 					return token.Error{
 						Msg: fmt.Sprintf(
 							"negative range left bound %d in value with index %d",
-							r.L, i,
+							r.Start, i,
 						),
 						Toks: []token.Token{prop.ValueTok},
 					}
 				}
-				if r.R < 0 {
+				if r.End < 0 {
 					return token.Error{
 						Msg: fmt.Sprintf(
 							"negative range right bound %d in value with index %d",
-							r.R, i,
+							r.End, i,
 						),
 						Toks: []token.Token{prop.ValueTok},
 					}
 				}
-				if r.L > r.R {
+				if r.Start > r.End {
 					return token.Error{
 						Msg: fmt.Sprintf(
 							"range left bound greater than right bound in value with index %d, %d > %d",
-							i, r.L, r.R,
+							i, r.Start, r.End,
 						),
 						Toks: []token.Token{prop.ValueTok},
 					}
@@ -212,7 +213,7 @@ func checkProp(prop parser.Prop) error {
 			}
 		}
 	case "reset":
-		v, ok := pv.(val.Str)
+		v, ok := pv.(types.Str)
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
@@ -227,7 +228,7 @@ func checkProp(prop parser.Prop) error {
 			}
 		}
 	case "read-latency", "size", "width":
-		v, ok := pv.(val.Int)
+		v, ok := pv.(types.Int)
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),

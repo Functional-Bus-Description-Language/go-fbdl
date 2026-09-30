@@ -6,14 +6,15 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
 type Expr interface {
-	Eval() (val.Value, error)
+	Eval() (types.Value, error)
 }
 
 func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
@@ -62,7 +63,7 @@ type BinaryExpr struct {
 	y  Expr
 }
 
-func (be BinaryExpr) Eval() (val.Value, error) {
+func (be BinaryExpr) Eval() (types.Value, error) {
 	x, err := be.x.Eval()
 	if err != nil {
 		return nil, err
@@ -73,48 +74,48 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 	}
 	op := be.op // Operator
 
-	var v val.Value
+	var v types.Value
 
 	switch x := x.(type) {
-	case val.Int:
+	case types.Int:
 		switch op.(type) {
 		case token.Add:
 			switch y := y.(type) {
-			case val.Int:
+			case types.Int:
 				v = x + y
 			}
 		case token.Sub:
 			switch y := y.(type) {
-			case val.Int:
+			case types.Int:
 				v = x - y
 			}
 		case token.Mul:
 			switch y := y.(type) {
-			case val.Int:
+			case types.Int:
 				v = x * y
 			}
 		case token.Div:
 			switch y := y.(type) {
-			case val.Int:
+			case types.Int:
 				if x%y == 0 {
 					v = x / y
 				} else {
-					v = val.Float(float64(x) / float64(y))
+					v = types.Float(float64(x) / float64(y))
 				}
 			}
 		case token.Rem:
 			switch y := y.(type) {
-			case val.Int:
+			case types.Int:
 				v = x % y
 			}
 		case token.Exp:
 			switch y := y.(type) {
-			case val.Int:
-				v = val.Int(int64(math.Pow(float64(x), float64(y))))
+			case types.Int:
+				v = types.Int(int64(math.Pow(float64(x), float64(y))))
 			}
 		case token.LShift:
 			switch y := y.(type) {
-			case val.Int:
+			case types.Int:
 				if y < 0 {
 					return nil, token.Error{
 						Msg:  fmt.Sprintf("negative value of left shift %d", y),
@@ -130,7 +131,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 			}
 		case token.RShift:
 			switch y := y.(type) {
-			case val.Int:
+			case types.Int:
 				if y < 0 {
 					return nil, token.Error{
 						Msg:  fmt.Sprintf("negative value of right shift %d", y),
@@ -146,8 +147,8 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 			}
 		case token.Colon:
 			switch y := y.(type) {
-			case val.Int:
-				v = val.Range{L: int64(x), R: int64(y)}
+			case types.Int:
+				v = types.SingleRange{Start: int64(x), End: int64(y)}
 			default:
 				return nil, token.Error{
 					Msg:  fmt.Sprintf("right bound of range must be of type integer, current type %s", y.Type()),
@@ -155,7 +156,7 @@ func (be BinaryExpr) Eval() (val.Value, error) {
 				}
 			}
 		}
-	case val.Range:
+	case types.Range:
 		switch op.(type) {
 		case token.Colon:
 			return nil, token.Error{
@@ -193,15 +194,15 @@ func MakeBinaryExpr(be ast.BinaryExpr, src []byte, s Scope) (BinaryExpr, error) 
 }
 
 type BitString struct {
-	x val.BitStr
+	x types.BitStr
 }
 
-func (bs BitString) Eval() (val.Value, error) {
+func (bs BitString) Eval() (types.Value, error) {
 	return bs.x, nil
 }
 
 func MakeBitString(e ast.BitString, src []byte) (BitString, error) {
-	x, err := val.MakeBitStr(token.Text(e.X, src))
+	x, err := types.MakeBitStr(token.Text(e.X, src))
 	if err != nil {
 		return BitString{}, fmt.Errorf("make bit string: %v", err)
 	}
@@ -214,7 +215,7 @@ type Call struct {
 	args     []Expr
 }
 
-func (c Call) Eval() (val.Value, error) {
+func (c Call) Eval() (types.Value, error) {
 	switch c.funcName {
 	case "bool":
 		return evalBool(c)
@@ -254,8 +255,8 @@ type Int struct {
 	x int64
 }
 
-func (i Int) Eval() (val.Value, error) {
-	return val.Int(i.x), nil
+func (i Int) Eval() (types.Value, error) {
+	return types.Int(i.x), nil
 }
 
 func MakeInt(e ast.Int, src []byte) (Int, error) {
@@ -271,19 +272,19 @@ type List struct {
 	exprs []Expr
 }
 
-func (l List) Eval() (val.Value, error) {
-	vals := []val.Value{}
+func (l List) Eval() (types.Value, error) {
+	vals := []types.Value{}
 
 	for i, expr := range l.exprs {
 		v, err := expr.Eval()
 		if err != nil {
-			return val.Int(0), fmt.Errorf("list evaluation, index %d: %v", i, err)
+			return types.Int(0), fmt.Errorf("list evaluation, index %d: %v", i, err)
 		}
 
 		vals = append(vals, v)
 	}
 
-	return val.List(vals), nil
+	return types.List(vals), nil
 }
 
 func MakeList(el ast.List, src []byte, s Scope) (List, error) {
@@ -304,8 +305,8 @@ type Bool struct {
 	x bool
 }
 
-func (b Bool) Eval() (val.Value, error) {
-	return val.Bool(b.x), nil
+func (b Bool) Eval() (types.Value, error) {
+	return types.Bool(b.x), nil
 }
 
 func MakeBool(e ast.Bool, src []byte) Bool {
@@ -317,8 +318,8 @@ type Float struct {
 	x float64
 }
 
-func (f Float) Eval() (val.Value, error) {
-	return val.Float(f.x), nil
+func (f Float) Eval() (types.Value, error) {
+	return types.Float(f.x), nil
 }
 
 func MakeFloat(e ast.Float, src []byte) (Float, error) {
@@ -336,15 +337,15 @@ type DeclaredIdentifier struct {
 	s Scope
 }
 
-func (di DeclaredIdentifier) Eval() (val.Value, error) {
+func (di DeclaredIdentifier) Eval() (types.Value, error) {
 	c, err := di.s.GetConst(di.x)
 	if err != nil {
-		return val.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.x, err)
+		return types.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.x, err)
 	}
 
 	x, err := c.Value.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.x, err)
+		return types.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.x, err)
 	}
 	return x, nil
 }
@@ -358,15 +359,15 @@ type QualifiedIdentifier struct {
 	s Scope
 }
 
-func (qi QualifiedIdentifier) Eval() (val.Value, error) {
+func (qi QualifiedIdentifier) Eval() (types.Value, error) {
 	c, err := qi.s.GetConst(qi.x)
 	if err != nil {
-		return val.Int(0), fmt.Errorf("evaluating qualified identifier '%s': %v", qi.x, err)
+		return types.Int(0), fmt.Errorf("evaluating qualified identifier '%s': %v", qi.x, err)
 	}
 
 	x, err := c.Value.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("evaluating constant qualified identifier '%s': %v", qi.x, err)
+		return types.Int(0), fmt.Errorf("evaluating constant qualified identifier '%s': %v", qi.x, err)
 	}
 	return x, nil
 }
@@ -379,8 +380,8 @@ type String struct {
 	x string
 }
 
-func (s String) Eval() (val.Value, error) {
-	return val.Str(s.x), nil
+func (s String) Eval() (types.Value, error) {
+	return types.Str(s.x), nil
 }
 
 func MakeString(e ast.String, src []byte) String {
@@ -395,35 +396,35 @@ type Subscript struct {
 	s    Scope
 }
 
-func (s Subscript) Eval() (val.Value, error) {
+func (s Subscript) Eval() (types.Value, error) {
 	idx, err := s.idx.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("subscript index evaluation:%v", err)
+		return types.Int(0), fmt.Errorf("subscript index evaluation:%v", err)
 	}
 
-	i, ok := idx.(val.Int)
+	i, ok := idx.(types.Int)
 	if !ok {
-		return val.Int(0), fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
+		return types.Int(0), fmt.Errorf("index must be of type 'integer', current type '%s'", idx.Type())
 	}
 
 	sym, err := s.s.GetSymbol(s.name, ConstDef)
 	if err != nil {
-		return val.Int(0), fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
+		return types.Int(0), fmt.Errorf("subscript evaluation, cannot find symbol '%s'", s.name)
 	}
 
 	cons, ok := sym.(*Const)
 	if !ok {
-		return val.Int(0), fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
+		return types.Int(0), fmt.Errorf("subscript evaluation, symbol '%s' is not a constant, type '%T'", s.name, sym)
 	}
 
 	exprList, ok := cons.Value.(ExpressionList)
 	if !ok {
-		return val.Int(0),
+		return types.Int(0),
 			fmt.Errorf("subscript evaluation, constant '%s' is not expression list, type '%T'", s.name, cons.Value)
 	}
 
 	if int(i) >= len(exprList.exprs) {
-		return val.Int(0), fmt.Errorf("list '%s', index %d out of range", s.name, i)
+		return types.Int(0), fmt.Errorf("list '%s', index %d out of range", s.name, i)
 	}
 
 	return exprList.exprs[i].Eval()
@@ -461,20 +462,20 @@ func MakeTime(e ast.Time, src []byte, s Scope) (Time, error) {
 	return Time{Int{x}, unit}, nil
 }
 
-func (tim Time) Eval() (val.Value, error) {
+func (tim Time) Eval() (types.Value, error) {
 	v, _ := tim.v.Eval()
 
-	var t val.Time
+	var t types.Time
 
 	switch tim.unit {
 	case "s":
-		t = val.Time{S: int64(v.(val.Int)), Ns: 0}
+		t = types.Time{S: int64(v.(types.Int)), Ns: 0}
 	case "ms":
-		t = val.Time{S: 0, Ns: 1000000 * int64(v.(val.Int))}
+		t = types.Time{S: 0, Ns: 1000000 * int64(v.(types.Int))}
 	case "us":
-		t = val.Time{S: 0, Ns: 1000 * int64(v.(val.Int))}
+		t = types.Time{S: 0, Ns: 1000 * int64(v.(types.Int))}
 	case "ns":
-		t = val.Time{S: 0, Ns: int64(v.(val.Int))}
+		t = types.Time{S: 0, Ns: int64(v.(types.Int))}
 	}
 
 	t.Normalize()
@@ -493,13 +494,13 @@ type UnaryExpr struct {
 	x  Expr
 }
 
-func (ue UnaryExpr) Eval() (val.Value, error) {
+func (ue UnaryExpr) Eval() (types.Value, error) {
 	x, err := ue.x.Eval()
 	if err != nil {
-		return val.Int(0), fmt.Errorf("unary expression, operand: %v", err)
+		return types.Int(0), fmt.Errorf("unary expression, operand: %v", err)
 	}
 
-	if x, ok := x.(val.Int); ok {
+	if x, ok := x.(types.Int); ok {
 		switch ue.op {
 		case UnaryPlus:
 			return x, nil
@@ -510,7 +511,7 @@ func (ue UnaryExpr) Eval() (val.Value, error) {
 		}
 	}
 
-	return val.Int(0), fmt.Errorf("unary expression, unknown operand type '%s'", x.Type())
+	return types.Int(0), fmt.Errorf("unary expression, unknown operand type '%s'", x.Type())
 }
 
 func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Scope) (UnaryExpr, error) {

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/pkg"
 )
@@ -31,7 +32,7 @@ func setBusWidth(main *parser.Inst) error {
 		)
 	}
 
-	if vi, ok := v.(val.Int); ok {
+	if vi, ok := v.(types.Int); ok {
 		busWidth = int64(vi)
 	} else {
 		return fmt.Errorf(

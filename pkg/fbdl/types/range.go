@@ -20,6 +20,8 @@ type SingleRange struct {
 	End   int64 // Right bound
 }
 
+func (sr SingleRange) Type() string { return "single range" }
+
 func (sr SingleRange) isRange() {}
 
 func (sr SingleRange) BitWidth() int64 {
@@ -35,6 +37,8 @@ func (sr SingleRange) Shift(offset int64) SingleRange {
 // ArrayRange represents possible multiple value ranges.
 // For example, [1:3, 8:10] means that the value can equal 1, 2, 3, 8, 9 or 10.
 type ArrayRange []SingleRange
+
+func (ar ArrayRange) Type() string { return "array range" }
 
 func (ar ArrayRange) isRange() {}
 

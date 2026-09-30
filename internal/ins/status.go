@@ -5,7 +5,6 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -13,7 +12,7 @@ import (
 type statusDiary struct {
 	atomicSet  bool
 	readValSet bool
-	readVal    val.Value
+	readVal    types.Value
 	widthSet   bool
 }
 
@@ -46,7 +45,7 @@ func insStatus(typeChain []parser.Functionality) (*fn.Status, error) {
 		if err != nil {
 			return nil, fmt.Errorf("'read-value': %v", err)
 		}
-		st.ReadValue = types.MakeBitStr(val)
+		st.ReadValue = val
 	}
 
 	return &st, nil
@@ -71,7 +70,7 @@ func applyStatusType(st *fn.Status, typ parser.Functionality, diary *statusDiary
 			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "atomic")
 			}
-			st.Atomic = bool(v.(val.Bool))
+			st.Atomic = bool(v.(types.Bool))
 			diary.atomicSet = true
 		case "read-value":
 			if diary.readValSet {
@@ -83,7 +82,7 @@ func applyStatusType(st *fn.Status, typ parser.Functionality, diary *statusDiary
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
-			st.Width = int64(v.(val.Int))
+			st.Width = int64(v.(types.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")

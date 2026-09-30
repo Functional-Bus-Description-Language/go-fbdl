@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
@@ -67,7 +68,7 @@ func applyBlackboxType(bb *fn.Blackbox, typ parser.Functionality) error {
 			if bb.Size != 0 {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "masters")
 			}
-			bb.Size = int64(v.(val.Int))
+			bb.Size = int64(v.(types.Int))
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
 		}

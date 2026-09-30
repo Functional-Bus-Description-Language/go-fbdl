@@ -3,20 +3,20 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
 type irqDiary struct {
 	addEnableSet      bool
 	clearSet          bool
 	enableInitValSet  bool
-	enableInitVal     val.Value
+	enableInitVal     types.Value
 	enableResetValSet bool
-	enableResetVal    val.Value
+	enableResetVal    types.Value
 	inTriggerSet      bool
 	outTriggerSet     bool
 }
@@ -71,13 +71,13 @@ func applyIrqType(irq *fn.Irq, typ parser.Functionality, diary *irqDiary) error 
 			if diary.addEnableSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "add-enable")
 			}
-			irq.AddEnable = (bool(v.(val.Bool)))
+			irq.AddEnable = (bool(v.(types.Bool)))
 			diary.addEnableSet = true
 		case "clear":
 			if diary.clearSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "clear")
 			}
-			irq.Clear = (string(v.(val.Str)))
+			irq.Clear = (string(v.(types.Str)))
 			diary.clearSet = true
 		case "enable-init-value":
 			if diary.enableInitValSet {
@@ -95,13 +95,13 @@ func applyIrqType(irq *fn.Irq, typ parser.Functionality, diary *irqDiary) error 
 			if diary.inTriggerSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "in-trigger")
 			}
-			irq.InTrigger = (string(v.(val.Str)))
+			irq.InTrigger = (string(v.(types.Str)))
 			diary.inTriggerSet = true
 		case "out-trigger":
 			if diary.outTriggerSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "out-trigger")
 			}
-			irq.OutTrigger = (string(v.(val.Str)))
+			irq.OutTrigger = (string(v.(types.Str)))
 			diary.outTriggerSet = true
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
@@ -135,7 +135,7 @@ func fillIrqValues(irq *fn.Irq, diary irqDiary) error {
 		if err != nil {
 			return fmt.Errorf("'enable-init-value': %v", err)
 		}
-		irq.EnableInitValue = types.MakeBitStr(val)
+		irq.EnableInitValue = val
 	}
 
 	if diary.enableResetValSet {
@@ -147,7 +147,7 @@ func fillIrqValues(irq *fn.Irq, diary irqDiary) error {
 		if err != nil {
 			return fmt.Errorf("'enable-reset-value': %v", err)
 		}
-		irq.EnableResetValue = types.MakeBitStr(val)
+		irq.EnableResetValue = val
 	}
 
 	return nil

@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/group"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
@@ -83,7 +84,7 @@ func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) 
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "virtual")
 			}
 
-			grp.Virtual = bool(v.(val.Bool))
+			grp.Virtual = bool(v.(types.Bool))
 			diary.virtualSet = true
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))

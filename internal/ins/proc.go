@@ -6,7 +6,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/proc"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -59,7 +58,7 @@ func applyProcType(p *fn.Proc, typ parser.Functionality, diary *procDiary) error
 			if diary.delaySet {
 				return fmt.Errorf(propAlreadySetMsg, prop.Loc(), "delay")
 			}
-			t := v.(val.Time)
+			t := v.(types.Time)
 			delay := types.Time{S: t.S, Ns: t.Ns}
 
 			p.Delay = &delay

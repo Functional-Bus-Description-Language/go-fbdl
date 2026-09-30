@@ -5,7 +5,6 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -13,11 +12,11 @@ import (
 type maskDiary struct {
 	atomicSet   bool
 	initValSet  bool
-	initVal     val.Value
+	initVal     types.Value
 	readValSet  bool
-	readVal     val.Value
+	readVal     types.Value
 	resetValSet bool
-	resetVal    val.Value
+	resetVal    types.Value
 	widthSet    bool
 }
 
@@ -71,7 +70,7 @@ func applyMaskType(mask *fn.Mask, typ parser.Functionality, diary *maskDiary) er
 			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "atomic")
 			}
-			mask.Atomic = bool(v.(val.Bool))
+			mask.Atomic = bool(v.(types.Bool))
 			diary.atomicSet = true
 		case "init-value":
 			if diary.initValSet {
@@ -95,7 +94,7 @@ func applyMaskType(mask *fn.Mask, typ parser.Functionality, diary *maskDiary) er
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
-			mask.Width = int64(v.(val.Int))
+			mask.Width = int64(v.(types.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")
@@ -120,7 +119,7 @@ func fillMaskValues(mask *fn.Mask, diary maskDiary) error {
 		if err != nil {
 			return fmt.Errorf("'init-value': %v", err)
 		}
-		mask.InitValue = types.MakeBitStr(val)
+		mask.InitValue = val
 	}
 
 	if diary.resetValSet {
@@ -128,7 +127,7 @@ func fillMaskValues(mask *fn.Mask, diary maskDiary) error {
 		if err != nil {
 			return fmt.Errorf("'reset-value': %v", err)
 		}
-		mask.ResetValue = types.MakeBitStr(val)
+		mask.ResetValue = val
 	}
 
 	if diary.readValSet {
@@ -136,7 +135,7 @@ func fillMaskValues(mask *fn.Mask, diary maskDiary) error {
 		if err != nil {
 			return fmt.Errorf("'read-value': %v", err)
 		}
-		mask.ReadValue = types.MakeBitStr(val)
+		mask.ReadValue = val
 	}
 
 	return nil

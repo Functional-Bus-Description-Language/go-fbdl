@@ -1,5 +1,4 @@
-// Package val provides types for Functional Bus Description Language type system.
-package val
+package types
 
 type Value interface {
 	Type() string
@@ -24,14 +23,6 @@ func (i Int) Type() string { return "integer" }
 type List []Value
 
 func (l List) Type() string { return "list" }
-
-// Range represents FBDL range type.
-type Range struct {
-	L int64
-	R int64
-}
-
-func (r Range) Type() string { return "range" }
 
 // Str represents FBDL string type.
 type Str string

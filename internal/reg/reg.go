@@ -4,13 +4,13 @@ import (
 	"log"
 	"sort"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 var busAlign int64
@@ -58,8 +58,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 		hash = hash & ((1 << busWidth) - 1)
 	}
 	// Ignore error, the value has been trimmed to the proper width.
-	val, _ := val.BitStrFromInt(val.Int(hash), busWidth)
-	id.InitValue = types.MakeBitStr(val)
+	id.InitValue, _ = types.BitStrFromInt(types.Int(hash), busWidth)
 	bus.Statics = append(bus.Statics, id)
 
 	if addTimestamp {

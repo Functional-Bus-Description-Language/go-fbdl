@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
@@ -62,22 +63,22 @@ func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 			if blk.Align != 0 {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "align")
 			}
-			blk.Align = int64(v.(val.Int))
+			blk.Align = int64(v.(types.Int))
 		case "masters":
 			if blk.Masters != 0 {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "masters")
 			}
-			blk.Masters = int64(v.(val.Int))
+			blk.Masters = int64(v.(types.Int))
 		case "reset":
 			if blk.Reset != "" {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "reset")
 			}
-			blk.Reset = string(v.(val.Str))
+			blk.Reset = string(v.(types.Str))
 		case "width":
 			if blk.Width != 0 {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
-			width := int64(v.(val.Int))
+			width := int64(v.(types.Int))
 			blk.Width = width
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))

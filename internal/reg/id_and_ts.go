@@ -4,7 +4,6 @@ import (
 	"math"
 	"time"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
@@ -26,14 +25,13 @@ func timestamp() *fn.Static {
 
 	ts.Width = width
 
-	timestamp := val.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
+	timestamp := types.Int(time.Now().Unix() & int64(math.Pow(2, float64(width))-1))
 
-	val, err := val.BitStrFromInt(timestamp, width)
+	val, err := types.BitStrFromInt(timestamp, width)
 	if err != nil {
 		panic("TIMESTAMP")
 	}
-
-	ts.InitValue = types.MakeBitStr(val)
+	ts.InitValue = val
 
 	return &ts
 }

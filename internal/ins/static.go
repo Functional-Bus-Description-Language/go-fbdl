@@ -6,18 +6,17 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type staticDiary struct {
 	initValSet  bool
-	initVal     val.Value
+	initVal     types.Value
 	readValSet  bool
-	readVal     val.Value
+	readVal     types.Value
 	resetValSet bool
-	resetVal    val.Value
+	resetVal    types.Value
 	widthSet    bool
 }
 
@@ -93,7 +92,7 @@ func applyStaticType(st *fn.Static, typ parser.Functionality, diary *staticDiary
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
-			st.Width = int64(v.(val.Int))
+			st.Width = int64(v.(types.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")
@@ -115,7 +114,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		if err != nil {
 			return fmt.Errorf("'init-value': %v", err)
 		}
-		st.InitValue = types.MakeBitStr(val)
+		st.InitValue = val
 	} else {
 		return fmt.Errorf("static functionality must have init-value property set")
 	}
@@ -125,7 +124,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		if err != nil {
 			return fmt.Errorf("'reset-value': %v", err)
 		}
-		st.ResetValue = types.MakeBitStr(val)
+		st.ResetValue = val
 	}
 
 	if diary.readValSet {
@@ -133,7 +132,7 @@ func fillStaticValues(st *fn.Static, diary staticDiary) error {
 		if err != nil {
 			return fmt.Errorf("'read-value': %v", err)
 		}
-		st.ReadValue = types.MakeBitStr(val)
+		st.ReadValue = val
 	}
 
 	return nil

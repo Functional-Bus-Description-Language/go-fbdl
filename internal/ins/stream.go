@@ -7,7 +7,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -60,7 +59,7 @@ func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDia
 			if diary.delaySet {
 				return fmt.Errorf(propAlreadySetMsg, prop.Loc(), "delay")
 			}
-			t := v.(val.Time)
+			t := v.(types.Time)
 			delay := types.Time{S: t.S, Ns: t.Ns}
 
 			strm.Delay = &delay

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 // assertCall asserts that function name for given call is supported,
@@ -33,24 +33,24 @@ func assertCall(c Call) error {
 	return nil
 }
 
-func evalBool(c Call) (val.Value, error) {
+func evalBool(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
 		return nil, fmt.Errorf("bool argument evaluation: %v", err)
 	}
 
 	switch arg := arg.(type) {
-	case val.Int:
+	case types.Int:
 		if arg != 0 {
-			return val.Bool(true), nil
+			return types.Bool(true), nil
 		}
-		return val.Bool(false), nil
+		return types.Bool(false), nil
 	}
 
 	return nil, fmt.Errorf("invalid argument type '%s' for bool function", arg.Type())
 }
 
-func evalCeil(c Call) (val.Value, error) {
+func evalCeil(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
 		return nil, fmt.Errorf("ceil argument evaluation: %v", err)
@@ -59,16 +59,16 @@ func evalCeil(c Call) (val.Value, error) {
 	f := float64(0.0)
 
 	switch arg := arg.(type) {
-	case val.Int:
+	case types.Int:
 		return arg, nil
-	case val.Float:
+	case types.Float:
 		f = float64(arg)
 	}
 
-	return val.Int(int64(math.Ceil(f))), nil
+	return types.Int(int64(math.Ceil(f))), nil
 }
 
-func evalFloor(c Call) (val.Value, error) {
+func evalFloor(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
 		return nil, fmt.Errorf("floor argument evaluation: %v", err)
@@ -77,16 +77,16 @@ func evalFloor(c Call) (val.Value, error) {
 	f := float64(0.0)
 
 	switch arg := arg.(type) {
-	case val.Int:
+	case types.Int:
 		return arg, nil
-	case val.Float:
+	case types.Float:
 		f = float64(arg)
 	}
 
-	return val.Int(int64(math.Floor(f))), nil
+	return types.Int(int64(math.Floor(f))), nil
 }
 
-func evalLog2(c Call) (val.Value, error) {
+func evalLog2(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
 		return nil, fmt.Errorf("log2 argument evaluation: %v", err)
@@ -96,10 +96,10 @@ func evalLog2(c Call) (val.Value, error) {
 	f := float64(0.0)
 
 	switch arg := arg.(type) {
-	case val.Int:
+	case types.Int:
 		argType = "int"
 		f = float64(arg)
-	case val.Float:
+	case types.Float:
 		argType = "float"
 		f = float64(arg)
 	}
@@ -110,13 +110,13 @@ func evalLog2(c Call) (val.Value, error) {
 
 	r := math.Log2(f)
 	if r == float64(int64(r)) {
-		return val.Int(int64(r)), nil
+		return types.Int(int64(r)), nil
 	}
 
-	return val.Float(r), nil
+	return types.Float(r), nil
 }
 
-func evalLog10(c Call) (val.Value, error) {
+func evalLog10(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
 		return nil, fmt.Errorf("log10 argument evaluation: %v", err)
@@ -126,10 +126,10 @@ func evalLog10(c Call) (val.Value, error) {
 	f := float64(0.0)
 
 	switch arg := arg.(type) {
-	case val.Int:
+	case types.Int:
 		argType = "int"
 		f = float64(arg)
-	case val.Float:
+	case types.Float:
 		argType = "float"
 		f = float64(arg)
 	}
@@ -140,8 +140,8 @@ func evalLog10(c Call) (val.Value, error) {
 
 	r := math.Log10(f)
 	if r == float64(int64(r)) {
-		return val.Int(int64(r)), nil
+		return types.Int(int64(r)), nil
 	}
 
-	return val.Float(r), nil
+	return types.Float(r), nil
 }

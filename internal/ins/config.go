@@ -3,22 +3,22 @@ package ins
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type configDiary struct {
 	atomicSet   bool
 	initValSet  bool
-	initVal     val.Value
+	initVal     types.Value
 	rangeSet    bool
 	readValSet  bool
-	readVal     val.Value
+	readVal     types.Value
 	resetValSet bool
-	resetVal    val.Value
+	resetVal    types.Value
 	widthSet    bool
 }
 
@@ -72,7 +72,7 @@ func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiar
 			if diary.atomicSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "atomic")
 			}
-			cfg.Atomic = (bool(v.(val.Bool)))
+			cfg.Atomic = (bool(v.(types.Bool)))
 			diary.atomicSet = true
 		case "init-value":
 			if diary.initValSet {
@@ -89,20 +89,14 @@ func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiar
 			}
 
 			switch rng := v.(type) {
-			case val.Int:
+			case types.Int:
 				cfg.Range = types.SingleRange{Start: 0, End: int64(rng)}
-			case val.Range:
-				cfg.Range = types.SingleRange{Start: rng.L, End: rng.R}
-			case val.List:
+			case types.SingleRange:
+				cfg.Range = rng
+			case types.List:
 				mr := types.ArrayRange{}
 				for _, r := range rng {
-					mr = append(
-						mr,
-						types.SingleRange{
-							Start: r.(val.Range).L,
-							End:   r.(val.Range).R,
-						},
-					)
+					mr = append(mr, r.(types.SingleRange))
 				}
 				cfg.Range = mr
 			}
@@ -126,7 +120,7 @@ func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiar
 			if diary.rangeSet {
 				return fmt.Errorf(propConflictMsg, p.Loc(), "width", "range")
 			}
-			cfg.Width = int64(v.(val.Int))
+			cfg.Width = int64(v.(types.Int))
 			diary.widthSet = true
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
@@ -155,7 +149,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		if err != nil {
 			return fmt.Errorf("'init-value': %v", err)
 		}
-		cfg.InitValue = types.MakeBitStr(val)
+		cfg.InitValue = val
 	}
 
 	if diary.resetValSet {
@@ -163,7 +157,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		if err != nil {
 			return fmt.Errorf("'reset-value': %v", err)
 		}
-		cfg.ResetValue = types.MakeBitStr(val)
+		cfg.ResetValue = val
 	}
 
 	if diary.readValSet {
@@ -171,7 +165,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		if err != nil {
 			return fmt.Errorf("'read-value': %v", err)
 		}
-		cfg.ReadValue = types.MakeBitStr(val)
+		cfg.ReadValue = val
 	}
 
 	return nil

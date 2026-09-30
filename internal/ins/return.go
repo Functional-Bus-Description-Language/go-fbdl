@@ -3,9 +3,10 @@ package ins
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
@@ -59,7 +60,7 @@ func applyReturnType(ret *fn.Return, typ parser.Functionality, diary *returnDiar
 			if diary.widthSet {
 				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
 			}
-			ret.Width = int64(v.(val.Int))
+			ret.Width = int64(v.(types.Int))
 			diary.widthSet = true
 		default:
 			panic("should never happen")
