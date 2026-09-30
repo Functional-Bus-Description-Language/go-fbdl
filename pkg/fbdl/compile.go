@@ -2,7 +2,7 @@ package fbdl
 
 import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/pkg"
@@ -11,8 +11,8 @@ import (
 // Compile compiles functional bus description for a main bus named mainName located in the file which path is provided as mainPath.
 // If noTimestamp is true, then the bus timestamp is not generated.
 func Compile(mainPath, mainName string, addTimestamp bool) (*fn.Block, map[string]*pkg.Package, error) {
-	packages := prs.DiscoverPackages(mainPath)
-	prs.ParsePackages(packages)
+	packages := parser.DiscoverPackages(mainPath)
+	parser.ParsePackages(packages)
 
 	bus, insPkgs, err := ins.Instantiate(packages, mainName)
 	if err != nil {

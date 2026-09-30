@@ -8,7 +8,7 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/args"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ins"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/reg"
 )
 
@@ -39,8 +39,8 @@ func main() {
 
 	printDebug = args.Debug
 
-	packages := prs.DiscoverPackages(args.MainFile)
-	prs.ParsePackages(packages)
+	packages := parser.DiscoverPackages(args.MainFile)
+	parser.ParsePackages(packages)
 
 	bus, pkgsConsts, err := ins.Instantiate(packages, args.MainBus)
 	if err != nil {

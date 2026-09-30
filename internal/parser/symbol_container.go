@@ -1,4 +1,4 @@
-package prs
+package parser
 
 type symbolContainer struct {
 	Consts []*Const

@@ -3,14 +3,14 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 )
 
 // Check property value type and value.
-func checkProp(prop prs.Prop) error {
+func checkProp(prop parser.Prop) error {
 	pv, err := prop.Value.Eval()
 	if err != nil {
 		return err

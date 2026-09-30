@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/stream"
@@ -16,7 +16,7 @@ type streamDiary struct {
 	delaySet bool
 }
 
-func insStream(typeChain []prs.Functionality) (*fn.Stream, error) {
+func insStream(typeChain []parser.Functionality) (*fn.Stream, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -41,7 +41,7 @@ func insStream(typeChain []prs.Functionality) (*fn.Stream, error) {
 	return &stream, nil
 }
 
-func applyStreamType(strm *fn.Stream, typ prs.Functionality, diary *streamDiary) error {
+func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "stream"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -72,7 +72,7 @@ func applyStreamType(strm *fn.Stream, typ prs.Functionality, diary *streamDiary)
 	}
 
 	for _, s := range typ.Symbols() {
-		pe, ok := s.(*prs.Inst)
+		pe, ok := s.(*parser.Inst)
 		if !ok {
 			continue
 		}

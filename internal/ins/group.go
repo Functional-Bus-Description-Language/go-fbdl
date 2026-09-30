@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
@@ -17,7 +17,7 @@ type groupDiary struct {
 	virtualSet bool
 }
 
-func insGroup(typeChain []prs.Functionality) (*fn.Group, error) {
+func insGroup(typeChain []parser.Functionality) (*fn.Group, error) {
 	typeChainStr := fmt.Sprintf("debug: instantiating group, type chain: %s", typeChain[0].Name())
 	for i := 1; i < len(typeChain); i++ {
 		typeChainStr = fmt.Sprintf("%s -> %s", typeChainStr, typeChain[i].Name())
@@ -63,7 +63,7 @@ func insGroup(typeChain []prs.Functionality) (*fn.Group, error) {
 	return &grp, nil
 }
 
-func applyGroupType(grp *fn.Group, typ prs.Functionality, diary *groupDiary) error {
+func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "group"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -91,7 +91,7 @@ func applyGroupType(grp *fn.Group, typ prs.Functionality, diary *groupDiary) err
 	}
 
 	for _, sym := range typ.Symbols() {
-		if c, ok := sym.(*prs.Const); ok {
+		if c, ok := sym.(*parser.Const); ok {
 			if constContainer.HasConst(grp.Consts, c.Name()) {
 				return fmt.Errorf(
 					"const '%s' is already defined in one of ancestor types", c.Name(),
@@ -107,12 +107,12 @@ func applyGroupType(grp *fn.Group, typ prs.Functionality, diary *groupDiary) err
 			constContainer.AddConst(&grp.Consts, c.Name(), val)
 		}
 
-		_, ok := sym.(*prs.Inst)
+		_, ok := sym.(*parser.Inst)
 		if !ok {
 			continue
 		}
 
-		f := insFunctionality(sym.(prs.Functionality))
+		f := insFunctionality(sym.(parser.Functionality))
 
 		if !util.IsValidInnerType(f.Type(), "group") {
 			return fmt.Errorf(

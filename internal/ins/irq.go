@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -21,7 +21,7 @@ type irqDiary struct {
 	outTriggerSet     bool
 }
 
-func insIrq(typeChain []prs.Functionality) (*fn.Irq, error) {
+func insIrq(typeChain []parser.Functionality) (*fn.Irq, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -52,7 +52,7 @@ func insIrq(typeChain []prs.Functionality) (*fn.Irq, error) {
 	return &irq, nil
 }
 
-func applyIrqType(irq *fn.Irq, typ prs.Functionality, diary *irqDiary) error {
+func applyIrqType(irq *fn.Irq, typ parser.Functionality, diary *irqDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "irq"); err != nil {
 			return fmt.Errorf(": %v", err)

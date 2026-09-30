@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func insBlackbox(typeChain []prs.Functionality) (*fn.Blackbox, error) {
+func insBlackbox(typeChain []parser.Functionality) (*fn.Blackbox, error) {
 	typeChainStr := fmt.Sprintf("debug: instantiating blackbox, type chain: %s", typeChain[0].Name())
 	for i := 1; i < len(typeChain); i++ {
 		typeChainStr = fmt.Sprintf("%s -> %s", typeChainStr, typeChain[i].Name())
@@ -48,7 +48,7 @@ func insBlackbox(typeChain []prs.Functionality) (*fn.Blackbox, error) {
 	return &bb, nil
 }
 
-func applyBlackboxType(bb *fn.Blackbox, typ prs.Functionality) error {
+func applyBlackboxType(bb *fn.Blackbox, typ parser.Functionality) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "blackbox"); err != nil {
 			return fmt.Errorf(": %v", err)

@@ -1,12 +1,12 @@
 package ins
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/pkg"
 )
 
-func constifyPackages(packages prs.Packages) map[string]*pkg.Package {
+func constifyPackages(packages parser.Packages) map[string]*pkg.Package {
 	cPkgs := map[string]*pkg.Package{}
 
 	// TODO: Resolve name conflicts.
@@ -22,7 +22,7 @@ func constifyPackages(packages prs.Packages) map[string]*pkg.Package {
 	return cPkgs
 }
 
-func constifyPkg(pp *prs.Package) *pkg.Package {
+func constifyPkg(pp *parser.Package) *pkg.Package {
 	p := pkg.Package{}
 
 	for _, c := range pp.Consts {

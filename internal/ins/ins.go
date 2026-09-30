@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -16,7 +16,7 @@ const dfltBusWidth int64 = 32
 
 var busWidth int64
 
-func setBusWidth(main *prs.Inst) error {
+func setBusWidth(main *parser.Inst) error {
 	prop, ok := main.Props().Get("width")
 	if !ok {
 		busWidth = dfltBusWidth
@@ -45,7 +45,7 @@ func setBusWidth(main *prs.Inst) error {
 
 // Instantiate main bus within given packages scope.
 // MainName is the name of the main bus.
-func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]*pkg.Package, error) {
+func Instantiate(packages parser.Packages, mainName string) (*fn.Block, map[string]*pkg.Package, error) {
 	main, err := packages["main"][0].GetInst(mainName)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%v", err)
@@ -68,7 +68,7 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 		for _, pkg := range pkgs {
 			for _, symbol := range pkg.Symbols() {
 				name := symbol.Name()
-				prsFn, ok := symbol.(prs.Functionality)
+				prsFn, ok := symbol.(parser.Functionality)
 				if !ok {
 					continue
 				}
@@ -91,7 +91,7 @@ func Instantiate(packages prs.Packages, mainName string) (*fn.Block, map[string]
 	return mainBus, pkgs, nil
 }
 
-func insFunctionality(pf prs.Functionality) fn.Functionality {
+func insFunctionality(pf parser.Functionality) fn.Functionality {
 	typeChain := resolveToBaseType(pf)
 
 	var f fn.Functionality
@@ -134,11 +134,11 @@ func insFunctionality(pf prs.Functionality) fn.Functionality {
 	return f
 }
 
-func resolveToBaseType(f prs.Functionality) []prs.Functionality {
-	typeChain := []prs.Functionality{}
+func resolveToBaseType(f parser.Functionality) []parser.Functionality {
+	typeChain := []parser.Functionality{}
 
 	if !util.IsBaseType(f.Type()) {
-		var s prs.Symbol
+		var s parser.Symbol
 		var err error
 		if f.Scope() != nil {
 			s, err = f.Scope().GetType(f.Type())
@@ -151,7 +151,7 @@ func resolveToBaseType(f prs.Functionality) []prs.Functionality {
 				f.File().Path, f.Line(), f.Col(), err,
 			)
 		}
-		typeFn := s.(prs.Functionality)
+		typeFn := s.(parser.Functionality)
 
 		typeChain = append(typeChain, resolveToBaseType(typeFn)...)
 	}

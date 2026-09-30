@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
@@ -21,7 +21,7 @@ type staticDiary struct {
 	widthSet    bool
 }
 
-func insStatic(typeChain []prs.Functionality) (*fn.Static, error) {
+func insStatic(typeChain []parser.Functionality) (*fn.Static, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -56,7 +56,7 @@ func insStatic(typeChain []prs.Functionality) (*fn.Static, error) {
 	return &st, nil
 }
 
-func applyStaticType(st *fn.Static, typ prs.Functionality, diary *staticDiary) error {
+func applyStaticType(st *fn.Static, typ parser.Functionality, diary *staticDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "static"); err != nil {
 			return fmt.Errorf(": %v", err)

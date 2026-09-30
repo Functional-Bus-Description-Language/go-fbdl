@@ -1,5 +1,4 @@
-// Package prs implements parser based on the tree-sitter parser.
-package prs
+package parser
 
 import (
 	"log"

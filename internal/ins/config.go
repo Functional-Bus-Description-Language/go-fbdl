@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -22,7 +22,7 @@ type configDiary struct {
 	widthSet    bool
 }
 
-func insConfig(typeChain []prs.Functionality) (*fn.Config, error) {
+func insConfig(typeChain []parser.Functionality) (*fn.Config, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func insConfig(typeChain []prs.Functionality) (*fn.Config, error) {
 	return &cfg, nil
 }
 
-func applyConfigType(cfg *fn.Config, typ prs.Functionality, diary *configDiary) error {
+func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "config"); err != nil {
 			return fmt.Errorf(": %v", err)

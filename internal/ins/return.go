@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -13,7 +13,7 @@ type returnDiary struct {
 	widthSet bool
 }
 
-func insReturn(typeChain []prs.Functionality) (*fn.Return, error) {
+func insReturn(typeChain []parser.Functionality) (*fn.Return, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -40,7 +40,7 @@ func insReturn(typeChain []prs.Functionality) (*fn.Return, error) {
 	return &ret, nil
 }
 
-func applyReturnType(ret *fn.Return, typ prs.Functionality, diary *returnDiary) error {
+func applyReturnType(ret *fn.Return, typ parser.Functionality, diary *returnDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "return"); err != nil {
 			return fmt.Errorf(": %v", err)

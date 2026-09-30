@@ -3,11 +3,11 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
-func resolveArgLists(packages prs.Packages) error {
+func resolveArgLists(packages parser.Packages) error {
 	for _, pkgs := range packages {
 		for _, pkg := range pkgs {
 			err := resolveArgListsInSymbols(pkg.Symbols())
@@ -20,9 +20,9 @@ func resolveArgLists(packages prs.Packages) error {
 	return nil
 }
 
-func resolveArgListsInSymbols(syms []prs.Symbol) error {
+func resolveArgListsInSymbols(syms []parser.Symbol) error {
 	for _, s := range syms {
-		f, ok := s.(prs.Functionality)
+		f, ok := s.(parser.Functionality)
 		if !ok {
 			continue
 		}
@@ -47,10 +47,10 @@ func resolveArgListsInSymbols(syms []prs.Symbol) error {
 	return nil
 }
 
-func resolveArgs(symbol prs.Functionality) (map[string]prs.Expr, error) {
+func resolveArgs(symbol parser.Functionality) (map[string]parser.Expr, error) {
 	var err error
 	args := symbol.Args()
-	resolvedArgs := make(map[string]prs.Expr)
+	resolvedArgs := make(map[string]parser.Expr)
 	inPositionalArgs := true
 
 	typeSymbol, err := symbol.GetType(symbol.Type())

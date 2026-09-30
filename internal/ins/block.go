@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/block"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
@@ -12,7 +12,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
-func insBlock(typeChain []prs.Functionality) (*fn.Block, error) {
+func insBlock(typeChain []parser.Functionality) (*fn.Block, error) {
 	typeChainStr := fmt.Sprintf("debug: instantiating block, type chain: %s", typeChain[0].Name())
 	for i := 1; i < len(typeChain); i++ {
 		typeChainStr = fmt.Sprintf("%s -> %s", typeChainStr, typeChain[i].Name())
@@ -43,7 +43,7 @@ func insBlock(typeChain []prs.Functionality) (*fn.Block, error) {
 	return &blk, nil
 }
 
-func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
+func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "bus"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -85,7 +85,7 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 	}
 
 	for _, s := range typ.Symbols() {
-		if c, ok := s.(*prs.Const); ok {
+		if c, ok := s.(*parser.Const); ok {
 			if constContainer.HasConst(blk.Consts, c.Name()) {
 				return fmt.Errorf(
 					"const '%s' is already defined in one of ancestor types", c.Name(),
@@ -101,12 +101,12 @@ func applyBlockType(blk *fn.Block, typ prs.Functionality) error {
 			constContainer.AddConst(&blk.Consts, c.Name(), val)
 		}
 
-		_, ok := s.(*prs.Inst)
+		_, ok := s.(*parser.Inst)
 		if !ok {
 			continue
 		}
 
-		f := insFunctionality(s.(prs.Functionality))
+		f := insFunctionality(s.(parser.Functionality))
 
 		if !util.IsValidInnerType(f.Type(), "block") {
 			return fmt.Errorf(

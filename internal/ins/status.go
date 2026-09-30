@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -17,7 +17,7 @@ type statusDiary struct {
 	widthSet   bool
 }
 
-func insStatus(typeChain []prs.Functionality) (*fn.Status, error) {
+func insStatus(typeChain []parser.Functionality) (*fn.Status, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -52,7 +52,7 @@ func insStatus(typeChain []prs.Functionality) (*fn.Status, error) {
 	return &st, nil
 }
 
-func applyStatusType(st *fn.Status, typ prs.Functionality, diary *statusDiary) error {
+func applyStatusType(st *fn.Status, typ parser.Functionality, diary *statusDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "status"); err != nil {
 			return fmt.Errorf(": %v", err)

@@ -1,4 +1,4 @@
-package prs
+package parser
 
 // Functionality is common interface for Inst and Type structs.
 // Type is actually a functionality, but not instantiated.

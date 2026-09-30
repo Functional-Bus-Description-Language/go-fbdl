@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -15,7 +15,7 @@ type paramDiary struct {
 	widthSet bool
 }
 
-func insParam(typeChain []prs.Functionality) (*fn.Param, error) {
+func insParam(typeChain []parser.Functionality) (*fn.Param, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -42,7 +42,7 @@ func insParam(typeChain []prs.Functionality) (*fn.Param, error) {
 	return &param, nil
 }
 
-func applyParamType(param *fn.Param, typ prs.Functionality, diary *paramDiary) error {
+func applyParamType(param *fn.Param, typ parser.Functionality, diary *paramDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "param"); err != nil {
 			return fmt.Errorf(": %v", err)

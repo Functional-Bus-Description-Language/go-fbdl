@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/proc"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
@@ -15,7 +15,7 @@ type procDiary struct {
 	delaySet bool
 }
 
-func insProc(typeChain []prs.Functionality) (*fn.Proc, error) {
+func insProc(typeChain []parser.Functionality) (*fn.Proc, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -40,7 +40,7 @@ func insProc(typeChain []prs.Functionality) (*fn.Proc, error) {
 	return &proc, nil
 }
 
-func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
+func applyProcType(p *fn.Proc, typ parser.Functionality, diary *procDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "proc"); err != nil {
 			return fmt.Errorf(": %v", err)
@@ -71,7 +71,7 @@ func applyProcType(p *fn.Proc, typ prs.Functionality, diary *procDiary) error {
 	}
 
 	for _, s := range typ.Symbols() {
-		pe, ok := s.(*prs.Inst)
+		pe, ok := s.(*parser.Inst)
 		if !ok {
 			continue
 		}

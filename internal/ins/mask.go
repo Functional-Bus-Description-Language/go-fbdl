@@ -3,7 +3,7 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/prs"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/val"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
@@ -21,7 +21,7 @@ type maskDiary struct {
 	widthSet    bool
 }
 
-func insMask(typeChain []prs.Functionality) (*fn.Mask, error) {
+func insMask(typeChain []parser.Functionality) (*fn.Mask, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
 		return nil, fmt.Errorf("%v", err)
@@ -52,7 +52,7 @@ func insMask(typeChain []prs.Functionality) (*fn.Mask, error) {
 	return &mask, nil
 }
 
-func applyMaskType(mask *fn.Mask, typ prs.Functionality, diary *maskDiary) error {
+func applyMaskType(mask *fn.Mask, typ parser.Functionality, diary *maskDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "mask"); err != nil {
 			return fmt.Errorf(": %v", err)

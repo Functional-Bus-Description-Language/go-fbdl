@@ -1,4 +1,4 @@
-package prs
+package parser
 
 type Scope interface {
 	GetConst(name string) (*Const, error)
