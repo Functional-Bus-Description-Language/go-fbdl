@@ -1,6 +1,10 @@
 package fn
 
 import (
+	"encoding/json"
+	"fmt"
+	"hash/adler32"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/cnst"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
@@ -76,4 +80,19 @@ func (blk *Block) HasFunctionality(name string) bool {
 	}
 
 	return false
+}
+
+func (blk *Block) ToJSON() []byte {
+	bytes, err := json.MarshalIndent(blk, "", "  ")
+	if err != nil {
+		panic(fmt.Sprintf("'%s' block json marshalling failed: %v", blk.Name, err))
+	}
+
+	return bytes
+}
+
+func (blk *Block) Hash() uint32 {
+	bytes := blk.ToJSON()
+
+	return adler32.Checksum(bytes)
 }

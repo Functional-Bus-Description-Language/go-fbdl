@@ -74,9 +74,6 @@ func main() {
 	}
 
 	// Dump registerification results to stdout
-	jsonBytes, err := json.MarshalIndent(bus, "", "  ")
-	if err != nil {
-		log.Fatalf("marshal registerification results: %v", err)
-	}
+	jsonBytes := bus.ToJSON()
 	fmt.Printf("%s", string(jsonBytes))
 }

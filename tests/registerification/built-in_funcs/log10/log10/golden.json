@@ -88,7 +88,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"6b6904f3\"",
+      "InitValue": "x\"ace78fc7\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

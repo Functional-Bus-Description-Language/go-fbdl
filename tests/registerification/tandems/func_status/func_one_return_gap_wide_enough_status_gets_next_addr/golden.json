@@ -70,7 +70,7 @@
       "Doc": "Bus identifier.",
       "IsArray": false,
       "Count": 1,
-      "InitValue": "x\"5a690463\"",
+      "InitValue": "x\"6258f6ee\"",
       "ReadValue": "",
       "ResetValue": "",
       "Width": 32,

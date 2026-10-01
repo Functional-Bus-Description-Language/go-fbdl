@@ -9,7 +9,6 @@ import (
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/gap"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/hash"
 )
 
 var busAlign int64
@@ -52,7 +51,7 @@ func Registerify(bus *fn.Block, addTimestamp bool) {
 	}
 	id := id()
 	id.Access = types.MakeSingleAccess(0, 0, id.Width)
-	hash := int64(hash.Hash(bus))
+	hash := int64(bus.Hash())
 	if busWidth < 32 {
 		hash = hash & ((1 << busWidth) - 1)
 	}
