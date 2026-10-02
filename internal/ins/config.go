@@ -50,7 +50,11 @@ func insConfig(typeChain []parser.Functionality) (*fn.Config, error) {
 	return &cfg, nil
 }
 
-func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiary) error {
+func applyConfigType(
+	cfg *fn.Config,
+	typ parser.Functionality,
+	diary *configDiary,
+) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "config"); err != nil {
 			return fmt.Errorf(": %v", err)
