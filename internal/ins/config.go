@@ -11,15 +11,12 @@ import (
 )
 
 type configDiary struct {
-	atomicSet   bool
-	initValSet  bool
-	initVal     types.Value
-	rangeSet    bool
-	readValSet  bool
-	readVal     types.Value
-	resetValSet bool
-	resetVal    types.Value
-	widthSet    bool
+	atomicSet bool
+	rangeSet  bool
+	widthSet  bool
+	initVal   types.Value
+	readVal   types.Value
+	resetVal  types.Value
 }
 
 func insConfig(typeChain []parser.Functionality) (*fn.Config, error) {
@@ -77,13 +74,12 @@ func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiar
 			cfg.Atomic = (bool(val.(types.Bool)))
 			diary.atomicSet = true
 		case "init-value":
-			if diary.initValSet {
+			if diary.initVal != nil {
 				return fmt.Errorf(
 					propAlreadySetMsg, prop.Loc(), "init-value",
 				)
 			}
 			diary.initVal = val
-			diary.initValSet = true
 		case "range":
 			if diary.rangeSet {
 				return fmt.Errorf(
@@ -110,21 +106,19 @@ func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiar
 			}
 			diary.rangeSet = true
 		case "read-value":
-			if diary.readValSet {
+			if diary.readVal != nil {
 				return fmt.Errorf(
 					propAlreadySetMsg, prop.Loc(), "read-value",
 				)
 			}
 			diary.readVal = val
-			diary.readValSet = true
 		case "reset-value":
-			if diary.resetValSet {
+			if diary.resetVal != nil {
 				return fmt.Errorf(
 					propAlreadySetMsg, prop.Loc(), "reset-value",
 				)
 			}
 			diary.resetVal = val
-			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
 				return fmt.Errorf(
@@ -160,7 +154,7 @@ func fillConfigProps(cfg *fn.Config, diary configDiary) {
 }
 
 func fillConfigValues(cfg *fn.Config, diary configDiary) error {
-	if diary.initValSet {
+	if diary.initVal != nil {
 		val, err := processValue(diary.initVal, cfg.Width)
 		if err != nil {
 			return fmt.Errorf("'init-value': %v", err)
@@ -168,7 +162,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		cfg.InitValue = val
 	}
 
-	if diary.resetValSet {
+	if diary.resetVal != nil {
 		val, err := processValue(diary.resetVal, cfg.Width)
 		if err != nil {
 			return fmt.Errorf("'reset-value': %v", err)
@@ -176,7 +170,7 @@ func fillConfigValues(cfg *fn.Config, diary configDiary) error {
 		cfg.ResetValue = val
 	}
 
-	if diary.readValSet {
+	if diary.readVal != nil {
 		val, err := processValue(diary.readVal, cfg.Width)
 		if err != nil {
 			return fmt.Errorf("'read-value': %v", err)
