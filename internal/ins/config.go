@@ -54,41 +54,49 @@ func insConfig(typeChain []parser.Functionality) (*fn.Config, error) {
 }
 
 func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiary) error {
-	for _, p := range typ.Props() {
-		if err := util.IsValidProperty(p.Name, "config"); err != nil {
+	for _, prop := range typ.Props() {
+		if err := util.IsValidProperty(prop.Name, "config"); err != nil {
 			return fmt.Errorf(": %v", err)
 		}
-		if err := checkProp(p); err != nil {
+		if err := checkProp(prop); err != nil {
 			return err
 		}
 
-		v, err := p.Value.Eval()
+		val, err := prop.Value.Eval()
 		if err != nil {
 			return err
 		}
 
-		switch p.Name {
+		switch prop.Name {
 		case "atomic":
 			if diary.atomicSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "atomic")
+				return fmt.Errorf(
+					propAlreadySetMsg, prop.Loc(), "atomic",
+				)
 			}
-			cfg.Atomic = (bool(v.(types.Bool)))
+			cfg.Atomic = (bool(val.(types.Bool)))
 			diary.atomicSet = true
 		case "init-value":
 			if diary.initValSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "init-value")
+				return fmt.Errorf(
+					propAlreadySetMsg, prop.Loc(), "init-value",
+				)
 			}
-			diary.initVal = v
+			diary.initVal = val
 			diary.initValSet = true
 		case "range":
 			if diary.rangeSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "range")
+				return fmt.Errorf(
+					propAlreadySetMsg, prop.Loc(), "range",
+				)
 			}
 			if diary.widthSet {
-				return fmt.Errorf(propConflictMsg, p.Loc(), "range", "width")
+				return fmt.Errorf(
+					propConflictMsg, prop.Loc(), "range", "width",
+				)
 			}
 
-			switch rng := v.(type) {
+			switch rng := val.(type) {
 			case types.Int:
 				cfg.Range = types.SingleRange{Start: 0, End: int64(rng)}
 			case types.SingleRange:
@@ -103,27 +111,35 @@ func applyConfigType(cfg *fn.Config, typ parser.Functionality, diary *configDiar
 			diary.rangeSet = true
 		case "read-value":
 			if diary.readValSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "read-value")
+				return fmt.Errorf(
+					propAlreadySetMsg, prop.Loc(), "read-value",
+				)
 			}
-			diary.readVal = v
+			diary.readVal = val
 			diary.readValSet = true
 		case "reset-value":
 			if diary.resetValSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "reset-value")
+				return fmt.Errorf(
+					propAlreadySetMsg, prop.Loc(), "reset-value",
+				)
 			}
-			diary.resetVal = v
+			diary.resetVal = val
 			diary.resetValSet = true
 		case "width":
 			if diary.widthSet {
-				return fmt.Errorf(propAlreadySetMsg, p.Loc(), "width")
+				return fmt.Errorf(
+					propAlreadySetMsg, prop.Loc(), "width",
+				)
 			}
 			if diary.rangeSet {
-				return fmt.Errorf(propConflictMsg, p.Loc(), "width", "range")
+				return fmt.Errorf(
+					propConflictMsg, prop.Loc(), "width", "range",
+				)
 			}
-			cfg.Width = int64(v.(types.Int))
+			cfg.Width = int64(val.(types.Int))
 			diary.widthSet = true
 		default:
-			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
+			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
 		}
 	}
 
