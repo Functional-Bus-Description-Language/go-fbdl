@@ -35,8 +35,6 @@ func Parse() {
 			maybeVal = true
 			// Parameters default values.
 			switch param {
-			case "-r":
-				DumpReg = "reg.json"
 			case "-c":
 				DumpConsts = "const.json"
 			default:
@@ -86,8 +84,6 @@ func Parse() {
 			}
 
 			switch param {
-			case "-r":
-				DumpReg = arg
 			case "-c":
 				DumpConsts = arg
 			}

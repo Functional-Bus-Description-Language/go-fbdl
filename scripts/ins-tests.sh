@@ -44,7 +44,7 @@ do
 
 	echo "  $dir"
 	cd "$dir"
-	../../../fbdl -r bus.fbd > /dev/null 2>stderr || true
+	../../../fbdl bus.fbd > /dev/null 2>stderr || true
 	diff --color stderr.golden stderr
 	if $update; then
 		cp stderr stderr.golden

@@ -9,7 +9,6 @@ var (
 	Debug        bool
 	NoGaps       bool
 
-	DumpReg    string
 	DumpConsts string
 )
 
@@ -31,7 +30,6 @@ func isValidParam(p string) bool {
 	params := map[string]bool{
 		"-c":    true,
 		"-main": true,
-		"-r":    true,
 	}
 	if _, ok := params[p]; ok {
 		return true
