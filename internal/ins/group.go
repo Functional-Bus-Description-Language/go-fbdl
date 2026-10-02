@@ -137,7 +137,7 @@ func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) 
 	return nil
 }
 
-func addGroupInnerElement(grp *fn.Group, f any) error {
+func addGroupInnerElement(grp *fn.Group, f fn.Functionality) error {
 	var err error
 
 	switch f := f.(type) {

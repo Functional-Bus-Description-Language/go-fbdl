@@ -132,7 +132,7 @@ func fillBlockProps(blk *fn.Block) {
 	}
 }
 
-func addBlockInnerFunc(blk *fn.Block, f any) {
+func addBlockInnerFunc(blk *fn.Block, f fn.Functionality) {
 	switch f := f.(type) {
 	case (*fn.Blackbox):
 		blk.Blackboxes = append(blk.Blackboxes, f)
