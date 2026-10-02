@@ -1,11 +1,19 @@
 package gap
 
+import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/args"
+)
+
 type Pool struct {
 	singles []Single
 	arrays  []Array
 }
 
 func (p *Pool) Add(g Gap) {
+	if args.NoGaps {
+		return
+	}
+
 	switch g := g.(type) {
 	case Single:
 		if len(p.singles) == 0 {
@@ -43,6 +51,10 @@ func (p *Pool) Add(g Gap) {
 // If writeSafe = true, then gap must be write safe.
 // if writeSafe = false, then gap can be write safe, but does not have to.
 func (p *Pool) GetSingle(width int64, writeSafe bool) (Single, bool) {
+	if args.NoGaps {
+		return Single{}, false
+	}
+
 	for i, s := range p.singles {
 		if (s.Width() >= width) && (!writeSafe || (writeSafe && s.WriteSafe)) {
 			p.singles = append(p.singles[:i], p.singles[i+1:]...)

@@ -1,11 +1,13 @@
+// Custom package for command line arguments parsing.
 package args
 
 var (
 	MainBus  string
 	MainFile string
 
-	Debug        bool
 	AddTimestamp bool
+	Debug        bool
+	NoGaps       bool
 
 	DumpReg    string
 	DumpConsts string
@@ -13,7 +15,11 @@ var (
 
 func isValidFlag(f string) bool {
 	flags := map[string]bool{
-		"-help": true, "-version": true, "-debug": true, "-add-timestamp": true,
+		"-add-timestamp": true,
+		"-debug":         true,
+		"-help":          true,
+		"-no-gaps":       true,
+		"-version":       true,
 	}
 	if _, ok := flags[f]; ok {
 		return true
@@ -23,7 +29,9 @@ func isValidFlag(f string) bool {
 
 func isValidParam(p string) bool {
 	params := map[string]bool{
-		"-main": true, "-r": true, "-c": true,
+		"-c":    true,
+		"-main": true,
+		"-r":    true,
 	}
 	if _, ok := params[p]; ok {
 		return true
