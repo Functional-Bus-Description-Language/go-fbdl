@@ -119,7 +119,7 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 				if y < 0 {
 					return nil, token.Error{
 						Msg:  fmt.Sprintf("negative value of left shift %d", y),
-						Toks: []token.Token{be.ast.Y.Tok()},
+						Toks: []token.Token{op},
 					}
 				}
 				v = x << y
@@ -135,7 +135,7 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 				if y < 0 {
 					return nil, token.Error{
 						Msg:  fmt.Sprintf("negative value of right shift %d", y),
-						Toks: []token.Token{be.ast.Y.Tok()},
+						Toks: []token.Token{op},
 					}
 				}
 				v = x >> y

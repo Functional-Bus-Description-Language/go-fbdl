@@ -1,5 +1,5 @@
 error: negative value of right shift -9
-bus.fbd +2:26
+bus.fbd +2:23
    |
  2 |   c config; width = 1 >> -9
-   |                          ^^
+   |                       ^^

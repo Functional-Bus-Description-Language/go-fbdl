@@ -17,7 +17,7 @@ func buildParamList(ctx *context) ([]Param, error) {
 	if _, ok := ctx.nextTok().(token.RParen); ok {
 		return nil, token.Error{
 			Msg:  "empty parameter list",
-			Toks: []token.Token{token.Join(ctx.token(), ctx.nextTok())},
+			Toks: []token.Token{ctx.token()},
 		}
 	}
 

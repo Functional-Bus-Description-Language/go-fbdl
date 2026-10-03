@@ -108,22 +108,22 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 	return insts, nil
 }
 
-func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
+func buildInst(astInst ast.Inst, src []byte) (*Inst, error) {
 	i := &Inst{}
 
-	i.token = ai.Name
-	i.name = token.Text(ai.Name, src)
-	i.doc = ai.Doc.Text(src)
+	i.token = astInst.Name
+	i.name = token.Text(astInst.Name, src)
+	i.doc = astInst.Doc.Text(src)
 
-	v, err := MakeExpr(ai.Count, src, i)
+	v, err := MakeExpr(astInst.Count, src, i)
 	if err != nil {
 		return nil, err
 	}
 	i.count = v
 
-	i.typ = token.Text(ai.Type, src)
+	i.typ = token.Text(astInst.Type, src)
 
-	argList, err := buildArgList(ai.ArgList, src, i)
+	argList, err := buildArgList(astInst.ArgList, src, i)
 	if err != nil {
 		return nil, err
 	}
@@ -132,11 +132,11 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 	if util.IsBaseType(i.typ) && i.argList.Len() > 0 {
 		return nil, token.Error{
 			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
-			Toks: []token.Token{token.Join(i.argList.LParen, i.argList.RParen)},
+			Toks: []token.Token{astInst.Type},
 		}
 	}
 
-	props, syms, err := buildBody(ai.Body, src, i)
+	props, syms, err := buildBody(astInst.Body, src, i)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func buildInst(ai ast.Inst, src []byte) (*Inst, error) {
 			if err := util.IsValidProperty(p.Name, i.typ); err != nil {
 				return nil, token.Error{
 					Msg:  err.Error(),
-					Toks: []token.Token{ai.Body.Props[j].Name},
+					Toks: []token.Token{astInst.Body.Props[j].Name},
 				}
 			}
 

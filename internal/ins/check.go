@@ -17,8 +17,8 @@ func checkProp(prop parser.Prop) error {
 		return err
 	}
 
-	invalidTypeMsg := `%s property must be of type %s, current type %s`
-	mustBePositiveMsg := `%s property must be positive, current value %d`
+	invalidTypeMsg := `'%s' property must be of type %s, current type %s`
+	mustBePositiveMsg := `'%s' property must be positive, current value %d`
 
 	name := prop.Name
 
@@ -28,7 +28,7 @@ func checkProp(prop parser.Prop) error {
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		if v != "Read Write" && v != "Read Only" && v != "Write Only" {
@@ -36,14 +36,14 @@ func checkProp(prop parser.Prop) error {
 				Msg: fmt.Sprintf(
 					"access property must be \"Read Write\", \"Read Only\" or \"Write Only\", current value %q", v,
 				),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "add-enable", "atomic", "byte-write-enable", "virtual":
 		if _, ok := pv.(types.Bool); !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "bool", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "align":
@@ -51,13 +51,13 @@ func checkProp(prop parser.Prop) error {
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		if v < 1 {
 			return token.Error{
 				Msg:  fmt.Sprintf(mustBePositiveMsg, name, v),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		if util.AlignToPowerOf2(int64(v)) != int64(v) {
@@ -65,7 +65,7 @@ func checkProp(prop parser.Prop) error {
 				Msg: fmt.Sprintf(
 					"align property value must be a power of 2, current value %d", v,
 				),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "clear":
@@ -73,13 +73,13 @@ func checkProp(prop parser.Prop) error {
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		if v != "Explicit" && v != "On Read" {
 			return token.Error{
 				Msg:  fmt.Sprintf("clear property must be \"Explicit\" or \"On Read\", current value %q", v),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "delay":
@@ -89,7 +89,7 @@ func checkProp(prop parser.Prop) error {
 		default:
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "time", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "enable-init-value", "enable-reset-value", "init-value", "read-value", "reset-value":
@@ -99,7 +99,7 @@ func checkProp(prop parser.Prop) error {
 		default:
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer or bit string", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "in-trigger", "out-trigger":
@@ -107,13 +107,13 @@ func checkProp(prop parser.Prop) error {
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		if v != "Edge" && v != "Level" {
 			return token.Error{
 				Msg:  fmt.Sprintf("%s property must be \"Edge\" or \"Level\", current value %q", name, v),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "masters":
@@ -121,13 +121,13 @@ func checkProp(prop parser.Prop) error {
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		if v < 1 {
 			return token.Error{
 				Msg:  fmt.Sprintf(mustBePositiveMsg, name, v),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "range":
@@ -136,33 +136,33 @@ func checkProp(prop parser.Prop) error {
 			if v < 0 {
 				return token.Error{
 					Msg:  fmt.Sprintf("range property value must be natural, value %d is negative", v),
-					Toks: []token.Token{prop.ValueTok},
+					Toks: []token.Token{prop.NameTok},
 				}
 			}
 		case types.SingleRange:
 			if v.Start < 0 {
 				return token.Error{
 					Msg:  fmt.Sprintf("negative range left bound %d", v.Start),
-					Toks: []token.Token{prop.ValueTok},
+					Toks: []token.Token{prop.NameTok},
 				}
 			}
 			if v.End < 0 {
 				return token.Error{
 					Msg:  fmt.Sprintf("negative range right bound %d", v.End),
-					Toks: []token.Token{prop.ValueTok},
+					Toks: []token.Token{prop.NameTok},
 				}
 			}
 			if v.Start > v.End {
 				return token.Error{
 					Msg:  fmt.Sprintf("range left bound greater than right bound, %d > %d", v.Start, v.End),
-					Toks: []token.Token{prop.ValueTok},
+					Toks: []token.Token{prop.NameTok},
 				}
 			}
 		case types.List:
 			if len(v) == 0 {
 				return token.Error{
 					Msg:  "empty range property value list",
-					Toks: []token.Token{prop.ValueTok},
+					Toks: []token.Token{prop.NameTok},
 				}
 			}
 
@@ -174,7 +174,7 @@ func checkProp(prop parser.Prop) error {
 							"all values in range property list must be of type range, value with index %d is of type %s",
 							i, rng.Type(),
 						),
-						Toks: []token.Token{prop.ValueTok},
+						Toks: []token.Token{prop.NameTok},
 					}
 				}
 
@@ -184,7 +184,7 @@ func checkProp(prop parser.Prop) error {
 							"negative range left bound %d in value with index %d",
 							r.Start, i,
 						),
-						Toks: []token.Token{prop.ValueTok},
+						Toks: []token.Token{prop.NameTok},
 					}
 				}
 				if r.End < 0 {
@@ -193,7 +193,7 @@ func checkProp(prop parser.Prop) error {
 							"negative range right bound %d in value with index %d",
 							r.End, i,
 						),
-						Toks: []token.Token{prop.ValueTok},
+						Toks: []token.Token{prop.NameTok},
 					}
 				}
 				if r.Start > r.End {
@@ -202,14 +202,14 @@ func checkProp(prop parser.Prop) error {
 							"range left bound greater than right bound in value with index %d, %d > %d",
 							i, r.Start, r.End,
 						),
-						Toks: []token.Token{prop.ValueTok},
+						Toks: []token.Token{prop.NameTok},
 					}
 				}
 			}
 		default:
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer, range or [range]", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "reset":
@@ -217,14 +217,14 @@ func checkProp(prop parser.Prop) error {
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "string", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		reset := string(v)
 		if reset != "Sync" && reset != "Async" {
 			return token.Error{
 				Msg:  fmt.Sprintf("reset property must be \"Sync\" or \"Async\", current value %q", reset),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	case "read-latency", "size", "width":
@@ -232,13 +232,13 @@ func checkProp(prop parser.Prop) error {
 		if !ok {
 			return token.Error{
 				Msg:  fmt.Sprintf(invalidTypeMsg, name, "integer", pv.Type()),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 		if v < 0 {
 			return token.Error{
 				Msg:  fmt.Sprintf("%s property must be natural, current value %d", prop.Name, v),
-				Toks: []token.Token{prop.ValueTok},
+				Toks: []token.Token{prop.NameTok},
 			}
 		}
 	default:

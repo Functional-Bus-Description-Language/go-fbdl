@@ -1,5 +1,5 @@
-error: align property must be positive, current value -10
-bus.fbd +2:11
+error: 'align' property must be positive, current value -10
+bus.fbd +2:3
    |
  2 |   align = -10
-   |           ^^^
+   |   ^^^^^

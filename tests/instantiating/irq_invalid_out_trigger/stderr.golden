@@ -1,5 +1,5 @@
 error: out-trigger property must be "Edge" or "Level", current value "abc"
-bus.fbd +3:19
+bus.fbd +3:5
    |
  3 |     out-trigger = "abc"
-   |                   ^^^^^
+   |     ^^^^^^^^^^^

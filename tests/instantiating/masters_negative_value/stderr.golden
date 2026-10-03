@@ -1,5 +1,5 @@
-error: masters property must be positive, current value -10
-bus.fbd +2:13
+error: 'masters' property must be positive, current value -10
+bus.fbd +2:3
    |
  2 |   masters = -10
-   |             ^^^
+   |   ^^^^^^^

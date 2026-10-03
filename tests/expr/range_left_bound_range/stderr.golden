@@ -1,5 +1,5 @@
 error: left bound of range must be of type integer, current type range
-bus.fbd +2:21
+bus.fbd +2:22
    |
  2 |   c config; range = 0:1:2
-   |                     ^^^
+   |                      ^

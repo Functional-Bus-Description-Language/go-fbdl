@@ -36,7 +36,7 @@ func buildArgList(ctx *context) (ArgList, error) {
 	if _, ok := ctx.nextTok().(token.RParen); ok {
 		return argList, token.Error{
 			Msg:  "empty argument list",
-			Toks: []token.Token{token.Join(ctx.token(), ctx.nextTok())},
+			Toks: []token.Token{ctx.token()},
 		}
 	}
 

@@ -79,7 +79,7 @@ type (
 )
 
 func (be BinaryExpr) expr()            {}
-func (be BinaryExpr) Tok() token.Token { return token.Join(be.X.Tok(), be.Y.Tok()) }
+func (be BinaryExpr) Tok() token.Token { return be.Op }
 
 func (bs BitString) expr()            {}
 func (bs BitString) Tok() token.Token { return bs.X }
@@ -91,7 +91,7 @@ func (c Call) expr()            {}
 func (c Call) Tok() token.Token { return c.Name }
 
 func (l List) expr()            {}
-func (l List) Tok() token.Token { return token.Join(l.LBracket, l.RBracket) }
+func (l List) Tok() token.Token { return l.LBracket }
 
 func (i Ident) expr()            {}
 func (i Ident) Tok() token.Token { return i.Name }
@@ -112,10 +112,10 @@ func (t Time) expr()            {}
 func (t Time) Tok() token.Token { return t.X }
 
 func (ue UnaryExpr) expr()            {}
-func (ue UnaryExpr) Tok() token.Token { return token.Join(ue.Op, ue.X.Tok()) }
+func (ue UnaryExpr) Tok() token.Token { return ue.Op }
 
 func (pe ParenExpr) expr()            {}
-func (pe ParenExpr) Tok() token.Token { return token.Join(pe.LParen, pe.RParen) }
+func (pe ParenExpr) Tok() token.Token { return pe.LParen }
 
 // leftOp is the operator on the left side of the expression.
 func buildExpr(ctx *context, leftOp token.Operator) (Expr, error) {

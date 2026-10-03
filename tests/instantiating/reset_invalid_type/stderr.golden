@@ -1,5 +1,5 @@
-error: reset property must be of type string, current type float
-bus.fbd +2:11
+error: 'reset' property must be of type string, current type float
+bus.fbd +2:3
    |
  2 |   reset = 3.14
-   |           ^^^^
+   |   ^^^^^

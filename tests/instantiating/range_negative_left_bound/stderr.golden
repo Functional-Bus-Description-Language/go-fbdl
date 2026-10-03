@@ -1,5 +1,5 @@
 error: negative range left bound -1
-bus.fbd +3:13
+bus.fbd +3:5
    |
  3 |     range = -1:0
-   |             ^^^^
+   |     ^^^^^
