@@ -1,5 +1,4 @@
 package parser
-
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
@@ -19,7 +18,7 @@ func checkPropConflict(typ string, prop Prop, props PropContainer) error {
 
 	if r, ok := props.Get("range"); ok {
 		if prop.Name == "width" {
-			return fmt.Errorf(msg, "width", "range", r.Line, r.Col)
+			return fmt.Errorf(msg, "width", "range", r.Line(), r.Col())
 		}
 	}
 
