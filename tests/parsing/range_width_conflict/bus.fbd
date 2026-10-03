@@ -1,0 +1,4 @@
+main bus
+  cfg config
+    range = 5
+    width = 2
