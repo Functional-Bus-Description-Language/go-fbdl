@@ -201,12 +201,8 @@ func parseSpace(ctx *context, toks *[]Token) (Token, error) {
 	// Eat all spaces
 	startIdx := ctx.idx
 	ctx.idx++
-	for {
-		if ctx.byte() == ' ' {
-			ctx.idx++
-		} else {
-			break
-		}
+	for ctx.byte() == ' ' {
+		ctx.idx++
 	}
 
 	spaceCount := ctx.idx - startIdx
@@ -237,13 +233,9 @@ func parseIndent(ctx *context, toks *[]Token) (Token, error) {
 
 	spaceCount := 0
 	// Eat all spaces
-	for {
-		if ctx.byte() == ' ' {
-			ctx.idx++
-			spaceCount++
-		} else {
-			break
-		}
+	for ctx.byte() == ' ' {
+		ctx.idx++
+		spaceCount++
 	}
 
 	if ctx.byte() == '\n' {
