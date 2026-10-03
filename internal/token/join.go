@@ -8,7 +8,7 @@ package token
 //   - tokens are not in the same line,
 //   - tok1 is after tok2.
 func Join(tok1, tok2 Token) Token {
-	if tok1.Line() != tok2.Line() {
+	if tok1.Path() != tok2.Path() {
 		panic("cannot join tokens from different files")
 	}
 	if tok1.Line() != tok2.Line() {
@@ -20,12 +20,10 @@ func Join(tok1, tok2 Token) Token {
 
 	return None{
 		position{
-			start:  tok1.Start(),
-			end:    tok2.End(),
-			line:   tok1.Line(),
-			column: tok1.Column(),
-			src:    tok1.Src(),
-			path:   tok1.Path(),
+			start: tok1.Start(),
+			end:   tok2.End(),
+			src:   tok1.Src(),
+			path:  tok1.Path(),
 		},
 	}
 }

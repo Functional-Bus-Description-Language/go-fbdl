@@ -2,10 +2,8 @@ package token
 
 // Parsing context
 type context struct {
-	line   int // Current line number
 	indent int // Current indent level
 	idx    int // Current buffer index
-	nlIdx  int // Last newline index
 	src    []byte
 	path   string
 }
@@ -14,14 +12,9 @@ func (ctx context) end() bool {
 	return ctx.idx >= len(ctx.src)
 }
 
-// Returns column number for given index.
-func (ctx context) col(idx int) int {
-	return idx - ctx.nlIdx
-}
-
 // Creates position from the current context state.
 func (ctx context) pos() position {
-	return position{ctx.idx, ctx.idx, ctx.line, ctx.col(ctx.idx), ctx.src, ctx.path}
+	return position{ctx.idx, ctx.idx, ctx.src, ctx.path}
 }
 
 // Returns byte with index equal idx.

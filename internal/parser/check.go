@@ -1,4 +1,5 @@
 package parser
+
 import (
 	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"

@@ -93,74 +93,74 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 	return types, nil
 }
 
-func buildType(at ast.Type, src []byte) (*Type, error) {
-	t := &Type{}
+func buildType(astTyp ast.Type, src []byte) (*Type, error) {
+	typ := &Type{}
 
-	t.token = at.Name
-	t.name = token.Text(at.Name, src)
-	t.doc = at.Doc.Text(src)
+	typ.token = astTyp.Name
+	typ.name = token.Text(astTyp.Name, src)
+	typ.doc = astTyp.Doc.Text(src)
 
-	params, err := buildParamList(at.Params, src, t)
+	params, err := buildParamList(astTyp.Params, src, typ)
 	if err != nil {
 		return nil, err
 	}
-	t.params = params
+	typ.params = params
 
-	v, err := MakeExpr(at.Count, src, t)
+	v, err := MakeExpr(astTyp.Count, src, typ)
 	if err != nil {
 		return nil, err
 	}
-	t.count = v
+	typ.count = v
 
-	t.typ = token.Text(at.Type, src)
+	typ.typ = token.Text(astTyp.Type, src)
 
-	args, err := buildArgList(at.Args, src, t)
+	args, err := buildArgList(astTyp.Args, src, typ)
 	if err != nil {
 		return nil, err
 	}
-	t.args = args
+	typ.args = args
 
-	if util.IsBaseType(t.typ) && len(t.args.Args) > 0 {
+	if util.IsBaseType(typ.typ) && len(typ.args.Args) > 0 {
 		return nil, token.Error{
-			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", t.typ),
-			Toks: []token.Token{token.Join(t.args.LParen, t.args.RParen)},
+			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", typ.typ),
+			Toks: []token.Token{astTyp.Type},
 		}
 	}
 
-	props, syms, err := buildBody(at.Body, src, t)
+	props, syms, err := buildBody(astTyp.Body, src, typ)
 	if err != nil {
 		return nil, err
 	}
 
-	if util.IsBaseType(t.typ) {
+	if util.IsBaseType(typ.typ) {
 		for j, p := range props {
-			if err := util.IsValidProperty(p.Name, t.typ); err != nil {
+			if err := util.IsValidProperty(p.Name, typ.typ); err != nil {
 				return nil, token.Error{
 					Msg:  err.Error(),
-					Toks: []token.Token{at.Body.Props[j].Name},
+					Toks: []token.Token{astTyp.Body.Props[j].Name},
 				}
 			}
 
-			if err := checkPropConflict(t.typ, p, props[0:j]); err != nil {
+			if err := checkPropConflict(typ.typ, p, props[0:j]); err != nil {
 				return nil, token.Error{
 					Msg:  err.Error(),
-					Toks: []token.Token{at.Body.Props[j].Name},
+					Toks: []token.Token{astTyp.Body.Props[j].Name},
 				}
 			}
 		}
 	}
-	t.props = props
+	typ.props = props
 
 	for _, s := range syms.Consts {
-		s.setScope(t)
+		s.setScope(typ)
 	}
 	for _, s := range syms.Insts {
-		s.setScope(t)
+		s.setScope(typ)
 	}
 	for _, s := range syms.Types {
-		s.setScope(t)
+		s.setScope(typ)
 	}
-	t.symbolContainer = syms
+	typ.symbolContainer = syms
 
-	return t, nil
+	return typ, nil
 }
