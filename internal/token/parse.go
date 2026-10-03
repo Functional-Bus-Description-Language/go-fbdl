@@ -302,15 +302,13 @@ func parseNewline(ctx *context, toks *[]Token) error {
 	nl := Newline{ctx.pos()}
 
 	// Eat all newlines
-	for {
+	for ctx.byte() == '\n' {
 		ctx.nlIdx = ctx.idx
 		ctx.line++
 		ctx.idx++
-		if ctx.end() || ctx.byte() != '\n' {
-			break
-		}
 		nl.end++
 	}
+	nl.end--
 
 	*toks = append(*toks, nl)
 
