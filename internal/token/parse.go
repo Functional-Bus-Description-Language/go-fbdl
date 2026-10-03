@@ -65,84 +65,115 @@ func Parse(src []byte, path string) ([]Token, error) {
 		b := ctx.byte()      // Current byte
 		nb := ctx.nextByte() // Next byte
 
-		if b == ' ' {
+		switch b {
+		case ' ':
 			tok, err = parseSpace(&ctx, &toks)
-		} else if b == '\t' {
+		case '\t':
 			err = parseTab(&ctx, &toks)
-		} else if b == '\n' {
+		case '\n':
 			err = parseNewline(&ctx, &toks)
-		} else if b == '#' {
+		case '#':
 			tok = parseComment(&ctx, toks)
-		} else if b == ',' {
+		case ',':
 			tok, err = parseComma(&ctx, toks)
-		} else if b == ';' {
+		case ';':
 			tok, err = parseSemicolon(&ctx, toks)
-		} else if b == ':' {
+		case ':':
 			tok = parseColon(&ctx, toks)
-		} else if b == '!' && nb == '=' {
-			tok = parseNonequalityOperator(&ctx)
-		} else if b == '!' {
-			tok = parseNegationOperator(&ctx)
-		} else if b == '=' && nb == '=' {
-			tok = parseEqualityOperator(&ctx)
-		} else if b == '=' {
-			tok = parseAssignmentOperator(&ctx)
-		} else if b == '+' {
+		case '!':
+			if nb == '=' {
+				tok = parseNonequalityOperator(&ctx)
+			} else {
+				tok = parseNegationOperator(&ctx)
+			}
+		case '=':
+			if nb == '=' {
+				tok = parseEqualityOperator(&ctx)
+			} else {
+				tok = parseAssignmentOperator(&ctx)
+			}
+		case '+':
 			tok = parseAdditionOperator(&ctx)
-		} else if b == '-' {
+		case '-':
 			tok = parseSubtractionOperator(&ctx)
-		} else if b == '%' {
+		case '%':
 			tok = parseRemainderOperator(&ctx)
-		} else if b == '*' && nb == '*' {
-			tok = parseExponentiationOperator(&ctx)
-		} else if b == '*' {
-			tok = parseMultiplicationOperator(&ctx)
-		} else if b == '/' {
+		case '*':
+			if nb == '*' {
+				tok = parseExponentiationOperator(&ctx)
+			} else {
+				tok = parseMultiplicationOperator(&ctx)
+			}
+		case '/':
 			tok = parseDivisionOperator(&ctx)
-		} else if b == '<' && nb == '=' {
-			tok = parseLessThanEqualOperator(&ctx)
-		} else if b == '<' && nb == '<' {
-			tok = parseLeftShiftOperator(&ctx)
-		} else if b == '<' {
-			tok = parseLessThanOperator(&ctx)
-		} else if b == '>' && nb == '=' {
-			tok = parseGreaterThanEqualOperator(&ctx)
-		} else if b == '>' && nb == '>' {
-			tok = parseRightShiftOperator(&ctx)
-		} else if b == '>' {
-			tok = parseGreaterThanOperator(&ctx)
-		} else if b == '(' {
+		case '<':
+			switch nb {
+			case '=':
+				tok = parseLessThanEqualOperator(&ctx)
+			case '<':
+				tok = parseLeftShiftOperator(&ctx)
+			default:
+				tok = parseLessThanOperator(&ctx)
+			}
+		case '>':
+			switch nb {
+			case '=':
+				tok = parseGreaterThanEqualOperator(&ctx)
+			case '>':
+				tok = parseRightShiftOperator(&ctx)
+			default:
+				tok = parseGreaterThanOperator(&ctx)
+			}
+		case '(':
 			tok = parseLeftParenthesis(&ctx)
-		} else if b == ')' {
+		case ')':
 			tok = parseRightParenthesis(&ctx)
-		} else if b == '[' {
+		case '[':
 			tok = parseLeftBracket(&ctx)
-		} else if b == ']' {
+		case ']':
 			tok = parseRightBracket(&ctx)
-		} else if b == '&' && nb == '&' {
-			tok = parseLogicalAnd(&ctx)
-		} else if b == '&' {
-			tok = parseBitAnd(&ctx)
-		} else if b == '|' && nb == '|' {
-			tok = parseLogicalOr(&ctx)
-		} else if b == '|' {
-			tok = parseBitOr(&ctx)
-		} else if b == '"' {
+		case '&':
+			if nb == '&' {
+				tok = parseLogicalAnd(&ctx)
+			} else {
+				tok = parseBitAnd(&ctx)
+			}
+		case '|':
+			if nb == '|' {
+				tok = parseLogicalOr(&ctx)
+			} else {
+				tok = parseBitOr(&ctx)
+			}
+		case '"':
 			tok, err = parseString(&ctx)
-		} else if (b == 'b' || b == 'B') && nb == '"' {
-			tok, err = parseBinBitString(&ctx)
-		} else if (b == 'o' || b == 'O') && nb == '"' {
-			tok, err = parseOctalBitString(&ctx)
-		} else if (b == 'x' || b == 'X') && nb == '"' {
-			tok, err = parseHexBitString(&ctx)
-		} else if isDigit(b) {
+		case 'b', 'B':
+			if nb == '"' {
+				tok, err = parseBinBitString(&ctx)
+			} else {
+				tok, err = parseWord(&ctx, &toks)
+			}
+		case 'o', 'O':
+			if nb == '"' {
+				tok, err = parseOctalBitString(&ctx)
+			} else {
+				tok, err = parseWord(&ctx, &toks)
+			}
+		case 'x', 'X':
+			if nb == '"' {
+				tok, err = parseHexBitString(&ctx)
+			} else {
+				tok, err = parseWord(&ctx, &toks)
+			}
+		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 			tok, err = parseNumber(&ctx)
-		} else if isLetter(b) || b == '_' {
-			tok, err = parseWord(&ctx, &toks)
-		} else {
-			return nil, Error{
-				Msg:  fmt.Sprintf("invalid byte 0x%x ('%c')", b, b),
-				Toks: []Token{None{position: ctx.pos()}},
+		default:
+			if isLetter(b) || b == '_' {
+				tok, err = parseWord(&ctx, &toks)
+			} else {
+				return nil, Error{
+					Msg:  fmt.Sprintf("invalid byte 0x%x ('%c')", b, b),
+					Toks: []Token{None{position: ctx.pos()}},
+				}
 			}
 		}
 
