@@ -60,3 +60,37 @@ func TestBuildMultiConst(t *testing.T) {
 		}
 	}
 }
+
+func TestBuildMultiConstDocs(t *testing.T) {
+	src := []byte(`const
+  # Doc A
+  A = 1
+
+  # Doc B
+  B = 2
+
+  # Not a Doc
+
+  C = 3
+`)
+	toks, err := token.Parse(src, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	file, err := Build(toks)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(file.Consts) != 3 {
+		t.Fatalf("got %d constants, want 3", len(file.Consts))
+	}
+	if got := file.Consts[0].Doc.Text(src); got != "Doc A" {
+		t.Errorf("A: got doc %q, want %q", got, "Doc A")
+	}
+	if got := file.Consts[1].Doc.Text(src); got != "Doc B" {
+		t.Errorf("B: got doc %q, want %q", got, "Doc B")
+	}
+	if !file.Consts[2].Doc.isEmpty() {
+		t.Errorf("C: got doc %q, want no doc", file.Consts[2].Doc.Text(src))
+	}
+}

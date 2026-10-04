@@ -73,6 +73,11 @@ tokenLoop:
 			case token.Ident:
 				con.Name = t
 				state = Ass
+			case token.Comment:
+				con.Doc = buildDoc(ctx)
+				ctx.idx--
+			case token.Newline:
+				con.Doc = emptyDoc()
 			default:
 				return nil, unexpected(t, "identifier")
 			}
@@ -103,6 +108,7 @@ tokenLoop:
 				con.Doc = doc
 				ctx.idx--
 			case token.Newline:
+				con.Doc = emptyDoc()
 				continue
 			case token.Dedent:
 				ctx.idx++

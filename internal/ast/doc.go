@@ -49,7 +49,7 @@ func buildDoc(ctx *context) Doc {
 		switch t := ctx.token().(type) {
 		case token.Newline:
 			if prevNewline {
-				break
+				return doc
 			} else {
 				prevNewline = true
 			}
