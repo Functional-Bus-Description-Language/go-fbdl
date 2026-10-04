@@ -43,14 +43,14 @@ func TestBuildMultiConst(t *testing.T) {
 			Name:  toks[13].(token.Ident),
 			Value: Float{toks[15].(token.Float)},
 		},
-		Const{Name: toks[17].(token.Ident), Value: Bool{toks[19].(token.Bool)}},
+		Const{Name: toks[18].(token.Ident), Value: Bool{toks[20].(token.Bool)}},
 	}
 	ctx := context{toks: toks}
 	got, err := buildMultiConst(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if ctx.idx != 20 {
+	if ctx.idx != 21 {
 		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 

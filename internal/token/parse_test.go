@@ -15,7 +15,8 @@ func TestParse(t *testing.T) {
 			0,
 			"\n\n",
 			[]Token{
-				Newline{position{start: 0, end: 1}},
+				Newline{position{start: 0, end: 0}},
+				Newline{position{start: 1, end: 1}},
 				Eof{position{start: 2, end: 2}},
 			},
 		},
@@ -223,7 +224,8 @@ func TestParse(t *testing.T) {
 				Width{position{start: 16, end: 20}},
 				Ass{position{start: 21, end: 21}},
 				Int{position{start: 22, end: 22}},
-				Newline{position{start: 23, end: 24}},
+				Newline{position{start: 23, end: 23}},
+				Newline{position{start: 24, end: 24}},
 				Dedent{position{start: 25, end: 25}},
 				Ident{position{start: 25, end: 28}},
 				Bus{position{start: 30, end: 32}},
@@ -370,12 +372,14 @@ func TestParse(t *testing.T) {
 		}
 
 		for j, tok := range test.want {
-			if reflect.TypeOf(got[j]) != reflect.TypeOf(tok) ||
+			gotType := reflect.TypeOf(got[j])
+			wantType := reflect.TypeOf(tok)
+			if gotType != wantType ||
 				got[j].Start() != tok.Start() ||
 				got[j].End() != tok.End() {
 				t.Fatalf(
-					"\nTest: %d\n\nCode:\n%s\n\nToken: %d\n got: %+v\nwant: %+v",
-					i, test.src, j, got[j], tok,
+					"\nTest: %d\n\nCode:\n%s\n\nToken: %d\ngot type: %v\ngot: %+v\nwant type %v\nwant: %+v",
+					i, test.src, j, gotType, got[j], wantType, tok,
 				)
 			}
 		}

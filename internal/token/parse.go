@@ -297,17 +297,10 @@ func parseNewline(ctx *context, toks *[]Token) error {
 	}
 
 	nl := Newline{ctx.pos()}
-
-	// Eat all newlines
-	for ctx.byte() == '\n' {
-		ctx.idx++
-		nl.end++
-	}
-	nl.end--
-
+	ctx.idx++
 	*toks = append(*toks, nl)
 
-	if !ctx.end() && ctx.byte() != ' ' && ctx.indent != 0 {
+	if !ctx.end() && ctx.byte() != ' ' && ctx.byte() != '\n' && ctx.indent != 0 {
 		// Insert proper number of Dedent tokens.
 		t := Dedent{ctx.pos()}
 		for range ctx.indent {

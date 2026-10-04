@@ -53,7 +53,7 @@ func TestBuildMultiImport(t *testing.T) {
 	want := []Import{
 		Import{Path: toks[3].(token.String)},
 		Import{Name: toks[5].(token.Ident), Path: toks[6].(token.String)},
-		Import{Path: toks[8].(token.String)},
+		Import{Path: toks[9].(token.String)},
 	}
 
 	ctx := context{toks: toks}
@@ -61,7 +61,7 @@ func TestBuildMultiImport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if ctx.idx != 9 {
+	if ctx.idx != 10 {
 		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
