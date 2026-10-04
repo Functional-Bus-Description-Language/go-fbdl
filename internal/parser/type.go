@@ -23,71 +23,71 @@ type Type struct {
 	symbolContainer
 }
 
-func (t *Type) GetConst(name string) (*Const, error) {
-	sym, ok := t.symbolContainer.GetConst(name)
+func (typ *Type) GetConst(name string) (*Const, error) {
+	sym, ok := typ.symbolContainer.GetConst(name)
 	if ok {
 		return sym, nil
 	}
 
-	if v, ok := t.resolvedArgs[name]; ok {
+	if v, ok := typ.resolvedArgs[name]; ok {
 		return &Const{Value: v}, nil
 	}
 
-	return t.scope.GetConst(name)
+	return typ.scope.GetConst(name)
 }
 
-func (t *Type) GetInst(name string) (*Inst, error) {
-	sym, ok := t.symbolContainer.GetInst(name)
+func (typ *Type) GetInst(name string) (*Inst, error) {
+	sym, ok := typ.symbolContainer.GetInst(name)
 	if ok {
 		return sym, nil
 	}
 
-	return t.scope.GetInst(name)
+	return typ.scope.GetInst(name)
 }
 
-func (t *Type) GetType(name string) (*Type, error) {
-	sym, ok := t.symbolContainer.GetType(name)
+func (typ *Type) GetType(name string) (*Type, error) {
+	sym, ok := typ.symbolContainer.GetType(name)
 	if ok {
 		return sym, nil
 	}
 
-	return t.scope.GetType(name)
+	return typ.scope.GetType(name)
 }
 
-func (t Type) Kind() SymbolKind                    { return TypeDef }
-func (t Type) Type() string                        { return t.typ }
-func (t Type) Args() []Arg                         { return t.args.Args }
-func (t Type) Params() []Param                     { return t.params }
-func (t *Type) SetResolvedArgs(ra map[string]Expr) { t.resolvedArgs = ra }
-func (t Type) ResolvedArgs() map[string]Expr       { return t.resolvedArgs }
-func (t Type) Props() PropContainer                { return t.props }
-func (t Type) Symbols() []Symbol                   { return t.symbolContainer.Symbols() }
-func (t Type) IsArray() bool                       { return false }
-func (t Type) Count() Expr                         { return t.count }
+func (typ Type) Kind() SymbolKind                    { return TypeDef }
+func (typ Type) Type() string                        { return typ.typ }
+func (typ Type) Args() []Arg                         { return typ.args.Args }
+func (typ Type) Params() []Param                     { return typ.params }
+func (typ *Type) SetResolvedArgs(ra map[string]Expr) { typ.resolvedArgs = ra }
+func (typ Type) ResolvedArgs() map[string]Expr       { return typ.resolvedArgs }
+func (typ Type) Props() PropContainer                { return typ.props }
+func (typ Type) Symbols() []Symbol                   { return typ.symbolContainer.Symbols() }
+func (typ Type) IsArray() bool                       { return false }
+func (typ Type) Count() Expr                         { return typ.count }
 
 // buildTypes builds list of Types based on the list of ast.Type.
 func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 	types := make([]*Type, 0, len(astTypes))
 	cache := make(map[string]*Type)
 
-	for _, at := range astTypes {
-		t, err := buildType(at, src)
+	for _, astType := range astTypes {
+		typ, err := buildType(astType, src)
 		if err != nil {
 			return nil, err
 		}
 
-		if first, ok := cache[t.name]; ok {
+		if first, ok := cache[typ.name]; ok {
 			return nil, token.Error{
 				Msg: fmt.Sprintf(
 					"redefinition of type '%s', first definition line %d column %d",
-					t.name, first.Line(), first.Col(),
+					typ.name, first.Line(), first.Col(),
 				),
-				Toks: []token.Token{at.Name, first.token},
+				Toks: []token.Token{astType.Name, first.token},
 			}
 		}
 
-		cache[t.name] = t
-		types = append(types, t)
+		cache[typ.name] = typ
+		types = append(types, typ)
 	}
 
 	return types, nil
