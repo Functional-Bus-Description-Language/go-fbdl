@@ -4,24 +4,18 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-// Build builds ast from provided source.
-func Build(src []byte, path string) (File, error) {
+// Build builds an AST based on Token vector.
+func Build(toks []token.Token) (File, error) {
 	var (
 		err    error
 		f      File
-		ctx    context
+		ctx    = context{toks: toks}
 		doc    Doc
 		consts []Const
 		imps   []Import
 		ins    Inst
 		typ    Type
 	)
-
-	toks, err := token.Parse(src, path)
-	if err != nil {
-		return File{}, err
-	}
-	ctx.toks = toks
 
 	for {
 		if _, ok := ctx.token().(token.Eof); ok {

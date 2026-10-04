@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/ast"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
@@ -97,7 +98,12 @@ func parseFile(path string, pkg *Package, wg *sync.WaitGroup) {
 		log.Fatalf("cannot read %s: %v", path, err)
 	}
 
-	astFile, err := ast.Build(src, path)
+	toks, err := token.Parse(src, path)
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+
+	astFile, err := ast.Build(toks)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
