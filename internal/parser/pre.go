@@ -70,31 +70,54 @@ func findPkgsInDir(dirPath string, pkgs Packages, visitedDirs map[util.DirID]str
 
 	visitedDirs[dirID] = struct{}{}
 
-	dirEntires, err := os.ReadDir(dirPath)
+	dirEntries, err := os.ReadDir(dirPath)
+	// The directory may disappear after GetDirID.
+	// For example, when multiple tests are run in parallel, various
+	// tools might create and delete directories dynamically.
+	if os.IsNotExist(err) {
+		return
+	}
 	if err != nil {
 		panic(err)
 	}
 
+	findPkgsInEntries(dirPath, dirEntries, pkgs, visitedDirs)
+}
+
+// NOTE: Entries may disappear after ReadDir.
+// In such a case skip them without losing their siblings.
+func findPkgsInEntries(
+	dirPath string,
+	dirEntries []os.DirEntry,
+	pkgs Packages,
+	visitedDirs map[util.DirID]struct{},
+) {
 	base := filepath.Base(dirPath)
 	pkgPath := dirPath
 	hasPkgPrefix := strings.HasPrefix(base, "fbd-")
 	isPkgDir := false
 
-	for _, de := range dirEntires {
+	for _, de := range dirEntries {
 		dePath := filepath.Join(dirPath, de.Name())
 		fileInfo, err := os.Lstat(dePath)
+		if os.IsNotExist(err) {
+			continue
+		}
 		if err != nil {
 			panic(err)
 		}
 		if fileInfo.Mode()&os.ModeSymlink != 0 {
 			dePath, err = filepath.EvalSymlinks(dePath)
-			// If symlink returns an error, just ignore it.
+			// Ignore unresolvable links, but still inspect the remaining entries.
 			if err != nil {
-				return
+				continue
 			}
 		}
 
 		fileInfo, err = os.Stat(dePath)
+		if os.IsNotExist(err) {
+			continue
+		}
 		if err != nil {
 			panic(err)
 		}
