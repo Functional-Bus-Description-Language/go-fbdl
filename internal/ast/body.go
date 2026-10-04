@@ -31,13 +31,14 @@ tokenLoop:
 
 		switch tok := ctx.token().(type) {
 		case token.Newline:
+			doc = emptyDoc()
 			ctx.idx++
 		case token.Comment:
 			doc = buildDoc(ctx)
 		case token.Const:
 			consts, err = buildConst(ctx)
 			if len(consts) > 0 {
-				if doc.endLine() == consts[0].Name.Line()+1 {
+				if !doc.isEmpty() {
 					consts[0].Doc = doc
 				}
 				body.Consts = append(body.Consts, consts...)

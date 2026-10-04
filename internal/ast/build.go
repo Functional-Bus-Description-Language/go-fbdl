@@ -30,14 +30,14 @@ func Build(toks []token.Token) (File, error) {
 		case token.Const:
 			consts, err = buildConst(&ctx)
 			if len(consts) > 0 {
-				if doc.endLine() == consts[0].Name.Line()-1 {
+				if !doc.isEmpty() {
 					consts[0].Doc = doc
 				}
 				f.Consts = append(f.Consts, consts...)
 			}
 		case token.Ident:
 			ins, err = buildInst(&ctx)
-			if doc.endLine() == ins.Name.Line()-1 {
+			if !doc.isEmpty() {
 				ins.Doc = doc
 			}
 			f.Insts = append(f.Insts, ins)

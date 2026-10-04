@@ -9,15 +9,6 @@ type Doc struct {
 	Lines []token.Comment
 }
 
-// endLine returns line number of the last line in the documentation comment.
-// If doc has no lines 0 is returned.
-func (d Doc) endLine() int {
-	if len(d.Lines) == 0 {
-		return 0
-	}
-	return d.Lines[len(d.Lines)-1].Line()
-}
-
 func (d Doc) Text(src []byte) string {
 	text := ""
 	for i, l := range d.Lines {
@@ -38,6 +29,14 @@ func (d Doc) Text(src []byte) string {
 		}
 	}
 	return text
+}
+
+func (d Doc) isEmpty() bool {
+	return len(d.Lines) == 0
+}
+
+func emptyDoc() Doc {
+	return Doc{}
 }
 
 func buildDoc(ctx *context) Doc {
