@@ -22,61 +22,61 @@ type Inst struct {
 	symbolContainer
 }
 
-func (i Inst) Kind() SymbolKind { return FuncInst }
-func (i Inst) Type() string     { return i.typ }
-func (i Inst) IsArray() bool    { return i.count != nil }
-func (i Inst) Count() Expr      { return i.count }
+func (inst Inst) Kind() SymbolKind { return FuncInst }
+func (inst Inst) Type() string     { return inst.typ }
+func (inst Inst) IsArray() bool    { return inst.count != nil }
+func (inst Inst) Count() Expr      { return inst.count }
 
-func (i *Inst) GetConst(name string) (*Const, error) {
-	sym, ok := i.symbolContainer.GetConst(name)
+func (inst *Inst) GetConst(name string) (*Const, error) {
+	sym, ok := inst.symbolContainer.GetConst(name)
 	if ok {
 		return sym, nil
 	}
 
-	if v, ok := i.resolvedArgs[name]; ok {
+	if v, ok := inst.resolvedArgs[name]; ok {
 		return &Const{Value: v}, nil
 	}
 
-	return i.scope.GetConst(name)
+	return inst.scope.GetConst(name)
 }
 
-func (i *Inst) GetInst(name string) (*Inst, error) {
-	sym, ok := i.symbolContainer.GetInst(name)
+func (inst *Inst) GetInst(name string) (*Inst, error) {
+	sym, ok := inst.symbolContainer.GetInst(name)
 	if ok {
 		return sym, nil
 	}
 
-	return i.scope.GetInst(name)
+	return inst.scope.GetInst(name)
 }
 
-func (i *Inst) GetType(name string) (*Type, error) {
-	sym, ok := i.symbolContainer.GetType(name)
+func (inst *Inst) GetType(name string) (*Type, error) {
+	sym, ok := inst.symbolContainer.GetType(name)
 	if ok {
 		return sym, nil
 	}
 
-	return i.scope.GetType(name)
+	return inst.scope.GetType(name)
 }
 
-func (i Inst) Args() []Arg                         { return i.argList.Args }
-func (i *Inst) SetResolvedArgs(ra map[string]Expr) { i.resolvedArgs = ra }
-func (i Inst) ResolvedArgs() map[string]Expr       { return i.resolvedArgs }
-func (i Inst) Props() PropContainer                { return i.props }
-func (i Inst) Symbols() []Symbol                   { return i.symbolContainer.Symbols() }
+func (inst Inst) Args() []Arg                         { return inst.argList.Args }
+func (inst *Inst) SetResolvedArgs(ra map[string]Expr) { inst.resolvedArgs = ra }
+func (inst Inst) ResolvedArgs() map[string]Expr       { return inst.resolvedArgs }
+func (inst Inst) Props() PropContainer                { return inst.props }
+func (inst Inst) Symbols() []Symbol                   { return inst.symbolContainer.Symbols() }
 
-func (i Inst) File() *File {
-	if i.file != nil {
-		return i.file
+func (inst Inst) File() *File {
+	if inst.file != nil {
+		return inst.file
 	}
 
-	if s, ok := i.scope.(Symbol); ok {
+	if s, ok := inst.scope.(Symbol); ok {
 		return s.File()
 	}
 
 	panic("should never happen")
 }
 
-func (i Inst) Params() []Param {
+func (inst Inst) Params() []Param {
 	panic("should never happen, element definition cannot have parameters")
 }
 
@@ -85,88 +85,88 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 	insts := make([]*Inst, 0, len(astInsts))
 	cache := make(map[string]*Inst)
 
-	for _, ai := range astInsts {
-		i, err := buildInst(ai, src)
+	for _, astInst := range astInsts {
+		inst, err := buildInst(astInst, src)
 		if err != nil {
 			return nil, err
 		}
 
-		if first, ok := cache[i.name]; ok {
+		if first, ok := cache[inst.name]; ok {
 			return nil, token.Error{
 				Msg: fmt.Sprintf(
 					"reinstantiation of '%s', first instantiation line %d column %d",
-					i.name, first.Line(), first.Col(),
+					inst.name, first.Line(), first.Col(),
 				),
-				Toks: []token.Token{ai.Name},
+				Toks: []token.Token{astInst.Name},
 			}
 		}
 
-		cache[i.name] = i
-		insts = append(insts, i)
+		cache[inst.name] = inst
+		insts = append(insts, inst)
 	}
 
 	return insts, nil
 }
 
 func buildInst(astInst ast.Inst, src []byte) (*Inst, error) {
-	i := &Inst{}
+	inst := &Inst{}
 
-	i.token = astInst.Name
-	i.name = token.Text(astInst.Name, src)
-	i.doc = astInst.Doc.Text(src)
+	inst.token = astInst.Name
+	inst.name = token.Text(astInst.Name, src)
+	inst.doc = astInst.Doc.Text(src)
 
-	v, err := MakeExpr(astInst.Count, src, i)
+	v, err := MakeExpr(astInst.Count, src, inst)
 	if err != nil {
 		return nil, err
 	}
-	i.count = v
+	inst.count = v
 
-	i.typ = token.Text(astInst.Type, src)
+	inst.typ = token.Text(astInst.Type, src)
 
-	argList, err := buildArgList(astInst.ArgList, src, i)
+	argList, err := buildArgList(astInst.ArgList, src, inst)
 	if err != nil {
 		return nil, err
 	}
-	i.argList = argList
+	inst.argList = argList
 
-	if util.IsBaseType(i.typ) && i.argList.Len() > 0 {
+	if util.IsBaseType(inst.typ) && inst.argList.Len() > 0 {
 		return nil, token.Error{
-			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", i.typ),
+			Msg:  fmt.Sprintf("base type '%s' does not accept argument list", inst.typ),
 			Toks: []token.Token{astInst.Type},
 		}
 	}
 
-	props, syms, err := buildBody(astInst.Body, src, i)
+	props, syms, err := buildBody(astInst.Body, src, inst)
 	if err != nil {
 		return nil, err
 	}
 
-	if util.IsBaseType(i.typ) {
+	if util.IsBaseType(inst.typ) {
 		for j, p := range props {
-			if err := util.IsValidProperty(p.Name, i.typ); err != nil {
+			if err := util.IsValidProperty(p.Name, inst.typ); err != nil {
 				return nil, token.Error{
 					Msg:  err.Error(),
 					Toks: []token.Token{astInst.Body.Props[j].Name},
 				}
 			}
 
-			if err := checkPropConflict(i.typ, p, props[0:j]); err != nil {
+			if err := checkPropConflict(inst.typ, p, props[0:j]); err != nil {
 				return nil, err
 			}
 		}
 	}
-	i.props = props
+	inst.props = props
 
 	for _, s := range syms.Consts {
-		s.setScope(i)
+		s.setScope(inst)
 	}
 	for _, s := range syms.Insts {
-		s.setScope(i)
+		s.setScope(inst)
 	}
 	for _, s := range syms.Types {
-		s.setScope(i)
+		s.setScope(inst)
 	}
-	i.symbolContainer = syms
+	inst.symbolContainer = syms
 
-	return i, nil
+	return inst, nil
 }
