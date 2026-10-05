@@ -40,81 +40,33 @@ func buildArgList(tokens *tokenStream) (ArgList, error) {
 		}
 	}
 
-	arg := Arg{}
-
-	type State int
-	const (
-		Name State = iota
-		Ass
-		Comma
-		Val
-	)
-	state := Name
-
-tokenLoop:
 	for {
-		switch state {
-		case Name:
-			switch t := tokens.peek(0).(type) {
-			case token.Ident:
-				switch tokens.peek(1).(type) {
-				case token.Ass:
-					arg.Name = t
-					tokens.next()
-					state = Ass
-				default:
-					arg.Name = nil
-					arg.ValueFirstTok = t
-					expr, err := buildExpr(tokens, nil)
-					if err != nil {
-						return argList, err
-					}
-					arg.Value = expr
-					argList.Args = append(argList.Args, arg)
-					state = Comma
-				}
-			default:
-				arg.Name = nil
-				arg.ValueFirstTok = tokens.peek(0)
-				expr, err := buildExpr(tokens, nil)
-				if err != nil {
-					return argList, err
-				}
-				arg.Value = expr
-				argList.Args = append(argList.Args, arg)
-				state = Comma
-			}
-		case Ass:
-			switch t := tokens.peek(0).(type) {
-			case token.Ass:
+		arg := Arg{}
+		if name, ok := tokens.peek(0).(token.Ident); ok {
+			if _, ok := tokens.peek(1).(token.Ass); ok {
+				arg.Name = name
 				tokens.next()
-				state = Val
-			default:
-				return argList, unexpected(t, "'='")
-			}
-		case Comma:
-			switch t := tokens.peek(0).(type) {
-			case token.Comma:
 				tokens.next()
-				state = Name
-			case token.RParen:
-				argList.RParen = t
-				tokens.next()
-				break tokenLoop
-			default:
-				return argList, unexpected(t, "',' or ')'")
 			}
-		case Val:
-			arg.ValueFirstTok = tokens.peek(0)
-			expr, err := buildExpr(tokens, nil)
-			if err != nil {
-				return argList, err
-			}
-			arg.Value = expr
-			argList.Args = append(argList.Args, arg)
-			state = Comma
+		}
+
+		arg.ValueFirstTok = tokens.peek(0)
+		expr, err := buildExpr(tokens, nil)
+		if err != nil {
+			return argList, err
+		}
+		arg.Value = expr
+		argList.Args = append(argList.Args, arg)
+
+		switch t := tokens.peek(0).(type) {
+		case token.Comma:
+			tokens.next()
+		case token.RParen:
+			argList.RParen = t
+			tokens.next()
+			return argList, nil
+		default:
+			return argList, unexpected(t, "',' or ')'")
 		}
 	}
-
-	return argList, nil
 }

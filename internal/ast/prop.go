@@ -12,55 +12,31 @@ type Prop struct {
 
 func buildPropAssignments(tokens *tokenStream) ([]Prop, error) {
 	props := []Prop{}
-	p := Prop{}
-
-	type State int
-	const (
-		Prop State = iota
-		Ass
-		Exp
-		Semicolon
-	)
-	state := Prop
-
-tokenLoop:
 	for {
-		switch state {
-		case Prop:
-			switch t := tokens.next().(type) {
-			case token.Property:
-				p.Name = t
-				state = Ass
-			default:
-				return nil, unexpected(t, "property name")
-			}
-		case Ass:
-			switch t := tokens.next().(type) {
-			case token.Ass:
-				state = Exp
-			default:
-				return nil, unexpected(t, "'='")
-			}
-		case Exp:
-			expr, err := buildExpr(tokens, nil)
-			if err != nil {
-				return nil, err
-			}
-			p.Value = expr
-			props = append(props, p)
-			state = Semicolon
-		case Semicolon:
-			switch t := tokens.peek(0).(type) {
-			case token.Newline, token.Eof:
-				break tokenLoop
-			case token.Semicolon:
-				tokens.next()
-				state = Prop
-			default:
-				return nil, unexpected(t, "';' or newline")
-			}
+		t := tokens.next()
+		name, ok := t.(token.Property)
+		if !ok {
+			return nil, unexpected(t, "property name")
+		}
+
+		t = tokens.next()
+		if _, ok := t.(token.Ass); !ok {
+			return nil, unexpected(t, "'='")
+		}
+
+		expr, err := buildExpr(tokens, nil)
+		if err != nil {
+			return nil, err
+		}
+		props = append(props, Prop{Name: name, Value: expr})
+
+		switch t := tokens.peek(0).(type) {
+		case token.Newline, token.Eof:
+			return props, nil
+		case token.Semicolon:
+			tokens.next()
+		default:
+			return nil, unexpected(t, "';' or newline")
 		}
 	}
-
-	return props, nil
 }

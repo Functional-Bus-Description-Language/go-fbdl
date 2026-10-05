@@ -23,62 +23,35 @@ func buildParamList(tokens *tokenStream) ([]Param, error) {
 
 	tokens.next()
 	params := []Param{}
-	p := Param{}
-
-	type State int
-	const (
-		Name State = iota
-		Ass
-		Val
-		Comma
-	)
-	state := Name
-
-tokenLoop:
 	for {
-		switch state {
-		case Name:
-			switch t := tokens.next().(type) {
-			case token.Ident:
-				p.Name = t
-				state = Ass
-			default:
-				return nil, unexpected(t, "identifier")
-			}
-		case Ass:
-			switch t := tokens.next().(type) {
-			case token.Ass:
-				state = Val
-			case token.Comma:
-				params = append(params, p)
-				p = Param{}
-				state = Name
-			case token.RParen:
-				params = append(params, p)
-				break tokenLoop
-			default:
-				return nil, unexpected(t, "'=', ')' or ','")
-			}
-		case Val:
+		t := tokens.next()
+		name, ok := t.(token.Ident)
+		if !ok {
+			return nil, unexpected(t, "identifier")
+		}
+		p := Param{Name: name}
+
+		switch t := tokens.peek(0).(type) {
+		case token.Ass:
+			tokens.next()
 			expr, err := buildExpr(tokens, nil)
 			if err != nil {
 				return nil, err
 			}
 			p.Value = expr
-			params = append(params, p)
-			p = Param{}
-			state = Comma
-		case Comma:
-			switch t := tokens.next().(type) {
-			case token.Comma:
-				state = Name
-			case token.RParen:
-				break tokenLoop
-			default:
-				return nil, unexpected(t, "',' or ')'")
-			}
+		case token.Comma, token.RParen:
+		default:
+			tokens.next()
+			return nil, unexpected(t, "'=', ')' or ','")
+		}
+		params = append(params, p)
+
+		switch t := tokens.next().(type) {
+		case token.Comma:
+		case token.RParen:
+			return params, nil
+		default:
+			return nil, unexpected(t, "',' or ')'")
 		}
 	}
-
-	return params, nil
 }
