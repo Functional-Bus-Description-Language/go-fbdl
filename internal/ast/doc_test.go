@@ -12,7 +12,7 @@ func TestDoc(t *testing.T) {
 # Line 4`
 	toks, _ := token.Parse([]byte(src), "")
 
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
 	doc := buildDoc(&ctx)
 	got := doc.Text([]byte(src))
 	want := `Line 1

@@ -10,66 +10,67 @@ type Import struct {
 	Path token.String
 }
 
-func buildImport(ctx *context) ([]Import, error) {
-	switch t := ctx.nextTok().(type) {
+func buildImport(tokens *tokenStream) ([]Import, error) {
+	switch t := tokens.peek(1).(type) {
 	case token.Ident, token.String:
-		return buildSingleImport(ctx)
+		return buildSingleImport(tokens)
 	case token.Newline:
-		return buildMultiImport(ctx)
+		return buildMultiImport(tokens)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleImport(ctx *context) ([]Import, error) {
+func buildSingleImport(tokens *tokenStream) ([]Import, error) {
 	i := Import{}
 
-	ctx.idx++
-	switch t := ctx.token().(type) {
+	tokens.next()
+	switch t := tokens.peek(0).(type) {
 	case token.Ident:
 		i.Name = t
-		ctx.idx++
-		switch t := ctx.token().(type) {
+		tokens.next()
+		switch t := tokens.peek(0).(type) {
 		case token.String:
 			i.Path = t
-			ctx.idx++
+			tokens.next()
 		default:
 			return nil, unexpected(t, "string")
 		}
 	case token.String:
 		i.Path = t
-		ctx.idx++
+		tokens.next()
 	}
 
 	return []Import{i}, nil
 }
 
-func buildMultiImport(ctx *context) ([]Import, error) {
-	ctx.idx += 2
-	if _, ok := ctx.token().(token.Indent); !ok {
-		return nil, unexpected(ctx.token(), "indent increase")
+func buildMultiImport(tokens *tokenStream) ([]Import, error) {
+	tokens.next()
+	tokens.next()
+	if _, ok := tokens.peek(0).(token.Indent); !ok {
+		return nil, unexpected(tokens.peek(0), "indent increase")
 	}
 
 	var imps []Import
 
 	for {
-		ctx.idx++
+		tokens.next()
 
-		switch t := ctx.token().(type) {
+		switch t := tokens.peek(0).(type) {
 		case token.Newline:
 			// Go to next line
 		case token.Dedent:
-			ctx.idx++
+			tokens.next()
 			return imps, nil
 		case token.Eof:
 			return imps, nil
 		case token.String:
 			imps = append(imps, Import{Path: t})
 		case token.Ident:
-			ctx.idx++
-			path, ok := ctx.token().(token.String)
+			tokens.next()
+			path, ok := tokens.peek(0).(token.String)
 			if !ok {
-				return nil, unexpected(ctx.token(), "string")
+				return nil, unexpected(tokens.peek(0), "string")
 			}
 			imps = append(imps, Import{Name: t, Path: path})
 		default:

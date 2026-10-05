@@ -14,53 +14,54 @@ type Inst struct {
 	Body    Body
 }
 
-func buildInst(ctx *context) (Inst, error) {
-	inst := Inst{Name: ctx.token().(token.Ident)}
-	ctx.idx++
+func buildInst(tokens *tokenStream) (Inst, error) {
+	inst := Inst{Name: tokens.peek(0).(token.Ident)}
+	tokens.next()
 
 	// Count
-	if _, ok := ctx.token().(token.LBracket); ok {
-		ctx.idx++
-		expr, err := buildExpr(ctx, nil)
+	if _, ok := tokens.peek(0).(token.LBracket); ok {
+		tokens.next()
+		expr, err := buildExpr(tokens, nil)
 		if err != nil {
 			return inst, err
 		}
 		inst.Count = expr
-		if _, ok := ctx.token().(token.RBracket); !ok {
-			return inst, unexpected(ctx.token(), "']'")
+		if _, ok := tokens.peek(0).(token.RBracket); !ok {
+			return inst, unexpected(tokens.peek(0), "']'")
 		}
-		ctx.idx++
+		tokens.next()
 	}
 
 	// Type
-	switch t := ctx.token().(type) {
+	switch t := tokens.peek(0).(type) {
 	case token.Functionality, token.Ident, token.QualIdent:
 		inst.Type = t
-		ctx.idx++
+		tokens.next()
 	default:
 		return inst, unexpected(t, "functionality type")
 	}
 
 	// Argument List
-	argList, err := buildArgList(ctx)
+	argList, err := buildArgList(tokens)
 	if err != nil {
 		return inst, err
 	}
 	inst.ArgList = argList
 
 	// Body
-	switch t := ctx.token().(type) {
+	switch t := tokens.peek(0).(type) {
 	case token.Semicolon:
-		ctx.idx++
-		props, err := buildPropAssignments(ctx)
+		tokens.next()
+		props, err := buildPropAssignments(tokens)
 		if err != nil {
 			return inst, err
 		}
 		inst.Body.Props = props
 	case token.Newline:
-		if _, ok := ctx.nextTok().(token.Indent); ok {
-			ctx.idx += 2
-			body, err := buildBody(ctx)
+		if _, ok := tokens.peek(1).(token.Indent); ok {
+			tokens.next()
+			tokens.next()
+			body, err := buildBody(tokens)
 			if err != nil {
 				return inst, err
 			}

@@ -118,45 +118,45 @@ func (pe ParenExpr) expr()            {}
 func (pe ParenExpr) Tok() token.Token { return pe.LParen }
 
 // leftOp is the operator on the left side of the expression.
-func buildExpr(ctx *context, leftOp token.Operator) (Expr, error) {
+func buildExpr(tokens *tokenStream, leftOp token.Operator) (Expr, error) {
 	var (
 		err  error
 		expr Expr
 	)
 
-	switch t := ctx.token().(type) {
+	switch t := tokens.peek(0).(type) {
 	case token.Neg, token.Sub, token.Add:
-		expr, err = buildUnaryExpr(ctx)
+		expr, err = buildUnaryExpr(tokens)
 	case token.Ident:
-		switch ctx.nextTok().(type) {
+		switch tokens.peek(1).(type) {
 		case token.LParen:
-			expr, err = buildCallExpr(ctx)
+			expr, err = buildCallExpr(tokens)
 		default:
-			expr, err = buildIdent(ctx)
+			expr, err = buildIdent(tokens)
 		}
 	case token.QualIdent:
-		switch ctx.nextTok().(type) {
+		switch tokens.peek(1).(type) {
 		case token.LParen:
-			expr, err = buildCallExpr(ctx)
+			expr, err = buildCallExpr(tokens)
 		default:
-			expr, err = buildQualIdent(ctx)
+			expr, err = buildQualIdent(tokens)
 		}
 	case token.Bool:
-		expr, err = buildBool(ctx)
+		expr, err = buildBool(tokens)
 	case token.Int:
-		expr, err = buildInt(ctx)
+		expr, err = buildInt(tokens)
 	case token.Float:
-		expr, err = buildFloat(ctx)
+		expr, err = buildFloat(tokens)
 	case token.String:
-		expr, err = buildString(ctx)
+		expr, err = buildString(tokens)
 	case token.Time:
-		expr, err = buildTime(ctx)
+		expr, err = buildTime(tokens)
 	case token.BitString:
-		expr, err = buildBitString(ctx)
+		expr, err = buildBitString(tokens)
 	case token.LParen:
-		expr, err = buildParenExpr(ctx)
+		expr, err = buildParenExpr(tokens)
 	case token.LBracket:
-		expr, err = buildList(ctx)
+		expr, err = buildList(tokens)
 	default:
 		return Ident{}, unexpected(t, "expression")
 	}
@@ -167,7 +167,7 @@ func buildExpr(ctx *context, leftOp token.Operator) (Expr, error) {
 
 	for {
 		var rightOp token.Operator
-		if op, ok := ctx.token().(token.Operator); ok {
+		if op, ok := tokens.peek(0).(token.Operator); ok {
 			rightOp = op
 		} else {
 			return expr, nil
@@ -176,8 +176,8 @@ func buildExpr(ctx *context, leftOp token.Operator) (Expr, error) {
 		if (leftOp == nil) ||
 			(leftOp != nil && (leftOp.Precedence() < rightOp.Precedence())) {
 			be := BinaryExpr{X: expr, Op: rightOp}
-			ctx.idx++
-			expr, err = buildExpr(ctx, rightOp)
+			tokens.next()
+			expr, err = buildExpr(tokens, rightOp)
 			if err != nil {
 				return expr, err
 			}
@@ -189,100 +189,89 @@ func buildExpr(ctx *context, leftOp token.Operator) (Expr, error) {
 	}
 }
 
-func buildIdent(ctx *context) (Ident, error) {
-	id := Ident{Name: ctx.token()}
-	ctx.idx++
+func buildIdent(tokens *tokenStream) (Ident, error) {
+	id := Ident{Name: tokens.next()}
 	return id, nil
 }
 
-func buildQualIdent(ctx *context) (QualIdent, error) {
-	id := QualIdent{Name: ctx.token()}
-	ctx.idx++
+func buildQualIdent(tokens *tokenStream) (QualIdent, error) {
+	id := QualIdent{Name: tokens.next()}
 	return id, nil
 }
 
-func buildBool(ctx *context) (Bool, error) {
-	b := Bool{ctx.token().(token.Bool)}
-	ctx.idx++
+func buildBool(tokens *tokenStream) (Bool, error) {
+	b := Bool{tokens.next().(token.Bool)}
 	return b, nil
 }
 
-func buildInt(ctx *context) (Int, error) {
-	int_ := Int{ctx.token().(token.Int)}
-	ctx.idx++
+func buildInt(tokens *tokenStream) (Int, error) {
+	int_ := Int{tokens.next().(token.Int)}
 	return int_, nil
 }
 
-func buildFloat(ctx *context) (Float, error) {
-	r := Float{ctx.token().(token.Float)}
-	ctx.idx++
+func buildFloat(tokens *tokenStream) (Float, error) {
+	r := Float{tokens.next().(token.Float)}
 	return r, nil
 }
 
-func buildString(ctx *context) (String, error) {
-	s := String{ctx.token().(token.String)}
-	ctx.idx++
+func buildString(tokens *tokenStream) (String, error) {
+	s := String{tokens.next().(token.String)}
 	return s, nil
 }
 
-func buildTime(ctx *context) (Time, error) {
-	t := Time{ctx.token().(token.Time)}
-	ctx.idx++
+func buildTime(tokens *tokenStream) (Time, error) {
+	t := Time{tokens.next().(token.Time)}
 	return t, nil
 }
 
-func buildBitString(ctx *context) (BitString, error) {
-	s := BitString{ctx.token().(token.BitString)}
-	ctx.idx++
+func buildBitString(tokens *tokenStream) (BitString, error) {
+	s := BitString{tokens.next().(token.BitString)}
 	return s, nil
 }
 
-func buildParenExpr(ctx *context) (ParenExpr, error) {
+func buildParenExpr(tokens *tokenStream) (ParenExpr, error) {
 	pe := ParenExpr{}
 	var (
 		err  error
 		expr Expr
 	)
 
-	pe.LParen = ctx.token().(token.LParen)
-
-	ctx.idx++
-	expr, err = buildExpr(ctx, nil)
+	pe.LParen = tokens.next().(token.LParen)
+	expr, err = buildExpr(tokens, nil)
 	if err != nil {
 		return pe, err
 	}
 	pe.X = expr
 
-	if rp, ok := ctx.token().(token.RParen); ok {
+	if rp, ok := tokens.peek(0).(token.RParen); ok {
 		pe.RParen = rp
-		ctx.idx++
+		tokens.next()
 	} else {
-		return pe, unexpected(ctx.token(), "')'")
+		return pe, unexpected(tokens.peek(0), "')'")
 	}
 
 	return pe, nil
 }
 
-func buildList(ctx *context) (List, error) {
+func buildList(tokens *tokenStream) (List, error) {
 	l := List{}
 	prevExpr := false
-	l.LBracket = ctx.token().(token.LBracket)
-	lbi := ctx.idx // Left bracket token index
-	ctx.idx++
+	l.LBracket = tokens.peek(0).(token.LBracket)
+	tokens.next()
 
 tokenLoop:
 	for {
-		switch t := ctx.token().(type) {
+		switch t := tokens.peek(0).(type) {
 		case token.RBracket:
 			l.RBracket = t
-			ctx.idx++
+			tokens.next()
 			break tokenLoop
 		case token.Comma:
-			if ctx.idx == lbi+1 {
+			if len(l.Xs) == 0 {
 				return l, unexpected(t, "expression")
 			}
 			prevExpr = false
-			ctx.idx++
+			tokens.next()
 		default:
 			if prevExpr {
 				return l, unexpected(t, "',' or ']'")
@@ -292,7 +281,7 @@ tokenLoop:
 				expr Expr
 				err  error
 			)
-			expr, err = buildExpr(ctx, nil)
+			expr, err = buildExpr(tokens, nil)
 			if err != nil {
 				return l, err
 			}
@@ -304,25 +293,24 @@ tokenLoop:
 	return l, nil
 }
 
-func buildCallExpr(ctx *context) (Call, error) {
-	call := Call{Name: ctx.token().(token.Ident)}
-	lpi := ctx.idx // Left parenthesis token index
-	ctx.idx += 2
+func buildCallExpr(tokens *tokenStream) (Call, error) {
+	call := Call{Name: tokens.next().(token.Ident)}
+	tokens.next()
 
 	prevExpr := false
 
 tokenLoop:
 	for {
-		switch t := ctx.token().(type) {
+		switch t := tokens.peek(0).(type) {
 		case token.RParen:
-			ctx.idx++
+			tokens.next()
 			break tokenLoop
 		case token.Comma:
-			if ctx.idx == lpi+2 {
+			if len(call.Args) == 0 {
 				return call, unexpected(t, "expression")
 			}
 			prevExpr = false
-			ctx.idx++
+			tokens.next()
 		default:
 			if prevExpr {
 				return call, unexpected(t, "',' or ')'")
@@ -332,7 +320,7 @@ tokenLoop:
 				expr Expr
 				err  error
 			)
-			expr, err = buildExpr(ctx, nil)
+			expr, err = buildExpr(tokens, nil)
 			if err != nil {
 				return call, err
 			}
@@ -344,11 +332,11 @@ tokenLoop:
 	return call, nil
 }
 
-func buildUnaryExpr(ctx *context) (UnaryExpr, error) {
-	op := ctx.token().(token.Operator)
+func buildUnaryExpr(tokens *tokenStream) (UnaryExpr, error) {
+	op := tokens.peek(0).(token.Operator)
 	un := UnaryExpr{Op: op}
-	ctx.idx++
-	x, err := buildExpr(ctx, op)
+	tokens.next()
+	x, err := buildExpr(tokens, op)
 	if err != nil {
 		return un, err
 	}

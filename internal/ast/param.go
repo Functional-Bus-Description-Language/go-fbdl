@@ -10,17 +10,18 @@ type Param struct {
 	Value Expr // Default value of the parameter
 }
 
-func buildParamList(ctx *context) ([]Param, error) {
-	if _, ok := ctx.token().(token.LParen); !ok {
+func buildParamList(tokens *tokenStream) ([]Param, error) {
+	if _, ok := tokens.peek(0).(token.LParen); !ok {
 		return nil, nil
 	}
-	if _, ok := ctx.nextTok().(token.RParen); ok {
+	if _, ok := tokens.peek(1).(token.RParen); ok {
 		return nil, token.Error{
 			Msg:  "empty parameter list",
-			Toks: []token.Token{ctx.token()},
+			Toks: []token.Token{tokens.peek(0)},
 		}
 	}
 
+	tokens.next()
 	params := []Param{}
 	p := Param{}
 
@@ -35,10 +36,9 @@ func buildParamList(ctx *context) ([]Param, error) {
 
 tokenLoop:
 	for {
-		ctx.idx++
 		switch state {
 		case Name:
-			switch t := ctx.token().(type) {
+			switch t := tokens.next().(type) {
 			case token.Ident:
 				p.Name = t
 				state = Ass
@@ -46,7 +46,7 @@ tokenLoop:
 				return nil, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := ctx.token().(type) {
+			switch t := tokens.next().(type) {
 			case token.Ass:
 				state = Val
 			case token.Comma:
@@ -55,27 +55,24 @@ tokenLoop:
 				state = Name
 			case token.RParen:
 				params = append(params, p)
-				ctx.idx++
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "'=', ')' or ','")
 			}
 		case Val:
-			expr, err := buildExpr(ctx, nil)
+			expr, err := buildExpr(tokens, nil)
 			if err != nil {
 				return nil, err
 			}
-			ctx.idx--
 			p.Value = expr
 			params = append(params, p)
 			p = Param{}
 			state = Comma
 		case Comma:
-			switch t := ctx.token().(type) {
+			switch t := tokens.next().(type) {
 			case token.Comma:
 				state = Name
 			case token.RParen:
-				ctx.idx++
 				break tokenLoop
 			default:
 				return nil, unexpected(t, "',' or ')'")

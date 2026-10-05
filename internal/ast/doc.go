@@ -39,23 +39,19 @@ func emptyDoc() Doc {
 	return Doc{}
 }
 
-func buildDoc(ctx *context) Doc {
+func buildDoc(tokens *tokenStream) Doc {
 	doc := Doc{}
-	doc.Lines = append(doc.Lines, ctx.token().(token.Comment))
+	doc.Lines = append(doc.Lines, tokens.next().(token.Comment))
 
-	prevNewline := false
 	for {
-		ctx.idx++
-		switch t := ctx.token().(type) {
+		switch tokens.peek(0).(type) {
 		case token.Newline:
-			if prevNewline {
-				return doc
-			} else {
-				prevNewline = true
+			tokens.next()
+			if _, ok := tokens.peek(0).(token.Newline); ok {
+				return emptyDoc()
 			}
 		case token.Comment:
-			doc.Lines = append(doc.Lines, t)
-			prevNewline = false
+			doc.Lines = append(doc.Lines, tokens.next().(token.Comment))
 		default:
 			return doc
 		}

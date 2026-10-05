@@ -12,7 +12,8 @@ func TestBuildSingleConst(t *testing.T) {
 		Name:  toks[1].(token.Ident),
 		Value: Int{toks[3].(token.Int)},
 	}
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
+	ctx.next()
 	got, err := buildSingleConst(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
@@ -45,7 +46,8 @@ func TestBuildMultiConst(t *testing.T) {
 		},
 		Const{Name: toks[18].(token.Ident), Value: Bool{toks[20].(token.Bool)}},
 	}
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
+	ctx.next()
 	got, err := buildMultiConst(&ctx)
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)

@@ -23,20 +23,20 @@ func (al ArgList) Len() int {
 	return len(al.Args)
 }
 
-func buildArgList(ctx *context) (ArgList, error) {
-	if _, ok := ctx.token().(token.LParen); !ok {
+func buildArgList(tokens *tokenStream) (ArgList, error) {
+	if _, ok := tokens.peek(0).(token.LParen); !ok {
 		return ArgList{}, nil
 	}
 
 	argList := ArgList{
-		LParen: ctx.token().(token.LParen),
+		LParen: tokens.next().(token.LParen),
 		Args:   []Arg{},
 	}
 
-	if _, ok := ctx.nextTok().(token.RParen); ok {
+	if _, ok := tokens.peek(0).(token.RParen); ok {
 		return argList, token.Error{
 			Msg:  "empty argument list",
-			Toks: []token.Token{ctx.token()},
+			Toks: []token.Token{argList.LParen},
 		}
 	}
 
@@ -53,64 +53,63 @@ func buildArgList(ctx *context) (ArgList, error) {
 
 tokenLoop:
 	for {
-		ctx.idx++
 		switch state {
 		case Name:
-			switch t := ctx.token().(type) {
+			switch t := tokens.peek(0).(type) {
 			case token.Ident:
-				switch ctx.nextTok().(type) {
+				switch tokens.peek(1).(type) {
 				case token.Ass:
 					arg.Name = t
+					tokens.next()
 					state = Ass
 				default:
 					arg.Name = nil
 					arg.ValueFirstTok = t
-					expr, err := buildExpr(ctx, nil)
+					expr, err := buildExpr(tokens, nil)
 					if err != nil {
 						return argList, err
 					}
-					ctx.idx--
 					arg.Value = expr
 					argList.Args = append(argList.Args, arg)
 					state = Comma
 				}
 			default:
 				arg.Name = nil
-				arg.ValueFirstTok = ctx.token()
-				expr, err := buildExpr(ctx, nil)
+				arg.ValueFirstTok = tokens.peek(0)
+				expr, err := buildExpr(tokens, nil)
 				if err != nil {
 					return argList, err
 				}
-				ctx.idx--
 				arg.Value = expr
 				argList.Args = append(argList.Args, arg)
 				state = Comma
 			}
 		case Ass:
-			switch t := ctx.token().(type) {
+			switch t := tokens.peek(0).(type) {
 			case token.Ass:
+				tokens.next()
 				state = Val
 			default:
 				return argList, unexpected(t, "'='")
 			}
 		case Comma:
-			switch t := ctx.token().(type) {
+			switch t := tokens.peek(0).(type) {
 			case token.Comma:
+				tokens.next()
 				state = Name
 			case token.RParen:
 				argList.RParen = t
-				ctx.idx++
+				tokens.next()
 				break tokenLoop
 			default:
 				return argList, unexpected(t, "',' or ')'")
 			}
 		case Val:
-			arg.ValueFirstTok = ctx.token()
-			expr, err := buildExpr(ctx, nil)
+			arg.ValueFirstTok = tokens.peek(0)
+			expr, err := buildExpr(tokens, nil)
 			if err != nil {
 				return argList, err
 			}
-			ctx.idx--
 			arg.Value = expr
 			argList.Args = append(argList.Args, arg)
 			state = Comma

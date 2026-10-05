@@ -12,7 +12,7 @@ type Body struct {
 	Types  []Type
 }
 
-func buildBody(ctx *context) (Body, error) {
+func buildBody(tokens *tokenStream) (Body, error) {
 	var (
 		err    error
 		body   Body
@@ -25,18 +25,18 @@ func buildBody(ctx *context) (Body, error) {
 
 tokenLoop:
 	for {
-		if _, ok := ctx.token().(token.Eof); ok {
+		if _, ok := tokens.peek(0).(token.Eof); ok {
 			break
 		}
 
-		switch tok := ctx.token().(type) {
+		switch tok := tokens.peek(0).(type) {
 		case token.Newline:
 			doc = emptyDoc()
-			ctx.idx++
+			tokens.next()
 		case token.Comment:
-			doc = buildDoc(ctx)
+			doc = buildDoc(tokens)
 		case token.Const:
-			consts, err = buildConst(ctx)
+			consts, err = buildConst(tokens)
 			if len(consts) > 0 {
 				if !doc.isEmpty() {
 					consts[0].Doc = doc
@@ -44,10 +44,10 @@ tokenLoop:
 				body.Consts = append(body.Consts, consts...)
 			}
 		case token.Ident:
-			ins, err = buildInst(ctx)
+			ins, err = buildInst(tokens)
 			body.Insts = append(body.Insts, ins)
 		case token.Property:
-			props, err = buildPropAssignments(ctx)
+			props, err = buildPropAssignments(tokens)
 			if err != nil {
 				return body, err
 			}
@@ -55,10 +55,10 @@ tokenLoop:
 				body.Props = append(body.Props, props...)
 			}
 		case token.Type:
-			typ, err = buildType(ctx)
+			typ, err = buildType(tokens)
 			body.Types = append(body.Types, typ)
 		case token.Dedent:
-			ctx.idx++
+			tokens.next()
 			break tokenLoop
 		default:
 			return body, unexpected(tok, "const, type, identifier, or comment")

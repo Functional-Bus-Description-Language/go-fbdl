@@ -11,27 +11,28 @@ type Const struct {
 	Value Expr
 }
 
-func buildConst(ctx *context) ([]Const, error) {
-	switch t := ctx.nextTok().(type) {
+func buildConst(tokens *tokenStream) ([]Const, error) {
+	tokens.next()
+
+	switch t := tokens.peek(0).(type) {
 	case token.Ident:
-		return buildSingleConst(ctx)
+		return buildSingleConst(tokens)
 	case token.Newline:
-		return buildMultiConst(ctx)
+		return buildMultiConst(tokens)
 	default:
 		return nil, unexpected(t, "identifier, string or newline")
 	}
 }
 
-func buildSingleConst(ctx *context) ([]Const, error) {
-	con := Const{Name: ctx.nextTok().(token.Ident)}
+func buildSingleConst(tokens *tokenStream) ([]Const, error) {
+	con := Const{Name: tokens.next().(token.Ident)}
 
-	ctx.idx += 2
-	if _, ok := ctx.token().(token.Ass); !ok {
-		return nil, unexpected(ctx.token(), "'='")
+	if _, ok := tokens.peek(0).(token.Ass); !ok {
+		return nil, unexpected(tokens.peek(0), "'='")
 	}
+	tokens.next()
 
-	ctx.idx++
-	expr, err := buildExpr(ctx, nil)
+	expr, err := buildExpr(tokens, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +41,7 @@ func buildSingleConst(ctx *context) ([]Const, error) {
 	return []Const{con}, nil
 }
 
-func buildMultiConst(ctx *context) ([]Const, error) {
+func buildMultiConst(tokens *tokenStream) ([]Const, error) {
 	consts := []Const{}
 	con := Const{}
 
@@ -54,13 +55,11 @@ func buildMultiConst(ctx *context) ([]Const, error) {
 	)
 	state := Indent
 
-	ctx.idx += 1
 tokenLoop:
 	for {
-		ctx.idx++
 		switch state {
 		case Indent:
-			switch t := ctx.token().(type) {
+			switch t := tokens.next().(type) {
 			case token.Newline:
 				continue
 			case token.Indent:
@@ -69,49 +68,50 @@ tokenLoop:
 				return nil, unexpected(t, "indent or newline")
 			}
 		case FirstId:
-			switch t := ctx.token().(type) {
+			switch t := tokens.peek(0).(type) {
 			case token.Ident:
 				con.Name = t
+				tokens.next()
 				state = Ass
 			case token.Comment:
-				con.Doc = buildDoc(ctx)
-				ctx.idx--
+				con.Doc = buildDoc(tokens)
 			case token.Newline:
+				tokens.next()
 				con.Doc = emptyDoc()
 			default:
 				return nil, unexpected(t, "identifier")
 			}
 		case Ass:
-			switch t := ctx.token().(type) {
+			switch t := tokens.next().(type) {
 			case token.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "'='")
 			}
 		case Exp:
-			expr, err := buildExpr(ctx, nil)
+			expr, err := buildExpr(tokens, nil)
 			if err != nil {
 				return nil, err
 			}
 			con.Value = expr
 			consts = append(consts, con)
 			con = Const{}
-			ctx.idx--
 			state = Id
 		case Id:
-			switch t := ctx.token().(type) {
+			switch t := tokens.peek(0).(type) {
 			case token.Ident:
 				con.Name = t
+				tokens.next()
 				state = Ass
 			case token.Comment:
-				doc := buildDoc(ctx)
+				doc := buildDoc(tokens)
 				con.Doc = doc
-				ctx.idx--
 			case token.Newline:
+				tokens.next()
 				con.Doc = emptyDoc()
 				continue
 			case token.Dedent:
-				ctx.idx++
+				tokens.next()
 				break tokenLoop
 			case token.Eof:
 				break tokenLoop

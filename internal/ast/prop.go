@@ -10,7 +10,7 @@ type Prop struct {
 	Value Expr
 }
 
-func buildPropAssignments(ctx *context) ([]Prop, error) {
+func buildPropAssignments(tokens *tokenStream) ([]Prop, error) {
 	props := []Prop{}
 	p := Prop{}
 
@@ -23,14 +23,11 @@ func buildPropAssignments(ctx *context) ([]Prop, error) {
 	)
 	state := Prop
 
-	// Decrement context index as it is incremented at the beginning of the for loop.
-	ctx.idx--
 tokenLoop:
 	for {
-		ctx.idx++
 		switch state {
 		case Prop:
-			switch t := ctx.token().(type) {
+			switch t := tokens.next().(type) {
 			case token.Property:
 				p.Name = t
 				state = Ass
@@ -38,26 +35,26 @@ tokenLoop:
 				return nil, unexpected(t, "property name")
 			}
 		case Ass:
-			switch t := ctx.token().(type) {
+			switch t := tokens.next().(type) {
 			case token.Ass:
 				state = Exp
 			default:
 				return nil, unexpected(t, "'='")
 			}
 		case Exp:
-			expr, err := buildExpr(ctx, nil)
+			expr, err := buildExpr(tokens, nil)
 			if err != nil {
 				return nil, err
 			}
-			ctx.idx--
 			p.Value = expr
 			props = append(props, p)
 			state = Semicolon
 		case Semicolon:
-			switch t := ctx.token().(type) {
+			switch t := tokens.peek(0).(type) {
 			case token.Newline, token.Eof:
 				break tokenLoop
 			case token.Semicolon:
+				tokens.next()
 				state = Prop
 			default:
 				return nil, unexpected(t, "';' or newline")

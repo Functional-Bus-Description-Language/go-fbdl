@@ -9,7 +9,7 @@ func Build(toks []token.Token) (File, error) {
 	var (
 		err    error
 		f      File
-		ctx    = context{toks: toks}
+		tokens = tokenStream{toks: toks}
 		doc    Doc
 		consts []Const
 		imps   []Import
@@ -17,18 +17,17 @@ func Build(toks []token.Token) (File, error) {
 		typ    Type
 	)
 
+tokenLoop:
 	for {
-		if _, ok := ctx.token().(token.Eof); ok {
-			break
-		}
-
-		switch t := ctx.token().(type) {
+		switch t := tokens.peek(0).(type) {
+		case token.Eof:
+			break tokenLoop
 		case token.Newline:
-			ctx.idx++
+			tokens.next()
 		case token.Comment:
-			doc = buildDoc(&ctx)
+			doc = buildDoc(&tokens)
 		case token.Const:
-			consts, err = buildConst(&ctx)
+			consts, err = buildConst(&tokens)
 			if len(consts) > 0 {
 				if !doc.isEmpty() {
 					consts[0].Doc = doc
@@ -36,18 +35,18 @@ func Build(toks []token.Token) (File, error) {
 				f.Consts = append(f.Consts, consts...)
 			}
 		case token.Ident:
-			ins, err = buildInst(&ctx)
+			ins, err = buildInst(&tokens)
 			if !doc.isEmpty() {
 				ins.Doc = doc
 			}
 			f.Insts = append(f.Insts, ins)
 		case token.Import:
-			imps, err = buildImport(&ctx)
+			imps, err = buildImport(&tokens)
 			if len(imps) > 0 {
 				f.Imports = append(f.Imports, imps...)
 			}
 		case token.Type:
-			typ, err = buildType(&ctx)
+			typ, err = buildType(&tokens)
 			f.Types = append(f.Types, typ)
 		default:
 			return f, unexpected(t, "const, type, identifier, import or comment")

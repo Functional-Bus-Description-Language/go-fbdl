@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func checkExpr(ctx context, i int, got Expr, want Expr, err error) error {
+func checkExpr(ctx tokenStream, i int, got Expr, want Expr, err error) error {
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func checkExpr(ctx context, i int, got Expr, want Expr, err error) error {
 func TestBuildIdent(t *testing.T) {
 	toks, _ := token.Parse([]byte("id"), "")
 	want := Ident{Name: toks[0]}
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
 	got, err := buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 1, got, want, err)
 	if err != nil {
@@ -43,7 +43,7 @@ func TestBuildUnaryExpr(t *testing.T) {
 	want := UnaryExpr{
 		Op: toks[0], X: Ident{Name: toks[1]},
 	}
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
 	got, err := buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 2, got, want, err)
 	if err != nil {
@@ -54,8 +54,7 @@ func TestBuildUnaryExpr(t *testing.T) {
 	want = UnaryExpr{
 		Op: toks[0], X: Int{toks[1].(token.Int)},
 	}
-	ctx.idx = 0
-	ctx.toks = toks
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 2, got, want, err)
 	if err != nil {
@@ -74,7 +73,7 @@ func TestBuildParenExpr(t *testing.T) {
 		},
 		RParen: toks[4].(token.RParen),
 	}
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
 	got, err := buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
@@ -90,7 +89,7 @@ func TestBuildCall(t *testing.T) {
 			Ident{Name: toks[2].(token.Ident)},
 		},
 	}
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
 	got, err := buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 4, got, want, err)
 	if err != nil {
@@ -105,8 +104,7 @@ func TestBuildCall(t *testing.T) {
 			Bool{toks[4].(token.Bool)},
 		},
 	}
-	ctx.idx = 0
-	ctx.toks = toks
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 6, got, want, err)
 	if err != nil {
@@ -119,7 +117,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 	want := BinaryExpr{
 		X: Ident{Name: toks[0]}, Op: toks[1].(token.Operator), Y: Int{toks[2].(token.Int)},
 	}
-	ctx := context{toks: toks}
+	ctx := tokenStream{toks: toks}
 	got, err := buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
@@ -136,8 +134,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 			Y:  Ident{Name: toks[4]},
 		},
 	}
-	ctx.idx = 0
-	ctx.toks = toks
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
@@ -154,8 +151,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[3].(token.Operator),
 		Y:  Ident{Name: toks[4]},
 	}
-	ctx.idx = 0
-	ctx.toks = toks
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
@@ -176,8 +172,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 			Y:  Ident{Name: toks[6]},
 		},
 	}
-	ctx.idx = 0
-	ctx.toks = toks
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 7, got, want, err)
 	if err != nil {
@@ -202,8 +197,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[7].(token.Operator),
 		Y:  Ident{Name: toks[8]},
 	}
-	ctx.idx = 0
-	ctx.toks = toks
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 9, got, want, err)
 	if err != nil {
@@ -224,8 +218,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[5].(token.Operator),
 		Y:  Bool{toks[6].(token.Bool)},
 	}
-	ctx.idx = 0
-	ctx.toks = toks
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 7, got, want, err)
 	if err != nil {
@@ -236,7 +229,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 	want = BinaryExpr{
 		X: Int{X: toks[0].(token.Int)}, Op: toks[1].(token.Colon), Y: Int{toks[2].(token.Int)},
 	}
-	ctx = context{toks: toks}
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
@@ -249,7 +242,7 @@ func TestBuildBinaryExpr(t *testing.T) {
 		Op: toks[2].(token.Operator),
 		Y:  Int{toks[3].(token.Int)},
 	}
-	ctx = context{toks: toks}
+	ctx = tokenStream{toks: toks}
 	got, err = buildExpr(&ctx, nil)
 	err = checkExpr(ctx, 5, got, want, err)
 	if err != nil {
