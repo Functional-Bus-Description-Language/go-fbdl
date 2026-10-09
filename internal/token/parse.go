@@ -15,37 +15,6 @@ func lastToken(toks []Token) (Token, bool) {
 	return toks[len(toks)-1], true
 }
 
-// Returns word from the source starting from index idx.
-//
-// The function assumes byte under idx is not a whitespace character.
-// The second return is true if word contains hyphen '-' character.
-// The third return is true if word contains dot '.' character.
-func getWord(src []byte, idx int) ([]byte, bool, bool) {
-	hasHyphen := false
-	hasDot := false
-	endIdx := idx
-
-	for {
-		if endIdx >= len(src) {
-			return src[idx:endIdx], hasHyphen, hasDot
-		}
-
-		b := src[endIdx]
-		if isLetter(b) || isDigit(b) || b == '_' || b == '-' || b == '.' {
-			switch b {
-			case '-':
-				hasHyphen = true
-			case '.':
-				hasDot = true
-			}
-			endIdx++
-			continue
-		} else {
-			return src[idx:endIdx], hasHyphen, hasDot
-		}
-	}
-}
-
 // Parses src byte array containing the source code and returns token Stream.
 func Parse(src []byte, path string) ([]Token, error) {
 	var (
@@ -60,8 +29,8 @@ func Parse(src []byte, path string) ([]Token, error) {
 	for !ctx.end() {
 		tok = None{}
 		err = nil
-		b := ctx.byte()      // Current byte
-		nb := ctx.nextByte() // Next byte
+		b := ctx.peek(0)
+		nb := ctx.peek(1)
 
 		switch b {
 		case ' ':
@@ -198,18 +167,18 @@ func parseSpace(ctx *context, toks *[]Token) (Token, error) {
 
 	// Eat all spaces
 	startIdx := ctx.idx
-	ctx.idx++
-	for ctx.byte() == ' ' {
-		ctx.idx++
+	ctx.next()
+	for ctx.peek(0) == ' ' {
+		ctx.next()
 	}
 
 	spaceCount := ctx.idx - startIdx
 
-	if ctx.byte() == '\n' {
-		ctx.idx--
+	if ctx.peek(0) == '\n' {
+		tok := None{ctx.pos()}
+		tok.start = startIdx
+		tok.end--
 		if spaceCount > 1 {
-			tok := None{ctx.pos()}
-			tok.start = startIdx
 			return None{}, Error{
 				fmt.Sprintf("extra %d spaces at line end", spaceCount),
 				[]Token{tok},
@@ -217,7 +186,7 @@ func parseSpace(ctx *context, toks *[]Token) (Token, error) {
 		} else {
 			return None{}, Error{
 				"extra space at line end",
-				[]Token{None{ctx.pos()}},
+				[]Token{tok},
 			}
 		}
 	}
@@ -230,12 +199,12 @@ func parseIndent(ctx *context, toks *[]Token) (Token, error) {
 
 	spaceCount := 0
 	// Eat all spaces
-	for ctx.byte() == ' ' {
-		ctx.idx++
+	for ctx.peek(0) == ' ' {
+		ctx.next()
 		spaceCount++
 	}
 
-	if ctx.byte() == '\n' {
+	if ctx.peek(0) == '\n' {
 		if spaceCount > 1 {
 			indent.end += spaceCount - 1
 			return None{}, Error{
@@ -297,10 +266,10 @@ func parseNewline(ctx *context, toks *[]Token) error {
 	}
 
 	nl := Newline{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	*toks = append(*toks, nl)
 
-	if !ctx.end() && ctx.byte() != ' ' && ctx.byte() != '\n' && ctx.indent != 0 {
+	if !ctx.end() && ctx.peek(0) != ' ' && ctx.peek(0) != '\n' && ctx.indent != 0 {
 		// Insert proper number of Dedent tokens.
 		t := Dedent{ctx.pos()}
 		for range ctx.indent {
@@ -316,8 +285,8 @@ func parseComment(ctx *context, toks []Token) Token {
 	t := Comment{ctx.pos()}
 
 	for {
-		ctx.idx++
-		if ctx.end() || ctx.byte() == '\n' {
+		ctx.next()
+		if ctx.end() || ctx.peek(0) == '\n' {
 			t.end = ctx.idx - 1
 			break
 		}
@@ -344,7 +313,7 @@ func parseComma(ctx *context, toks []Token) (Token, error) {
 	}
 
 	t := Comma{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return t, nil
 }
 
@@ -356,157 +325,166 @@ func parseSemicolon(ctx *context, toks []Token) (Token, error) {
 	}
 
 	t := Semicolon{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return t, nil
 }
 
 func parseColon(ctx *context, toks []Token) Token {
 	c := Colon{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return c
 }
 
 func parseNonequalityOperator(ctx *context) Neq {
 	n := Neq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return n
 }
 
 func parseNegationOperator(ctx *context) Neg {
 	n := Neg{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return n
 }
 
 func parseEqualityOperator(ctx *context) Eq {
 	e := Eq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return e
 }
 
 func parseAssignmentOperator(ctx *context) Ass {
 	a := Ass{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return a
 }
 
 func parseAdditionOperator(ctx *context) Add {
 	a := Add{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return a
 }
 
 func parseSubtractionOperator(ctx *context) Sub {
 	toks := Sub{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return toks
 }
 
 func parseRemainderOperator(ctx *context) Rem {
 	r := Rem{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return r
 }
 
 func parseExponentiationOperator(ctx *context) Exp {
 	e := Exp{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return e
 }
 
 func parseMultiplicationOperator(ctx *context) Mul {
 	m := Mul{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return m
 }
 
 func parseDivisionOperator(ctx *context) Div {
 	d := Div{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return d
 }
 
 func parseLessThanEqualOperator(ctx *context) LessEq {
 	le := LessEq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return le
 }
 
 func parseLeftShiftOperator(ctx *context) LShift {
 	ls := LShift{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return ls
 }
 
 func parseLessThanOperator(ctx *context) Less {
 	l := Less{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return l
 }
 
 func parseGreaterThanEqualOperator(ctx *context) GreaterEq {
 	ge := GreaterEq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return ge
 }
 
 func parseRightShiftOperator(ctx *context) RShift {
 	rs := RShift{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return rs
 }
 
 func parseGreaterThanOperator(ctx *context) Greater {
 	g := Greater{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return g
 }
 
 func parseLeftParenthesis(ctx *context) LParen {
 	lp := LParen{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return lp
 }
 
 func parseRightParenthesis(ctx *context) RParen {
 	rp := RParen{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return rp
 }
 
 func parseLeftBracket(ctx *context) LBracket {
 	lb := LBracket{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return lb
 }
 
 func parseRightBracket(ctx *context) RBracket {
 	rb := RBracket{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return rb
 }
 
 func parseLogicalAnd(ctx *context) And {
 	a := And{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return a
 }
 
 func parseBitAnd(ctx *context) BitAnd {
 	ba := BitAnd{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return ba
 }
 
 func parseLogicalOr(ctx *context) Or {
 	o := Or{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	return o
 }
 
 func parseBitOr(ctx *context) BitOr {
 	bo := BitOr{ctx.pos()}
-	ctx.idx++
+	ctx.next()
 	return bo
 }
 
@@ -514,11 +492,11 @@ func parseString(ctx *context) (String, error) {
 	t := String{ctx.pos()}
 
 	for {
-		ctx.idx++
+		ctx.next()
 		if ctx.end() {
 			return t, Error{"unterminated string, probably missing '\"'", []Token{t}}
 		}
-		b := ctx.byte()
+		b := ctx.peek(0)
 		if b != '\n' {
 			t.end++
 		}
@@ -526,7 +504,7 @@ func parseString(ctx *context) (String, error) {
 			break
 		}
 	}
-	ctx.idx++
+	ctx.next()
 	return t, nil
 }
 
@@ -534,21 +512,22 @@ func parseBinBitString(ctx *context) (Token, error) {
 	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 
 	// Skip b"
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	for {
 		if ctx.end() {
 			return t, Error{"unterminated binary bit string, probably missing '\"'", []Token{t}}
 		}
 
-		switch b := ctx.byte(); b {
+		switch b := ctx.peek(0); b {
 		case '"':
 			t.end++
-			ctx.idx++
+			ctx.next()
 			return t, nil
 		case '0', '1',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
-			ctx.idx++
+			ctx.next()
 		default:
 			switch b {
 			case ' ', '\n', ';', ',':
@@ -567,21 +546,22 @@ func parseOctalBitString(ctx *context) (Token, error) {
 	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 
 	// Skip o"
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	for {
 		if ctx.end() {
 			return t, Error{"unterminated octal bit string, probably missing '\"'", []Token{t}}
 		}
 
-		switch b := ctx.byte(); b {
+		switch b := ctx.peek(0); b {
 		case '"':
 			t.end++
-			ctx.idx++
+			ctx.next()
 			return t, nil
 		case '0', '1', '2', '3', '4', '5', '6', '7',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
-			ctx.idx++
+			ctx.next()
 		default:
 			switch b {
 			case ' ', '\n', ';', ',':
@@ -600,22 +580,23 @@ func parseHexBitString(ctx *context) (Token, error) {
 	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 
 	// Skip x"
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	for {
 		if ctx.end() {
 			return t, Error{"unterminated hex bit string, probably missing '\"'", []Token{t}}
 		}
 
-		switch b := ctx.byte(); b {
+		switch b := ctx.peek(0); b {
 		case '"':
 			t.end++
-			ctx.idx++
+			ctx.next()
 			return t, nil
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
-			ctx.idx++
+			ctx.next()
 		case ' ', '\n', ';', ',':
 			return t, Error{"unterminated hex bit string, probably missing '\"'", []Token{t}}
 		default:
@@ -628,8 +609,8 @@ func parseHexBitString(ctx *context) (Token, error) {
 }
 
 func parseNumber(ctx *context) (Number, error) {
-	b := ctx.byte()
-	nb := ctx.nextByte()
+	b := ctx.peek(0)
+	nb := ctx.peek(1)
 
 	if b == '0' && (nb == 'b' || nb == 'B') {
 		return parseBinInt(ctx)
@@ -644,12 +625,12 @@ func parseNumber(ctx *context) (Number, error) {
 	hasE := false
 
 	for {
-		ctx.idx++
+		ctx.next()
 		if ctx.end() {
 			break
 		}
 
-		b := ctx.byte()
+		b := ctx.peek(0)
 		if isDigit(b) {
 			continue
 		}
@@ -701,11 +682,12 @@ func parseBinInt(ctx *context) (Int, error) {
 	t := Int{ctx.pos()}
 
 	// Skip 0b
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	for !ctx.end() {
-		b := ctx.byte()
+		b := ctx.peek(0)
 		if b == '0' || b == '1' {
-			ctx.idx++
+			ctx.next()
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
@@ -723,11 +705,12 @@ func parseOctalInt(ctx *context) (Int, error) {
 	t := Int{ctx.pos()}
 
 	// Skip 0o
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	for !ctx.end() {
-		b := ctx.byte()
+		b := ctx.peek(0)
 		if '0' <= b && b <= '7' {
-			ctx.idx++
+			ctx.next()
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
@@ -745,11 +728,12 @@ func parseHexInt(ctx *context) (Int, error) {
 	t := Int{ctx.pos()}
 
 	// Skip 0x
-	ctx.idx += 2
+	ctx.next()
+	ctx.next()
 	for !ctx.end() {
-		b := ctx.byte()
+		b := ctx.peek(0)
 		if isHexDigit(b) {
-			ctx.idx++
+			ctx.next()
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
@@ -775,8 +759,12 @@ func isValidQualifiedIdentifier(qi []byte) bool {
 // TODO: Refactor, too complex, split into 2 (or more) functions.
 func parseWord(ctx *context, toks *[]Token) (Token, error) {
 	var t Token
-	defer func() { ctx.idx = t.End() + 1 }()
-	word, hasHyphen, hasDot := getWord(ctx.src, ctx.idx)
+	defer func() {
+		for ctx.idx <= t.End() {
+			ctx.next()
+		}
+	}()
+	word, hasHyphen, hasDot := ctx.getWord()
 
 	qualIdentErrMsg := "symbol name in qualified identifier must start with letter"
 	if hasHyphen && hasDot {
@@ -809,10 +797,12 @@ func parseWord(ctx *context, toks *[]Token) (Token, error) {
 				return t, nil
 			}
 			*toks = append(*toks, t)
-			ctx.idx += len(chunks[i])
+			for range chunk {
+				ctx.next()
+			}
 			t = Sub{ctx.pos()}
 			*toks = append(*toks, t)
-			ctx.idx++
+			ctx.next()
 		}
 	} else if hasDot {
 		// It is qualified identifier
