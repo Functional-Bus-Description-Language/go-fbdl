@@ -1,0 +1,5 @@
+error: multiple dots in identifier
+bus.fbd +1:15
+   |
+ 1 | const A = abc-foo.bar.zaz-xyz
+   |               ^^^^^^^^^^^

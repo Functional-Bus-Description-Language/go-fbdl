@@ -1,4 +1,4 @@
 main bus
   p proc
-    delay = 1 ms
+    delay = 1'ms
     p param

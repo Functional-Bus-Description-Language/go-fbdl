@@ -450,9 +450,10 @@ type Time struct {
 func MakeTime(e ast.Time, src []byte, s Scope) (Time, error) {
 	txt := token.Text(e.X, src)
 
-	aux := strings.Fields(txt)
-	intLiteral := aux[0]
-	unit := aux[1]
+	intLiteral, unit, ok := strings.Cut(txt, "'")
+	if !ok {
+		return Time{}, fmt.Errorf("make time literal: missing apostrophe")
+	}
 
 	x, err := strconv.ParseInt(intLiteral, 10, 64)
 	if err != nil {

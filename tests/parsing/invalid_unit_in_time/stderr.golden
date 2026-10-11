@@ -1,0 +1,5 @@
+error: invalid unit in time literal, valid units for time literal are: 'ns', 'us', 'ms', 's'
+bus.fbd +3:13
+   |
+ 3 |     delay = 10'ab
+   |             ^^^^^

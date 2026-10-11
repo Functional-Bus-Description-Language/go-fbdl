@@ -3,139 +3,128 @@ package token
 import (
 	"bytes"
 	"fmt"
-	"unicode"
 )
-
-// Returns last token from the Token list.
-// If list is empty, the second return is false.
-func lastToken(toks []Token) (Token, bool) {
-	if len(toks) == 0 {
-		return nil, false
-	}
-	return toks[len(toks)-1], true
-}
 
 // Parses src byte array containing the source code and returns token Stream.
 func Parse(src []byte, path string) ([]Token, error) {
 	var (
-		ctx  context
-		tok  Token
-		err  error
-		toks []Token // Token stream
+		ctx    context
+		err    error
+		toks   []Token
+		tokens []Token // Token stream
 	)
 	ctx.src = src
 	ctx.path = path
+	ctx.lastTok = None{}
 
 	for !ctx.end() {
-		tok = None{}
-		err = nil
 		b := ctx.peek(0)
 		nb := ctx.peek(1)
 
 		switch b {
 		case ' ':
-			tok, err = parseSpace(&ctx, &toks)
+			toks, err = parseSpace(&ctx)
 		case '\t':
-			err = parseTab(&ctx, &toks)
+			toks, err = parseTab(&ctx)
 		case '\n':
-			err = parseNewline(&ctx, &toks)
+			toks, err = parseNewline(&ctx)
 		case '#':
-			tok = parseComment(&ctx, toks)
+			toks, err = parseComment(&ctx)
 		case ',':
-			tok, err = parseComma(&ctx, toks)
+			toks, err = parseComma(&ctx)
 		case ';':
-			tok, err = parseSemicolon(&ctx, toks)
+			toks, err = parseSemicolon(&ctx)
 		case ':':
-			tok = parseColon(&ctx, toks)
+			toks, err = parseColon(&ctx)
 		case '!':
 			if nb == '=' {
-				tok = parseNonequalityOperator(&ctx)
+				toks, err = parseNonequalityOperator(&ctx)
 			} else {
-				tok = parseNegationOperator(&ctx)
+				toks, err = parseNegationOperator(&ctx)
 			}
 		case '=':
 			if nb == '=' {
-				tok = parseEqualityOperator(&ctx)
+				toks, err = parseEqualityOperator(&ctx)
 			} else {
-				tok = parseAssignmentOperator(&ctx)
+				toks, err = parseAssignmentOperator(&ctx)
 			}
 		case '+':
-			tok = parseAdditionOperator(&ctx)
+			toks, err = parseAdditionOperator(&ctx)
 		case '-':
-			tok = parseSubtractionOperator(&ctx)
+			toks, err = parseSubtractionOperator(&ctx)
 		case '%':
-			tok = parseRemainderOperator(&ctx)
+			toks, err = parseRemainderOperator(&ctx)
 		case '*':
 			if nb == '*' {
-				tok = parseExponentiationOperator(&ctx)
+				toks, err = parseExponentiationOperator(&ctx)
 			} else {
-				tok = parseMultiplicationOperator(&ctx)
+				toks, err = parseMultiplicationOperator(&ctx)
 			}
 		case '/':
-			tok = parseDivisionOperator(&ctx)
+			toks, err = parseDivisionOperator(&ctx)
 		case '<':
 			switch nb {
 			case '=':
-				tok = parseLessThanEqualOperator(&ctx)
+				toks, err = parseLessThanEqualOperator(&ctx)
 			case '<':
-				tok = parseLeftShiftOperator(&ctx)
+				toks, err = parseLeftShiftOperator(&ctx)
 			default:
-				tok = parseLessThanOperator(&ctx)
+				toks, err = parseLessThanOperator(&ctx)
 			}
 		case '>':
 			switch nb {
 			case '=':
-				tok = parseGreaterThanEqualOperator(&ctx)
+				toks, err = parseGreaterThanEqualOperator(&ctx)
 			case '>':
-				tok = parseRightShiftOperator(&ctx)
+				toks, err = parseRightShiftOperator(&ctx)
 			default:
-				tok = parseGreaterThanOperator(&ctx)
+				toks, err = parseGreaterThanOperator(&ctx)
 			}
 		case '(':
-			tok = parseLeftParenthesis(&ctx)
+			toks, err = parseLeftParenthesis(&ctx)
 		case ')':
-			tok = parseRightParenthesis(&ctx)
+			toks, err = parseRightParenthesis(&ctx)
 		case '[':
-			tok = parseLeftBracket(&ctx)
+			toks, err = parseLeftBracket(&ctx)
 		case ']':
-			tok = parseRightBracket(&ctx)
+			toks, err = parseRightBracket(&ctx)
 		case '&':
 			if nb == '&' {
-				tok = parseLogicalAnd(&ctx)
+				toks, err = parseLogicalAnd(&ctx)
 			} else {
-				tok = parseBitAnd(&ctx)
+				toks, err = parseBitAnd(&ctx)
 			}
 		case '|':
 			if nb == '|' {
-				tok = parseLogicalOr(&ctx)
+				toks, err = parseLogicalOr(&ctx)
 			} else {
-				tok = parseBitOr(&ctx)
+				toks, err = parseBitOr(&ctx)
 			}
 		case '"':
-			tok, err = parseString(&ctx)
+			toks, err = parseString(&ctx)
 		case 'b', 'B':
 			if nb == '"' {
-				tok, err = parseBinBitString(&ctx)
+				toks, err = parseBinBitString(&ctx)
 			} else {
-				tok, err = parseWord(&ctx, &toks)
+				toks, err = parseWord(&ctx)
 			}
 		case 'o', 'O':
 			if nb == '"' {
-				tok, err = parseOctalBitString(&ctx)
+				toks, err = parseOctalBitString(&ctx)
 			} else {
-				tok, err = parseWord(&ctx, &toks)
+				toks, err = parseWord(&ctx)
 			}
 		case 'x', 'X':
 			if nb == '"' {
-				tok, err = parseHexBitString(&ctx)
+				toks, err = parseHexBitString(&ctx)
 			} else {
-				tok, err = parseWord(&ctx, &toks)
+				toks, err = parseWord(&ctx)
 			}
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
-			tok, err = parseNumber(&ctx)
+			toks, err = parseNumber(&ctx)
 		default:
 			if isLetter(b) || b == '_' {
-				tok, err = parseWord(&ctx, &toks)
+				toks, err = parseWord(&ctx)
 			} else {
 				return nil, Error{
 					Msg:  fmt.Sprintf("invalid byte 0x%x ('%c')", b, b),
@@ -145,24 +134,23 @@ func Parse(src []byte, path string) ([]Token, error) {
 		}
 
 		if err != nil {
-			return toks, err
+			return tokens, err
 		}
 
-		if _, ok := tok.(None); !ok {
-			toks = append(toks, tok)
+		tokens = append(tokens, toks...)
+		if len(toks) > 0 {
+			ctx.lastTok = toks[len(toks)-1]
 		}
 	}
 
-	toks = append(toks, Eof{ctx.pos()})
+	tokens = append(tokens, Eof{ctx.pos()})
 
-	return toks, nil
+	return tokens, nil
 }
 
-func parseSpace(ctx *context, toks *[]Token) (Token, error) {
-	if t, ok := lastToken(*toks); ok {
-		if _, ok := t.(Newline); ok {
-			return parseIndent(ctx, toks)
-		}
+func parseSpace(ctx *context) ([]Token, error) {
+	if _, ok := ctx.lastTok.(Newline); ok {
+		return parseIndent(ctx)
 	}
 
 	// Eat all spaces
@@ -179,22 +167,22 @@ func parseSpace(ctx *context, toks *[]Token) (Token, error) {
 		tok.start = startIdx
 		tok.end--
 		if spaceCount > 1 {
-			return None{}, Error{
+			return nil, Error{
 				fmt.Sprintf("extra %d spaces at line end", spaceCount),
 				[]Token{tok},
 			}
 		} else {
-			return None{}, Error{
+			return nil, Error{
 				"extra space at line end",
 				[]Token{tok},
 			}
 		}
 	}
 
-	return None{}, nil
+	return nil, nil
 }
 
-func parseIndent(ctx *context, toks *[]Token) (Token, error) {
+func parseIndent(ctx *context) ([]Token, error) {
 	indent := Indent{ctx.pos()}
 
 	spaceCount := 0
@@ -207,12 +195,12 @@ func parseIndent(ctx *context, toks *[]Token) (Token, error) {
 	if ctx.peek(0) == '\n' {
 		if spaceCount > 1 {
 			indent.end += spaceCount - 1
-			return None{}, Error{
+			return nil, Error{
 				fmt.Sprintf("extra %d spaces at line end", spaceCount),
 				[]Token{indent},
 			}
 		} else {
-			return None{}, Error{
+			return nil, Error{
 				"extra space at line end",
 				[]Token{indent},
 			}
@@ -222,7 +210,7 @@ func parseIndent(ctx *context, toks *[]Token) (Token, error) {
 	indent.end += spaceCount - 1
 
 	if spaceCount%2 != 0 {
-		return indent, Error{
+		return []Token{indent}, Error{
 			fmt.Sprintf("odd number (%d) of spaces in indent, expected even number", spaceCount),
 			[]Token{indent},
 		}
@@ -231,57 +219,56 @@ func parseIndent(ctx *context, toks *[]Token) (Token, error) {
 	indentLvl := spaceCount / 2
 	if indentLvl == ctx.indent+1 {
 		ctx.indent = indentLvl
-		return indent, nil
+		return []Token{indent}, nil
 	} else if indentLvl > ctx.indent+1 {
-		return indent, Error{
+		return []Token{indent}, Error{
 			fmt.Sprintf("multi indent increase, previous indent %d , current indent %d", ctx.indent, indentLvl),
 			[]Token{indent},
 		}
 	} else if indentLvl < ctx.indent {
 		// Insert proper number of INDENT_DEC tokens.
+		var parsed []Token
 		t := Dedent(indent)
 		for i := 0; indentLvl+i < ctx.indent; i++ {
-			*toks = append(*toks, t)
+			parsed = append(parsed, t)
 		}
 		ctx.indent = indentLvl
-		return None{}, nil
+		return parsed, nil
 	}
 
-	return None{}, nil
+	return nil, nil
 }
 
-func parseTab(ctx *context, toks *[]Token) error {
+func parseTab(ctx *context) ([]Token, error) {
 	tab := Indent{ctx.pos()}
-	return Error{
+	return nil, Error{
 		"tab character '\\t' allowed only in comments, use spaces",
 		[]Token{tab},
 	}
 }
 
-func parseNewline(ctx *context, toks *[]Token) error {
-	if t, ok := lastToken(*toks); ok {
-		if _, ok := t.(Semicolon); ok {
-			return Error{"extra ';' at line end", []Token{t}}
-		}
+func parseNewline(ctx *context) ([]Token, error) {
+	if _, ok := ctx.lastTok.(Semicolon); ok {
+		return nil, Error{"extra ';' at line end", []Token{ctx.lastTok}}
 	}
 
 	nl := Newline{ctx.pos()}
 	ctx.next()
-	*toks = append(*toks, nl)
+	parsed := []Token{nl}
 
 	if !ctx.end() && ctx.peek(0) != ' ' && ctx.peek(0) != '\n' && ctx.indent != 0 {
 		// Insert proper number of Dedent tokens.
 		t := Dedent{ctx.pos()}
 		for range ctx.indent {
-			*toks = append(*toks, t)
+			parsed = append(parsed, t)
 		}
 		ctx.indent = 0
 	}
 
-	return nil
+	return parsed, nil
 }
 
-func parseComment(ctx *context, toks []Token) Token {
+func parseComment(ctx *context) ([]Token, error) {
 	t := Comment{ctx.pos()}
 
 	for {
@@ -293,208 +280,200 @@ func parseComment(ctx *context, toks []Token) Token {
 	}
 
 	// Add comment to the token stream only if it is a potential documentation comment.
-	if prevTok, ok := lastToken(toks); ok {
-		switch prevTok.(type) {
-		case Newline, Indent, Dedent:
-			return t
-		}
-	} else {
-		return t
+	switch ctx.lastTok.(type) {
+	case None, Newline, Indent, Dedent:
+		return []Token{t}, nil
 	}
 
-	return None{}
+	return nil, nil
 }
 
-func parseComma(ctx *context, toks []Token) (Token, error) {
-	if t, ok := lastToken(toks); ok {
-		if _, ok := t.(Comma); ok {
-			return nil, Error{"redundant ','", []Token{Comma{ctx.pos()}}}
-		}
+func parseComma(ctx *context) ([]Token, error) {
+	if _, ok := ctx.lastTok.(Comma); ok {
+		return nil, Error{"redundant ','", []Token{Comma{ctx.pos()}}}
 	}
 
 	t := Comma{ctx.pos()}
 	ctx.next()
-	return t, nil
+	return []Token{t}, nil
 }
 
-func parseSemicolon(ctx *context, toks []Token) (Token, error) {
-	if t, ok := lastToken(toks); ok {
-		if _, ok := t.(Semicolon); ok {
-			return nil, Error{"redundant ';'", []Token{Semicolon{ctx.pos()}}}
-		}
+func parseSemicolon(ctx *context) ([]Token, error) {
+	if _, ok := ctx.lastTok.(Semicolon); ok {
+		return nil, Error{"redundant ';'", []Token{Semicolon{ctx.pos()}}}
 	}
 
 	t := Semicolon{ctx.pos()}
 	ctx.next()
-	return t, nil
+	return []Token{t}, nil
 }
 
-func parseColon(ctx *context, toks []Token) Token {
+func parseColon(ctx *context) ([]Token, error) {
 	c := Colon{ctx.pos()}
 	ctx.next()
-	return c
+	return []Token{c}, nil
 }
 
-func parseNonequalityOperator(ctx *context) Neq {
+func parseNonequalityOperator(ctx *context) ([]Token, error) {
 	n := Neq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return n
+	return []Token{n}, nil
 }
 
-func parseNegationOperator(ctx *context) Neg {
+func parseNegationOperator(ctx *context) ([]Token, error) {
 	n := Neg{ctx.pos()}
 	ctx.next()
-	return n
+	return []Token{n}, nil
 }
 
-func parseEqualityOperator(ctx *context) Eq {
+func parseEqualityOperator(ctx *context) ([]Token, error) {
 	e := Eq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return e
+	return []Token{e}, nil
 }
 
-func parseAssignmentOperator(ctx *context) Ass {
+func parseAssignmentOperator(ctx *context) ([]Token, error) {
 	a := Ass{ctx.pos()}
 	ctx.next()
-	return a
+	return []Token{a}, nil
 }
 
-func parseAdditionOperator(ctx *context) Add {
+func parseAdditionOperator(ctx *context) ([]Token, error) {
 	a := Add{ctx.pos()}
 	ctx.next()
-	return a
+	return []Token{a}, nil
 }
 
-func parseSubtractionOperator(ctx *context) Sub {
+func parseSubtractionOperator(ctx *context) ([]Token, error) {
 	toks := Sub{ctx.pos()}
 	ctx.next()
-	return toks
+	return []Token{toks}, nil
 }
 
-func parseRemainderOperator(ctx *context) Rem {
+func parseRemainderOperator(ctx *context) ([]Token, error) {
 	r := Rem{ctx.pos()}
 	ctx.next()
-	return r
+	return []Token{r}, nil
 }
 
-func parseExponentiationOperator(ctx *context) Exp {
+func parseExponentiationOperator(ctx *context) ([]Token, error) {
 	e := Exp{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return e
+	return []Token{e}, nil
 }
 
-func parseMultiplicationOperator(ctx *context) Mul {
+func parseMultiplicationOperator(ctx *context) ([]Token, error) {
 	m := Mul{ctx.pos()}
 	ctx.next()
-	return m
+	return []Token{m}, nil
 }
 
-func parseDivisionOperator(ctx *context) Div {
+func parseDivisionOperator(ctx *context) ([]Token, error) {
 	d := Div{ctx.pos()}
 	ctx.next()
-	return d
+	return []Token{d}, nil
 }
 
-func parseLessThanEqualOperator(ctx *context) LessEq {
+func parseLessThanEqualOperator(ctx *context) ([]Token, error) {
 	le := LessEq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return le
+	return []Token{le}, nil
 }
 
-func parseLeftShiftOperator(ctx *context) LShift {
+func parseLeftShiftOperator(ctx *context) ([]Token, error) {
 	ls := LShift{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return ls
+	return []Token{ls}, nil
 }
 
-func parseLessThanOperator(ctx *context) Less {
+func parseLessThanOperator(ctx *context) ([]Token, error) {
 	l := Less{ctx.pos()}
 	ctx.next()
-	return l
+	return []Token{l}, nil
 }
 
-func parseGreaterThanEqualOperator(ctx *context) GreaterEq {
+func parseGreaterThanEqualOperator(ctx *context) ([]Token, error) {
 	ge := GreaterEq{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return ge
+	return []Token{ge}, nil
 }
 
-func parseRightShiftOperator(ctx *context) RShift {
+func parseRightShiftOperator(ctx *context) ([]Token, error) {
 	rs := RShift{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return rs
+	return []Token{rs}, nil
 }
 
-func parseGreaterThanOperator(ctx *context) Greater {
+func parseGreaterThanOperator(ctx *context) ([]Token, error) {
 	g := Greater{ctx.pos()}
 	ctx.next()
-	return g
+	return []Token{g}, nil
 }
 
-func parseLeftParenthesis(ctx *context) LParen {
+func parseLeftParenthesis(ctx *context) ([]Token, error) {
 	lp := LParen{ctx.pos()}
 	ctx.next()
-	return lp
+	return []Token{lp}, nil
 }
 
-func parseRightParenthesis(ctx *context) RParen {
+func parseRightParenthesis(ctx *context) ([]Token, error) {
 	rp := RParen{ctx.pos()}
 	ctx.next()
-	return rp
+	return []Token{rp}, nil
 }
 
-func parseLeftBracket(ctx *context) LBracket {
+func parseLeftBracket(ctx *context) ([]Token, error) {
 	lb := LBracket{ctx.pos()}
 	ctx.next()
-	return lb
+	return []Token{lb}, nil
 }
 
-func parseRightBracket(ctx *context) RBracket {
+func parseRightBracket(ctx *context) ([]Token, error) {
 	rb := RBracket{ctx.pos()}
 	ctx.next()
-	return rb
+	return []Token{rb}, nil
 }
 
-func parseLogicalAnd(ctx *context) And {
+func parseLogicalAnd(ctx *context) ([]Token, error) {
 	a := And{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return a
+	return []Token{a}, nil
 }
 
-func parseBitAnd(ctx *context) BitAnd {
+func parseBitAnd(ctx *context) ([]Token, error) {
 	ba := BitAnd{ctx.pos()}
 	ctx.next()
-	return ba
+	return []Token{ba}, nil
 }
 
-func parseLogicalOr(ctx *context) Or {
+func parseLogicalOr(ctx *context) ([]Token, error) {
 	o := Or{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 	ctx.next()
 	ctx.next()
-	return o
+	return []Token{o}, nil
 }
 
-func parseBitOr(ctx *context) BitOr {
+func parseBitOr(ctx *context) ([]Token, error) {
 	bo := BitOr{ctx.pos()}
 	ctx.next()
-	return bo
+	return []Token{bo}, nil
 }
 
-func parseString(ctx *context) (String, error) {
+func parseString(ctx *context) ([]Token, error) {
 	t := String{ctx.pos()}
 
 	for {
 		ctx.next()
 		if ctx.end() {
-			return t, Error{"unterminated string, probably missing '\"'", []Token{t}}
+			return []Token{t}, Error{"unterminated string, probably missing '\"'", []Token{t}}
 		}
 		b := ctx.peek(0)
 		if b != '\n' {
@@ -505,10 +484,10 @@ func parseString(ctx *context) (String, error) {
 		}
 	}
 	ctx.next()
-	return t, nil
+	return []Token{t}, nil
 }
 
-func parseBinBitString(ctx *context) (Token, error) {
+func parseBinBitString(ctx *context) ([]Token, error) {
 	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 
 	// Skip b"
@@ -516,14 +495,17 @@ func parseBinBitString(ctx *context) (Token, error) {
 	ctx.next()
 	for {
 		if ctx.end() {
-			return t, Error{"unterminated binary bit string, probably missing '\"'", []Token{t}}
+			return nil, Error{
+				"unterminated binary bit string, probably missing '\"'",
+				[]Token{t},
+			}
 		}
 
 		switch b := ctx.peek(0); b {
 		case '"':
 			t.end++
 			ctx.next()
-			return t, nil
+			return []Token{t}, nil
 		case '0', '1',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
@@ -531,9 +513,12 @@ func parseBinBitString(ctx *context) (Token, error) {
 		default:
 			switch b {
 			case ' ', '\n', ';', ',':
-				return t, Error{"unterminated binary bit string, probably missing '\"'", []Token{t}}
+				return nil, Error{
+					"unterminated binary bit string, probably missing '\"'",
+					[]Token{t},
+				}
 			default:
-				return t, Error{
+				return nil, Error{
 					fmt.Sprintf("invalid character '%c' in binary bit string", b),
 					[]Token{BitString{ctx.pos()}},
 				}
@@ -542,7 +527,7 @@ func parseBinBitString(ctx *context) (Token, error) {
 	}
 }
 
-func parseOctalBitString(ctx *context) (Token, error) {
+func parseOctalBitString(ctx *context) ([]Token, error) {
 	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 
 	// Skip o"
@@ -550,14 +535,17 @@ func parseOctalBitString(ctx *context) (Token, error) {
 	ctx.next()
 	for {
 		if ctx.end() {
-			return t, Error{"unterminated octal bit string, probably missing '\"'", []Token{t}}
+			return nil, Error{
+				"unterminated octal bit string, probably missing '\"'",
+				[]Token{t},
+			}
 		}
 
 		switch b := ctx.peek(0); b {
 		case '"':
 			t.end++
 			ctx.next()
-			return t, nil
+			return []Token{t}, nil
 		case '0', '1', '2', '3', '4', '5', '6', '7',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
@@ -565,9 +553,12 @@ func parseOctalBitString(ctx *context) (Token, error) {
 		default:
 			switch b {
 			case ' ', '\n', ';', ',':
-				return t, Error{"unterminated octal bit string, probably missing '\"'", []Token{t}}
+				return nil, Error{
+					"unterminated octal bit string, probably missing '\"'",
+					[]Token{t},
+				}
 			default:
-				return t, Error{
+				return nil, Error{
 					fmt.Sprintf("invalid character '%c' in octal bit string", b),
 					[]Token{BitString{ctx.pos()}},
 				}
@@ -576,7 +567,7 @@ func parseOctalBitString(ctx *context) (Token, error) {
 	}
 }
 
-func parseHexBitString(ctx *context) (Token, error) {
+func parseHexBitString(ctx *context) ([]Token, error) {
 	t := BitString{position{ctx.idx, ctx.idx + 1, ctx.src, ctx.path}}
 
 	// Skip x"
@@ -584,23 +575,29 @@ func parseHexBitString(ctx *context) (Token, error) {
 	ctx.next()
 	for {
 		if ctx.end() {
-			return t, Error{"unterminated hex bit string, probably missing '\"'", []Token{t}}
+			return nil, Error{
+				"unterminated hex bit string, probably missing '\"'",
+				[]Token{t},
+			}
 		}
 
 		switch b := ctx.peek(0); b {
 		case '"':
 			t.end++
 			ctx.next()
-			return t, nil
+			return []Token{t}, nil
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
 			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
 			ctx.next()
 		case ' ', '\n', ';', ',':
-			return t, Error{"unterminated hex bit string, probably missing '\"'", []Token{t}}
+			return nil, Error{
+				"unterminated hex bit string, probably missing '\"'",
+				[]Token{t},
+			}
 		default:
-			return t, Error{
+			return nil, Error{
 				fmt.Sprintf("invalid character '%c' in hex bit string", b),
 				[]Token{BitString{ctx.pos()}},
 			}
@@ -608,7 +605,7 @@ func parseHexBitString(ctx *context) (Token, error) {
 	}
 }
 
-func parseNumber(ctx *context) (Number, error) {
+func parseNumber(ctx *context) ([]Token, error) {
 	b := ctx.peek(0)
 	nb := ctx.peek(1)
 
@@ -659,6 +656,8 @@ func parseNumber(ctx *context) (Number, error) {
 			} else {
 				hasE = true
 			}
+		} else if b == '\'' && !hasPoint && !hasE {
+			return parseTime(ctx, i.start)
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
@@ -675,10 +674,29 @@ func parseNumber(ctx *context) (Number, error) {
 		n = Float(i)
 	}
 
-	return n, nil
+	return []Token{n}, nil
 }
 
-func parseBinInt(ctx *context) (Int, error) {
+func parseTime(ctx *context, start int) ([]Token, error) {
+	ctx.next() // Skip the apostrophe.
+	unitStart := ctx.idx
+	for !ctx.end() && !isValidAfterNumber(ctx.peek(0)) {
+		ctx.next()
+	}
+
+	t := Time{position{start, ctx.idx - 1, ctx.src, ctx.path}}
+	switch string(ctx.src[unitStart:ctx.idx]) {
+	case "ns", "us", "ms", "s":
+		return []Token{t}, nil
+	default:
+		return nil, Error{
+			"invalid unit in time literal, valid units for time literal are: 'ns', 'us', 'ms', 's'",
+			[]Token{t},
+		}
+	}
+}
+
+func parseBinInt(ctx *context) ([]Token, error) {
 	t := Int{ctx.pos()}
 
 	// Skip 0b
@@ -691,17 +709,17 @@ func parseBinInt(ctx *context) (Int, error) {
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return t, Error{
+			return []Token{t}, Error{
 				fmt.Sprintf("invalid character '%c' in binary", b),
 				[]Token{Int{ctx.pos()}},
 			}
 		}
 	}
 	t.end = ctx.idx - 1
-	return t, nil
+	return []Token{t}, nil
 }
 
-func parseOctalInt(ctx *context) (Int, error) {
+func parseOctalInt(ctx *context) ([]Token, error) {
 	t := Int{ctx.pos()}
 
 	// Skip 0o
@@ -714,17 +732,17 @@ func parseOctalInt(ctx *context) (Int, error) {
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return t, Error{
+			return []Token{t}, Error{
 				fmt.Sprintf("invalid character '%c' in octal", b),
 				[]Token{Int{ctx.pos()}},
 			}
 		}
 	}
 	t.end = ctx.idx - 1
-	return t, nil
+	return []Token{t}, nil
 }
 
-func parseHexInt(ctx *context) (Int, error) {
+func parseHexInt(ctx *context) ([]Token, error) {
 	t := Int{ctx.pos()}
 
 	// Skip 0x
@@ -737,296 +755,304 @@ func parseHexInt(ctx *context) (Int, error) {
 		} else if isValidAfterNumber(b) {
 			break
 		} else {
-			return t, Error{
+			return []Token{t}, Error{
 				fmt.Sprintf("invalid character '%c' in hex", b),
 				[]Token{Int{ctx.pos()}},
 			}
 		}
 	}
 	t.end = ctx.idx - 1
-	return t, nil
+	return []Token{t}, nil
 }
 
-// isValidQualifiedIdentifier returns false if symbol name in
-// qualified identifier does not start with upper case letter.
-func isValidQualifiedIdentifier(qi []byte) bool {
-	aux := bytes.Split(qi, []byte("."))
-	sym := aux[1]
-	r := []rune(string(sym))[0]
-	return unicode.IsUpper(r) || unicode.IsLower(r)
+// Checks that the symbol following the dot starts with a letter.
+func isValidQualIdent(word []byte) bool {
+	dot := bytes.IndexByte(word, '.')
+	return dot >= 0 && dot+1 < len(word) && isLetter(word[dot+1])
 }
 
-// TODO: Refactor, too complex, split into 2 (or more) functions.
-func parseWord(ctx *context, toks *[]Token) (Token, error) {
-	var t Token
-	defer func() {
-		for ctx.idx <= t.End() {
-			ctx.next()
-		}
-	}()
-	word, hasHyphen, hasDot := ctx.getWord()
+func parseWord(ctx *context) ([]Token, error) {
+	word := ctx.getWord()
+	dotCount := bytes.Count(word, []byte{'.'})
+	hyphenCount := bytes.Count(word, []byte{'-'})
 
-	qualIdentErrMsg := "symbol name in qualified identifier must start with letter"
-	if hasHyphen && hasDot {
-		// This is for sure part of an expression
-		chunks := bytes.Split(word, []byte{'-'})
-		for i, chunk := range chunks {
-			if bytes.Contains(chunk, []byte{'.'}) {
-				t = QualIdent{
+	if dotCount > 1 && hyphenCount == 0 {
+		return nil, Error{
+			Msg: "multiple dots in identifier",
+			Toks: []Token{
+				Ident{
 					position{
-						start: ctx.idx,
-						end:   ctx.idx + len(chunk) - 1,
+						start: ctx.idx - len(word),
+						end:   ctx.idx - 1,
 						src:   ctx.src,
 						path:  ctx.path,
 					},
-				}
-				if !isValidQualifiedIdentifier(chunk) {
-					return t, Error{qualIdentErrMsg, []Token{t}}
-				}
-			} else {
-				t = Ident{
-					position{
-						start: ctx.idx,
-						end:   ctx.idx + len(chunk) - 1,
-						src:   ctx.src,
-						path:  ctx.path,
-					},
-				}
-			}
-			if i == len(chunks)-1 {
-				return t, nil
-			}
-			*toks = append(*toks, t)
-			for range chunk {
-				ctx.next()
-			}
-			t = Sub{ctx.pos()}
-			*toks = append(*toks, t)
-			ctx.next()
+				},
+			},
 		}
-	} else if hasDot {
-		// It is qualified identifier
-		t = QualIdent{position{
-			start: ctx.idx,
-			end:   ctx.idx + len(word) - 1,
+	}
+
+	if dotCount == 0 && hyphenCount == 0 {
+		return parseNoHyphenKeywordOrIdent(ctx, word)
+	} else if dotCount == 1 && hyphenCount == 0 {
+		tok := QualIdent{ctx.pos()}
+		tok.start = tok.end - len(word)
+		tok.end--
+		if !isValidQualIdent(word) {
+			return nil, Error{
+				"symbol name in qualified identifier must start with letter",
+				[]Token{tok},
+			}
+		}
+		return []Token{tok}, nil
+	} else if dotCount == 0 && hyphenCount == 1 {
+		return parseHyphenPropOrOneSubExpr(ctx, word)
+	} else if dotCount == 0 && hyphenCount > 1 {
+		return parseMultiSubExpr(ctx, word)
+	}
+
+	return parseMultiSubExprWithQualIdent(ctx, word)
+}
+
+func parseNoHyphenKeywordOrIdent(ctx *context, word []byte) ([]Token, error) {
+	toks, err := parseKeyword(ctx, word)
+	if err != nil || len(toks) != 0 {
+		return toks, err
+	}
+
+	switch ctx.lastTok.(type) {
+	case None, Newline, Semicolon, Indent, Dedent:
+		toks, err := parseNoHyphenProperty(ctx, word)
+		if err != nil || len(toks) != 0 {
+			return toks, err
+		}
+	}
+
+	ident := Ident{
+		position{
+			start: ctx.idx - len(word),
+			end:   ctx.idx - 1,
 			src:   ctx.src,
 			path:  ctx.path,
-		}}
-
-		if !isValidQualifiedIdentifier(word) {
-			return t, Error{qualIdentErrMsg, []Token{t}}
-		}
-
-		return t, nil
+		},
 	}
 
-	splitHyphenatedWord := func() (Ident, Sub, Ident) {
-		i1 := Ident{ctx.pos()}
-		s := Sub{position{}}
-		i2 := Ident{position{end: ctx.idx + len(word) - 1}}
-
-		for i := range word {
-			if word[i] == '-' {
-				i1.end = ctx.idx + i - 1
-
-				s.start = ctx.idx + i
-				s.end = ctx.idx + i
-
-				i2.start = ctx.idx + i + 1
-			}
-		}
-		return i1, s, i2
+	switch ctx.lastTok.(type) {
+	case Newline, Indent, Dedent:
+		return []Token{ident}, nil
 	}
 
-	if !hasHyphen {
-		// Firstly assume word is a keyword
-		t = parseKeyword(word, ctx)
-		// If it is not a keyword, then it might be a property or identifier.
-		if _, ok := t.(None); ok {
-			t = parseProperty(word, ctx)
-			// If it is not property, then it must be an identifier.
-			if _, ok := t.(None); ok {
-				t = Ident{position{t.Start(), t.End(), ctx.src, ctx.path}}
-			} else {
-				// However, properties are properties only if they are in valid place,
-				// otherwise, these are regular identifiers.
-				if prevTok, ok := lastToken(*toks); ok {
-					switch prevTok.(type) {
-					case Newline, Semicolon, Indent:
-						// Do nothing, this is property
-					default:
-						t = Ident{position{t.Start(), t.End(), ctx.src, ctx.path}}
-					}
-				}
-			}
-		}
-
-		// Allow functionality keywords to be instantiation names
-		if _, ok := t.(Functionality); ok {
-			if prevTok, ok := lastToken(*toks); ok {
-				switch prevTok.(type) {
-				case Newline, Indent, Dedent:
-					t = Ident{position{t.Start(), t.End(), ctx.src, ctx.path}}
-				}
-			}
-			if len(*toks) == 0 {
-				t = Ident{position{t.Start(), t.End(), ctx.src, ctx.path}}
-			}
-		}
-	} else {
-		// Firstly assume word is a property
-		t = parseProperty(word, ctx)
-		// If it is not property, then it is part of an expression.
-		if _, ok := t.(None); ok {
-			// t is last, as deferred function has to calculate new context index.
-			i1, sub, i2 := splitHyphenatedWord()
-			t = i2
-			*toks = append(*toks, []Token{i1, sub, i2}...)
-			// Assing to t for updating context index in deferred function
-			t = i2
-			return None{}, nil
-		} else {
-			// It might be property, or part of an expression.
-			prevTok, ok := lastToken(*toks)
-			if !ok {
-				// Safe to return, time literal units do not contain hyphen '-'.
-				return t, nil
-			}
-			// It is part of an expression.
-			switch prevTok.(type) {
-			case Newline, Indent, Semicolon:
-				// It is property
-			default:
-				i1, sub, i2 := splitHyphenatedWord()
-				*toks = append(*toks, []Token{i1, sub, i2}...)
-				// Assing to t for updating context index in deferred function
-				t = i2
-				return None{}, nil
-			}
-		}
+	toks, err = parseFunc(ctx, word)
+	if err != nil || len(toks) != 0 {
+		return toks, err
 	}
 
-	// The word might be the unit of time literal
-	if _, ok := t.(Ident); ok {
-		if prevTok, ok := lastToken(*toks); ok {
-			if _, ok := prevTok.(Int); ok {
-				switch string(word) {
-				case "ns", "us", "ms", "s":
-					t = Time{
-						position{
-							prevTok.Start(),
-							t.End(),
-							ctx.src,
-							ctx.path,
-						},
-					}
-					// Remove previous Int from the list
-					// New Time token will be inserted
-					*toks = (*toks)[:len(*toks)-1]
-				}
-			}
-		}
-	}
-
-	return t, nil
+	return []Token{ident}, nil
 }
 
-func parseKeyword(word []byte, ctx *context) Token {
-	s := ctx.idx
-	e := s + len(word) - 1
+func parseHyphenPropOrOneSubExpr(ctx *context, word []byte) ([]Token, error) {
+	switch ctx.lastTok.(type) {
+	case Newline, Semicolon, Indent, Dedent:
+		toks, err := parseHyphenProperty(ctx, word)
+		if err != nil || len(toks) != 0 {
+			return toks, err
+		}
+	}
+
+	hyphen := bytes.IndexByte(word, '-')
+	start := ctx.idx - len(word)
+	pos := position{start, start + len(word) - 1, ctx.src, ctx.path}
+
+	left := Ident{pos}
+	left.end = start + hyphen - 1
+
+	sub := Sub{pos}
+	sub.start = start + hyphen
+	sub.end = sub.start
+
+	right := Ident{pos}
+	right.start = sub.end + 1
+
+	return []Token{left, sub, right}, nil
+}
+
+func parseMultiSubExpr(ctx *context, word []byte) ([]Token, error) {
+	chunks := bytes.Split(word, []byte{'-'})
+	var toks []Token
+	start := ctx.idx - len(word)
+
+	for i, chunk := range chunks {
+		if len(chunk) != 0 {
+			toks = append(toks, Ident{position{start, start + len(chunk) - 1, ctx.src, ctx.path}})
+		}
+
+		start += len(chunk)
+		if i < len(chunks)-1 {
+			toks = append(toks, Sub{position{start, start, ctx.src, ctx.path}})
+			start++
+		}
+	}
+
+	return toks, nil
+}
+
+// Parses expression with multiple subtraction and potentially qualified identifiers.
+func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) {
+	chunks := bytes.Split(word, []byte{'-'})
+	var toks []Token
+	start := ctx.idx - len(word)
+
+	for i, chunk := range chunks {
+		pos := position{start, start + len(chunk) - 1, ctx.src, ctx.path}
+		if len(chunk) != 0 {
+			switch bytes.Count(chunk, []byte{'.'}) {
+			case 0:
+				toks = append(toks, Ident{pos})
+			case 1:
+				tok := QualIdent{pos}
+				if !isValidQualIdent(chunk) {
+					return nil, Error{
+						"symbol name in qualified identifier must start with letter",
+						[]Token{tok},
+					}
+				}
+				toks = append(toks, tok)
+			default:
+				return nil, Error{"multiple dots in identifier", []Token{Ident{pos}}}
+			}
+		}
+
+		start += len(chunk)
+		if i < len(chunks)-1 {
+			toks = append(toks, Sub{position{start, start, ctx.src, ctx.path}})
+			start++
+		}
+	}
+
+	return toks, nil
+}
+
+// Hard keywords that must not be used anywhere.
+func parseKeyword(ctx *context, word []byte) ([]Token, error) {
+	s := ctx.idx - len(word)
+	e := ctx.idx - 1
 
 	pos := position{s, e, ctx.src, ctx.path}
 
 	switch string(word) {
 	case "false", "true":
-		return Bool{pos}
-	case "block":
-		return Block{pos}
-	case "bus":
-		return Bus{pos}
-	case "config":
-		return Config{pos}
+		return []Token{Bool{pos}}, nil
 	case "const":
-		return Const{pos}
+		return []Token{Const{pos}}, nil
 	case "import":
-		return Import{pos}
-	case "group":
-		return Group{pos}
-	case "irq":
-		return Irq{pos}
-	case "mask":
-		return Mask{pos}
-	case "memory":
-		return Memory{pos}
-	case "param":
-		return Param{pos}
-	case "proc":
-		return Proc{pos}
-	case "return":
-		return Return{pos}
-	case "static":
-		return Static{pos}
-	case "status":
-		return Status{pos}
-	case "stream":
-		return Stream{pos}
+		return []Token{Import{pos}}, nil
 	case "type":
-		return Type{pos}
+		return []Token{Type{pos}}, nil
 	}
 
-	return None{pos}
+	return nil, nil
 }
 
-func parseProperty(word []byte, ctx *context) Token {
-	s := ctx.idx
-	e := s + len(word) - 1
+func parseFunc(ctx *context, word []byte) ([]Token, error) {
+	s := ctx.idx - len(word)
+	e := ctx.idx - 1
+
+	pos := position{s, e, ctx.src, ctx.path}
+
+	switch string(word) {
+	case "block":
+		return []Token{Block{pos}}, nil
+	case "bus":
+		return []Token{Bus{pos}}, nil
+	case "config":
+		return []Token{Config{pos}}, nil
+	case "group":
+		return []Token{Group{pos}}, nil
+	case "irq":
+		return []Token{Irq{pos}}, nil
+	case "mask":
+		return []Token{Mask{pos}}, nil
+	case "memory":
+		return []Token{Memory{pos}}, nil
+	case "param":
+		return []Token{Param{pos}}, nil
+	case "proc":
+		return []Token{Proc{pos}}, nil
+	case "return":
+		return []Token{Return{pos}}, nil
+	case "static":
+		return []Token{Static{pos}}, nil
+	case "status":
+		return []Token{Status{pos}}, nil
+	case "stream":
+		return []Token{Stream{pos}}, nil
+	}
+
+	return nil, nil
+}
+
+func parseNoHyphenProperty(ctx *context, word []byte) ([]Token, error) {
+	s := ctx.idx - len(word)
+	e := ctx.idx - 1
 
 	pos := position{s, e, ctx.src, ctx.path}
 
 	switch string(word) {
 	case "access":
-		return Access{pos}
-	case "add-enable":
-		return AddEnable{pos}
+		return []Token{Access{pos}}, nil
 	case "align":
-		return Align{pos}
+		return []Token{Align{pos}}, nil
 	case "atomic":
-		return Atomic{pos}
-	case "byte-write-enable":
-		return ByteWriteEnable{pos}
+		return []Token{Atomic{pos}}, nil
 	case "clear":
-		return Clear{pos}
+		return []Token{Clear{pos}}, nil
 	case "delay":
-		return Delay{pos}
-	case "enable-init-value":
-		return EnableInitValue{pos}
-	case "enable-reset-value":
-		return EnableResetValue{pos}
-	case "init-value":
-		return InitValue{pos}
-	case "in-trigger":
-		return InTrigger{pos}
+		return []Token{Delay{pos}}, nil
 	case "masters":
-		return Masters{pos}
-	case "out-trigger":
-		return OutTrigger{pos}
+		return []Token{Masters{pos}}, nil
 	case "range":
-		return Range{pos}
-	case "read-latency":
-		return ReadLatency{pos}
-	case "read-value":
-		return ReadValue{pos}
+		return []Token{Range{pos}}, nil
 	case "reset":
-		return Reset{pos}
-	case "reset-value":
-		return ResetValue{pos}
+		return []Token{Reset{pos}}, nil
 	case "size":
-		return Size{pos}
+		return []Token{Size{pos}}, nil
 	case "virtual":
-		return Virtual{pos}
+		return []Token{Virtual{pos}}, nil
 	case "width":
-		return Width{pos}
+		return []Token{Width{pos}}, nil
 	}
 
-	return None{pos}
+	return nil, nil
+}
+
+func parseHyphenProperty(ctx *context, word []byte) ([]Token, error) {
+	s := ctx.idx - len(word)
+	e := ctx.idx - 1
+
+	pos := position{s, e, ctx.src, ctx.path}
+
+	switch string(word) {
+	case "add-enable":
+		return []Token{AddEnable{pos}}, nil
+	case "byte-write-enable":
+		return []Token{ByteWriteEnable{pos}}, nil
+	case "enable-init-value":
+		return []Token{EnableInitValue{pos}}, nil
+	case "enable-reset-value":
+		return []Token{EnableResetValue{pos}}, nil
+	case "init-value":
+		return []Token{InitValue{pos}}, nil
+	case "in-trigger":
+		return []Token{InTrigger{pos}}, nil
+	case "out-trigger":
+		return []Token{OutTrigger{pos}}, nil
+	case "read-latency":
+		return []Token{ReadLatency{pos}}, nil
+	case "read-value":
+		return []Token{ReadValue{pos}}, nil
+	case "reset-value":
+		return []Token{ResetValue{pos}}, nil
+	}
+
+	return nil, nil
 }

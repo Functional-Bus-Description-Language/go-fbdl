@@ -1,0 +1,3 @@
+main bus
+  p proc
+    delay = 10'ab

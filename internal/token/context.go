@@ -2,10 +2,11 @@ package token
 
 // Parsing context
 type context struct {
-	indent int // Current indent level
-	idx    int // Current buffer index
-	src    []byte
-	path   string
+	lastTok Token
+	indent  int // Current indent level
+	idx     int // Current buffer index
+	src     []byte
+	path    string
 }
 
 func (ctx context) end() bool {
@@ -39,26 +40,17 @@ func (ctx *context) next() byte {
 }
 
 // Returns word from the source starting at the current context index.
-//
-// The method assumes the current byte is not a whitespace character.
-// The second return is true if word contains hyphen '-' character.
-// The third return is true if word contains dot '.' character.
-func (ctx context) getWord() ([]byte, bool, bool) {
-	hasHyphen := false
-	hasDot := false
+func (ctx *context) getWord() []byte {
 	startIdx := ctx.idx
 
-	for !ctx.end() {
+	endIdx := len(ctx.src)
+	for idx := startIdx; idx < len(ctx.src); idx++ {
 		b := ctx.peek(0)
 		if !isLetter(b) && !isDigit(b) && b != '_' && b != '-' && b != '.' {
+			endIdx = idx
 			break
 		}
-		switch ctx.next() {
-		case '-':
-			hasHyphen = true
-		case '.':
-			hasDot = true
-		}
+		ctx.next()
 	}
-	return ctx.src[startIdx:ctx.idx], hasHyphen, hasDot
+	return ctx.src[startIdx:endIdx]
 }

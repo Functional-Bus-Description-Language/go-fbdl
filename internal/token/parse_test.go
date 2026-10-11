@@ -156,7 +156,7 @@ func TestParse(t *testing.T) {
 		},
 		{
 			12,
-			"p proc; delay=10 ns",
+			"p proc; delay=10'ns",
 			[]Token{
 				Ident{position{start: 0, end: 0}},
 				Proc{position{start: 2, end: 5}},
@@ -260,13 +260,14 @@ func TestParse(t *testing.T) {
 		},
 		{
 			18,
-			"masters = -0",
+			"\nmasters = -0",
 			[]Token{
-				Masters{position{start: 0, end: 6}},
-				Ass{position{start: 8, end: 8}},
-				Sub{position{start: 10, end: 10}},
-				Int{position{start: 11, end: 11}},
-				Eof{position{start: 12, end: 12}},
+				Newline{position{start: 0, end: 0}},
+				Masters{position{start: 1, end: 7}},
+				Ass{position{start: 9, end: 9}},
+				Sub{position{start: 11, end: 11}},
+				Int{position{start: 12, end: 12}},
+				Eof{position{start: 13, end: 13}},
 			},
 		},
 		{
@@ -350,6 +351,42 @@ func TestParse(t *testing.T) {
 				Colon{position{start: 9, end: 9}},
 				Int{position{start: 10, end: 10}},
 				Eof{position{start: 11, end: 11}},
+			},
+		},
+		{
+			25,
+			"a-foo-ba",
+			[]Token{
+				Ident{position{start: 0, end: 0}},
+				Sub{position{start: 1, end: 1}},
+				Ident{position{start: 2, end: 4}},
+				Sub{position{start: 5, end: 5}},
+				Ident{position{start: 6, end: 7}},
+				Eof{position{start: 8, end: 8}},
+			},
+		},
+		{
+			26,
+			"a-b.C-d.E",
+			[]Token{
+				Ident{position{start: 0, end: 0}},
+				Sub{position{start: 1, end: 1}},
+				QualIdent{position{start: 2, end: 4}},
+				Sub{position{start: 5, end: 5}},
+				QualIdent{position{start: 6, end: 8}},
+				Eof{position{start: 9, end: 9}},
+			},
+		},
+		{
+			27,
+			"pkg.value--other.Value-",
+			[]Token{
+				QualIdent{position{start: 0, end: 8}},
+				Sub{position{start: 9, end: 9}},
+				Sub{position{start: 10, end: 10}},
+				QualIdent{position{start: 11, end: 21}},
+				Sub{position{start: 22, end: 22}},
+				Eof{position{start: 23, end: 23}},
 			},
 		},
 	}
