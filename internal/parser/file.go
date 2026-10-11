@@ -14,53 +14,62 @@ type File struct {
 	symbolContainer
 }
 
-func (f *File) GetConst(name string) (*Const, error) {
+func (file *File) GetConst(name string) (*Const, error) {
 	if strings.Contains(name, ".") {
 		parts := strings.Split(name, ".")
 		pkgName := parts[0]
 		symName := parts[1]
 
-		pkg, ok := f.Imports[pkgName]
+		pkg, ok := file.Imports[pkgName]
 		if !ok {
-			return nil, Error{token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)}, f}
+			return nil, Error{
+				token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)},
+				file,
+			}
 		}
 
 		return pkg.Pkg.GetConst(symName)
 	}
 
-	return f.Pkg.GetConst(name)
+	return file.Pkg.GetConst(name)
 }
 
-func (f *File) GetInst(name string) (*Inst, error) {
+func (file *File) GetInst(name string) (*Inst, error) {
 	if strings.Contains(name, ".") {
 		parts := strings.Split(name, ".")
 		pkgName := parts[0]
 		symName := parts[1]
 
-		pkg, ok := f.Imports[pkgName]
+		pkg, ok := file.Imports[pkgName]
 		if !ok {
-			return nil, Error{token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)}, f}
+			return nil, Error{
+				token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)},
+				file,
+			}
 		}
 
 		return pkg.Pkg.GetInst(symName)
 	}
 
-	return f.Pkg.GetInst(name)
+	return file.Pkg.GetInst(name)
 }
 
-func (f *File) GetType(name string) (*Type, error) {
+func (file *File) GetType(name string) (*Type, error) {
 	if strings.Contains(name, ".") {
 		parts := strings.Split(name, ".")
 		pkgName := parts[0]
 		symName := parts[1]
 
-		pkg, ok := f.Imports[pkgName]
+		pkg, ok := file.Imports[pkgName]
 		if !ok {
-			return nil, Error{token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)}, f}
+			return nil, Error{
+				token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)},
+				file,
+			}
 		}
 
 		return pkg.Pkg.GetType(symName)
 	}
 
-	return f.Pkg.GetType(name)
+	return file.Pkg.GetType(name)
 }

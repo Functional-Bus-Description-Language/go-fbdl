@@ -40,7 +40,7 @@ func main() {
 	printDebug = args.Debug
 
 	packages := parser.DiscoverPackages(args.MainFile)
-	err := parser.ParsePackages(packages);
+	err := parser.ParsePackages(packages)
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
