@@ -36,21 +36,21 @@ type Package struct {
 	symbolContainer
 }
 
-func (p *Package) AddFile(f *File) {
-	p.filesMutex.Lock()
-	p.Files = append(p.Files, f)
-	p.filesMutex.Unlock()
+func (pkg *Package) AddFile(f *File) {
+	pkg.filesMutex.Lock()
+	pkg.Files = append(pkg.Files, f)
+	pkg.filesMutex.Unlock()
 }
 
-func (p *Package) addConst(c *Const) error {
-	p.symbolsMutex.Lock()
-	defer p.symbolsMutex.Unlock()
+func (pkg *Package) addConst(c *Const) error {
+	pkg.symbolsMutex.Lock()
+	defer pkg.symbolsMutex.Unlock()
 
-	if !p.symbolContainer.addConst(c) {
+	if !pkg.symbolContainer.addConst(c) {
 		msg := fmt.Sprintf(
-			"redefinition of constant '%s' in package '%s'", c.name, p.Name,
+			"redefinition of constant '%s' in package '%s'", c.name, pkg.Name,
 		)
-		first, _ := p.symbolContainer.GetConst(c.name)
+		first, _ := pkg.symbolContainer.GetConst(c.name)
 		msg += fmt.Sprintf("; first definition %s:%d:%d", first.File().Path, first.Line(), first.Col())
 		return token.Error{Msg: msg, Toks: []token.Token{c.token}}
 	}
@@ -58,17 +58,17 @@ func (p *Package) addConst(c *Const) error {
 	return nil
 }
 
-func (p *Package) addInst(i *Inst) error {
-	p.symbolsMutex.Lock()
-	defer p.symbolsMutex.Unlock()
+func (pkg *Package) addInst(i *Inst) error {
+	pkg.symbolsMutex.Lock()
+	defer pkg.symbolsMutex.Unlock()
 
-	if !p.symbolContainer.addInst(i) {
+	if !pkg.symbolContainer.addInst(i) {
 		msg := `reinstantiation of '%s' in package '%s'
   %s:%d:%d
   %s:%d:%d`
-		first, _ := p.symbolContainer.GetInst(i.name)
+		first, _ := pkg.symbolContainer.GetInst(i.name)
 		return token.Error{Msg: fmt.Sprintf(
-			msg, i.name, p.Name,
+			msg, i.name, pkg.Name,
 			first.File().Path, first.Line(), first.Col(),
 			i.File().Path, i.Line(), i.Col(),
 		)}
@@ -77,15 +77,15 @@ func (p *Package) addInst(i *Inst) error {
 	return nil
 }
 
-func (p *Package) addType(t *Type) error {
-	p.symbolsMutex.Lock()
-	defer p.symbolsMutex.Unlock()
+func (pkg *Package) addType(t *Type) error {
+	pkg.symbolsMutex.Lock()
+	defer pkg.symbolsMutex.Unlock()
 
-	if !p.symbolContainer.addType(t) {
+	if !pkg.symbolContainer.addType(t) {
 		msg := fmt.Sprintf(
-			"redefinition of type '%s' in package '%s'", t.name, p.Name,
+			"redefinition of type '%s' in package '%s'", t.name, pkg.Name,
 		)
-		first, _ := p.symbolContainer.GetType(t.name)
+		first, _ := pkg.symbolContainer.GetType(t.name)
 		msg += fmt.Sprintf("; first definition %s:%d:%d", first.File().Path, first.Line(), first.Col())
 		return token.Error{Msg: msg, Toks: []token.Token{t.token}}
 	}
@@ -93,35 +93,35 @@ func (p *Package) addType(t *Type) error {
 	return nil
 }
 
-func (p *Package) GetConst(name string) (*Const, error) {
-	sym, ok := p.symbolContainer.GetConst(name)
+func (pkg *Package) GetConst(name string) (*Const, error) {
+	sym, ok := pkg.symbolContainer.GetConst(name)
 	if ok {
 		return sym, nil
 	}
 	return nil, fmt.Errorf(
 		"constant '%s' not found in package '%s'",
-		name, p.Name,
+		name, pkg.Name,
 	)
 }
 
-func (p *Package) GetInst(name string) (*Inst, error) {
-	sym, ok := p.symbolContainer.GetInst(name)
+func (pkg *Package) GetInst(name string) (*Inst, error) {
+	sym, ok := pkg.symbolContainer.GetInst(name)
 	if ok {
 		return sym, nil
 	}
 	return nil, fmt.Errorf(
 		"instantiation '%s' not found in package '%s'",
-		name, p.Name,
+		name, pkg.Name,
 	)
 }
 
-func (p *Package) GetType(name string) (*Type, error) {
-	sym, ok := p.symbolContainer.GetType(name)
+func (pkg *Package) GetType(name string) (*Type, error) {
+	sym, ok := pkg.symbolContainer.GetType(name)
 	if ok {
 		return sym, nil
 	}
 	return nil, fmt.Errorf(
 		"type '%s' not found in package '%s'",
-		name, p.Name,
+		name, pkg.Name,
 	)
 }
