@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"strings"
 )
 
@@ -22,10 +21,7 @@ func (file *File) GetConst(name string) (*Const, error) {
 
 		pkg, ok := file.Imports[pkgName]
 		if !ok {
-			return nil, Error{
-				token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)},
-				file,
-			}
+			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
 		}
 
 		return pkg.Pkg.GetConst(symName)
@@ -42,10 +38,7 @@ func (file *File) GetInst(name string) (*Inst, error) {
 
 		pkg, ok := file.Imports[pkgName]
 		if !ok {
-			return nil, Error{
-				token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)},
-				file,
-			}
+			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
 		}
 
 		return pkg.Pkg.GetInst(symName)
@@ -62,10 +55,7 @@ func (file *File) GetType(name string) (*Type, error) {
 
 		pkg, ok := file.Imports[pkgName]
 		if !ok {
-			return nil, Error{
-				token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)},
-				file,
-			}
+			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
 		}
 
 		return pkg.Pkg.GetType(symName)

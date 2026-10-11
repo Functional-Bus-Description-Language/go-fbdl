@@ -1,0 +1,5 @@
+error: constant 'bar' not found in package 'main'
+bus.fbd +2:21
+   |
+ 2 |   c config; width = bar
+   |                     ^^^

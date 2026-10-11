@@ -1,0 +1,5 @@
+error: package 'foo' is not imported
+bus.fbd +2:21
+   |
+ 2 |   c config; width = foo.bar
+   |                     ^^^^^^^

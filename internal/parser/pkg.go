@@ -98,7 +98,10 @@ func (p *Package) GetConst(name string) (*Const, error) {
 	if ok {
 		return sym, nil
 	}
-	return nil, Error{token.Error{Msg: fmt.Sprintf("constant '%s' not found in package '%s'", name, p.Name)}, nil}
+	return nil, fmt.Errorf(
+		"constant '%s' not found in package '%s'",
+		name, p.Name,
+	)
 }
 
 func (p *Package) GetInst(name string) (*Inst, error) {
@@ -106,7 +109,10 @@ func (p *Package) GetInst(name string) (*Inst, error) {
 	if ok {
 		return sym, nil
 	}
-	return nil, Error{token.Error{Msg: fmt.Sprintf("instantiation '%s' not found in package '%s'", name, p.Name)}, nil}
+	return nil, fmt.Errorf(
+		"instantiation '%s' not found in package '%s'",
+		name, p.Name,
+	)
 }
 
 func (p *Package) GetType(name string) (*Type, error) {
@@ -114,5 +120,8 @@ func (p *Package) GetType(name string) (*Type, error) {
 	if ok {
 		return sym, nil
 	}
-	return nil, Error{token.Error{Msg: fmt.Sprintf("type '%s' not found in package '%s'", name, p.Name)}, nil}
+	return nil, fmt.Errorf(
+		"type '%s' not found in package '%s'",
+		name, p.Name,
+	)
 }

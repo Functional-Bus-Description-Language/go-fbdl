@@ -347,14 +347,18 @@ func MakeFloat(e ast.Float, file *File) (Float, error) {
 }
 
 type DeclaredIdentifier struct {
-	x string
-	s Scope
+	ast   ast.Ident
+	scope Scope
+	x     string
 }
 
 func (di DeclaredIdentifier) Eval() (types.Value, error) {
-	c, err := di.s.GetConst(di.x)
+	c, err := di.scope.GetConst(di.x)
 	if err != nil {
-		return types.Int(0), err
+		return types.Int(0), token.Error{
+			Msg:  fmt.Sprintf("%v", err),
+			Toks: []token.Token{di.ast.Name},
+		}
 	}
 
 	x, err := c.Value.Eval()
@@ -365,19 +369,26 @@ func (di DeclaredIdentifier) Eval() (types.Value, error) {
 }
 
 func MakeDeclaredIdentifier(e ast.Ident, file *File, s Scope) DeclaredIdentifier {
-	src := file.Src
-	return DeclaredIdentifier{x: token.Text(e.Name, src), s: s}
+	return DeclaredIdentifier{
+		ast:   e,
+		x:     token.Text(e.Name, file.Src),
+		scope: s,
+	}
 }
 
 type QualifiedIdentifier struct {
-	x string
-	s Scope
+	ast   ast.QualIdent
+	scope Scope
+	x     string
 }
 
 func (qi QualifiedIdentifier) Eval() (types.Value, error) {
-	c, err := qi.s.GetConst(qi.x)
+	c, err := qi.scope.GetConst(qi.x)
 	if err != nil {
-		return types.Int(0), err
+		return types.Int(0), token.Error{
+			Msg:  fmt.Sprintf("%v", err),
+			Toks: []token.Token{qi.ast.Name},
+		}
 	}
 
 	x, err := c.Value.Eval()
@@ -388,8 +399,11 @@ func (qi QualifiedIdentifier) Eval() (types.Value, error) {
 }
 
 func MakeQualifiedIdentifier(e ast.QualIdent, file *File, s Scope) QualifiedIdentifier {
-	src := file.Src
-	return QualifiedIdentifier{x: token.Text(e.Name, src), s: s}
+	return QualifiedIdentifier{
+		ast:   e,
+		scope: s,
+		x:     token.Text(e.Name, file.Src),
+	}
 }
 
 type String struct {
