@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"math"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
@@ -19,15 +20,15 @@ func assertCall(c Call) error {
 	}
 
 	if ok := validFuncNames[c.funcName]; !ok {
-		return fmt.Errorf("unknown function '%s'", c.funcName)
+		return token.Error{Msg: fmt.Sprintf("unknown function '%s'", c.funcName)}
 	}
 
 	count := validArgCount[c.funcName]
 	if len(c.args) != count {
-		return fmt.Errorf(
+		return token.Error{Msg: fmt.Sprintf(
 			"function '%s' takes %d arguments, but %d were provided",
 			c.funcName, count, len(c.args),
-		)
+		)}
 	}
 
 	return nil
@@ -36,7 +37,7 @@ func assertCall(c Call) error {
 func evalBool(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
-		return nil, fmt.Errorf("bool argument evaluation: %v", err)
+		return nil, err
 	}
 
 	switch arg := arg.(type) {
@@ -47,13 +48,15 @@ func evalBool(c Call) (types.Value, error) {
 		return types.Bool(false), nil
 	}
 
-	return nil, fmt.Errorf("invalid argument type '%s' for bool function", arg.Type())
+	return nil, token.Error{
+		Msg: fmt.Sprintf("invalid argument type '%s' for bool function", arg.Type()),
+	}
 }
 
 func evalCeil(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
-		return nil, fmt.Errorf("ceil argument evaluation: %v", err)
+		return nil, err
 	}
 
 	f := float64(0.0)
@@ -71,7 +74,7 @@ func evalCeil(c Call) (types.Value, error) {
 func evalFloor(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
-		return nil, fmt.Errorf("floor argument evaluation: %v", err)
+		return nil, err
 	}
 
 	f := float64(0.0)
@@ -89,7 +92,7 @@ func evalFloor(c Call) (types.Value, error) {
 func evalLog2(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
-		return nil, fmt.Errorf("log2 argument evaluation: %v", err)
+		return nil, err
 	}
 
 	argType := "unknown"
@@ -105,7 +108,9 @@ func evalLog2(c Call) (types.Value, error) {
 	}
 
 	if argType != "int" && argType != "float" {
-		return nil, fmt.Errorf("cannot evaluate log2 for argument of %s type", argType)
+		return nil, token.Error{
+			Msg: fmt.Sprintf("cannot evaluate log2 for argument of %s type", argType),
+		}
 	}
 
 	r := math.Log2(f)
@@ -119,7 +124,7 @@ func evalLog2(c Call) (types.Value, error) {
 func evalLog10(c Call) (types.Value, error) {
 	arg, err := c.args[0].Eval()
 	if err != nil {
-		return nil, fmt.Errorf("log10 argument evaluation: %v", err)
+		return nil, err
 	}
 
 	argType := "unknown"
@@ -135,7 +140,9 @@ func evalLog10(c Call) (types.Value, error) {
 	}
 
 	if argType != "int" && argType != "float" {
-		return nil, fmt.Errorf("cannot evaluate log10 for argument of %s type", argType)
+		return nil, token.Error{
+			Msg: fmt.Sprintf("cannot evaluate log10 for argument of %s type", argType),
+		}
 	}
 
 	r := math.Log10(f)

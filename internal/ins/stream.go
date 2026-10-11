@@ -17,7 +17,7 @@ type streamDiary struct {
 func insStream(typeChain []parser.Functionality) (*fn.Stream, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	stream := fn.Stream{}
 	stream.Func = f
@@ -32,7 +32,7 @@ func insStream(typeChain []parser.Functionality) (*fn.Stream, error) {
 		}
 		err := applyStreamType(&stream, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -42,7 +42,7 @@ func insStream(typeChain []parser.Functionality) (*fn.Stream, error) {
 func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "stream"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(prop); err != nil {
 			return fmt.Errorf("%s: %v", prop.Loc(), err)

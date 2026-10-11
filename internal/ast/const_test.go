@@ -7,7 +7,7 @@ import (
 )
 
 func TestBuildSingleConst(t *testing.T) {
-	toks, _ := token.Parse([]byte("const A = 15"), "")
+	toks, _ := token.Parse([]byte("const A = 15"))
 	want := Const{
 		Name:  toks[1].(token.Ident),
 		Value: Int{toks[3].(token.Int)},
@@ -33,9 +33,7 @@ func TestBuildMultiConst(t *testing.T) {
   # Doc comment
   C = 3.14
 
-  D = false`),
-		"",
-	)
+  D = false`))
 	want := []Const{
 		Const{Name: toks[3].(token.Ident), Value: Int{toks[5].(token.Int)}},
 		Const{Name: toks[7].(token.Ident), Value: Int{toks[9].(token.Int)}},
@@ -75,7 +73,7 @@ func TestBuildMultiConstDocs(t *testing.T) {
 
   C = 3
 `)
-	toks, err := token.Parse(src, "")
+	toks, err := token.Parse(src)
 	if err != nil {
 		t.Fatal(err)
 	}

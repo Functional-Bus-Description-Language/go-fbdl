@@ -37,12 +37,25 @@ type symbol struct {
 	scope Scope
 }
 
-func (s symbol) Name() string     { return s.name }
-func (s symbol) Line() int        { return s.token.Line() }
-func (s symbol) Col() int         { return s.token.Column() }
-func (s symbol) Doc() string      { return s.doc }
-func (s symbol) Scope() Scope     { return s.scope }
-func (s symbol) File() *File      { return s.file }
+func (s symbol) Name() string { return s.name }
+func (s symbol) Line() int    { return lineNumber(s.token, s.file.Src) }
+func (s symbol) Col() int     { return columnNumber(s.token, s.file.Src) }
+func (s symbol) Doc() string  { return s.doc }
+func (s symbol) Scope() Scope { return s.scope }
+
+func (s symbol) File() *File {
+	if s.file != nil {
+		return s.file
+	}
+	if sym, ok := s.scope.(Symbol); ok {
+		return sym.File()
+	}
+	if file, ok := s.scope.(*File); ok {
+		return file
+	}
+	panic("symbol has no file")
+}
+
 func (s symbol) Tok() token.Token { return s.token }
 
 func (sym symbol) Loc() string {

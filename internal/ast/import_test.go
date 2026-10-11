@@ -7,7 +7,7 @@ import (
 )
 
 func TestBuildSingleImport(t *testing.T) {
-	toks, _ := token.Parse([]byte(`import "some/path"`), "")
+	toks, _ := token.Parse([]byte(`import "some/path"`))
 	want := Import{
 		Name: nil,
 		Path: toks[1].(token.String),
@@ -24,7 +24,7 @@ func TestBuildSingleImport(t *testing.T) {
 		t.Fatalf("got: %+v, want %+v", got[0], want)
 	}
 
-	toks, _ = token.Parse([]byte(`import pkg "path"`), "")
+	toks, _ = token.Parse([]byte(`import pkg "path"`))
 	want = Import{
 		Name: toks[1].(token.Ident),
 		Path: toks[2].(token.String),
@@ -47,9 +47,7 @@ func TestBuildMultiImport(t *testing.T) {
   "path1"
   pkg "path2"
 
-  "path3"`),
-		"",
-	)
+  "path3"`))
 	want := []Import{
 		Import{Path: toks[3].(token.String)},
 		Import{Name: toks[5].(token.Ident), Path: toks[6].(token.String)},

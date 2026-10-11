@@ -7,16 +7,16 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbolContainer, error) {
+func buildBody(astBody ast.Body, file *File, scope Scope) (PropContainer, symbolContainer, error) {
 	pc := PropContainer{}
 	sc := symbolContainer{}
 
 	for _, ap := range astBody.Props {
-		p := Prop{}
+		p := Prop{src: file.Src}
 
 		p.NameTok = ap.Name
-		p.Name = token.Text(ap.Name, src)
-		v, err := MakeExpr(ap.Value, src, scope)
+		p.Name = token.Text(ap.Name, file.Src)
+		v, err := MakeExpr(ap.Value, file, scope)
 		if err != nil {
 			return nil, sc, err
 		}
@@ -32,7 +32,7 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	}
 
 	// Handle constants
-	consts, err := buildConsts(astBody.Consts, src, scope)
+	consts, err := buildConsts(astBody.Consts, file, scope)
 	if err != nil {
 		return nil, sc, err
 	}
@@ -46,7 +46,7 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	}
 
 	// Handle types
-	types, err := buildTypes(astBody.Types, src)
+	types, err := buildTypes(astBody.Types, file)
 	if err != nil {
 		return nil, sc, err
 	}
@@ -60,7 +60,7 @@ func buildBody(astBody ast.Body, src []byte, scope Scope) (PropContainer, symbol
 	}
 
 	// Handle instantiations
-	insts, err := buildInsts(astBody.Insts, src)
+	insts, err := buildInsts(astBody.Insts, file)
 	if err != nil {
 		return nil, sc, err
 	}

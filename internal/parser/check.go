@@ -2,24 +2,28 @@ package parser
 
 import (
 	"fmt"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-func checkPropConflict(typ string, prop Prop, props PropContainer) error {
-	msg := `cannot set '%s' property, because '%s' property is already set in line %d column %d`
+func checkPropConflict(prop Prop, props PropContainer) *token.Error {
+	msg := "cannot set %s property, because %s property is already set"
 
-	if w, ok := props.Get("width"); ok {
-		if prop.Name == "range" {
-			return token.Error{
-				Msg:  fmt.Sprintf(msg, "range", "width", w.Line(), w.Col()),
-				Toks: []token.Token{prop.NameTok, w.NameTok},
+	if prop.Name == "range" {
+		if first, ok := props.Get("width"); ok {
+			return &token.Error{
+				Msg:  fmt.Sprintf(msg, prop.NameTok.Name(), first.NameTok.Name()),
+				Toks: []token.Token{prop.NameTok, first.NameTok},
 			}
 		}
 	}
 
-	if r, ok := props.Get("range"); ok {
-		if prop.Name == "width" {
-			return fmt.Errorf(msg, "width", "range", r.Line(), r.Col())
+	if prop.Name == "width" {
+		if first, ok := props.Get("range"); ok {
+			return &token.Error{
+				Msg:  fmt.Sprintf(msg, prop.NameTok.Name(), first.NameTok.Name()),
+				Toks: []token.Token{prop.NameTok, first.NameTok},
+			}
 		}
 	}
 

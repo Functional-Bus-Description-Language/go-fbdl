@@ -7,6 +7,7 @@ import (
 
 // Prop struct represents functionality property.
 type Prop struct {
+	src     []byte
 	NameTok token.Token
 	Name    string
 
@@ -14,8 +15,8 @@ type Prop struct {
 	ValueTok token.Token
 }
 
-func (p Prop) Line() int { return p.NameTok.Line() }
-func (p Prop) Col() int  { return p.NameTok.Column() }
+func (p Prop) Line() int { return lineNumber(p.NameTok, p.src) }
+func (p Prop) Col() int  { return columnNumber(p.NameTok, p.src) }
 
 func (p Prop) Loc() string {
 	return fmt.Sprintf("%d:%d", p.Line(), p.Col())

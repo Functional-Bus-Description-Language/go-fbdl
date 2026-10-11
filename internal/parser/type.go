@@ -66,12 +66,12 @@ func (typ Type) IsArray() bool                       { return false }
 func (typ Type) Count() Expr                         { return typ.count }
 
 // buildTypes builds list of Types based on the list of ast.Type.
-func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
+func buildTypes(astTypes []ast.Type, file *File) ([]*Type, error) {
 	types := make([]*Type, 0, len(astTypes))
 	cache := make(map[string]*Type)
 
 	for _, astType := range astTypes {
-		typ, err := buildType(astType, src)
+		typ, err := buildType(astType, file)
 		if err != nil {
 			return nil, err
 		}
@@ -93,20 +93,22 @@ func buildTypes(astTypes []ast.Type, src []byte) ([]*Type, error) {
 	return types, nil
 }
 
-func buildType(astTyp ast.Type, src []byte) (*Type, error) {
+func buildType(astTyp ast.Type, file *File) (*Type, error) {
+	src := file.Src
 	typ := &Type{}
+	typ.setFile(file)
 
 	typ.token = astTyp.Name
 	typ.name = token.Text(astTyp.Name, src)
 	typ.doc = astTyp.Doc.Text(src)
 
-	params, err := buildParamList(astTyp.Params, src, typ)
+	params, err := buildParamList(astTyp.Params, file, typ)
 	if err != nil {
 		return nil, err
 	}
 	typ.params = params
 
-	v, err := MakeExpr(astTyp.Count, src, typ)
+	v, err := MakeExpr(astTyp.Count, file, typ)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +116,7 @@ func buildType(astTyp ast.Type, src []byte) (*Type, error) {
 
 	typ.typ = token.Text(astTyp.Type, src)
 
-	args, err := buildArgList(astTyp.Args, src, typ)
+	args, err := buildArgList(astTyp.Args, file, typ)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +129,7 @@ func buildType(astTyp ast.Type, src []byte) (*Type, error) {
 		}
 	}
 
-	props, syms, err := buildBody(astTyp.Body, src, typ)
+	props, syms, err := buildBody(astTyp.Body, file, typ)
 	if err != nil {
 		return nil, err
 	}
@@ -141,11 +143,9 @@ func buildType(astTyp ast.Type, src []byte) (*Type, error) {
 				}
 			}
 
-			if err := checkPropConflict(typ.typ, p, props[0:j]); err != nil {
-				return nil, token.Error{
-					Msg:  err.Error(),
-					Toks: []token.Token{astTyp.Body.Props[j].Name},
-				}
+			err := checkPropConflict(p, props[0:j])
+			if err != nil {
+				return nil, err
 			}
 		}
 	}

@@ -16,7 +16,7 @@ type procDiary struct {
 func insProc(typeChain []parser.Functionality) (*fn.Proc, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	proc := fn.Proc{}
 	proc.Func = f
@@ -31,7 +31,7 @@ func insProc(typeChain []parser.Functionality) (*fn.Proc, error) {
 		}
 		err := applyProcType(&proc, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -41,7 +41,7 @@ func insProc(typeChain []parser.Functionality) (*fn.Proc, error) {
 func applyProcType(p *fn.Proc, typ parser.Functionality, diary *procDiary) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "proc"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(prop); err != nil {
 			return err

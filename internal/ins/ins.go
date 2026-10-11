@@ -3,6 +3,7 @@ package ins
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"log"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
@@ -49,7 +50,7 @@ func setBusWidth(main *parser.Inst) error {
 func Instantiate(packages parser.Packages, mainName string) (*fn.Block, map[string]*pkg.Package, error) {
 	main, err := packages["main"][0].GetInst(mainName)
 	if err != nil {
-		return nil, nil, fmt.Errorf("%v", err)
+		return nil, nil, err
 	}
 	log.Printf("debug: instantiating '%s' as the main bus", mainName)
 
@@ -129,6 +130,9 @@ func insFunctionality(pf parser.Functionality) fn.Functionality {
 	}
 
 	if err != nil {
+		if e, ok := err.(token.Error); ok {
+			err = parser.NewError(e, pf.File())
+		}
 		log.Fatalf("%v", err)
 	}
 

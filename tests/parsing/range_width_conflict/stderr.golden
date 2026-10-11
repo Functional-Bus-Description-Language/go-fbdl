@@ -1,1 +1,9 @@
-cannot set 'width' property, because 'range' property is already set in line 3 column 5
+error: cannot set 'width' property, because 'range' property is already set
+bus.fbd +4:5
+   |
+ 4 |     width = 2
+   |     ^^^^^
+bus.fbd +3:5
+   |
+ 3 |     range = 5
+   |     ^^^^^

@@ -23,7 +23,7 @@ type maskDiary struct {
 func insMask(typeChain []parser.Functionality) (*fn.Mask, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	mask := fn.Mask{}
 	mask.Func = f
@@ -38,7 +38,7 @@ func insMask(typeChain []parser.Functionality) (*fn.Mask, error) {
 		}
 		err := applyMaskType(&mask, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -54,7 +54,7 @@ func insMask(typeChain []parser.Functionality) (*fn.Mask, error) {
 func applyMaskType(mask *fn.Mask, typ parser.Functionality, diary *maskDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "mask"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return err

@@ -12,7 +12,9 @@ import (
 // If noTimestamp is true, then the bus timestamp is not generated.
 func Compile(mainPath, mainName string, addTimestamp bool) (*fn.Block, map[string]*pkg.Package, error) {
 	packages := parser.DiscoverPackages(mainPath)
-	parser.ParsePackages(packages)
+	if err := parser.ParsePackages(packages); err != nil {
+		return nil, nil, err
+	}
 
 	bus, insPkgs, err := ins.Instantiate(packages, mainName)
 	if err != nil {

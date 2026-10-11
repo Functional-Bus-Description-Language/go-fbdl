@@ -27,7 +27,7 @@ func insGroup(typeChain []parser.Functionality) (*fn.Group, error) {
 
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	grp := fn.Group{}
 	grp.Func = f
@@ -42,7 +42,7 @@ func insGroup(typeChain []parser.Functionality) (*fn.Group, error) {
 		}
 		err := applyGroupType(&grp, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -67,7 +67,7 @@ func insGroup(typeChain []parser.Functionality) (*fn.Group, error) {
 func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "group"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return err

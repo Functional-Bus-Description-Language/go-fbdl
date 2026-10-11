@@ -17,7 +17,7 @@ type returnDiary struct {
 func insReturn(typeChain []parser.Functionality) (*fn.Return, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	ret := fn.Return{}
 	ret.Func = f
@@ -32,7 +32,7 @@ func insReturn(typeChain []parser.Functionality) (*fn.Return, error) {
 		}
 		err := applyReturnType(&ret, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -44,7 +44,7 @@ func insReturn(typeChain []parser.Functionality) (*fn.Return, error) {
 func applyReturnType(ret *fn.Return, typ parser.Functionality, diary *returnDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "return"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return err

@@ -40,7 +40,10 @@ func main() {
 	printDebug = args.Debug
 
 	packages := parser.DiscoverPackages(args.MainFile)
-	parser.ParsePackages(packages)
+	err := parser.ParsePackages(packages);
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
 
 	bus, pkgsConsts, err := ins.Instantiate(packages, args.MainBus)
 	if err != nil {

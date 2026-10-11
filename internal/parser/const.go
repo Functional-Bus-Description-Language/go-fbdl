@@ -16,21 +16,22 @@ type Const struct {
 func (c Const) Kind() SymbolKind { return ConstDef }
 
 // buildConsts builds list of Consts defined in the same scope based on the list of ast.Const.
-func buildConsts(astConsts []ast.Const, src []byte, scope Scope) ([]*Const, error) {
+func buildConsts(astConsts []ast.Const, file *File, scope Scope) ([]*Const, error) {
 	consts := make([]*Const, 0, len(astConsts))
 	cache := make(map[string]*Const)
 
 	for _, ac := range astConsts {
 		c := &Const{}
+		c.setFile(file)
 
 		c.token = ac.Name
-		c.name = token.Text(ac.Name, src)
-		v, err := MakeExpr(ac.Value, src, scope)
+		c.name = token.Text(ac.Name, file.Src)
+		v, err := MakeExpr(ac.Value, file, scope)
 		if err != nil {
 			return nil, err
 		}
 		c.Value = v
-		c.doc = ac.Doc.Text(src)
+		c.doc = ac.Doc.Text(file.Src)
 
 		if first, ok := cache[c.name]; ok {
 			return nil, token.Error{

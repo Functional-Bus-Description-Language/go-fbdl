@@ -57,7 +57,7 @@ func applyConfigType(
 ) error {
 	for _, prop := range typ.Props() {
 		if err := util.IsValidProperty(prop.Name, "config"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(prop); err != nil {
 			return err

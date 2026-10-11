@@ -22,11 +22,11 @@ func TestApostropheTimeLiteral(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.src, func(t *testing.T) {
 			src := []byte(test.src)
-			toks, err := token.Parse(src, "time.fbd")
+			toks, err := token.Parse(src)
 			if err != nil {
 				t.Fatal(err)
 			}
-			tim, err := MakeTime(ast.Time{X: toks[0].(token.Time)}, src, nil)
+			tim, err := MakeTime(ast.Time{X: toks[0].(token.Time)}, &File{Src: src}, nil)
 			if err != nil {
 				t.Fatal(err)
 			}

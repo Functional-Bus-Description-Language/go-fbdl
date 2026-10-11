@@ -2,11 +2,13 @@ package parser
 
 import (
 	"fmt"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"strings"
 )
 
 type File struct {
 	Path    string
+	Src     []byte
 	Pkg     *Package
 	Imports map[string]Import
 	symbolContainer
@@ -20,7 +22,7 @@ func (f *File) GetConst(name string) (*Const, error) {
 
 		pkg, ok := f.Imports[pkgName]
 		if !ok {
-			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
+			return nil, Error{token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)}, f}
 		}
 
 		return pkg.Pkg.GetConst(symName)
@@ -37,7 +39,7 @@ func (f *File) GetInst(name string) (*Inst, error) {
 
 		pkg, ok := f.Imports[pkgName]
 		if !ok {
-			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
+			return nil, Error{token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)}, f}
 		}
 
 		return pkg.Pkg.GetInst(symName)
@@ -54,7 +56,7 @@ func (f *File) GetType(name string) (*Type, error) {
 
 		pkg, ok := f.Imports[pkgName]
 		if !ok {
-			return nil, fmt.Errorf("package '%s' is not imported", pkgName)
+			return nil, Error{token.Error{Msg: fmt.Sprintf("package '%s' is not imported", pkgName)}, f}
 		}
 
 		return pkg.Pkg.GetType(symName)

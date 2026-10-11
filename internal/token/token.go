@@ -1,17 +1,11 @@
 // Package tok implements Functional Bus Description Language tokens.
 package token
 
-import "fmt"
-
 // Various token types
 type (
 	Token interface {
 		Start() int
 		End() int
-		Line() int
-		Column() int
-		Src() []byte
-		Path() string
 		Name() string
 	}
 
@@ -36,103 +30,98 @@ type (
 	}
 )
 
-// Loc returns location of the token within the file in "line:column" format.
-func Loc(t Token) string {
-	return fmt.Sprintf("%d:%d", t.Line(), t.Column())
-}
-
 // Text returns token text from the source.
 func Text(t Token, src []byte) string {
 	return string(src[t.Start() : t.End()+1])
 }
 
 type (
-	None      struct{ position }
-	Comment   struct{ position }
-	Indent    struct{ position } // Indent increment
-	Dedent    struct{ position } // Indent decrement
-	Newline   struct{ position }
-	Eof       struct{ position } // End of file
-	Ident     struct{ position } // Identifier
-	QualIdent struct{ position } // Qualified Identifier
-	Bool      struct{ position }
-	Int       struct{ position }
-	Float     struct{ position }
-	String    struct{ position }
-	BitString struct{ position }
-	Time      struct{ position }
-	Neg       struct{ position } // !
-	Ass       struct{ position } // =
-	Add       struct{ position } // +
-	Sub       struct{ position } // -
-	Mul       struct{ position } // *
-	Div       struct{ position } // /
-	Rem       struct{ position } // %
-	Exp       struct{ position } // **
-	Eq        struct{ position } // ==
-	Neq       struct{ position } // !=
-	Less      struct{ position } // <
-	LessEq    struct{ position } // <=
-	Greater   struct{ position } // >
-	GreaterEq struct{ position } // >=
-	And       struct{ position } // &&
-	Or        struct{ position } // ||
-	LShift    struct{ position } // <<
-	RShift    struct{ position } // >>
-	BitAnd    struct{ position } // &
-	BitOr     struct{ position } // |
-	Xor       struct{ position } // ^
-	LParen    struct{ position } // (
-	RParen    struct{ position } // )
-	LBracket  struct{ position } // [
-	RBracket  struct{ position } // ]
-	Comma     struct{ position } // ,
-	Semicolon struct{ position } // ;
-	Colon     struct{ position } // :
+	None      struct{ span }
+	Comment   struct{ span }
+	Indent    struct{ span } // Indent increment
+	Dedent    struct{ span } // Indent decrement
+	Newline   struct{ span }
+	Eof       struct{ span } // End of file
+	Ident     struct{ span } // Identifier
+	QualIdent struct{ span } // Qualified Identifier
+	Bool      struct{ span }
+	Int       struct{ span }
+	Float     struct{ span }
+	String    struct{ span }
+	BitString struct{ span }
+	Time      struct{ span }
+	Neg       struct{ span } // !
+	Ass       struct{ span } // =
+	Add       struct{ span } // +
+	Sub       struct{ span } // -
+	Mul       struct{ span } // *
+	Div       struct{ span } // /
+	Rem       struct{ span } // %
+	Exp       struct{ span } // **
+	Eq        struct{ span } // ==
+	Neq       struct{ span } // !=
+	Less      struct{ span } // <
+	LessEq    struct{ span } // <=
+	Greater   struct{ span } // >
+	GreaterEq struct{ span } // >=
+	And       struct{ span } // &&
+	Or        struct{ span } // ||
+	LShift    struct{ span } // <<
+	RShift    struct{ span } // >>
+	BitAnd    struct{ span } // &
+	BitOr     struct{ span } // |
+	Xor       struct{ span } // ^
+	LParen    struct{ span } // (
+	RParen    struct{ span } // )
+	LBracket  struct{ span } // [
+	RBracket  struct{ span } // ]
+	Comma     struct{ span } // ,
+	Semicolon struct{ span } // ;
+	Colon     struct{ span } // :
 	// Keyword tokens
-	Const  struct{ position }
-	Import struct{ position }
-	Type   struct{ position }
+	Const  struct{ span }
+	Import struct{ span }
+	Type   struct{ span }
 	// Functionality tokens
-	Block  struct{ position }
-	Bus    struct{ position }
-	Config struct{ position }
-	Group  struct{ position }
-	Irq    struct{ position }
-	Mask   struct{ position }
-	Memory struct{ position }
-	Param  struct{ position }
-	Proc   struct{ position }
-	Return struct{ position }
-	Static struct{ position }
-	Status struct{ position }
-	Stream struct{ position }
+	Block  struct{ span }
+	Bus    struct{ span }
+	Config struct{ span }
+	Group  struct{ span }
+	Irq    struct{ span }
+	Mask   struct{ span }
+	Memory struct{ span }
+	Param  struct{ span }
+	Proc   struct{ span }
+	Return struct{ span }
+	Static struct{ span }
+	Status struct{ span }
+	Stream struct{ span }
 	// Property tokens
-	Access           struct{ position }
-	AddEnable        struct{ position }
-	Align            struct{ position }
-	Atomic           struct{ position }
-	ByteWriteEnable  struct{ position }
-	Clear            struct{ position }
-	Delay            struct{ position }
-	EnableInitValue  struct{ position }
-	EnableResetValue struct{ position }
-	InitValue        struct{ position }
-	InTrigger        struct{ position }
-	Masters          struct{ position }
-	OutTrigger       struct{ position }
-	Range            struct{ position }
-	ReadLatency      struct{ position }
-	ReadValue        struct{ position }
-	Reset            struct{ position }
-	ResetValue       struct{ position }
-	Size             struct{ position }
-	Virtual          struct{ position }
-	Width            struct{ position }
+	Access           struct{ span }
+	AddEnable        struct{ span }
+	Align            struct{ span }
+	Atomic           struct{ span }
+	ByteWriteEnable  struct{ span }
+	Clear            struct{ span }
+	Delay            struct{ span }
+	EnableInitValue  struct{ span }
+	EnableResetValue struct{ span }
+	InitValue        struct{ span }
+	InTrigger        struct{ span }
+	Masters          struct{ span }
+	OutTrigger       struct{ span }
+	Range            struct{ span }
+	ReadLatency      struct{ span }
+	ReadValue        struct{ span }
+	Reset            struct{ span }
+	ResetValue       struct{ span }
+	Size             struct{ span }
+	Virtual          struct{ span }
+	Width            struct{ span }
 	// Currently unused tokens
-	Period struct{ position } // .
-	LBrace struct{ position } // {
-	RBrace struct{ position } // }
+	Period struct{ span } // .
+	LBrace struct{ span } // {
+	RBrace struct{ span } // }
 )
 
 func (n None) Name() string { return "" }

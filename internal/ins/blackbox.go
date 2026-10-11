@@ -21,7 +21,7 @@ func insBlackbox(typeChain []parser.Functionality) (*fn.Blackbox, error) {
 
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	bb := fn.Blackbox{}
 	bb.Func = f
@@ -34,7 +34,7 @@ func insBlackbox(typeChain []parser.Functionality) (*fn.Blackbox, error) {
 		}
 		err := applyBlackboxType(&bb, typ)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -52,7 +52,7 @@ func insBlackbox(typeChain []parser.Functionality) (*fn.Blackbox, error) {
 func applyBlackboxType(bb *fn.Blackbox, typ parser.Functionality) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "blackbox"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return fmt.Errorf("%s: %v", p.Loc(), err)

@@ -1,1 +1,1 @@
-instantiation 'main' not found in package 'main'
+error: instantiation 'main' not found in package 'main'

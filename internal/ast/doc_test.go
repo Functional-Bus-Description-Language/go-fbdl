@@ -10,7 +10,7 @@ func TestDoc(t *testing.T) {
 #Line 2
 #
 # Line 4`
-	toks, _ := token.Parse([]byte(src), "")
+	toks, _ := token.Parse([]byte(src))
 
 	ctx := tokenStream{toks: toks}
 	doc := buildDoc(&ctx)

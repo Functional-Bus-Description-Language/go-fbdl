@@ -81,12 +81,12 @@ func (inst Inst) Params() []Param {
 }
 
 // buildInsts builds list of Insts based on the list of ast.Inst.
-func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
+func buildInsts(astInsts []ast.Inst, file *File) ([]*Inst, error) {
 	insts := make([]*Inst, 0, len(astInsts))
 	cache := make(map[string]*Inst)
 
 	for _, astInst := range astInsts {
-		inst, err := buildInst(astInst, src)
+		inst, err := buildInst(astInst, file)
 		if err != nil {
 			return nil, err
 		}
@@ -108,14 +108,16 @@ func buildInsts(astInsts []ast.Inst, src []byte) ([]*Inst, error) {
 	return insts, nil
 }
 
-func buildInst(astInst ast.Inst, src []byte) (*Inst, error) {
+func buildInst(astInst ast.Inst, file *File) (*Inst, error) {
+	src := file.Src
 	inst := &Inst{}
+	inst.setFile(file)
 
 	inst.token = astInst.Name
 	inst.name = token.Text(astInst.Name, src)
 	inst.doc = astInst.Doc.Text(src)
 
-	v, err := MakeExpr(astInst.Count, src, inst)
+	v, err := MakeExpr(astInst.Count, file, inst)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +125,7 @@ func buildInst(astInst ast.Inst, src []byte) (*Inst, error) {
 
 	inst.typ = token.Text(astInst.Type, src)
 
-	argList, err := buildArgList(astInst.ArgList, src, inst)
+	argList, err := buildArgList(astInst.ArgList, file, inst)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +138,7 @@ func buildInst(astInst ast.Inst, src []byte) (*Inst, error) {
 		}
 	}
 
-	props, syms, err := buildBody(astInst.Body, src, inst)
+	props, syms, err := buildBody(astInst.Body, file, inst)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +152,8 @@ func buildInst(astInst ast.Inst, src []byte) (*Inst, error) {
 				}
 			}
 
-			if err := checkPropConflict(inst.typ, p, props[0:j]); err != nil {
+			err := checkPropConflict(p, props[0:j])
+			if err != nil {
 				return nil, err
 			}
 		}

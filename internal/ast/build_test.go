@@ -128,7 +128,7 @@ func TestBuildError(t *testing.T) {
 			t.Fatalf("Invalid test index %d, expected %d", test.idx, i)
 		}
 
-		toks, err := token.Parse([]byte(test.src), "")
+		toks, err := token.Parse([]byte(test.src))
 		if err != nil {
 			t.Fatalf("%d: tokenize source: %v", i, err)
 		}

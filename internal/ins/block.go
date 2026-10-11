@@ -21,7 +21,7 @@ func insBlock(typeChain []parser.Functionality) (*fn.Block, error) {
 
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	blk := fn.Block{}
 	blk.Func = f
@@ -34,7 +34,7 @@ func insBlock(typeChain []parser.Functionality) (*fn.Block, error) {
 		}
 		err := applyBlockType(&blk, typ)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -46,7 +46,7 @@ func insBlock(typeChain []parser.Functionality) (*fn.Block, error) {
 func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "bus"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return err

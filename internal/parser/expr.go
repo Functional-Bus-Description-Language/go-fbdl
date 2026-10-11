@@ -17,35 +17,35 @@ type Expr interface {
 	Eval() (types.Value, error)
 }
 
-func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
-	var err error = nil
+func MakeExpr(astExpr ast.Expr, file *File, s Scope) (Expr, error) {
+	var err error
 	var expr Expr
 
 	switch e := astExpr.(type) {
 	case ast.BinaryExpr:
-		expr, err = MakeBinaryExpr(e, src, s)
+		expr, err = MakeBinaryExpr(e, file, s)
 	case ast.BitString:
-		expr, err = MakeBitString(e, src)
+		expr, err = MakeBitString(e, file)
 	case ast.Call:
-		expr, err = MakeCall(e, src, s)
+		expr, err = MakeCall(e, file, s)
 	case ast.Ident:
-		expr = MakeDeclaredIdentifier(e, src, s)
+		expr = MakeDeclaredIdentifier(e, file, s)
 	case ast.QualIdent:
-		expr = MakeQualifiedIdentifier(e, src, s)
+		expr = MakeQualifiedIdentifier(e, file, s)
 	case ast.Int:
-		expr, err = MakeInt(e, src)
+		expr, err = MakeInt(e, file)
 	case ast.List:
-		expr, err = MakeList(e, src, s)
+		expr, err = MakeList(e, file, s)
 	case ast.Bool:
-		expr = MakeBool(e, src)
+		expr = MakeBool(e, file)
 	case ast.Float:
-		expr, err = MakeFloat(e, src)
+		expr, err = MakeFloat(e, file)
 	case ast.String:
-		expr = MakeString(e, src)
+		expr = MakeString(e, file)
 	case ast.Time:
-		expr, err = MakeTime(e, src, s)
+		expr, err = MakeTime(e, file, s)
 	case ast.UnaryExpr:
-		expr, err = MakeUnaryExpr(e, src, s)
+		expr, err = MakeUnaryExpr(e, file, s)
 	case nil:
 		return nil, nil
 	default:
@@ -56,7 +56,8 @@ func MakeExpr(astExpr ast.Expr, src []byte, s Scope) (Expr, error) {
 }
 
 type BinaryExpr struct {
-	ast ast.BinaryExpr
+	file *File
+	ast  ast.BinaryExpr
 
 	x  Expr
 	op token.Operator
@@ -117,52 +118,52 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 			switch y := y.(type) {
 			case types.Int:
 				if y < 0 {
-					return nil, token.Error{
+					return nil, Error{token.Error{
 						Msg:  fmt.Sprintf("negative value of left shift %d", y),
 						Toks: []token.Token{op},
-					}
+					}, be.file}
 				}
 				v = x << y
 			default:
-				return nil, token.Error{
+				return nil, Error{token.Error{
 					Msg:  fmt.Sprintf("right operand of left shift must be of type integer, current type %s", y.Type()),
 					Toks: []token.Token{be.ast.Y.Tok()},
-				}
+				}, be.file}
 			}
 		case token.RShift:
 			switch y := y.(type) {
 			case types.Int:
 				if y < 0 {
-					return nil, token.Error{
+					return nil, Error{token.Error{
 						Msg:  fmt.Sprintf("negative value of right shift %d", y),
 						Toks: []token.Token{op},
-					}
+					}, be.file}
 				}
 				v = x >> y
 			default:
-				return nil, token.Error{
+				return nil, Error{token.Error{
 					Msg:  fmt.Sprintf("right operand of right shift must be of type integer, current type %s", y.Type()),
 					Toks: []token.Token{be.ast.Y.Tok()},
-				}
+				}, be.file}
 			}
 		case token.Colon:
 			switch y := y.(type) {
 			case types.Int:
 				v = types.SingleRange{Start: int64(x), End: int64(y)}
 			default:
-				return nil, token.Error{
+				return nil, Error{token.Error{
 					Msg:  fmt.Sprintf("right bound of range must be of type integer, current type %s", y.Type()),
 					Toks: []token.Token{be.ast.Y.Tok()},
-				}
+				}, be.file}
 			}
 		}
 	case types.Range:
 		switch op.(type) {
 		case token.Colon:
-			return nil, token.Error{
+			return nil, Error{token.Error{
 				Msg:  "left bound of range must be of type integer, current type range",
 				Toks: []token.Token{be.ast.X.Tok()},
-			}
+			}, be.file}
 		}
 	}
 
@@ -170,27 +171,27 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 		return v, nil
 	}
 
-	return nil, token.Error{
+	return nil, Error{token.Error{
 		Msg: fmt.Sprintf(
 			"unimplemented binary expression evaluation for %s operator, left operand type %s, right operand type %s, please report this error on %s",
 			op.Name(), x.Type(), y.Type(), util.RepoIssueUrl,
 		),
 		Toks: []token.Token{op},
-	}
+	}, be.file}
 }
 
-func MakeBinaryExpr(be ast.BinaryExpr, src []byte, s Scope) (BinaryExpr, error) {
-	x, err := MakeExpr(be.X, src, s)
+func MakeBinaryExpr(be ast.BinaryExpr, file *File, s Scope) (BinaryExpr, error) {
+	x, err := MakeExpr(be.X, file, s)
 	if err != nil {
-		return BinaryExpr{}, fmt.Errorf("make binary expression: left operand: %v", err)
+		return BinaryExpr{}, err
 	}
 
-	y, err := MakeExpr(be.Y, src, s)
+	y, err := MakeExpr(be.Y, file, s)
 	if err != nil {
-		return BinaryExpr{}, fmt.Errorf("make binary expression: right operand: %v", err)
+		return BinaryExpr{}, err
 	}
 
-	return BinaryExpr{ast: be, x: x, op: be.Op, y: y}, nil
+	return BinaryExpr{file: file, ast: be, x: x, op: be.Op, y: y}, nil
 }
 
 type BitString struct {
@@ -201,51 +202,60 @@ func (bs BitString) Eval() (types.Value, error) {
 	return bs.x, nil
 }
 
-func MakeBitString(e ast.BitString, src []byte) (BitString, error) {
+func MakeBitString(e ast.BitString, file *File) (BitString, error) {
+	src := file.Src
 	x, err := types.MakeBitStr(token.Text(e.X, src))
 	if err != nil {
-		return BitString{}, fmt.Errorf("make bit string: %v", err)
+		return BitString{}, Error{token.Error{Msg: fmt.Sprintf("make bit string: %v", err), Toks: []token.Token{e.X}}, file}
 	}
 
 	return BitString{x: x}, nil
 }
 
 type Call struct {
+	file     *File
 	funcName string
 	args     []Expr
 }
 
 func (c Call) Eval() (types.Value, error) {
+	var value types.Value
+	var err error
 	switch c.funcName {
 	case "bool":
-		return evalBool(c)
+		value, err = evalBool(c)
 	case "ceil":
-		return evalCeil(c)
+		value, err = evalCeil(c)
 	case "floor":
-		return evalFloor(c)
+		value, err = evalFloor(c)
 	case "log2":
-		return evalLog2(c)
+		value, err = evalLog2(c)
 	case "log10":
-		return evalLog10(c)
+		value, err = evalLog10(c)
+	default:
+		panic("should never happen")
 	}
-
-	panic("should never happen")
+	if e, ok := err.(token.Error); ok {
+		return nil, Error{e, c.file}
+	}
+	return value, err
 }
 
-func MakeCall(e ast.Call, src []byte, s Scope) (Call, error) {
-	c := Call{funcName: token.Text(e.Name, src), args: []Expr{}}
+func MakeCall(e ast.Call, file *File, s Scope) (Call, error) {
+	src := file.Src
+	c := Call{file: file, funcName: token.Text(e.Name, src), args: []Expr{}}
 
-	for i, a := range e.Args {
-		expr, err := MakeExpr(a, src, s)
+	for _, a := range e.Args {
+		expr, err := MakeExpr(a, file, s)
 		if err != nil {
-			return c, fmt.Errorf("make call: argument %d: %v", i, err)
+			return c, err
 		}
 		c.args = append(c.args, expr)
 	}
 
 	err := assertCall(c)
 	if err != nil {
-		return c, token.Error{Msg: err.Error(), Toks: []token.Token{e.Name}}
+		return c, Error{token.Error{Msg: err.Error(), Toks: []token.Token{e.Name}}, file}
 	}
 
 	return c, nil
@@ -259,26 +269,28 @@ func (i Int) Eval() (types.Value, error) {
 	return types.Int(i.x), nil
 }
 
-func MakeInt(e ast.Int, src []byte) (Int, error) {
+func MakeInt(e ast.Int, file *File) (Int, error) {
+	src := file.Src
 	x, err := strconv.ParseInt(token.Text(e.X, src), 0, 64)
 	if err != nil {
-		return Int{}, fmt.Errorf("make int: %v", err)
+		return Int{}, Error{token.Error{Msg: fmt.Sprintf("make int: %v", err), Toks: []token.Token{e.X}}, file}
 	}
 
 	return Int{x: x}, nil
 }
 
 type List struct {
+	file  *File
 	exprs []Expr
 }
 
 func (l List) Eval() (types.Value, error) {
 	vals := []types.Value{}
 
-	for i, expr := range l.exprs {
+	for _, expr := range l.exprs {
 		v, err := expr.Eval()
 		if err != nil {
-			return types.Int(0), fmt.Errorf("list evaluation, index %d: %v", i, err)
+			return types.Int(0), err
 		}
 
 		vals = append(vals, v)
@@ -287,18 +299,18 @@ func (l List) Eval() (types.Value, error) {
 	return types.List(vals), nil
 }
 
-func MakeList(el ast.List, src []byte, s Scope) (List, error) {
+func MakeList(el ast.List, file *File, s Scope) (List, error) {
 	exprs := []Expr{}
 
-	for i, e := range el.Xs {
-		e, err := MakeExpr(e, src, s)
+	for _, e := range el.Xs {
+		e, err := MakeExpr(e, file, s)
 		if err != nil {
-			return List{}, fmt.Errorf("make expression list: item %d: %v", i, err)
+			return List{}, err
 		}
 		exprs = append(exprs, e)
 	}
 
-	return List{exprs: exprs}, nil
+	return List{file: file, exprs: exprs}, nil
 }
 
 type Bool struct {
@@ -309,7 +321,8 @@ func (b Bool) Eval() (types.Value, error) {
 	return types.Bool(b.x), nil
 }
 
-func MakeBool(e ast.Bool, src []byte) Bool {
+func MakeBool(e ast.Bool, file *File) Bool {
+	src := file.Src
 	text := token.Text(e.X, src)
 	return Bool{x: text == "true"}
 }
@@ -322,11 +335,12 @@ func (f Float) Eval() (types.Value, error) {
 	return types.Float(f.x), nil
 }
 
-func MakeFloat(e ast.Float, src []byte) (Float, error) {
+func MakeFloat(e ast.Float, file *File) (Float, error) {
+	src := file.Src
 	text := token.Text(e.X, src)
 	x, err := strconv.ParseFloat(text, 64)
 	if err != nil {
-		return Float{}, fmt.Errorf("make float: %v", err)
+		return Float{}, Error{token.Error{Msg: fmt.Sprintf("make float: %v", err), Toks: []token.Token{e.X}}, file}
 	}
 
 	return Float{x: x}, nil
@@ -340,17 +354,18 @@ type DeclaredIdentifier struct {
 func (di DeclaredIdentifier) Eval() (types.Value, error) {
 	c, err := di.s.GetConst(di.x)
 	if err != nil {
-		return types.Int(0), fmt.Errorf("evaluating identifier '%s': %v", di.x, err)
+		return types.Int(0), err
 	}
 
 	x, err := c.Value.Eval()
 	if err != nil {
-		return types.Int(0), fmt.Errorf("evaluating constant identifier '%s': %v", di.x, err)
+		return types.Int(0), err
 	}
 	return x, nil
 }
 
-func MakeDeclaredIdentifier(e ast.Ident, src []byte, s Scope) DeclaredIdentifier {
+func MakeDeclaredIdentifier(e ast.Ident, file *File, s Scope) DeclaredIdentifier {
+	src := file.Src
 	return DeclaredIdentifier{x: token.Text(e.Name, src), s: s}
 }
 
@@ -362,17 +377,18 @@ type QualifiedIdentifier struct {
 func (qi QualifiedIdentifier) Eval() (types.Value, error) {
 	c, err := qi.s.GetConst(qi.x)
 	if err != nil {
-		return types.Int(0), fmt.Errorf("evaluating qualified identifier '%s': %v", qi.x, err)
+		return types.Int(0), err
 	}
 
 	x, err := c.Value.Eval()
 	if err != nil {
-		return types.Int(0), fmt.Errorf("evaluating constant qualified identifier '%s': %v", qi.x, err)
+		return types.Int(0), err
 	}
 	return x, nil
 }
 
-func MakeQualifiedIdentifier(e ast.QualIdent, src []byte, s Scope) QualifiedIdentifier {
+func MakeQualifiedIdentifier(e ast.QualIdent, file *File, s Scope) QualifiedIdentifier {
+	src := file.Src
 	return QualifiedIdentifier{x: token.Text(e.Name, src), s: s}
 }
 
@@ -384,7 +400,8 @@ func (s String) Eval() (types.Value, error) {
 	return types.Str(s.x), nil
 }
 
-func MakeString(e ast.String, src []byte) String {
+func MakeString(e ast.String, file *File) String {
+	src := file.Src
 	txt := token.Text(e.X, src)
 	return String{x: txt[1 : len(txt)-1]}
 }
@@ -447,17 +464,18 @@ type Time struct {
 	unit string
 }
 
-func MakeTime(e ast.Time, src []byte, s Scope) (Time, error) {
+func MakeTime(e ast.Time, file *File, s Scope) (Time, error) {
+	src := file.Src
 	txt := token.Text(e.X, src)
 
 	intLiteral, unit, ok := strings.Cut(txt, "'")
 	if !ok {
-		return Time{}, fmt.Errorf("make time literal: missing apostrophe")
+		return Time{}, Error{token.Error{Msg: "make time literal: missing apostrophe", Toks: []token.Token{e.X}}, file}
 	}
 
 	x, err := strconv.ParseInt(intLiteral, 10, 64)
 	if err != nil {
-		return Time{}, fmt.Errorf("make time literal: integer literal: %v", err)
+		return Time{}, Error{token.Error{Msg: fmt.Sprintf("make time literal: integer literal: %v", err), Toks: []token.Token{e.X}}, file}
 	}
 
 	return Time{Int{x}, unit}, nil
@@ -491,14 +509,16 @@ const (
 )
 
 type UnaryExpr struct {
-	op UnaryOperator
-	x  Expr
+	tok  token.Token
+	file *File
+	op   UnaryOperator
+	x    Expr
 }
 
 func (ue UnaryExpr) Eval() (types.Value, error) {
 	x, err := ue.x.Eval()
 	if err != nil {
-		return types.Int(0), fmt.Errorf("unary expression, operand: %v", err)
+		return types.Int(0), err
 	}
 
 	if x, ok := x.(types.Int); ok {
@@ -512,10 +532,11 @@ func (ue UnaryExpr) Eval() (types.Value, error) {
 		}
 	}
 
-	return types.Int(0), fmt.Errorf("unary expression, unknown operand type '%s'", x.Type())
+	return types.Int(0), Error{token.Error{Msg: fmt.Sprintf("unary expression, unknown operand type '%s'", x.Type()), Toks: []token.Token{ue.tok}}, ue.file}
 }
 
-func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Scope) (UnaryExpr, error) {
+func MakeUnaryExpr(e ast.UnaryExpr, file *File, s Scope) (UnaryExpr, error) {
+	src := file.Src
 	var op UnaryOperator
 	switch text := token.Text(e.Op, src); text {
 	case "+":
@@ -523,13 +544,13 @@ func MakeUnaryExpr(e ast.UnaryExpr, src []byte, s Scope) (UnaryExpr, error) {
 	case "-":
 		op = UnaryMinus
 	default:
-		return UnaryExpr{}, fmt.Errorf("make unary expression: invalid operator %s", text)
+		return UnaryExpr{}, Error{token.Error{Msg: fmt.Sprintf("make unary expression: invalid operator %s", text)}, file}
 	}
 
-	x, err := MakeExpr(e.X, src, s)
+	x, err := MakeExpr(e.X, file, s)
 	if err != nil {
-		return UnaryExpr{}, fmt.Errorf("make unary expression: operand: %v", err)
+		return UnaryExpr{}, err
 	}
 
-	return UnaryExpr{op: op, x: x}, nil
+	return UnaryExpr{file: file, tok: e.Op, op: op, x: x}, nil
 }

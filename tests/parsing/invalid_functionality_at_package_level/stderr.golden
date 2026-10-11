@@ -1,1 +1,5 @@
-bus.fbd:1:1: functionality 'foo' of type status cannot be instantiated at package level
+error: functionality 'foo' of type status cannot be instantiated at package level
+bus.fbd +1:1
+   |
+ 1 | foo status
+   | ^^^

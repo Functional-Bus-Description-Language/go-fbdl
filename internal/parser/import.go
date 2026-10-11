@@ -2,7 +2,6 @@ package parser
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -38,29 +37,30 @@ func buildImports(astImports []ast.Import, src []byte) []Import {
 			path = path[1 : len(path)-1]
 		}
 		imports = append(
-			imports, Import{ai.Path.Line(), name, path, nil},
+			imports, Import{lineNumber(ai.Path, src), name, path, nil},
 		)
 	}
 
 	return imports
 }
 
-func bindImports(packages Packages) {
-	for pkgName, pkgs := range packages {
+func bindImports(packages Packages) error {
+	for _, pkgs := range packages {
 		for _, pkg := range pkgs {
 			err := bindPkgImports(pkg, packages)
 			if err != nil {
-				log.Fatalf("package %s: %v", pkgName, err)
+				return err
 			}
 		}
 	}
+	return nil
 }
 
 func bindPkgImports(pkg *Package, packages Packages) error {
 	for _, file := range pkg.Files {
 		err := bindFileImports(file, packages)
 		if err != nil {
-			return fmt.Errorf("file %s: %v", file.Path, err)
+			return Error{err.(token.Error), file}
 		}
 	}
 
@@ -72,12 +72,12 @@ func bindFileImports(file *File, packages Packages) error {
 		import_ := file.Imports[importName]
 		matches := packages.GetMatching(import_.Path)
 		if len(matches) == 0 {
-			return fmt.Errorf("cannot find package %q", import_.Path)
+			return token.Error{Msg: fmt.Sprintf("cannot find package %q", import_.Path)}
 		} else if len(matches) == 1 {
 			import_.Pkg = matches[0]
 			file.Imports[importName] = import_
 		} else {
-			return fmt.Errorf("%d packages match path %q", len(matches), import_.Path)
+			return token.Error{Msg: fmt.Sprintf("%d packages match path %q", len(matches), import_.Path)}
 		}
 	}
 

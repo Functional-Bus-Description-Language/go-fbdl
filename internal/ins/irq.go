@@ -24,7 +24,7 @@ type irqDiary struct {
 func insIrq(typeChain []parser.Functionality) (*fn.Irq, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	irq := fn.Irq{}
 	irq.Func = f
@@ -39,7 +39,7 @@ func insIrq(typeChain []parser.Functionality) (*fn.Irq, error) {
 		}
 		err := applyIrqType(&irq, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -55,7 +55,7 @@ func insIrq(typeChain []parser.Functionality) (*fn.Irq, error) {
 func applyIrqType(irq *fn.Irq, typ parser.Functionality, diary *irqDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "irq"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return err

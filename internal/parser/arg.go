@@ -23,7 +23,7 @@ func (al ArgList) Len() int {
 	return len(al.Args)
 }
 
-func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, error) {
+func buildArgList(astArgList ast.ArgList, file *File, scope Scope) (ArgList, error) {
 	if astArgList.Len() == 0 {
 		return ArgList{}, nil
 	}
@@ -39,7 +39,7 @@ func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, err
 		arg := Arg{}
 
 		if aal.Name != nil {
-			name := token.Text(aal.Name, src)
+			name := token.Text(aal.Name, file.Src)
 			if names[name] {
 				return argList, token.Error{
 					Msg:  fmt.Sprintf("reassignment to '%s' argument", name),
@@ -50,7 +50,7 @@ func buildArgList(astArgList ast.ArgList, src []byte, scope Scope) (ArgList, err
 			arg.Name = name
 		}
 
-		val, err := MakeExpr(aal.Value, src, scope)
+		val, err := MakeExpr(aal.Value, file, scope)
 		if err != nil {
 			return argList, err
 		}

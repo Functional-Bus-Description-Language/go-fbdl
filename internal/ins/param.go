@@ -17,7 +17,7 @@ type paramDiary struct {
 func insParam(typeChain []parser.Functionality) (*fn.Param, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	param := fn.Param{}
 	param.Func = f
@@ -32,7 +32,7 @@ func insParam(typeChain []parser.Functionality) (*fn.Param, error) {
 		}
 		err := applyParamType(&param, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -44,7 +44,7 @@ func insParam(typeChain []parser.Functionality) (*fn.Param, error) {
 func applyParamType(param *fn.Param, typ parser.Functionality, diary *paramDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "param"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return fmt.Errorf("%s: %v", p.Loc(), err)

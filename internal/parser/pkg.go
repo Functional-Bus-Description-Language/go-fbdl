@@ -51,7 +51,8 @@ func (p *Package) addConst(c *Const) error {
 			"redefinition of constant '%s' in package '%s'", c.name, p.Name,
 		)
 		first, _ := p.symbolContainer.GetConst(c.name)
-		return token.Error{Msg: msg, Toks: []token.Token{c.token, first.token}}
+		msg += fmt.Sprintf("; first definition %s:%d:%d", first.File().Path, first.Line(), first.Col())
+		return token.Error{Msg: msg, Toks: []token.Token{c.token}}
 	}
 
 	return nil
@@ -65,12 +66,12 @@ func (p *Package) addInst(i *Inst) error {
 		msg := `reinstantiation of '%s' in package '%s'
   %s:%d:%d
   %s:%d:%d`
-		first, _ := p.symbolContainer.GetConst(i.name)
-		return fmt.Errorf(
+		first, _ := p.symbolContainer.GetInst(i.name)
+		return token.Error{Msg: fmt.Sprintf(
 			msg, i.name, p.Name,
 			first.File().Path, first.Line(), first.Col(),
 			i.File().Path, i.Line(), i.Col(),
-		)
+		)}
 	}
 
 	return nil
@@ -85,7 +86,8 @@ func (p *Package) addType(t *Type) error {
 			"redefinition of type '%s' in package '%s'", t.name, p.Name,
 		)
 		first, _ := p.symbolContainer.GetType(t.name)
-		return token.Error{Msg: msg, Toks: []token.Token{t.token, first.token}}
+		msg += fmt.Sprintf("; first definition %s:%d:%d", first.File().Path, first.Line(), first.Col())
+		return token.Error{Msg: msg, Toks: []token.Token{t.token}}
 	}
 
 	return nil
@@ -96,7 +98,7 @@ func (p *Package) GetConst(name string) (*Const, error) {
 	if ok {
 		return sym, nil
 	}
-	return nil, fmt.Errorf("constant '%s' not found in package '%s'", name, p.Name)
+	return nil, Error{token.Error{Msg: fmt.Sprintf("constant '%s' not found in package '%s'", name, p.Name)}, nil}
 }
 
 func (p *Package) GetInst(name string) (*Inst, error) {
@@ -104,7 +106,7 @@ func (p *Package) GetInst(name string) (*Inst, error) {
 	if ok {
 		return sym, nil
 	}
-	return nil, fmt.Errorf("instantiation '%s' not found in package '%s'", name, p.Name)
+	return nil, Error{token.Error{Msg: fmt.Sprintf("instantiation '%s' not found in package '%s'", name, p.Name)}, nil}
 }
 
 func (p *Package) GetType(name string) (*Type, error) {
@@ -112,5 +114,5 @@ func (p *Package) GetType(name string) (*Type, error) {
 	if ok {
 		return sym, nil
 	}
-	return nil, fmt.Errorf("type '%s' not found in package '%s'", name, p.Name)
+	return nil, Error{token.Error{Msg: fmt.Sprintf("type '%s' not found in package '%s'", name, p.Name)}, nil}
 }

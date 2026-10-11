@@ -23,7 +23,7 @@ type staticDiary struct {
 func insStatic(typeChain []parser.Functionality) (*fn.Static, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	st := fn.Static{}
 	st.Func = f
@@ -38,7 +38,7 @@ func insStatic(typeChain []parser.Functionality) (*fn.Static, error) {
 		}
 		err := applyStaticType(&st, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -58,7 +58,7 @@ func insStatic(typeChain []parser.Functionality) (*fn.Static, error) {
 func applyStaticType(st *fn.Static, typ parser.Functionality, diary *staticDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "static"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return err

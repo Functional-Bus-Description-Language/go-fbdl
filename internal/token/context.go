@@ -6,16 +6,15 @@ type context struct {
 	indent  int // Current indent level
 	idx     int // Current buffer index
 	src     []byte
-	path    string
 }
 
 func (ctx context) end() bool {
 	return ctx.idx >= len(ctx.src)
 }
 
-// Creates position from the current context state.
-func (ctx context) pos() position {
-	return position{ctx.idx, ctx.idx, ctx.src, ctx.path}
+// Creates span from the current context state.
+func (ctx context) span() span {
+	return span{ctx.idx, ctx.idx}
 }
 
 // Returns the byte at the given offset from the current index without advancing.

@@ -33,7 +33,7 @@ func makeFunctionality(typeChain []parser.Functionality) (fn.Func, error) {
 		}
 
 		if err != nil {
-			return fn.Func{}, fmt.Errorf("%v", err)
+			return fn.Func{}, err
 		}
 		count = int64(v.(types.Int))
 		if count < 0 {

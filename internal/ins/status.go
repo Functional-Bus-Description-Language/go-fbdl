@@ -19,7 +19,7 @@ type statusDiary struct {
 func insStatus(typeChain []parser.Functionality) (*fn.Status, error) {
 	f, err := makeFunctionality(typeChain)
 	if err != nil {
-		return nil, fmt.Errorf("%v", err)
+		return nil, err
 	}
 	st := fn.Status{}
 	st.Func = f
@@ -34,7 +34,7 @@ func insStatus(typeChain []parser.Functionality) (*fn.Status, error) {
 		}
 		err := applyStatusType(&st, typ, &diary)
 		if err != nil {
-			return nil, fmt.Errorf("%v", err)
+			return nil, err
 		}
 	}
 
@@ -54,7 +54,7 @@ func insStatus(typeChain []parser.Functionality) (*fn.Status, error) {
 func applyStatusType(st *fn.Status, typ parser.Functionality, diary *statusDiary) error {
 	for _, p := range typ.Props() {
 		if err := util.IsValidProperty(p.Name, "status"); err != nil {
-			return fmt.Errorf(": %v", err)
+			return err
 		}
 		if err := checkProp(p); err != nil {
 			return err
