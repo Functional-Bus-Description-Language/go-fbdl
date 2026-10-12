@@ -810,9 +810,7 @@ func parseWord(ctx *context) ([]Token, error) {
 			}
 		}
 		return []Token{tok}, nil
-	} else if dotCount == 0 && hyphenCount == 1 {
-		return parseHyphenPropOrOneSubExpr(ctx, word)
-	} else if dotCount == 0 && hyphenCount > 1 {
+	} else if dotCount == 0 && hyphenCount >= 1 {
 		return parseMultiHyphenPropOrSubExpr(ctx, word)
 	}
 
@@ -851,18 +849,6 @@ func parseNoHyphenKeywordOrIdent(ctx *context, word []byte) ([]Token, error) {
 	}
 
 	return []Token{ident}, nil
-}
-
-func parseHyphenPropOrOneSubExpr(ctx *context, word []byte) ([]Token, error) {
-	switch ctx.lastTok.(type) {
-	case None, Newline, Semicolon, Indent, Dedent:
-		toks, err := parseHyphenProperty(ctx, word)
-		if err != nil || len(toks) != 0 {
-			return toks, err
-		}
-	}
-
-	return parseMultiHyphenPropOrSubExpr(ctx, word)
 }
 
 func parseMultiHyphenPropOrSubExpr(ctx *context, word []byte) ([]Token, error) {
