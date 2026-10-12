@@ -16,6 +16,10 @@ type Error struct {
 	file *File
 }
 
+func NewError(tokErr token.Error, file *File) Error {
+	return Error{tokErr, file}
+}
+
 func (err Error) getColor() (string, string) {
 	if isatty.IsTerminal(os.Stdout.Fd()) {
 		return "\033[1;31m", "\033[0m"
@@ -113,9 +117,6 @@ func (err Error) code(tok token.Token) string {
 }
 
 func (err Error) Unwrap() error { return err.err }
-
-// NewError associates a token error with its source file.
-func NewError(err token.Error, file *File) Error { return Error{err, file} }
 
 func lineNumber(tok token.Token, src []byte) int {
 	line := 1

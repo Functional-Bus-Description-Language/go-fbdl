@@ -12,6 +12,8 @@ import (
 type Inst struct {
 	symbol
 
+	ast ast.Inst
+
 	typ   string
 	count Expr
 
@@ -26,6 +28,7 @@ func (inst Inst) Kind() SymbolKind { return FuncInst }
 func (inst Inst) Type() string     { return inst.typ }
 func (inst Inst) IsArray() bool    { return inst.count != nil }
 func (inst Inst) Count() Expr      { return inst.count }
+func (inst Inst) Ast() ast.Inst    { return inst.ast }
 
 func (inst *Inst) GetConst(name string) (*Const, error) {
 	sym, ok := inst.symbolContainer.GetConst(name)
@@ -115,6 +118,7 @@ func buildInst(astInst ast.Inst, file *File) (*Inst, error) {
 
 	inst.token = astInst.Name
 	inst.name = token.Text(astInst.Name, src)
+	inst.ast = astInst
 	inst.doc = astInst.Doc.Text(src)
 
 	v, err := MakeExpr(astInst.Count, file, inst)

@@ -3,11 +3,12 @@ package ins
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 type configDiary struct {
@@ -138,6 +139,24 @@ func applyConfigType(
 			diary.widthSet = true
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", prop.Name))
+		}
+	}
+
+	for _, sym := range typ.Symbols() {
+		inst, ok := sym.(*parser.Inst)
+		if !ok {
+			continue
+		}
+
+		f := insFunctionality(sym.(parser.Functionality))
+		if !util.IsValidInnerType(f.Type(), "config") {
+			return parser.NewError(
+				token.Error{
+					Msg:  fmt.Sprintf(invalidInnerTypeMsg, f.GetName(), f.Type(), "config"),
+					Toks: []token.Token{inst.Ast().Name},
+				},
+				inst.File(),
+			)
 		}
 	}
 
