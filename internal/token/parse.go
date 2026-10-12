@@ -847,7 +847,7 @@ func parseNoHyphenKeywordOrIdent(ctx *context, word []byte) ([]Token, error) {
 	}
 
 	switch ctx.lastTok.(type) {
-	case Newline, Indent, Dedent:
+	case None, Newline, Indent, Dedent:
 		return []Token{ident}, nil
 	}
 

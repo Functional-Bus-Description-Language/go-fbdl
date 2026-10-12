@@ -502,6 +502,25 @@ func TestParse(t *testing.T) {
 				Eof{span{start: 6, end: 6}},
 			},
 		},
+		{
+			41,
+			"config config",
+			[]Token{
+				Ident{span{start: 0, end: 5}},
+				Config{span{start: 7, end: 12}},
+				Eof{span{start: 13, end: 13}},
+			},
+		},
+		{
+			42,
+			"\nconfig config",
+			[]Token{
+				Newline{span{start: 0, end: 0}},
+				Ident{span{start: 1, end: 6}},
+				Config{span{start: 8, end: 13}},
+				Eof{span{start: 14, end: 14}},
+			},
+		},
 	}
 
 	for i, test := range tests {
