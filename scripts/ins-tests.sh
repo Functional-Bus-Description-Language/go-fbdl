@@ -34,6 +34,8 @@ cd tests/instantiating/
 
 echo -e "\nRunning instantiation tests\n"
 
+passed=0
+
 for dir in $(find . -maxdepth 1 -mindepth 1 -type d | sort);
 do
 	testname=`basename $dir`
@@ -51,10 +53,11 @@ do
 	fi
 	rm stderr
 	cd ..
+	passed=$((passed + 1))
 done
 
 if $update; then
 	echo -e "\nstderr.golden files updated\n"
 else
-	echo -e "\nAll \e[1;32mPASSED\e[0m!"
+	echo -e "\nAll ($passed) \e[1;32mPASSED\e[0m!"
 fi

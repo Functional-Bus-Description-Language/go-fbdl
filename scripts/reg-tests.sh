@@ -34,6 +34,8 @@ cd tests/registerification/
 
 echo -e "\nRunning registerification tests\n"
 
+passed=0
+
 for dir in $(find . -maxdepth 3 -mindepth 3 -type d | sort);
 do
 	testname=`basename $dir`
@@ -51,10 +53,11 @@ do
 	fi
 	rm reg.json
 	cd ../../..
+	passed=$((passed + 1))
 done
 
 if $update; then
 	echo -e "\ngolden.json files updated\n"
 else
-	echo -e "\nAll \e[1;32mPASSED\e[0m!"
+	echo -e "\nAll ($passed) \e[1;32mPASSED\e[0m!"
 fi
