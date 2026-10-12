@@ -1,0 +1,5 @@
+error: unexpected integer, expected 'const', 'type', identifier, or comment
+bus.fbd +3:3
+   |
+ 3 |   15
+   |   ^^

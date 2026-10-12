@@ -61,7 +61,7 @@ tokenLoop:
 			tokens.next()
 			break tokenLoop
 		default:
-			return body, unexpected(tok, "const, type, identifier, or comment")
+			return body, unexpected(tok, "'const', 'type', identifier, or comment")
 		}
 
 		if err != nil {
