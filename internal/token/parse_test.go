@@ -408,6 +408,16 @@ func TestParse(t *testing.T) {
 				Eof{span{start: 2, end: 2}},
 			},
 		},
+		{
+			30,
+			"enable-init-value = 0",
+			[]Token{
+				EnableInitValue{span{start: 0, end: 16}},
+				Ass{span{start: 18, end: 18}},
+				Int{span{start: 20, end: 20}},
+				Eof{span{start: 21, end: 21}},
+			},
+		},
 	}
 
 	for i, test := range tests {

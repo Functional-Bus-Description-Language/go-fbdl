@@ -813,7 +813,7 @@ func parseWord(ctx *context) ([]Token, error) {
 	} else if dotCount == 0 && hyphenCount == 1 {
 		return parseHyphenPropOrOneSubExpr(ctx, word)
 	} else if dotCount == 0 && hyphenCount > 1 {
-		return parseMultiSubExpr(ctx, word)
+		return parseMultiHyphenPropOrSubExpr(ctx, word)
 	}
 
 	return parseMultiSubExprWithQualIdent(ctx, word)
@@ -855,17 +855,25 @@ func parseNoHyphenKeywordOrIdent(ctx *context, word []byte) ([]Token, error) {
 
 func parseHyphenPropOrOneSubExpr(ctx *context, word []byte) ([]Token, error) {
 	switch ctx.lastTok.(type) {
-	case Newline, Semicolon, Indent, Dedent:
+	case None, Newline, Semicolon, Indent, Dedent:
 		toks, err := parseHyphenProperty(ctx, word)
 		if err != nil || len(toks) != 0 {
 			return toks, err
 		}
 	}
 
-	return parseMultiSubExpr(ctx, word)
+	return parseMultiHyphenPropOrSubExpr(ctx, word)
 }
 
-func parseMultiSubExpr(ctx *context, word []byte) ([]Token, error) {
+func parseMultiHyphenPropOrSubExpr(ctx *context, word []byte) ([]Token, error) {
+	switch ctx.lastTok.(type) {
+	case None, Newline, Semicolon, Indent, Dedent:
+		toks, err := parseHyphenProperty(ctx, word)
+		if err != nil || len(toks) != 0 {
+			return toks, err
+		}
+	}
+
 	chunks := bytes.Split(word, []byte{'-'})
 	var toks []Token
 	start := ctx.idx - len(word)
