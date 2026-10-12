@@ -1,0 +1,3 @@
+main bus
+  i irq
+    st static; init-value = 0

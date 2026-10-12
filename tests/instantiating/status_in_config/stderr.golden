@@ -1,4 +1,4 @@
-error: 's' of base type 'status' cannot be instantiated in functionality of base type 'config'
+error: 's' of base type 'status' cannot be instantiated in 'c' of base type 'config'
 bus.fbd +3:5
    |
  3 |     s status

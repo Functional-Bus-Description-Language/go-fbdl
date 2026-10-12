@@ -1,0 +1,5 @@
+error: 'i' of base type 'irq' cannot be instantiated in 'r' of base type 'return'
+bus.fbd +4:7
+   |
+ 4 |       i irq
+   |       ^

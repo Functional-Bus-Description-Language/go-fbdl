@@ -1,0 +1,3 @@
+main bus
+  sts status
+    msk mask

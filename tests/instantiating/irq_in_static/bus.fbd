@@ -1,0 +1,4 @@
+main bus
+  st static
+    init-value = 0
+    ir irq

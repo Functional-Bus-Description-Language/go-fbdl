@@ -1,0 +1,4 @@
+main bus
+  strm stream
+    p1 param
+      bb blackbox; size = 1024

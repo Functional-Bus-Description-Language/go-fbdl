@@ -3,10 +3,12 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
 type paramDiary struct {
@@ -88,6 +90,26 @@ func applyParamType(param *fn.Param, typ parser.Functionality, diary *paramDiary
 			diary.widthSet = true
 		default:
 			panic("should never happen")
+		}
+	}
+
+	for _, sym := range typ.Symbols() {
+		pi, ok := sym.(*parser.Inst)
+		if !ok {
+			continue
+		}
+
+		f := insFunctionality(sym.(parser.Functionality))
+		if !util.IsValidInnerType(f.Type(), "param") {
+			return pi.NewError(
+				token.Error{
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), param.Name, "param",
+					),
+					Toks: []token.Token{pi.Ast().Name},
+				},
+			)
 		}
 	}
 

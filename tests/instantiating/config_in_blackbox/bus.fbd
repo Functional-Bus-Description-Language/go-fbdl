@@ -1,0 +1,4 @@
+main bus
+  bb blackbox
+    size = 1024
+    cfg config

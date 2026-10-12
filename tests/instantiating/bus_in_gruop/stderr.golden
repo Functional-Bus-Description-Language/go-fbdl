@@ -1,0 +1,5 @@
+error: 'b' of base type 'block' cannot be instantiated in 'grp' of base type 'group'
+bus.fbd +3:5
+   |
+ 3 |     b bus
+   |     ^

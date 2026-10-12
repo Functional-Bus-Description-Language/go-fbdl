@@ -1,0 +1,5 @@
+error: 'ir' of base type 'irq' cannot be instantiated in 'st' of base type 'static'
+bus.fbd +4:5
+   |
+ 4 |     ir irq
+   |     ^^

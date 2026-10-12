@@ -1,0 +1,5 @@
+error: 'msk' of base type 'mask' cannot be instantiated in 'sts' of base type 'status'
+bus.fbd +3:5
+   |
+ 3 |     msk mask
+   |     ^^^

@@ -1,0 +1,4 @@
+main bus
+  p proc
+    r return
+      i irq

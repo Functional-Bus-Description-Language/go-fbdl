@@ -1,0 +1,5 @@
+error: 'i' of base type 'irq' cannot be instantiated in 'm' of base type 'mask'
+bus.fbd +3:5
+   |
+ 3 |     i irq
+   |     ^

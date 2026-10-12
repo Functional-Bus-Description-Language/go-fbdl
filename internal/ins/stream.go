@@ -3,11 +3,12 @@ package ins
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 )
 
 type streamDiary struct {
@@ -69,16 +70,24 @@ func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDia
 
 	}
 
-	for _, s := range typ.Symbols() {
-		pe, ok := s.(*parser.Inst)
+	for _, sym := range typ.Symbols() {
+		pi, ok := sym.(*parser.Inst)
 		if !ok {
 			continue
 		}
 
-		f := insFunctionality(pe)
+		f := insFunctionality(pi)
 
 		if !util.IsValidInnerType(f.Type(), "stream") {
-			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "stream")
+			return pi.NewError(
+				token.Error{
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), strm.Name, "stream",
+					),
+					Toks: []token.Token{pi.Ast().Name},
+				},
+			)
 		}
 
 		if strm.HasFunctionality(f.GetName()) {

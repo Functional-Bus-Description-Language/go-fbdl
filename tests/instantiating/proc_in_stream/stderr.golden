@@ -1,0 +1,5 @@
+error: 'pr' of base type 'proc' cannot be instantiated in 'strm' of base type 'stream'
+bus.fbd +3:5
+   |
+ 3 |     pr proc
+   |     ^^

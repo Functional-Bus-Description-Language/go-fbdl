@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
@@ -11,7 +12,6 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/group"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 type groupDiary struct {
@@ -108,7 +108,7 @@ func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) 
 			constContainer.AddConst(&grp.Consts, c.Name(), val)
 		}
 
-		_, ok := sym.(*parser.Inst)
+		pi, ok := sym.(*parser.Inst)
 		if !ok {
 			continue
 		}
@@ -116,8 +116,14 @@ func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) 
 		f := insFunctionality(sym.(parser.Functionality))
 
 		if !util.IsValidInnerType(f.Type(), "group") {
-			return fmt.Errorf(
-				invalidInnerTypeMsg, f.GetName(), f.Type(), "group",
+			return pi.NewError(
+				token.Error{
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), grp.Name, "group",
+					),
+					Toks: []token.Token{pi.Ast().Name},
+				},
 			)
 		}
 

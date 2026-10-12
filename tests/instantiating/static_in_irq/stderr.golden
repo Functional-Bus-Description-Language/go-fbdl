@@ -1,0 +1,5 @@
+error: 'st' of base type 'static' cannot be instantiated in 'i' of base type 'irq'
+bus.fbd +3:5
+   |
+ 3 |     st static; init-value = 0
+   |     ^^

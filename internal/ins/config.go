@@ -143,19 +143,21 @@ func applyConfigType(
 	}
 
 	for _, sym := range typ.Symbols() {
-		inst, ok := sym.(*parser.Inst)
+		pi, ok := sym.(*parser.Inst)
 		if !ok {
 			continue
 		}
 
 		f := insFunctionality(sym.(parser.Functionality))
 		if !util.IsValidInnerType(f.Type(), "config") {
-			return parser.NewError(
+			return pi.NewError(
 				token.Error{
-					Msg:  fmt.Sprintf(invalidInnerTypeMsg, f.GetName(), f.Type(), "config"),
-					Toks: []token.Token{inst.Ast().Name},
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), cfg.Name, "config",
+					),
+					Toks: []token.Token{pi.Ast().Name},
 				},
-				inst.File(),
 			)
 		}
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
@@ -105,6 +106,26 @@ func applyIrqType(irq *fn.Irq, typ parser.Functionality, diary *irqDiary) error 
 			diary.outTriggerSet = true
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
+		}
+	}
+
+	for _, sym := range typ.Symbols() {
+		pi, ok := sym.(*parser.Inst)
+		if !ok {
+			continue
+		}
+
+		f := insFunctionality(sym.(parser.Functionality))
+		if !util.IsValidInnerType(f.Type(), "irq") {
+			return pi.NewError(
+				token.Error{
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), irq.Name, "irq",
+					),
+					Toks: []token.Token{pi.Ast().Name},
+				},
+			)
 		}
 	}
 

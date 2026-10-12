@@ -3,10 +3,12 @@ package ins
 import (
 	"fmt"
 
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 )
 
 type procDiary struct {
@@ -68,16 +70,24 @@ func applyProcType(p *fn.Proc, typ parser.Functionality, diary *procDiary) error
 
 	}
 
-	for _, s := range typ.Symbols() {
-		pe, ok := s.(*parser.Inst)
+	for _, sym := range typ.Symbols() {
+		pi, ok := sym.(*parser.Inst)
 		if !ok {
 			continue
 		}
 
-		f := insFunctionality(pe)
+		f := insFunctionality(pi)
 
 		if !util.IsValidInnerType(f.Type(), "proc") {
-			return fmt.Errorf(invalidInnerTypeMsg, f.GetName(), f.Type(), "proc")
+			return pi.NewError(
+				token.Error{
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), p.Name, "proc",
+					),
+					Toks: []token.Token{pi.Ast().Name},
+				},
+			)
 		}
 
 		if p.HasFunctionality(f.GetName()) {

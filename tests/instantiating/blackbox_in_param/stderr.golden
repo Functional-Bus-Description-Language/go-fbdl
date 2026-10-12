@@ -1,0 +1,5 @@
+error: 'bb' of base type 'blackbox' cannot be instantiated in 'p1' of base type 'param'
+bus.fbd +4:7
+   |
+ 4 |       bb blackbox; size = 1024
+   |       ^^

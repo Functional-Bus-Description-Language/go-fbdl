@@ -1,9 +1,10 @@
 package ins
 
 import (
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/pkg"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/pkg"
 )
 
 func constifyPackages(packages parser.Packages) map[string]*pkg.Package {

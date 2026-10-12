@@ -30,6 +30,11 @@ func (inst Inst) IsArray() bool    { return inst.count != nil }
 func (inst Inst) Count() Expr      { return inst.count }
 func (inst Inst) Ast() ast.Inst    { return inst.ast }
 
+// Creates a new parser Error with file set to the instantiation file.
+func (inst Inst) NewError(tokErr token.Error) Error {
+	return Error{tokErr, inst.file}
+}
+
 func (inst *Inst) GetConst(name string) (*Const, error) {
 	sym, ok := inst.symbolContainer.GetConst(name)
 	if ok {

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 func insBlackbox(typeChain []parser.Functionality) (*fn.Blackbox, error) {
@@ -71,6 +71,26 @@ func applyBlackboxType(bb *fn.Blackbox, typ parser.Functionality) error {
 			bb.Size = int64(v.(types.Int))
 		default:
 			panic(fmt.Sprintf("unhandled '%s' property", p.Name))
+		}
+	}
+
+	for _, sym := range typ.Symbols() {
+		pi, ok := sym.(*parser.Inst)
+		if !ok {
+			continue
+		}
+
+		f := insFunctionality(sym.(parser.Functionality))
+		if !util.IsValidInnerType(f.Type(), "blackbox") {
+			return pi.NewError(
+				token.Error{
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), bb.Name, "blackbox",
+					),
+					Toks: []token.Token{pi.Ast().Name},
+				},
+			)
 		}
 	}
 

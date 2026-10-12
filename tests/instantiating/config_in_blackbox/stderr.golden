@@ -1,0 +1,5 @@
+error: 'cfg' of base type 'config' cannot be instantiated in 'bb' of base type 'blackbox'
+bus.fbd +4:5
+   |
+ 4 |     cfg config
+   |     ^^^

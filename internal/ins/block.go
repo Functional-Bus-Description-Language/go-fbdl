@@ -102,7 +102,7 @@ func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 			constContainer.AddConst(&blk.Consts, c.Name(), val)
 		}
 
-		inst, ok := s.(*parser.Inst)
+		pi, ok := s.(*parser.Inst)
 		if !ok {
 			continue
 		}
@@ -110,12 +110,14 @@ func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 		f := insFunctionality(s.(parser.Functionality))
 
 		if !util.IsValidInnerType(f.Type(), "block") {
-			return parser.NewError(
+			return pi.NewError(
 				token.Error{
-					Msg:  fmt.Sprintf(invalidInnerTypeMsg, f.GetName(), f.Type(), "block"),
-					Toks: []token.Token{inst.Ast().Name},
+					Msg: fmt.Sprintf(
+						invalidInnerTypeMsg,
+						f.GetName(), f.Type(), blk.Name, "block",
+					),
+					Toks: []token.Token{pi.Ast().Name},
 				},
-				inst.File(),
 			)
 		}
 
