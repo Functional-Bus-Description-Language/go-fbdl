@@ -12,7 +12,6 @@ import (
 
 const propAlreadySetMsg string = "%s: cannot set '%s' property as it is already set in one of ancestor types"
 const propConflictMsg string = "%s: cannot set '%s' property because '%s' property is already set in one of ancestor types"
-const invalidInnerTypeMsg string = "'%s' of base type '%s' cannot be instantiated in '%s' of base type '%s'"
 const funcWithNameAlreadyInstMsg string = "cannot instantiate '%s', functionality with such name is already instantiated in one of ancestor types"
 
 func makeFunctionality(typeChain []parser.Functionality) (fn.Func, error) {

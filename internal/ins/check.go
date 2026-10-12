@@ -3,6 +3,7 @@ package ins
 import (
 	"fmt"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
@@ -243,6 +244,19 @@ func checkProp(prop parser.Prop) error {
 		}
 	default:
 		panic(fmt.Sprintf("checkProp() for property '%s' not yet implemented", name))
+	}
+
+	return nil
+}
+
+func checkInnerFuncType(inf fn.Functionality, of fn.Functionality) error {
+	msg := "'%s' of base type '%s' cannot be instantiated in '%s' of base type '%s'"
+
+	if !util.IsValidInnerType(inf.Type(), of.Type()) {
+		return fmt.Errorf(
+			msg,
+			inf.GetName(), inf.Type(), of.GetName(), of.Type(),
+		)
 	}
 
 	return nil

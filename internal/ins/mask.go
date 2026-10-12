@@ -110,13 +110,11 @@ func applyMaskType(mask *fn.Mask, typ parser.Functionality, diary *maskDiary) er
 		}
 
 		f := insFunctionality(sym.(parser.Functionality))
-		if !util.IsValidInnerType(f.Type(), "mask") {
+		err := checkInnerFuncType(f, mask)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), mask.Name, "mask",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)

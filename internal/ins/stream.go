@@ -78,13 +78,11 @@ func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDia
 
 		f := insFunctionality(pi)
 
-		if !util.IsValidInnerType(f.Type(), "stream") {
+		err := checkInnerFuncType(f, strm)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), strm.Name, "stream",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)
@@ -94,7 +92,7 @@ func applyStreamType(strm *fn.Stream, typ parser.Functionality, diary *streamDia
 			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
 
-		err := addStreamInnerFunc(strm, f)
+		err = addStreamInnerFunc(strm, f)
 		if err != nil {
 			return token.Error{
 				Msg:  fmt.Sprintf("cannot instantiate '%s' functionality: %v", f.GetName(), err),

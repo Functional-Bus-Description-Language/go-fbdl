@@ -109,13 +109,11 @@ func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 
 		f := insFunctionality(s.(parser.Functionality))
 
-		if !util.IsValidInnerType(f.Type(), "block") {
+		err := checkInnerFuncType(f, blk)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), blk.Name, "block",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)

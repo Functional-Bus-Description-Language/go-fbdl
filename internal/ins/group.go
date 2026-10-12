@@ -115,13 +115,11 @@ func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) 
 
 		f := insFunctionality(sym.(parser.Functionality))
 
-		if !util.IsValidInnerType(f.Type(), "group") {
+		err := checkInnerFuncType(f, grp)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), grp.Name, "group",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)
@@ -131,7 +129,7 @@ func applyGroupType(grp *fn.Group, typ parser.Functionality, diary *groupDiary) 
 			return fmt.Errorf(funcWithNameAlreadyInstMsg, f.GetName())
 		}
 
-		err := addGroupInnerElement(grp, f)
+		err = addGroupInnerElement(grp, f)
 		if err != nil {
 			return token.Error{
 				Msg:  fmt.Sprintf("%v", err),

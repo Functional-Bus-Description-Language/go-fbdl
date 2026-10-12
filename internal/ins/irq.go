@@ -116,13 +116,11 @@ func applyIrqType(irq *fn.Irq, typ parser.Functionality, diary *irqDiary) error 
 		}
 
 		f := insFunctionality(sym.(parser.Functionality))
-		if !util.IsValidInnerType(f.Type(), "irq") {
+		err := checkInnerFuncType(f, irq)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), irq.Name, "irq",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)

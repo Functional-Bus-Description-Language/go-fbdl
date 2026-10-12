@@ -81,13 +81,11 @@ func applyBlackboxType(bb *fn.Blackbox, typ parser.Functionality) error {
 		}
 
 		f := insFunctionality(sym.(parser.Functionality))
-		if !util.IsValidInnerType(f.Type(), "blackbox") {
+		err := checkInnerFuncType(f, bb)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), bb.Name, "blackbox",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)

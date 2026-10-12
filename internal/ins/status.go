@@ -98,13 +98,11 @@ func applyStatusType(st *fn.Status, typ parser.Functionality, diary *statusDiary
 		}
 
 		f := insFunctionality(sym.(parser.Functionality))
-		if !util.IsValidInnerType(f.Type(), "status") {
+		err := checkInnerFuncType(f, st)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), st.Name, "status",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)

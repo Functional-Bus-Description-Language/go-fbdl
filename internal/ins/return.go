@@ -75,13 +75,11 @@ func applyReturnType(ret *fn.Return, typ parser.Functionality, diary *returnDiar
 		}
 
 		f := insFunctionality(sym.(parser.Functionality))
-		if !util.IsValidInnerType(f.Type(), "return") {
+		err := checkInnerFuncType(f, ret)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), ret.Name, "return",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)

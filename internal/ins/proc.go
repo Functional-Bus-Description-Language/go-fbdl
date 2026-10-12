@@ -78,13 +78,11 @@ func applyProcType(p *fn.Proc, typ parser.Functionality, diary *procDiary) error
 
 		f := insFunctionality(pi)
 
-		if !util.IsValidInnerType(f.Type(), "proc") {
+		err := checkInnerFuncType(f, p)
+		if err != nil {
 			return pi.NewError(
 				token.Error{
-					Msg: fmt.Sprintf(
-						invalidInnerTypeMsg,
-						f.GetName(), f.Type(), p.Name, "proc",
-					),
+					Msg:  fmt.Sprintf("%v", err),
 					Toks: []token.Token{pi.Ast().Name},
 				},
 			)
