@@ -418,6 +418,90 @@ func TestParse(t *testing.T) {
 				Eof{span{start: 21, end: 21}},
 			},
 		},
+		{
+			31,
+			"1e-3",
+			[]Token{
+				Float{span{start: 0, end: 3}},
+				Eof{span{start: 4, end: 4}},
+			},
+		},
+		{
+			32,
+			"1e+3",
+			[]Token{
+				Float{span{start: 0, end: 3}},
+				Eof{span{start: 4, end: 4}},
+			},
+		},
+		{
+			33,
+			"1E-12",
+			[]Token{
+				Float{span{start: 0, end: 4}},
+				Eof{span{start: 5, end: 5}},
+			},
+		},
+		{
+			34,
+			"1E+12",
+			[]Token{
+				Float{span{start: 0, end: 4}},
+				Eof{span{start: 5, end: 5}},
+			},
+		},
+		{
+			35,
+			"1.25e-3",
+			[]Token{
+				Float{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
+		{
+			36,
+			"1.25E+3",
+			[]Token{
+				Float{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
+		{
+			37,
+			"1e3",
+			[]Token{
+				Float{span{start: 0, end: 2}},
+				Eof{span{start: 3, end: 3}},
+			},
+		},
+		{
+			38,
+			"1e+0",
+			[]Token{
+				Float{span{start: 0, end: 3}},
+				Eof{span{start: 4, end: 4}},
+			},
+		},
+		{
+			39,
+			"1e-3-2",
+			[]Token{
+				Float{span{start: 0, end: 3}},
+				Sub{span{start: 4, end: 4}},
+				Int{span{start: 5, end: 5}},
+				Eof{span{start: 6, end: 6}},
+			},
+		},
+		{
+			40,
+			"1e+3+2",
+			[]Token{
+				Float{span{start: 0, end: 3}},
+				Add{span{start: 4, end: 4}},
+				Int{span{start: 5, end: 5}},
+				Eof{span{start: 6, end: 6}},
+			},
+		},
 	}
 
 	for i, test := range tests {
@@ -531,7 +615,7 @@ func TestParseError(t *testing.T) {
 		{
 			14,
 			"\n\"str",
-			"unterminated string, probably missing '\"'",
+			"unterminated string literal",
 		},
 		{
 			15,
@@ -567,6 +651,41 @@ func TestParseError(t *testing.T) {
 			21,
 			"pkg.3c",
 			"symbol name in qualified identifier must start with letter",
+		},
+		{
+			22,
+			"1e",
+			"missing digits in number exponent",
+		},
+		{
+			23,
+			"1e+",
+			"missing digits in number exponent",
+		},
+		{
+			24,
+			"1e-",
+			"missing digits in number exponent",
+		},
+		{
+			25,
+			"1E+ ",
+			"missing digits in number exponent",
+		},
+		{
+			26,
+			"1e-\n",
+			"missing digits in number exponent",
+		},
+		{
+			27,
+			"1e+-3",
+			"missing digits in number exponent",
+		},
+		{
+			28,
+			"1e--3",
+			"missing digits in number exponent",
 		},
 	}
 

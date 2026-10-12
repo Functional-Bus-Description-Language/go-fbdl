@@ -479,13 +479,11 @@ func parseString(ctx *context) ([]Token, error) {
 
 	for {
 		ctx.next()
-		if ctx.end() {
-			return []Token{t}, Error{"unterminated string, probably missing '\"'", []Token{t}}
+		if ctx.end() || ctx.peek(0) == '\n' {
+			return []Token{t}, Error{"unterminated string literal", []Token{t}}
 		}
 		b := ctx.peek(0)
-		if b != '\n' {
-			t.end++
-		}
+		t.end++
 		if b == '"' {
 			break
 		}
@@ -662,6 +660,16 @@ func parseNumber(ctx *context) ([]Token, error) {
 				}
 			} else {
 				hasE = true
+			}
+			ctx.next() // Skip the exponent marker.
+			if ctx.peek(0) == '+' || ctx.peek(0) == '-' {
+				ctx.next()
+			}
+			if !isDigit(ctx.peek(0)) {
+				return nil, Error{
+					"missing digits in number exponent",
+					[]Token{Float{span{i.start, ctx.idx - 1}}},
+				}
 			}
 		} else if b == '\'' && !hasPoint && !hasE {
 			return parseTime(ctx, i.start)
