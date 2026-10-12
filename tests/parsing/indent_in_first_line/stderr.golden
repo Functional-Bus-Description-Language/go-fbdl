@@ -1,0 +1,5 @@
+error: unexpected indent increment, expected 'const', 'import', 'type', identifier, or comment
+bus.fbd +1:1
+   |
+ 1 |   main bus
+   | ^^

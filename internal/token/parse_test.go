@@ -573,7 +573,7 @@ func TestParseError(t *testing.T) {
 		},
 		{
 			2,
-			" ;\n",
+			"f;\n",
 			"extra ';' at line end",
 		},
 		{

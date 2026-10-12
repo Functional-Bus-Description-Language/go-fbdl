@@ -150,7 +150,8 @@ func Parse(src []byte) ([]Token, error) {
 }
 
 func parseSpace(ctx *context) ([]Token, error) {
-	if _, ok := ctx.lastTok.(Newline); ok {
+	switch ctx.lastTok.(type) {
+	case None, Newline:
 		return parseIndent(ctx)
 	}
 

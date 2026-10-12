@@ -49,7 +49,7 @@ tokenLoop:
 			typ, err = buildType(&tokens)
 			f.Types = append(f.Types, typ)
 		default:
-			return f, unexpected(t, "const, type, identifier, import or comment")
+			return f, unexpected(t, "'const', 'import', 'type', identifier, or comment")
 		}
 
 		if err != nil {
