@@ -389,6 +389,16 @@ func TestParse(t *testing.T) {
 				Eof{span{start: 23, end: 23}},
 			},
 		},
+		{
+			28,
+			"x^y",
+			[]Token{
+				Ident{span{start: 0, end: 0}},
+				Xor{span{start: 1, end: 1}},
+				Ident{span{start: 2, end: 2}},
+				Eof{span{start: 3, end: 3}},
+			},
+		},
 	}
 
 	for i, test := range tests {

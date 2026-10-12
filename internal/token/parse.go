@@ -61,6 +61,8 @@ func Parse(src []byte) ([]Token, error) {
 			}
 		case '/':
 			toks, err = parseDivisionOperator(&ctx)
+		case '^':
+			toks, err = parseXorOperator(&ctx)
 		case '<':
 			switch nb {
 			case '=':
@@ -374,6 +376,12 @@ func parseDivisionOperator(ctx *context) ([]Token, error) {
 	d := Div{ctx.span()}
 	ctx.next()
 	return []Token{d}, nil
+}
+
+func parseXorOperator(ctx *context) ([]Token, error) {
+	x := Xor{ctx.span()}
+	ctx.next()
+	return []Token{x}, nil
 }
 
 func parseLessThanEqualOperator(ctx *context) ([]Token, error) {
