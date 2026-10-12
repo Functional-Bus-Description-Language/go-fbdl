@@ -862,21 +862,7 @@ func parseHyphenPropOrOneSubExpr(ctx *context, word []byte) ([]Token, error) {
 		}
 	}
 
-	hyphen := bytes.IndexByte(word, '-')
-	start := ctx.idx - len(word)
-	pos := span{start, start + len(word) - 1}
-
-	left := Ident{pos}
-	left.end = start + hyphen - 1
-
-	sub := Sub{pos}
-	sub.start = start + hyphen
-	sub.end = sub.start
-
-	right := Ident{pos}
-	right.start = sub.end + 1
-
-	return []Token{left, sub, right}, nil
+	return parseMultiSubExpr(ctx, word)
 }
 
 func parseMultiSubExpr(ctx *context, word []byte) ([]Token, error) {
