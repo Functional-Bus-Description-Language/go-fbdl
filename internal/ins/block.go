@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/types"
 
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/parser"
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/util/constContainer"
-	"github.com/Functional-Bus-Description-Language/go-fbdl/pkg/fbdl/fn"
 )
 
 func insBlock(typeChain []parser.Functionality) (*fn.Block, error) {
@@ -101,7 +102,7 @@ func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 			constContainer.AddConst(&blk.Consts, c.Name(), val)
 		}
 
-		_, ok := s.(*parser.Inst)
+		inst, ok := s.(*parser.Inst)
 		if !ok {
 			continue
 		}
@@ -109,8 +110,12 @@ func applyBlockType(blk *fn.Block, typ parser.Functionality) error {
 		f := insFunctionality(s.(parser.Functionality))
 
 		if !util.IsValidInnerType(f.Type(), "block") {
-			return fmt.Errorf(
-				invalidInnerTypeMsg, f.GetName(), f.Type(), "block",
+			return parser.NewError(
+				token.Error{
+					Msg:  fmt.Sprintf(invalidInnerTypeMsg, f.GetName(), f.Type(), "block"),
+					Toks: []token.Token{inst.Ast().Name},
+				},
+				inst.File(),
 			)
 		}
 
