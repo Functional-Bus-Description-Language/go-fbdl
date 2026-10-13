@@ -541,6 +541,34 @@ func TestParse(t *testing.T) {
 				Eof{span{start: 8, end: 8}},
 			},
 		},
+		{
+			45,
+			"1^2",
+			[]Token{
+				Int{span{start: 0, end: 0}},
+				Xor{span{start: 1, end: 1}},
+				Int{span{start: 2, end: 2}},
+				Eof{span{start: 3, end: 3}},
+			},
+		},
+		{
+			46,
+			"1!=2",
+			[]Token{
+				Int{span{start: 0, end: 0}},
+				Neq{span{start: 1, end: 2}},
+				Int{span{start: 3, end: 3}},
+				Eof{span{start: 4, end: 4}},
+			},
+		},
+		{
+			47,
+			"1#Comment",
+			[]Token{
+				Int{span{start: 0, end: 0}},
+				Eof{span{start: 9, end: 9}},
+			},
+		},
 	}
 
 	for i, test := range tests {
