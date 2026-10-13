@@ -754,6 +754,66 @@ func TestParseError(t *testing.T) {
 			"1e--3",
 			"missing digits in number exponent",
 		},
+		{
+			29,
+			"0b",
+			"missing digit after bin prefix",
+		},
+		{
+			30,
+			"0o",
+			"missing digit after octal prefix",
+		},
+		{
+			31,
+			"0x",
+			"missing digit after hex prefix",
+		},
+		{
+			32,
+			"0B",
+			"missing digit after bin prefix",
+		},
+		{
+			33,
+			"0O",
+			"missing digit after octal prefix",
+		},
+		{
+			34,
+			"0X",
+			"missing digit after hex prefix",
+		},
+		{
+			35,
+			"0b ",
+			"missing digit after bin prefix",
+		},
+		{
+			36,
+			"0o\n",
+			"missing digit after octal prefix",
+		},
+		{
+			37,
+			"0x\t",
+			"missing digit after hex prefix",
+		},
+		{
+			38,
+			"0b+1",
+			"missing digit after bin prefix",
+		},
+		{
+			39,
+			"0o)",
+			"missing digit after octal prefix",
+		},
+		{
+			40,
+			"0x#Comment",
+			"missing digit after hex prefix",
+		},
 	}
 
 	for i, test := range tests {

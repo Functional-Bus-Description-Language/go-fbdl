@@ -732,6 +732,9 @@ func parseBinInt(ctx *context) ([]Token, error) {
 		}
 	}
 	t.end = ctx.idx - 1
+	if t.end == t.start+1 {
+		return nil, Error{"missing digit after bin prefix", []Token{t}}
+	}
 	return []Token{t}, nil
 }
 
@@ -755,6 +758,9 @@ func parseOctalInt(ctx *context) ([]Token, error) {
 		}
 	}
 	t.end = ctx.idx - 1
+	if t.end == t.start+1 {
+		return nil, Error{"missing digit after octal prefix", []Token{t}}
+	}
 	return []Token{t}, nil
 }
 
@@ -778,6 +784,9 @@ func parseHexInt(ctx *context) ([]Token, error) {
 		}
 	}
 	t.end = ctx.idx - 1
+	if t.end == t.start+1 {
+		return nil, Error{"missing digit after hex prefix", []Token{t}}
+	}
 	return []Token{t}, nil
 }
 
