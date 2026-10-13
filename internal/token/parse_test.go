@@ -814,6 +814,26 @@ func TestParseError(t *testing.T) {
 			"0x#Comment",
 			"missing digit after hex prefix",
 		},
+		{
+			41,
+			"a-.b",
+			"missing package in qualified identifier",
+		},
+		{
+			42,
+			"a--.b",
+			"missing package in qualified identifier",
+		},
+		{
+			43,
+			"pkg.a-.b",
+			"missing package in qualified identifier",
+		},
+		{
+			44,
+			"const X = a-.b-c",
+			"missing package in qualified identifier",
+		},
 	}
 
 	for i, test := range tests {

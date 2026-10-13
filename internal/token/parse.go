@@ -790,10 +790,16 @@ func parseHexInt(ctx *context) ([]Token, error) {
 	return []Token{t}, nil
 }
 
-// Checks that the symbol following the dot starts with a letter.
-func isValidQualIdent(word []byte) bool {
+// Checks that the package is present and the symbol starts with a letter.
+func validateQualIdent(word []byte, tok QualIdent) error {
 	dot := bytes.IndexByte(word, '.')
-	return dot >= 0 && dot+1 < len(word) && isLetter(word[dot+1])
+	if dot == 0 {
+		return Error{"missing package in qualified identifier", []Token{tok}}
+	}
+	if dot < 0 || dot+1 >= len(word) || !isLetter(word[dot+1]) {
+		return Error{"symbol name in qualified identifier must start with letter", []Token{tok}}
+	}
+	return nil
 }
 
 func parseWord(ctx *context) ([]Token, error) {
@@ -821,11 +827,8 @@ func parseWord(ctx *context) ([]Token, error) {
 		tok := QualIdent{ctx.span()}
 		tok.start = tok.end - len(word)
 		tok.end--
-		if !isValidQualIdent(word) {
-			return nil, Error{
-				"symbol name in qualified identifier must start with letter",
-				[]Token{tok},
-			}
+		if err := validateQualIdent(word, tok); err != nil {
+			return nil, err
 		}
 		return []Token{tok}, nil
 	} else if dotCount == 0 && hyphenCount >= 1 {
@@ -911,11 +914,8 @@ func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) 
 				toks = append(toks, Ident{pos})
 			case 1:
 				tok := QualIdent{pos}
-				if !isValidQualIdent(chunk) {
-					return nil, Error{
-						"symbol name in qualified identifier must start with letter",
-						[]Token{tok},
-					}
+				if err := validateQualIdent(chunk, tok); err != nil {
+					return nil, err
 				}
 				toks = append(toks, tok)
 			default:
