@@ -520,6 +520,7 @@ type UnaryOperator uint8
 const (
 	UnaryPlus = iota
 	UnaryMinus
+	UnaryNegation
 )
 
 type UnaryExpr struct {
@@ -535,14 +536,27 @@ func (ue UnaryExpr) Eval() (types.Value, error) {
 		return types.Int(0), err
 	}
 
-	if x, ok := x.(types.Int); ok {
-		switch ue.op {
-		case UnaryPlus:
+	switch ue.op {
+	case UnaryPlus:
+		if x, ok := x.(types.Int); ok {
 			return x, nil
-		case UnaryMinus:
+		}
+	case UnaryMinus:
+		if x, ok := x.(types.Int); ok {
 			return -x, nil
-		default:
-			panic("operator not yet supported")
+		}
+	case UnaryNegation:
+		if x, ok := x.(types.Bool); ok {
+			return !x, nil
+		}
+		return types.Int(0), Error{
+			token.Error{
+				Msg: fmt.Sprintf(
+					"operand of negation must be of type bool, current type %s",
+					x.Type(),
+				),
+				Toks: []token.Token{ue.tok}},
+			ue.file,
 		}
 	}
 
@@ -557,6 +571,8 @@ func MakeUnaryExpr(e ast.UnaryExpr, file *File, s Scope) (UnaryExpr, error) {
 		op = UnaryPlus
 	case "-":
 		op = UnaryMinus
+	case "!":
+		op = UnaryNegation
 	default:
 		return UnaryExpr{}, Error{token.Error{Msg: fmt.Sprintf("make unary expression: invalid operator %s", text)}, file}
 	}

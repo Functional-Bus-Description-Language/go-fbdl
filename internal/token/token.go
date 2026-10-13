@@ -30,6 +30,15 @@ type (
 	}
 )
 
+// New constructs a token with an inclusive source span.
+// It is useful mostly for tests in ast package.
+func New[T interface {
+	Token
+	~struct{ span }
+}](start, end int) T {
+	return T{span{start, end}}
+}
+
 // Text returns token text from the source.
 func Text(t Token, src []byte) string {
 	return string(src[t.Start() : t.End()+1])
@@ -155,7 +164,8 @@ func (bs BitString) Name() string { return "bit string" }
 
 func (t Time) Name() string { return "time" }
 
-func (n Neg) Name() string { return "!" }
+func (n Neg) Name() string    { return "!" }
+func (n Neg) Precedence() int { return 7 }
 
 func (a Ass) Name() string { return "'='" }
 

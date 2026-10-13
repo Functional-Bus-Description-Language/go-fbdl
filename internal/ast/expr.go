@@ -167,6 +167,10 @@ func buildExpr(tokens *tokenStream, leftOp token.Operator) (Expr, error) {
 
 	for {
 		var rightOp token.Operator
+		// Negation is always a prefix operator, never a binary operator.
+		if _, ok := tokens.peek(0).(token.Neg); ok {
+			return expr, nil
+		}
 		if op, ok := tokens.peek(0).(token.Operator); ok {
 			rightOp = op
 		} else {

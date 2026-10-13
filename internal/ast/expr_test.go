@@ -62,6 +62,74 @@ func TestBuildUnaryExpr(t *testing.T) {
 	}
 }
 
+func TestBuildNegation(t *testing.T) {
+	tests := []struct {
+		src  string
+		want Expr
+	}{
+		{
+			src: "!true",
+			want: UnaryExpr{
+				Op: token.New[token.Neg](0, 0), X: Bool{token.New[token.Bool](1, 4)},
+			},
+		},
+		{
+			src: "!!false",
+			want: UnaryExpr{
+				Op: token.New[token.Neg](0, 0),
+				X:  UnaryExpr{Op: token.New[token.Neg](1, 1), X: Bool{token.New[token.Bool](2, 6)}},
+			},
+		},
+		{
+			src: "!true == false",
+			want: BinaryExpr{
+				X:  UnaryExpr{Op: token.New[token.Neg](0, 0), X: Bool{token.New[token.Bool](1, 4)}},
+				Op: token.New[token.Eq](6, 7),
+				Y:  Bool{token.New[token.Bool](9, 13)},
+			},
+		},
+		{
+			src: "true && !false",
+			want: BinaryExpr{
+				X:  Bool{token.New[token.Bool](0, 3)},
+				Op: token.New[token.And](5, 6),
+				Y:  UnaryExpr{Op: token.New[token.Neg](8, 8), X: Bool{token.New[token.Bool](9, 13)}},
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.src, func(t *testing.T) {
+			toks, err := token.Parse([]byte(test.src))
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := tokenStream{toks: toks}
+			got, err := buildExpr(&ctx, nil)
+			if err := checkExpr(ctx, len(toks)-1, got, test.want, err); err != nil {
+				t.Fatal(err)
+			}
+			if ctx.idx != len(toks)-1 {
+				t.Fatalf("consumed %d tokens, want %d", ctx.idx, len(toks)-1)
+			}
+		})
+	}
+}
+
+func TestBuildInvalidNegation(t *testing.T) {
+	for _, src := range []string{"const A = !", "const A = true ! false"} {
+		t.Run(src, func(t *testing.T) {
+			toks, err := token.Parse([]byte(src))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if _, err := Build(toks); err == nil {
+				t.Fatal("expected an error")
+			}
+		})
+	}
+}
+
 func TestBuildParenExpr(t *testing.T) {
 	toks, _ := token.Parse([]byte("(a >> b)"))
 	want := ParenExpr{
