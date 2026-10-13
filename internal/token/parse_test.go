@@ -569,6 +569,54 @@ func TestParse(t *testing.T) {
 				Eof{span{start: 9, end: 9}},
 			},
 		},
+		{
+			48,
+			`b"hHlL"`,
+			[]Token{
+				BitString{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
+		{
+			49,
+			`B"hHlL"`,
+			[]Token{
+				BitString{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
+		{
+			50,
+			`o"hHlL"`,
+			[]Token{
+				BitString{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
+		{
+			51,
+			`O"hHlL"`,
+			[]Token{
+				BitString{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
+		{
+			52,
+			`x"hHlL"`,
+			[]Token{
+				BitString{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
+		{
+			53,
+			`X"hHlL"`,
+			[]Token{
+				BitString{span{start: 0, end: 6}},
+				Eof{span{start: 7, end: 7}},
+			},
+		},
 	}
 
 	for i, test := range tests {

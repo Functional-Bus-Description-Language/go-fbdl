@@ -513,7 +513,7 @@ func parseBinBitString(ctx *context) ([]Token, error) {
 			ctx.next()
 			return []Token{t}, nil
 		case '0', '1',
-			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			'-', 'h', 'H', 'l', 'L', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
 			ctx.next()
 		default:
@@ -553,7 +553,7 @@ func parseOctalBitString(ctx *context) ([]Token, error) {
 			ctx.next()
 			return []Token{t}, nil
 		case '0', '1', '2', '3', '4', '5', '6', '7',
-			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			'-', 'h', 'H', 'l', 'L', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
 			ctx.next()
 		default:
@@ -594,7 +594,7 @@ func parseHexBitString(ctx *context) ([]Token, error) {
 			return []Token{t}, nil
 		case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 			'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F',
-			'-', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
+			'-', 'h', 'H', 'l', 'L', 'u', 'U', 'w', 'W', 'x', 'X', 'z', 'Z':
 			t.end++
 			ctx.next()
 		case ' ', '\n', ';', ',':
