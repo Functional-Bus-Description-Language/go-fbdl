@@ -164,7 +164,7 @@ func parseSpace(ctx *context) ([]Token, error) {
 
 	spaceCount := ctx.idx - startIdx
 
-	if ctx.peek(0) == '\n' {
+	if ctx.end() || ctx.peek(0) == '\n' {
 		tok := None{ctx.span()}
 		tok.start = startIdx
 		tok.end--
@@ -194,7 +194,7 @@ func parseIndent(ctx *context) ([]Token, error) {
 		spaceCount++
 	}
 
-	if ctx.peek(0) == '\n' {
+	if ctx.end() || ctx.peek(0) == '\n' {
 		if spaceCount > 1 {
 			indent.end += spaceCount - 1
 			return nil, Error{

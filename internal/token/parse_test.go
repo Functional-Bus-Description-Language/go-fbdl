@@ -660,7 +660,7 @@ func TestParseError(t *testing.T) {
 		{
 			0,
 			"\n ",
-			"odd number (1) of spaces in indent, expected even number",
+			"extra space at line end",
 		},
 		{
 			1,
@@ -881,6 +881,36 @@ func TestParseError(t *testing.T) {
 			44,
 			"const X = a-.b-c",
 			"missing package in qualified identifier",
+		},
+		{
+			45,
+			"const X = 1 ",
+			"extra space at line end",
+		},
+		{
+			46,
+			"const X = 1   ",
+			"extra 3 spaces at line end",
+		},
+		{
+			47,
+			" ",
+			"extra space at line end",
+		},
+		{
+			48,
+			"  ",
+			"extra 2 spaces at line end",
+		},
+		{
+			49,
+			"\n  ",
+			"extra 2 spaces at line end",
+		},
+		{
+			50,
+			"Main bus\n  width = 32 ",
+			"extra space at line end",
 		},
 	}
 
