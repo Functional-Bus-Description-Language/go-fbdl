@@ -961,6 +961,8 @@ func parseFunc(ctx *context, word []byte) ([]Token, error) {
 	pos := span{s, e}
 
 	switch string(word) {
+	case "blackbox":
+		return []Token{Blackbox{pos}}, nil
 	case "block":
 		return []Token{Block{pos}}, nil
 	case "bus":
@@ -973,8 +975,6 @@ func parseFunc(ctx *context, word []byte) ([]Token, error) {
 		return []Token{Irq{pos}}, nil
 	case "mask":
 		return []Token{Mask{pos}}, nil
-	case "memory":
-		return []Token{Memory{pos}}, nil
 	case "param":
 		return []Token{Param{pos}}, nil
 	case "proc":

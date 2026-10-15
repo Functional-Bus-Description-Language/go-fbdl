@@ -92,19 +92,19 @@ type (
 	Import struct{ span }
 	Type   struct{ span }
 	// Functionality tokens
-	Block  struct{ span }
-	Bus    struct{ span }
-	Config struct{ span }
-	Group  struct{ span }
-	Irq    struct{ span }
-	Mask   struct{ span }
-	Memory struct{ span }
-	Param  struct{ span }
-	Proc   struct{ span }
-	Return struct{ span }
-	Static struct{ span }
-	Status struct{ span }
-	Stream struct{ span }
+	Blackbox struct{ span }
+	Block    struct{ span }
+	Bus      struct{ span }
+	Config   struct{ span }
+	Group    struct{ span }
+	Irq      struct{ span }
+	Mask     struct{ span }
+	Param    struct{ span }
+	Proc     struct{ span }
+	Return   struct{ span }
+	Static   struct{ span }
+	Status   struct{ span }
+	Stream   struct{ span }
 	// Property tokens
 	Access           struct{ span }
 	AddEnable        struct{ span }
@@ -247,12 +247,13 @@ func (i Import) Name() string { return "'import'" }
 
 func (t Type) Name() string { return "'type'" }
 
-func (b Block) Name() string { return "'block'" }
+func (bb Blackbox) Name() string   { return "'blackbox'" }
+func (bb Blackbox) functionality() {}
 
+func (b Block) Name() string   { return "'block'" }
 func (b Block) functionality() {}
 
-func (b Bus) Name() string { return "'bus'" }
-
+func (b Bus) Name() string   { return "'bus'" }
 func (b Bus) functionality() {}
 
 func (c Config) Name() string   { return "'config'" }
@@ -266,9 +267,6 @@ func (i Irq) functionality() {}
 
 func (m Mask) Name() string   { return "'mask'" }
 func (m Mask) functionality() {}
-
-func (m Memory) Name() string   { return "'memory'" }
-func (m Memory) functionality() {}
 
 func (p Param) Name() string   { return "'param'" }
 func (p Param) functionality() {}
