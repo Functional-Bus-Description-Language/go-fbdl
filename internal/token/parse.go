@@ -907,19 +907,19 @@ func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) 
 	start := ctx.idx - len(word)
 
 	for i, chunk := range chunks {
-		pos := span{start, start + len(chunk) - 1}
+		spn := span{start, start + len(chunk) - 1}
 		if len(chunk) != 0 {
 			switch bytes.Count(chunk, []byte{'.'}) {
 			case 0:
-				toks = append(toks, Ident{pos})
+				toks = append(toks, Ident{spn})
 			case 1:
-				tok := QualIdent{pos}
+				tok := QualIdent{spn}
 				if err := validateQualIdent(chunk, tok); err != nil {
 					return nil, err
 				}
 				toks = append(toks, tok)
 			default:
-				return nil, Error{"multiple dots in identifier", []Token{Ident{pos}}}
+				return nil, Error{"multiple dots in identifier", []Token{Ident{spn}}}
 			}
 		}
 
@@ -935,124 +935,124 @@ func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) 
 
 // Hard keywords that must not be used anywhere.
 func parseKeyword(ctx *context, word []byte) ([]Token, error) {
-	s := ctx.idx - len(word)
-	e := ctx.idx - 1
-
-	pos := span{s, e}
+	s := span{
+		ctx.idx - len(word),
+		ctx.idx - 1,
+	}
 
 	switch string(word) {
 	case "false", "true":
-		return []Token{Bool{pos}}, nil
+		return []Token{Bool{s}}, nil
 	case "const":
-		return []Token{Const{pos}}, nil
+		return []Token{Const{s}}, nil
 	case "import":
-		return []Token{Import{pos}}, nil
+		return []Token{Import{s}}, nil
 	case "type":
-		return []Token{Type{pos}}, nil
+		return []Token{Type{s}}, nil
 	}
 
 	return nil, nil
 }
 
 func parseFunc(ctx *context, word []byte) ([]Token, error) {
-	s := ctx.idx - len(word)
-	e := ctx.idx - 1
-
-	pos := span{s, e}
+	s := span{
+		ctx.idx - len(word),
+		ctx.idx - 1,
+	}
 
 	switch string(word) {
 	case "blackbox":
-		return []Token{Blackbox{pos}}, nil
+		return []Token{Blackbox{s}}, nil
 	case "block":
-		return []Token{Block{pos}}, nil
+		return []Token{Block{s}}, nil
 	case "bus":
-		return []Token{Bus{pos}}, nil
+		return []Token{Bus{s}}, nil
 	case "config":
-		return []Token{Config{pos}}, nil
+		return []Token{Config{s}}, nil
 	case "group":
-		return []Token{Group{pos}}, nil
+		return []Token{Group{s}}, nil
 	case "irq":
-		return []Token{Irq{pos}}, nil
+		return []Token{Irq{s}}, nil
 	case "mask":
-		return []Token{Mask{pos}}, nil
+		return []Token{Mask{s}}, nil
 	case "param":
-		return []Token{Param{pos}}, nil
+		return []Token{Param{s}}, nil
 	case "proc":
-		return []Token{Proc{pos}}, nil
+		return []Token{Proc{s}}, nil
 	case "return":
-		return []Token{Return{pos}}, nil
+		return []Token{Return{s}}, nil
 	case "static":
-		return []Token{Static{pos}}, nil
+		return []Token{Static{s}}, nil
 	case "status":
-		return []Token{Status{pos}}, nil
+		return []Token{Status{s}}, nil
 	case "stream":
-		return []Token{Stream{pos}}, nil
+		return []Token{Stream{s}}, nil
 	}
 
 	return nil, nil
 }
 
 func parseNoHyphenProperty(ctx *context, word []byte) ([]Token, error) {
-	s := ctx.idx - len(word)
-	e := ctx.idx - 1
-
-	pos := span{s, e}
+	s := span{
+		ctx.idx - len(word),
+		ctx.idx - 1,
+	}
 
 	switch string(word) {
 	case "access":
-		return []Token{Access{pos}}, nil
+		return []Token{Access{s}}, nil
 	case "align":
-		return []Token{Align{pos}}, nil
+		return []Token{Align{s}}, nil
 	case "atomic":
-		return []Token{Atomic{pos}}, nil
+		return []Token{Atomic{s}}, nil
 	case "clear":
-		return []Token{Clear{pos}}, nil
+		return []Token{Clear{s}}, nil
 	case "delay":
-		return []Token{Delay{pos}}, nil
+		return []Token{Delay{s}}, nil
 	case "masters":
-		return []Token{Masters{pos}}, nil
+		return []Token{Masters{s}}, nil
 	case "range":
-		return []Token{Range{pos}}, nil
+		return []Token{Range{s}}, nil
 	case "reset":
-		return []Token{Reset{pos}}, nil
+		return []Token{Reset{s}}, nil
 	case "size":
-		return []Token{Size{pos}}, nil
+		return []Token{Size{s}}, nil
 	case "virtual":
-		return []Token{Virtual{pos}}, nil
+		return []Token{Virtual{s}}, nil
 	case "width":
-		return []Token{Width{pos}}, nil
+		return []Token{Width{s}}, nil
 	}
 
 	return nil, nil
 }
 
 func parseHyphenProperty(ctx *context, word []byte) ([]Token, error) {
-	s := ctx.idx - len(word)
-	e := ctx.idx - 1
-
-	pos := span{s, e}
+	s := span{
+		ctx.idx - len(word),
+		ctx.idx - 1,
+	}
 
 	switch string(word) {
 	case "add-enable":
-		return []Token{AddEnable{pos}}, nil
+		return []Token{AddEnable{s}}, nil
 	case "byte-write-enable":
-		return []Token{ByteWriteEnable{pos}}, nil
+		return []Token{ByteWriteEnable{s}}, nil
 	case "enable-init-value":
-		return []Token{EnableInitValue{pos}}, nil
+		return []Token{EnableInitValue{s}}, nil
 	case "enable-reset-value":
-		return []Token{EnableResetValue{pos}}, nil
+		return []Token{EnableResetValue{s}}, nil
 	case "init-value":
-		return []Token{InitValue{pos}}, nil
+		return []Token{InitValue{s}}, nil
 	case "in-trigger":
-		return []Token{InTrigger{pos}}, nil
+		return []Token{InTrigger{s}}, nil
 	case "out-trigger":
-		return []Token{OutTrigger{pos}}, nil
+		return []Token{OutTrigger{s}}, nil
 	case "read-latency":
-		return []Token{ReadLatency{pos}}, nil
+		return []Token{ReadLatency{s}}, nil
 	case "read-value":
-		return []Token{ReadValue{pos}}, nil
+		return []Token{ReadValue{s}}, nil
 	case "reset-value":
-		return []Token{ResetValue{pos}}, nil
+		return []Token{ResetValue{s}}, nil
 	}
 
 	return nil, nil
