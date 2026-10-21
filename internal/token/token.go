@@ -40,7 +40,11 @@ func New[T interface {
 }
 
 // Text returns token text from the source.
+// In the case of Eof token, "\x00" is returned.
 func Text(t Token, src []byte) string {
+	if _, ok := t.(Eof); ok {
+		return "\x00"
+	}
 	return string(src[t.Start() : t.End()+1])
 }
 
