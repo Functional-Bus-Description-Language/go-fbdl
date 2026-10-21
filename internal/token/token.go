@@ -31,7 +31,7 @@ type (
 	}
 )
 
-// New constructs a token with an inclusive source span.
+// New constructs a token with the source span [start, end).
 // It is useful mostly for tests in ast package.
 func New[T interface {
 	Token

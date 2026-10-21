@@ -12,9 +12,9 @@ func (ctx context) end() bool {
 	return ctx.idx >= len(ctx.src)
 }
 
-// Creates span from the current context state.
+// Creates a span for the current byte, or an empty span at the end of the source.
 func (ctx context) span() span {
-	return span{ctx.idx, ctx.idx}
+	return span{ctx.idx, min(ctx.idx+1, len(ctx.src))}
 }
 
 // Returns the byte at the given offset from the current index without advancing.

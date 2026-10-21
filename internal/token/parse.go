@@ -165,9 +165,7 @@ func parseSpace(ctx *context) ([]Token, error) {
 	spaceCount := ctx.idx - startIdx
 
 	if ctx.end() || ctx.peek(0) == '\n' {
-		tok := None{ctx.span()}
-		tok.start = startIdx
-		tok.end--
+		tok := None{span{startIdx, ctx.idx}}
 		if spaceCount > 1 {
 			return nil, Error{
 				fmt.Sprintf("extra %d spaces at line end", spaceCount),
@@ -276,7 +274,7 @@ func parseComment(ctx *context) ([]Token, error) {
 	for {
 		ctx.next()
 		if ctx.end() || ctx.peek(0) == '\n' {
-			t.end = ctx.idx - 1
+			t.end = ctx.idx
 			break
 		}
 	}
@@ -317,7 +315,7 @@ func parseColon(ctx *context) ([]Token, error) {
 }
 
 func parseNonequalityOperator(ctx *context) ([]Token, error) {
-	n := Neq{span{ctx.idx, ctx.idx + 1}}
+	n := Neq{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{n}, nil
@@ -330,7 +328,7 @@ func parseNegationOperator(ctx *context) ([]Token, error) {
 }
 
 func parseEqualityOperator(ctx *context) ([]Token, error) {
-	e := Eq{span{ctx.idx, ctx.idx + 1}}
+	e := Eq{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{e}, nil
@@ -361,7 +359,7 @@ func parseRemainderOperator(ctx *context) ([]Token, error) {
 }
 
 func parseExponentiationOperator(ctx *context) ([]Token, error) {
-	e := Exp{span{ctx.idx, ctx.idx + 1}}
+	e := Exp{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{e}, nil
@@ -386,14 +384,14 @@ func parseXorOperator(ctx *context) ([]Token, error) {
 }
 
 func parseLessThanEqualOperator(ctx *context) ([]Token, error) {
-	le := LessEq{span{ctx.idx, ctx.idx + 1}}
+	le := LessEq{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{le}, nil
 }
 
 func parseLeftShiftOperator(ctx *context) ([]Token, error) {
-	ls := LShift{span{ctx.idx, ctx.idx + 1}}
+	ls := LShift{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{ls}, nil
@@ -406,14 +404,14 @@ func parseLessThanOperator(ctx *context) ([]Token, error) {
 }
 
 func parseGreaterThanEqualOperator(ctx *context) ([]Token, error) {
-	ge := GreaterEq{span{ctx.idx, ctx.idx + 1}}
+	ge := GreaterEq{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{ge}, nil
 }
 
 func parseRightShiftOperator(ctx *context) ([]Token, error) {
-	rs := RShift{span{ctx.idx, ctx.idx + 1}}
+	rs := RShift{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{rs}, nil
@@ -450,7 +448,7 @@ func parseRightBracket(ctx *context) ([]Token, error) {
 }
 
 func parseLogicalAnd(ctx *context) ([]Token, error) {
-	a := And{span{ctx.idx, ctx.idx + 1}}
+	a := And{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{a}, nil
@@ -463,7 +461,7 @@ func parseBitAnd(ctx *context) ([]Token, error) {
 }
 
 func parseLogicalOr(ctx *context) ([]Token, error) {
-	o := Or{span{ctx.idx, ctx.idx + 1}}
+	o := Or{span{ctx.idx, ctx.idx + 2}}
 	ctx.next()
 	ctx.next()
 	return []Token{o}, nil
@@ -494,7 +492,7 @@ func parseString(ctx *context) ([]Token, error) {
 }
 
 func parseBinBitString(ctx *context) ([]Token, error) {
-	t := BitString{span{ctx.idx, ctx.idx + 1}}
+	t := BitString{span{ctx.idx, ctx.idx + 2}}
 
 	// Skip b"
 	ctx.next()
@@ -534,7 +532,7 @@ func parseBinBitString(ctx *context) ([]Token, error) {
 }
 
 func parseOctalBitString(ctx *context) ([]Token, error) {
-	t := BitString{span{ctx.idx, ctx.idx + 1}}
+	t := BitString{span{ctx.idx, ctx.idx + 2}}
 
 	// Skip o"
 	ctx.next()
@@ -574,7 +572,7 @@ func parseOctalBitString(ctx *context) ([]Token, error) {
 }
 
 func parseHexBitString(ctx *context) ([]Token, error) {
-	t := BitString{span{ctx.idx, ctx.idx + 1}}
+	t := BitString{span{ctx.idx, ctx.idx + 2}}
 
 	// Skip x"
 	ctx.next()
@@ -669,7 +667,7 @@ func parseNumber(ctx *context) ([]Token, error) {
 			if !isDigit(ctx.peek(0)) {
 				return nil, Error{
 					"missing digits in number exponent",
-					[]Token{Float{span{i.start, ctx.idx - 1}}},
+					[]Token{Float{span{i.start, ctx.idx}}},
 				}
 			}
 		} else if b == '\'' && !hasPoint && !hasE {
@@ -684,7 +682,7 @@ func parseNumber(ctx *context) ([]Token, error) {
 		}
 	}
 
-	i.end = ctx.idx - 1
+	i.end = ctx.idx
 	var n Number = i
 	if hasPoint || hasE {
 		n = Float(i)
@@ -700,7 +698,7 @@ func parseTime(ctx *context, start int) ([]Token, error) {
 		ctx.next()
 	}
 
-	t := Time{span{start, ctx.idx - 1}}
+	t := Time{span{start, ctx.idx}}
 	switch string(ctx.src[unitStart:ctx.idx]) {
 	case "ns", "us", "ms", "s":
 		return []Token{t}, nil
@@ -731,8 +729,8 @@ func parseBinInt(ctx *context) ([]Token, error) {
 			}
 		}
 	}
-	t.end = ctx.idx - 1
-	if t.end == t.start+1 {
+	t.end = ctx.idx
+	if t.end == t.start+2 {
 		return nil, Error{"missing digit after bin prefix", []Token{t}}
 	}
 	return []Token{t}, nil
@@ -757,8 +755,8 @@ func parseOctalInt(ctx *context) ([]Token, error) {
 			}
 		}
 	}
-	t.end = ctx.idx - 1
-	if t.end == t.start+1 {
+	t.end = ctx.idx
+	if t.end == t.start+2 {
 		return nil, Error{"missing digit after octal prefix", []Token{t}}
 	}
 	return []Token{t}, nil
@@ -783,8 +781,8 @@ func parseHexInt(ctx *context) ([]Token, error) {
 			}
 		}
 	}
-	t.end = ctx.idx - 1
-	if t.end == t.start+1 {
+	t.end = ctx.idx
+	if t.end == t.start+2 {
 		return nil, Error{"missing digit after hex prefix", []Token{t}}
 	}
 	return []Token{t}, nil
@@ -814,7 +812,7 @@ func parseWord(ctx *context) ([]Token, error) {
 				Ident{
 					span{
 						start: ctx.idx - len(word),
-						end:   ctx.idx - 1,
+						end:   ctx.idx,
 					},
 				},
 			},
@@ -824,9 +822,7 @@ func parseWord(ctx *context) ([]Token, error) {
 	if dotCount == 0 && hyphenCount == 0 {
 		return parseNoHyphenKeywordOrIdent(ctx, word)
 	} else if dotCount == 1 && hyphenCount == 0 {
-		tok := QualIdent{ctx.span()}
-		tok.start = tok.end - len(word)
-		tok.end--
+		tok := QualIdent{span{ctx.idx - len(word), ctx.idx}}
 		if err := validateQualIdent(word, tok); err != nil {
 			return nil, err
 		}
@@ -855,7 +851,7 @@ func parseNoHyphenKeywordOrIdent(ctx *context, word []byte) ([]Token, error) {
 	ident := Ident{
 		span{
 			start: ctx.idx - len(word),
-			end:   ctx.idx - 1,
+			end:   ctx.idx,
 		},
 	}
 
@@ -887,12 +883,12 @@ func parseMultiHyphenPropOrSubExpr(ctx *context, word []byte) ([]Token, error) {
 
 	for i, chunk := range chunks {
 		if len(chunk) != 0 {
-			toks = append(toks, Ident{span{start, start + len(chunk) - 1}})
+			toks = append(toks, Ident{span{start, start + len(chunk)}})
 		}
 
 		start += len(chunk)
 		if i < len(chunks)-1 {
-			toks = append(toks, Sub{span{start, start}})
+			toks = append(toks, Sub{span{start, start + 1}})
 			start++
 		}
 	}
@@ -907,7 +903,7 @@ func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) 
 	start := ctx.idx - len(word)
 
 	for i, chunk := range chunks {
-		spn := span{start, start + len(chunk) - 1}
+		spn := span{start, start + len(chunk)}
 		if len(chunk) != 0 {
 			switch bytes.Count(chunk, []byte{'.'}) {
 			case 0:
@@ -925,7 +921,7 @@ func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) 
 
 		start += len(chunk)
 		if i < len(chunks)-1 {
-			toks = append(toks, Sub{span{start, start}})
+			toks = append(toks, Sub{span{start, start + 1}})
 			start++
 		}
 	}
@@ -937,7 +933,7 @@ func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) 
 func parseKeyword(ctx *context, word []byte) ([]Token, error) {
 	s := span{
 		ctx.idx - len(word),
-		ctx.idx - 1,
+		ctx.idx,
 	}
 
 	switch string(word) {
@@ -957,7 +953,7 @@ func parseKeyword(ctx *context, word []byte) ([]Token, error) {
 func parseFunc(ctx *context, word []byte) ([]Token, error) {
 	s := span{
 		ctx.idx - len(word),
-		ctx.idx - 1,
+		ctx.idx,
 	}
 
 	switch string(word) {
@@ -995,7 +991,7 @@ func parseFunc(ctx *context, word []byte) ([]Token, error) {
 func parseNoHyphenProperty(ctx *context, word []byte) ([]Token, error) {
 	s := span{
 		ctx.idx - len(word),
-		ctx.idx - 1,
+		ctx.idx,
 	}
 
 	switch string(word) {
@@ -1029,7 +1025,7 @@ func parseNoHyphenProperty(ctx *context, word []byte) ([]Token, error) {
 func parseHyphenProperty(ctx *context, word []byte) ([]Token, error) {
 	s := span{
 		ctx.idx - len(word),
-		ctx.idx - 1,
+		ctx.idx,
 	}
 
 	switch string(word) {

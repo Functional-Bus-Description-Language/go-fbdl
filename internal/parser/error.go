@@ -69,7 +69,7 @@ func (err Error) code(tok token.Token) string {
 		lineStartIdx--
 	}
 
-	lineEndIdx := min(tok.End(), len(src)-1)
+	lineEndIdx := min(tok.End()-1, len(src)-1)
 	if _, ok := tok.(token.Newline); !ok {
 		for lineEndIdx < len(src)-1 {
 			if src[lineEndIdx+1] == '\n' {
@@ -105,7 +105,7 @@ func (err Error) code(tok token.Token) string {
 
 	colorPrefix, colorSuffix := err.getColor()
 	b.WriteString(colorPrefix)
-	for col < columnNumber(tok, file.Src)+(tok.End()-tok.Start()+1) {
+	for col < columnNumber(tok, file.Src)+max(1, tok.End()-tok.Start()) {
 		b.WriteRune('^')
 		col++
 	}

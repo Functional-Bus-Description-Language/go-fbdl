@@ -70,30 +70,30 @@ func TestBuildNegation(t *testing.T) {
 		{
 			src: "!true",
 			want: UnaryExpr{
-				Op: token.New[token.Neg](0, 0), X: Bool{token.New[token.Bool](1, 4)},
+				Op: token.New[token.Neg](0, 1), X: Bool{token.New[token.Bool](1, 5)},
 			},
 		},
 		{
 			src: "!!false",
 			want: UnaryExpr{
-				Op: token.New[token.Neg](0, 0),
-				X:  UnaryExpr{Op: token.New[token.Neg](1, 1), X: Bool{token.New[token.Bool](2, 6)}},
+				Op: token.New[token.Neg](0, 1),
+				X:  UnaryExpr{Op: token.New[token.Neg](1, 2), X: Bool{token.New[token.Bool](2, 7)}},
 			},
 		},
 		{
 			src: "!true == false",
 			want: BinaryExpr{
-				X:  UnaryExpr{Op: token.New[token.Neg](0, 0), X: Bool{token.New[token.Bool](1, 4)}},
-				Op: token.New[token.Eq](6, 7),
-				Y:  Bool{token.New[token.Bool](9, 13)},
+				X:  UnaryExpr{Op: token.New[token.Neg](0, 1), X: Bool{token.New[token.Bool](1, 5)}},
+				Op: token.New[token.Eq](6, 8),
+				Y:  Bool{token.New[token.Bool](9, 14)},
 			},
 		},
 		{
 			src: "true && !false",
 			want: BinaryExpr{
-				X:  Bool{token.New[token.Bool](0, 3)},
-				Op: token.New[token.And](5, 6),
-				Y:  UnaryExpr{Op: token.New[token.Neg](8, 8), X: Bool{token.New[token.Bool](9, 13)}},
+				X:  Bool{token.New[token.Bool](0, 4)},
+				Op: token.New[token.And](5, 7),
+				Y:  UnaryExpr{Op: token.New[token.Neg](8, 9), X: Bool{token.New[token.Bool](9, 14)}},
 			},
 		},
 	}
