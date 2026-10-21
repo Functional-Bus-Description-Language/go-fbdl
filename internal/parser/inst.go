@@ -122,7 +122,7 @@ func buildInst(astInst ast.Inst, file *File) (*Inst, error) {
 	inst.setFile(file)
 
 	inst.token = astInst.Name
-	inst.name = token.Text(astInst.Name, src)
+	inst.name = astInst.Name.Text(src)
 	inst.ast = astInst
 	inst.doc = astInst.Doc.Text(src)
 
@@ -132,7 +132,7 @@ func buildInst(astInst ast.Inst, file *File) (*Inst, error) {
 	}
 	inst.count = v
 
-	inst.typ = token.Text(astInst.Type, src)
+	inst.typ = astInst.Type.Text(src)
 
 	argList, err := buildArgList(astInst.ArgList, file, inst)
 	if err != nil {

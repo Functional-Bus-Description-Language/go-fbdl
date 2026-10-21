@@ -15,7 +15,7 @@ func buildBody(astBody ast.Body, file *File, scope Scope) (PropContainer, symbol
 		p := Prop{src: file.Src}
 
 		p.NameTok = ap.Name
-		p.Name = token.Text(ap.Name, file.Src)
+		p.Name = ap.Name.Text(file.Src)
 		v, err := MakeExpr(ap.Value, file, scope)
 		if err != nil {
 			return nil, sc, err

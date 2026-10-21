@@ -99,7 +99,7 @@ func buildType(astTyp ast.Type, file *File) (*Type, error) {
 	typ.setFile(file)
 
 	typ.token = astTyp.Name
-	typ.name = token.Text(astTyp.Name, src)
+	typ.name = astTyp.Name.Text(src)
 	typ.doc = astTyp.Doc.Text(src)
 
 	params, err := buildParamList(astTyp.Params, file, typ)
@@ -114,7 +114,7 @@ func buildType(astTyp ast.Type, file *File) (*Type, error) {
 	}
 	typ.count = v
 
-	typ.typ = token.Text(astTyp.Type, src)
+	typ.typ = astTyp.Type.Text(src)
 
 	args, err := buildArgList(astTyp.Args, file, typ)
 	if err != nil {

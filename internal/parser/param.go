@@ -26,7 +26,7 @@ func buildParamList(astParams []ast.Param, file *File, scope Scope) ([]Param, er
 	for _, ap := range astParams {
 		p := Param{}
 
-		name := token.Text(ap.Name, src)
+		name := ap.Name.Text(src)
 		if names[name] {
 			return nil, token.Error{
 				Msg:  fmt.Sprintf("redeclaration of '%s' parameter", name),

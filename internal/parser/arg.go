@@ -39,7 +39,7 @@ func buildArgList(astArgList ast.ArgList, file *File, scope Scope) (ArgList, err
 		arg := Arg{}
 
 		if aal.Name != nil {
-			name := token.Text(aal.Name, file.Src)
+			name := aal.Name.Text(file.Src)
 			if names[name] {
 				return argList, token.Error{
 					Msg:  fmt.Sprintf("reassignment to '%s' argument", name),

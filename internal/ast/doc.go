@@ -12,7 +12,7 @@ type Doc struct {
 func (d Doc) Text(src []byte) string {
 	text := ""
 	for i, l := range d.Lines {
-		t := token.Text(l, src)
+		t := l.Text(src)
 		start := 1
 		if len(t) > 1 {
 			if t[1] == ' ' {

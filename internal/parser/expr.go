@@ -204,7 +204,7 @@ func (bs BitString) Eval() (types.Value, error) {
 
 func MakeBitString(e ast.BitString, file *File) (BitString, error) {
 	src := file.Src
-	x, err := types.MakeBitStr(token.Text(e.X, src))
+	x, err := types.MakeBitStr(e.X.Text(src))
 	if err != nil {
 		return BitString{}, Error{token.Error{Msg: fmt.Sprintf("make bit string: %v", err), Toks: []token.Token{e.X}}, file}
 	}
@@ -243,7 +243,7 @@ func (c Call) Eval() (types.Value, error) {
 
 func MakeCall(e ast.Call, file *File, s Scope) (Call, error) {
 	src := file.Src
-	c := Call{file: file, funcName: token.Text(e.Name, src), args: []Expr{}}
+	c := Call{file: file, funcName: e.Name.Text(src), args: []Expr{}}
 
 	for _, a := range e.Args {
 		expr, err := MakeExpr(a, file, s)
@@ -271,7 +271,7 @@ func (i Int) Eval() (types.Value, error) {
 
 func MakeInt(e ast.Int, file *File) (Int, error) {
 	src := file.Src
-	x, err := strconv.ParseInt(token.Text(e.X, src), 0, 64)
+	x, err := strconv.ParseInt(e.X.Text(src), 0, 64)
 	if err != nil {
 		return Int{}, Error{token.Error{Msg: fmt.Sprintf("make int: %v", err), Toks: []token.Token{e.X}}, file}
 	}
@@ -323,7 +323,7 @@ func (b Bool) Eval() (types.Value, error) {
 
 func MakeBool(e ast.Bool, file *File) Bool {
 	src := file.Src
-	text := token.Text(e.X, src)
+	text := e.X.Text(src)
 	return Bool{x: text == "true"}
 }
 
@@ -337,7 +337,7 @@ func (f Float) Eval() (types.Value, error) {
 
 func MakeFloat(e ast.Float, file *File) (Float, error) {
 	src := file.Src
-	text := token.Text(e.X, src)
+	text := e.X.Text(src)
 	x, err := strconv.ParseFloat(text, 64)
 	if err != nil {
 		return Float{}, Error{token.Error{Msg: fmt.Sprintf("make float: %v", err), Toks: []token.Token{e.X}}, file}
@@ -371,7 +371,7 @@ func (di DeclaredIdentifier) Eval() (types.Value, error) {
 func MakeDeclaredIdentifier(e ast.Ident, file *File, s Scope) DeclaredIdentifier {
 	return DeclaredIdentifier{
 		ast:   e,
-		x:     token.Text(e.Name, file.Src),
+		x:     e.Name.Text(file.Src),
 		scope: s,
 	}
 }
@@ -402,7 +402,7 @@ func MakeQualifiedIdentifier(e ast.QualIdent, file *File, s Scope) QualifiedIden
 	return QualifiedIdentifier{
 		ast:   e,
 		scope: s,
-		x:     token.Text(e.Name, file.Src),
+		x:     e.Name.Text(file.Src),
 	}
 }
 
@@ -416,7 +416,7 @@ func (s String) Eval() (types.Value, error) {
 
 func MakeString(e ast.String, file *File) String {
 	src := file.Src
-	txt := token.Text(e.X, src)
+	txt := e.X.Text(src)
 	return String{x: txt[1 : len(txt)-1]}
 }
 
@@ -480,7 +480,7 @@ type Time struct {
 
 func MakeTime(e ast.Time, file *File, s Scope) (Time, error) {
 	src := file.Src
-	txt := token.Text(e.X, src)
+	txt := e.X.Text(src)
 
 	intLiteral, unit, ok := strings.Cut(txt, "'")
 	if !ok {
@@ -566,7 +566,7 @@ func (ue UnaryExpr) Eval() (types.Value, error) {
 func MakeUnaryExpr(e ast.UnaryExpr, file *File, s Scope) (UnaryExpr, error) {
 	src := file.Src
 	var op UnaryOperator
-	switch text := token.Text(e.Op, src); text {
+	switch text := e.Op.Text(src); text {
 	case "+":
 		op = UnaryPlus
 	case "-":

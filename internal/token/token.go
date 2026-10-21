@@ -7,6 +7,7 @@ type (
 		Start() int
 		End() int
 		Name() string
+		Text(src []byte) string
 	}
 
 	Functionality interface {
@@ -37,15 +38,6 @@ func New[T interface {
 	~struct{ span }
 }](start, end int) T {
 	return T{span{start, end}}
-}
-
-// Text returns token text from the source.
-// In the case of Eof token, "\x00" is returned.
-func Text(t Token, src []byte) string {
-	if _, ok := t.(Eof); ok {
-		return "\x00"
-	}
-	return string(src[t.Start() : t.End()+1])
 }
 
 type (
@@ -148,6 +140,10 @@ func (d Dedent) Name() string { return "indent decrement" }
 func (n Newline) Name() string { return "newline" }
 
 func (e Eof) Name() string { return "end of file" }
+
+func (e Eof) Text(src []byte) string {
+	panic("calling Text() on Eof indicates logic error")
+}
 
 func (i Ident) Name() string { return "identifier" }
 

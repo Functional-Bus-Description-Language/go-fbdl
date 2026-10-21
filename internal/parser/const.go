@@ -25,7 +25,7 @@ func buildConsts(astConsts []ast.Const, file *File, scope Scope) ([]*Const, erro
 		c.setFile(file)
 
 		c.token = ac.Name
-		c.name = token.Text(ac.Name, file.Src)
+		c.name = ac.Name.Text(file.Src)
 		v, err := MakeExpr(ac.Value, file, scope)
 		if err != nil {
 			return nil, err
