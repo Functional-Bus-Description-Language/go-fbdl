@@ -13,10 +13,26 @@ func TestBuildSingleConst(t *testing.T) {
 		wantIdx int
 	}{
 		{
-			"const A = 15",
+			`const A = 15`,
 			[]Const{{
 				Name:  token.New[token.Ident](6, 7),
 				Value: Int{token.New[token.Int](10, 12)},
+			}},
+			4,
+		},
+		{
+			`const bus = "ab"`,
+			[]Const{{
+				Name:  token.New[token.Ident](6, 9),
+				Value: String{token.New[token.String](12, 16)},
+			}},
+			4,
+		},
+		{
+			`const width = 1`,
+			[]Const{{
+				Name:  token.New[token.Ident](6, 11),
+				Value: Int{token.New[token.Int](14, 15)},
 			}},
 			4,
 		},
@@ -97,6 +113,22 @@ func TestBuildMultiConst(t *testing.T) {
 			},
 			21,
 		},
+		{
+			`const
+  bus = "ab"
+  width = 1`,
+			[]Const{
+				{
+					Name:  token.New[token.Ident](8, 11),
+					Value: String{token.New[token.String](14, 18)},
+				},
+				{
+					Name:  token.New[token.Ident](21, 26),
+					Value: Int{token.New[token.Int](29, 30)},
+				},
+			},
+			10,
+		},
 	}
 
 	for _, test := range tests {
@@ -170,5 +202,34 @@ func TestBuildMultiConstDocs(t *testing.T) {
 	}
 	if !file.Consts[2].Doc.isEmpty() {
 		t.Errorf("C: got doc %q, want no doc", file.Consts[2].Doc.Text(src))
+	}
+}
+
+func TestBuildConstKeywordNames(t *testing.T) {
+	for _, test := range []struct {
+		src  string
+		want []string
+	}{
+		{`const bus = "ab"`, []string{"bus"}},
+		{`const width = 1`, []string{"width"}},
+		{"const\n  bus = \"ab\"\n  width = 1", []string{"bus", "width"}},
+	} {
+		t.Run(test.src, func(t *testing.T) {
+			toks, err := token.Parse([]byte(test.src))
+			if err != nil {
+				t.Fatal(err)
+			}
+			file, err := Build(toks)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var got []string
+			for _, con := range file.Consts {
+				got = append(got, con.Name.Text([]byte(test.src)))
+			}
+			if !reflect.DeepEqual(got, test.want) {
+				t.Fatalf("got names %v, want %v", got, test.want)
+			}
+		})
 	}
 }

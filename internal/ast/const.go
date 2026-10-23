@@ -15,7 +15,7 @@ func buildConst(tokens *tokenStream) ([]Const, error) {
 	tokens.next()
 
 	switch t := tokens.peek(0).(type) {
-	case token.Ident:
+	case token.Ident, token.Functionality, token.WordProperty:
 		return buildSingleConst(tokens)
 	case token.Newline:
 		return buildMultiConst(tokens)
@@ -25,7 +25,17 @@ func buildConst(tokens *tokenStream) ([]Const, error) {
 }
 
 func buildSingleConst(tokens *tokenStream) ([]Const, error) {
-	con := Const{Name: tokens.next().(token.Ident)}
+	var name token.Ident
+	switch tok := tokens.next().(type) {
+	case token.Ident:
+		name = tok
+	case token.Functionality:
+		name = tok.Ident()
+	case token.WordProperty:
+		name = tok.Ident()
+	default:
+		return nil, unexpected(tok, "identifier")
+	}
 
 	if _, ok := tokens.peek(0).(token.Ass); !ok {
 		return nil, unexpected(tokens.peek(0), "'='")
@@ -36,9 +46,8 @@ func buildSingleConst(tokens *tokenStream) ([]Const, error) {
 	if err != nil {
 		return nil, err
 	}
-	con.Value = expr
 
-	return []Const{con}, nil
+	return []Const{{Name: name, Value: expr}}, nil
 }
 
 func buildMultiConst(tokens *tokenStream) ([]Const, error) {
@@ -63,7 +72,7 @@ func buildMultiConst(tokens *tokenStream) ([]Const, error) {
 			doc = emptyDoc()
 		case token.Comment:
 			doc = buildDoc(tokens)
-		case token.Ident:
+		case token.Ident, token.Functionality, token.WordProperty:
 			con, err := buildSingleConst(tokens)
 			if err != nil {
 				return nil, err
