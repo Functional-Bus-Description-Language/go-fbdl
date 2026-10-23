@@ -7,56 +7,134 @@ import (
 )
 
 func TestBuildSingleConst(t *testing.T) {
-	toks, _ := token.Parse([]byte("const A = 15"))
-	want := Const{
-		Name:  toks[1].(token.Ident),
-		Value: Int{toks[3].(token.Int)},
+	var tests = []struct {
+		src     string
+		want    []Const
+		wantIdx int
+	}{
+		{
+			"const A = 15",
+			[]Const{{
+				Name:  token.New[token.Ident](6, 7),
+				Value: Int{token.New[token.Int](10, 12)},
+			}},
+			4,
+		},
 	}
-	ctx := tokenStream{toks: toks}
-	ctx.next()
-	got, err := buildSingleConst(&ctx)
-	if err != nil {
-		t.Fatalf("err != nil: %v", err)
-	}
-	if ctx.idx != 4 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
-	}
-	if !reflect.DeepEqual(got[0], want) {
-		t.Fatalf("got: %+v, want %+v", got[0], want)
+
+	for _, test := range tests {
+		toks, err := token.Parse([]byte(test.src))
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\ntoken.Parse: %v",
+				test.src, err,
+			)
+		}
+		tokStream := tokenStream{toks: toks}
+		tokStream.next()
+		got, err := buildSingleConst(&tokStream)
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\nbuildSingleConst: %v",
+				test.src, err,
+			)
+		}
+		if tokStream.idx != test.wantIdx {
+			t.Fatalf(
+				"Input:\n%s\n\ntokStream.idx = %d, want %d",
+				test.src, tokStream.idx, test.wantIdx,
+			)
+		}
+		if len(got) != len(test.want) {
+			t.Fatalf(
+				"Input:\n%s\n\ngot %d constants, want %d",
+				test.src, len(got), len(test.want),
+			)
+		}
+		for j, want := range test.want {
+			if !reflect.DeepEqual(got[j], want) {
+				t.Fatalf(
+					"Input:\n%s\n\nConstant: %d\ngot: %+v\nwant: %+v",
+					test.src, j, got[j], want,
+				)
+			}
+		}
 	}
 }
 
 func TestBuildMultiConst(t *testing.T) {
-	toks, _ := token.Parse([]byte(`const
+	var tests = []struct {
+		src     string
+		want    []Const
+		wantIdx int
+	}{
+		{
+			`const
   A = 1
   B = 2 # Inline comment
   # Doc comment
   C = 3.14
 
-  D = false`))
-	want := []Const{
-		Const{Name: toks[3].(token.Ident), Value: Int{toks[5].(token.Int)}},
-		Const{Name: toks[7].(token.Ident), Value: Int{toks[9].(token.Int)}},
-		Const{
-			Doc:   Doc{Lines: []token.Comment{toks[11].(token.Comment)}},
-			Name:  toks[13].(token.Ident),
-			Value: Float{toks[15].(token.Float)},
+  D = false`,
+			[]Const{
+				{
+					Name:  token.New[token.Ident](8, 9),
+					Value: Int{token.New[token.Int](12, 13)},
+				},
+				{
+					Name:  token.New[token.Ident](16, 17),
+					Value: Int{token.New[token.Int](20, 21)},
+				},
+				{
+					Doc:   Doc{Lines: []token.Comment{token.New[token.Comment](41, 54)}},
+					Name:  token.New[token.Ident](57, 58),
+					Value: Float{token.New[token.Float](61, 65)},
+				},
+				{
+					Name:  token.New[token.Ident](69, 70),
+					Value: Bool{token.New[token.Bool](73, 78)},
+				},
+			},
+			21,
 		},
-		Const{Name: toks[18].(token.Ident), Value: Bool{toks[20].(token.Bool)}},
-	}
-	ctx := tokenStream{toks: toks}
-	ctx.next()
-	got, err := buildMultiConst(&ctx)
-	if err != nil {
-		t.Fatalf("err != nil: %v", err)
-	}
-	if ctx.idx != 21 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
 	}
 
-	for i := range want {
-		if !reflect.DeepEqual(got[i], want[i]) {
-			t.Fatalf("i: %d\ngot:\n%+v,\nwant\n%+v", i, got[i], want[i])
+	for _, test := range tests {
+		toks, err := token.Parse([]byte(test.src))
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\ntoken.Parse: %v",
+				test.src, err,
+			)
+		}
+		tokStream := tokenStream{toks: toks}
+		tokStream.next()
+		got, err := buildMultiConst(&tokStream)
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\nbuildMultiConst: %v",
+				test.src, err,
+			)
+		}
+		if tokStream.idx != test.wantIdx {
+			t.Fatalf(
+				"Input:\n%s\n\ntokStream.idx = %d, want %d",
+				test.src, tokStream.idx, test.wantIdx,
+			)
+		}
+		if len(got) != len(test.want) {
+			t.Fatalf(
+				"Input:\n%s\n\ngot %d constants, want %d",
+				test.src, len(got), len(test.want),
+			)
+		}
+		for j, want := range test.want {
+			if !reflect.DeepEqual(got[j], want) {
+				t.Fatalf(
+					"Input:\n%s\n\nConstant: %d\ngot: %+v\nwant: %+v",
+					test.src, j, got[j], want,
+				)
+			}
 		}
 	}
 }
