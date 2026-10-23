@@ -45,9 +45,14 @@ func (ctx *context) getWord() []byte {
 	endIdx := len(ctx.src)
 	for idx := startIdx; idx < len(ctx.src); idx++ {
 		b := ctx.peek(0)
-		if b == '-' && isDigit(ctx.peek(1)) {
-			endIdx = idx
-			break
+		if b == '-' {
+			next := ctx.peek(1)
+			bitString := ctx.peek(2) == '"' &&
+				(next == 'b' || next == 'B' || next == 'o' || next == 'O' || next == 'x' || next == 'X')
+			if isDigit(next) || bitString {
+				endIdx = idx
+				break
+			}
 		}
 		if !isLetter(b) && !isDigit(b) && b != '_' && b != '-' && b != '.' {
 			endIdx = idx

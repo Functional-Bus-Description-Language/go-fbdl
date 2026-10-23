@@ -12,6 +12,8 @@ type (
 
 	Functionality interface {
 		Token
+		// Transforms functionality token into identifier token
+		Ident() Ident
 		functionality()
 	}
 
@@ -28,6 +30,20 @@ type (
 	Property interface {
 		Token
 		property()
+	}
+
+	// Properties being a single word
+	WordProperty interface {
+		Property
+		// Transforms functionality token into identifier token
+		Ident() Ident
+	}
+
+	// Properties containing at least one hyphen
+	HyphenProperty interface {
+		Property
+		// Splits the hyphen property input multiple identifiers and subtractions
+		Split() []Token
 	}
 )
 
@@ -249,105 +265,215 @@ func (t Type) Name() string { return "'type'" }
 
 func (bb Blackbox) Name() string   { return "'blackbox'" }
 func (bb Blackbox) functionality() {}
+func (bb Blackbox) Ident() Ident   { return Ident(bb) }
 
 func (b Block) Name() string   { return "'block'" }
 func (b Block) functionality() {}
+func (b Block) Ident() Ident   { return Ident(b) }
 
 func (b Bus) Name() string   { return "'bus'" }
 func (b Bus) functionality() {}
+func (b Bus) Ident() Ident   { return Ident(b) }
 
 func (c Config) Name() string   { return "'config'" }
 func (c Config) functionality() {}
+func (c Config) Ident() Ident   { return Ident(c) }
 
 func (g Group) Name() string   { return "'group'" }
 func (g Group) functionality() {}
+func (g Group) Ident() Ident   { return Ident(g) }
 
 func (i Irq) Name() string   { return "'irq'" }
 func (i Irq) functionality() {}
+func (i Irq) Ident() Ident   { return Ident(i) }
 
 func (m Mask) Name() string   { return "'mask'" }
 func (m Mask) functionality() {}
+func (m Mask) Ident() Ident   { return Ident(m) }
 
 func (p Param) Name() string   { return "'param'" }
 func (p Param) functionality() {}
+func (p Param) Ident() Ident   { return Ident(p) }
 
 func (p Proc) Name() string   { return "'proc'" }
 func (p Proc) functionality() {}
+func (p Proc) Ident() Ident   { return Ident(p) }
 
 func (r Return) Name() string   { return "'return'" }
 func (r Return) functionality() {}
+func (r Return) Ident() Ident   { return Ident(r) }
 
 func (s Static) Name() string   { return "'static'" }
 func (s Static) functionality() {}
+func (s Static) Ident() Ident   { return Ident(s) }
 
 func (s Status) Name() string   { return "'status'" }
 func (s Status) functionality() {}
+func (s Status) Ident() Ident   { return Ident(s) }
 
 func (s Stream) Name() string   { return "'stream'" }
 func (s Stream) functionality() {}
+func (s Stream) Ident() Ident   { return Ident(s) }
 
 func (a Access) Name() string { return "'access'" }
 func (a Access) property()    {}
+func (a Access) Ident() Ident { return Ident(a) }
 
 func (ae AddEnable) Name() string { return "'add-enable'" }
 func (ae AddEnable) property()    {}
 
+func (ae AddEnable) Split() []Token {
+	return []Token{
+		Ident{span{ae.start, ae.start + 3}},
+		Sub{span{ae.start + 3, ae.start + 4}},
+		Ident{span{ae.start + 4, ae.end}},
+	}
+}
+
 func (a Align) Name() string { return "'align'" }
 func (a Align) property()    {}
+func (a Align) Ident() Ident { return Ident(a) }
 
 func (a Atomic) Name() string { return "'atomic'" }
 func (a Atomic) property()    {}
+func (a Atomic) Ident() Ident { return Ident(a) }
 
 func (bwe ByteWriteEnable) Name() string { return "'byte-write-enable'" }
 func (bwe ByteWriteEnable) property()    {}
 
+func (bwe ByteWriteEnable) Split() []Token {
+	return []Token{
+		Ident{span{bwe.start, bwe.start + 4}},
+		Sub{span{bwe.start + 4, bwe.start + 5}},
+		Ident{span{bwe.start + 5, bwe.start + 10}},
+		Sub{span{bwe.start + 10, bwe.start + 11}},
+		Ident{span{bwe.start + 11, bwe.end}},
+	}
+}
+
 func (c Clear) Name() string { return "'clear'" }
 func (c Clear) property()    {}
+func (c Clear) Ident() Ident { return Ident(c) }
 
 func (d Delay) Name() string { return "'delay'" }
 func (d Delay) property()    {}
+func (d Delay) Ident() Ident { return Ident(d) }
 
 func (eiv EnableInitValue) Name() string { return "'enable-init-value'" }
 func (eiv EnableInitValue) property()    {}
 
+func (eiv EnableInitValue) Split() []Token {
+	return []Token{
+		Ident{span{eiv.start, eiv.start + 6}},
+		Sub{span{eiv.start + 6, eiv.start + 7}},
+		Ident{span{eiv.start + 7, eiv.start + 11}},
+		Sub{span{eiv.start + 11, eiv.start + 12}},
+		Ident{span{eiv.start + 12, eiv.end}},
+	}
+}
+
 func (erv EnableResetValue) Name() string { return "'enable-reset-value'" }
 func (erv EnableResetValue) property()    {}
+
+func (erv EnableResetValue) Split() []Token {
+	return []Token{
+		Ident{span{erv.start, erv.start + 6}},
+		Sub{span{erv.start + 6, erv.start + 7}},
+		Ident{span{erv.start + 7, erv.start + 12}},
+		Sub{span{erv.start + 12, erv.start + 13}},
+		Ident{span{erv.start + 13, erv.end}},
+	}
+}
 
 func (iv InitValue) Name() string { return "'init-value'" }
 func (iv InitValue) property()    {}
 
+func (iv InitValue) Split() []Token {
+	return []Token{
+		Ident{span{iv.start, iv.start + 4}},
+		Sub{span{iv.start + 4, iv.start + 5}},
+		Ident{span{iv.start + 5, iv.end}},
+	}
+}
+
 func (it InTrigger) Name() string { return "'in-trigger'" }
 func (it InTrigger) property()    {}
 
+func (it InTrigger) Split() []Token {
+	return []Token{
+		Ident{span{it.start, it.start + 2}},
+		Sub{span{it.start + 2, it.start + 3}},
+		Ident{span{it.start + 3, it.end}},
+	}
+}
+
 func (m Masters) Name() string { return "'masters'" }
 func (m Masters) property()    {}
+func (m Masters) Ident() Ident { return Ident(m) }
 
 func (ot OutTrigger) Name() string { return "'out-trigger'" }
 func (ot OutTrigger) property()    {}
 
+func (ot OutTrigger) Split() []Token {
+	return []Token{
+		Ident{span{ot.start, ot.start + 3}},
+		Sub{span{ot.start + 3, ot.start + 4}},
+		Ident{span{ot.start + 4, ot.end}},
+	}
+}
+
 func (r Range) Name() string { return "'range'" }
 func (r Range) property()    {}
+func (r Range) Ident() Ident { return Ident(r) }
 
 func (rl ReadLatency) Name() string { return "'read-latency'" }
 func (r ReadLatency) property()     {}
 
+func (r ReadLatency) Split() []Token {
+	return []Token{
+		Ident{span{r.start, r.start + 4}},
+		Sub{span{r.start + 4, r.start + 5}},
+		Ident{span{r.start + 5, r.end}},
+	}
+}
+
 func (rv ReadValue) Name() string { return "'read-value'" }
 func (rv ReadValue) property()    {}
 
+func (rv ReadValue) Split() []Token {
+	return []Token{
+		Ident{span{rv.start, rv.start + 4}},
+		Sub{span{rv.start + 4, rv.start + 5}},
+		Ident{span{rv.start + 5, rv.end}},
+	}
+}
+
 func (r Reset) Name() string { return "'reset'" }
 func (r Reset) property()    {}
+func (r Reset) Ident() Ident { return Ident(r) }
 
 func (rv ResetValue) Name() string { return "'reset-value'" }
 func (rv ResetValue) property()    {}
 
+func (rv ResetValue) Split() []Token {
+	return []Token{
+		Ident{span{rv.start, rv.start + 5}},
+		Sub{span{rv.start + 5, rv.start + 6}},
+		Ident{span{rv.start + 6, rv.end}},
+	}
+}
+
 func (s Size) Name() string { return "'size'" }
 func (s Size) property()    {}
+func (s Size) Ident() Ident { return Ident(s) }
 
 func (v Virtual) Name() string { return "'virtual'" }
 func (v Virtual) property()    {}
+func (v Virtual) Ident() Ident { return Ident(v) }
 
 func (w Width) Name() string { return "'width'" }
 func (w Width) property()    {}
+func (w Width) Ident() Ident { return Ident(w) }
 
 func (p Period) Name() string { return "'.'" }
 

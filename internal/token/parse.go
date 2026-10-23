@@ -820,7 +820,7 @@ func parseWord(ctx *context) ([]Token, error) {
 	}
 
 	if dotCount == 0 && hyphenCount == 0 {
-		return parseNoHyphenKeywordOrIdent(ctx, word)
+		return parseNoHyphenWord(ctx, word)
 	} else if dotCount == 1 && hyphenCount == 0 {
 		tok := QualIdent{span{ctx.idx - len(word), ctx.idx}}
 		if err := validateQualIdent(word, tok); err != nil {
@@ -828,24 +828,26 @@ func parseWord(ctx *context) ([]Token, error) {
 		}
 		return []Token{tok}, nil
 	} else if dotCount == 0 && hyphenCount >= 1 {
-		return parseMultiHyphenPropOrSubExpr(ctx, word)
+		return parseMultiHyphenWord(ctx, word)
 	}
 
 	return parseMultiSubExprWithQualIdent(ctx, word)
 }
 
-func parseNoHyphenKeywordOrIdent(ctx *context, word []byte) ([]Token, error) {
+func parseNoHyphenWord(ctx *context, word []byte) ([]Token, error) {
 	toks, err := parseKeyword(ctx, word)
 	if err != nil || len(toks) != 0 {
 		return toks, err
 	}
 
-	switch ctx.lastTok.(type) {
-	case None, Newline, Semicolon, Indent, Dedent:
-		toks, err := parseNoHyphenProperty(ctx, word)
-		if err != nil || len(toks) != 0 {
-			return toks, err
-		}
+	toks, err = parseFunc(ctx, word)
+	if err != nil || len(toks) != 0 {
+		return toks, err
+	}
+
+	toks, err = parseWordProp(ctx, word)
+	if err != nil || len(toks) != 0 {
+		return toks, err
 	}
 
 	ident := Ident{
@@ -855,45 +857,16 @@ func parseNoHyphenKeywordOrIdent(ctx *context, word []byte) ([]Token, error) {
 		},
 	}
 
-	switch ctx.lastTok.(type) {
-	case None, Newline, Indent, Dedent:
-		return []Token{ident}, nil
-	}
+	return []Token{ident}, nil
+}
 
-	toks, err = parseFunc(ctx, word)
+func parseMultiHyphenWord(ctx *context, word []byte) ([]Token, error) {
+	toks, err := parseHyphenProp(ctx, word)
 	if err != nil || len(toks) != 0 {
 		return toks, err
 	}
 
-	return []Token{ident}, nil
-}
-
-func parseMultiHyphenPropOrSubExpr(ctx *context, word []byte) ([]Token, error) {
-	switch ctx.lastTok.(type) {
-	case None, Newline, Semicolon, Indent, Dedent:
-		toks, err := parseHyphenProperty(ctx, word)
-		if err != nil || len(toks) != 0 {
-			return toks, err
-		}
-	}
-
-	chunks := bytes.Split(word, []byte{'-'})
-	var toks []Token
-	start := ctx.idx - len(word)
-
-	for i, chunk := range chunks {
-		if len(chunk) != 0 {
-			toks = append(toks, Ident{span{start, start + len(chunk)}})
-		}
-
-		start += len(chunk)
-		if i < len(chunks)-1 {
-			toks = append(toks, Sub{span{start, start + 1}})
-			start++
-		}
-	}
-
-	return toks, nil
+	return parseMultiSubExprWithQualIdent(ctx, word)
 }
 
 // Parses expression with multiple subtraction and potentially qualified identifiers.
@@ -907,7 +880,13 @@ func parseMultiSubExprWithQualIdent(ctx *context, word []byte) ([]Token, error) 
 		if len(chunk) != 0 {
 			switch bytes.Count(chunk, []byte{'.'}) {
 			case 0:
-				toks = append(toks, Ident{spn})
+				chunkCtx := *ctx
+				chunkCtx.idx = spn.end
+				parsed, err := parseNoHyphenWord(&chunkCtx, chunk)
+				if err != nil {
+					return nil, err
+				}
+				toks = append(toks, parsed...)
 			case 1:
 				tok := QualIdent{spn}
 				if err := validateQualIdent(chunk, tok); err != nil {
@@ -988,7 +967,7 @@ func parseFunc(ctx *context, word []byte) ([]Token, error) {
 	return nil, nil
 }
 
-func parseNoHyphenProperty(ctx *context, word []byte) ([]Token, error) {
+func parseWordProp(ctx *context, word []byte) ([]Token, error) {
 	s := span{
 		ctx.idx - len(word),
 		ctx.idx,
@@ -1022,7 +1001,7 @@ func parseNoHyphenProperty(ctx *context, word []byte) ([]Token, error) {
 	return nil, nil
 }
 
-func parseHyphenProperty(ctx *context, word []byte) ([]Token, error) {
+func parseHyphenProp(ctx *context, word []byte) ([]Token, error) {
 	s := span{
 		ctx.idx - len(word),
 		ctx.idx,
