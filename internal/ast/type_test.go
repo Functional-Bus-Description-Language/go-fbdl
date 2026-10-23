@@ -7,71 +7,123 @@ import (
 )
 
 func TestBuildTypeSingleLine(t *testing.T) {
-	toks, _ := token.Parse([]byte("type foo_t(W=1) [8]config; width = W"))
-	want := Type{
-		Name:   toks[1].(token.Ident),
-		Params: []Param{Param{toks[3].(token.Ident), Int{toks[5].(token.Int)}}},
-		Count:  Int{toks[8].(token.Int)},
-		Type:   toks[10].(token.Config),
-		Body: Body{
-			Props: []Prop{Prop{toks[12].(token.Width), Ident{toks[14].(token.Ident)}}},
+	var tests = []struct {
+		src     string
+		want    Type
+		wantIdx int
+	}{
+		{
+			"type foo_t(W=1) [8]config; width = W",
+			Type{
+				Name:   token.New[token.Ident](5, 10),
+				Params: []Param{{token.New[token.Ident](11, 12), Int{token.New[token.Int](13, 14)}}},
+				Count:  Int{token.New[token.Int](17, 18)},
+				Type:   token.New[token.Config](19, 25),
+				Body: Body{
+					Props: []Prop{{token.New[token.Width](27, 32), Ident{token.New[token.Ident](35, 36)}}},
+				},
+			},
+			15,
 		},
 	}
 
-	ctx := tokenStream{toks: toks}
-	got, err := buildType(&ctx)
-	if err != nil {
-		t.Fatalf("err != nil: %v", err)
-	}
-	if ctx.idx != 15 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
-	}
-
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("\ngot:\n%+v,\nwant\n%+v", got, want)
+	for _, test := range tests {
+		toks, err := token.Parse([]byte(test.src))
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\ntoken.Parse: %v",
+				test.src, err,
+			)
+		}
+		tokStream := tokenStream{toks: toks}
+		got, err := buildType(&tokStream)
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\nbuildType: %v",
+				test.src, err,
+			)
+		}
+		if tokStream.idx != test.wantIdx {
+			t.Fatalf(
+				"Input:\n%s\n\ntokStream.idx = %d, want %d",
+				test.src, tokStream.idx, test.wantIdx,
+			)
+		}
+		if !reflect.DeepEqual(got, test.want) {
+			t.Fatalf(
+				"Input:\n%s\n\ngot: %+v\nwant: %+v",
+				test.src, got, test.want,
+			)
+		}
 	}
 }
 
 func TestBuildTypeMultiLine(t *testing.T) {
-	toks, _ := token.Parse([]byte(`type foo_t bar(1, N = 2)
+	var tests = []struct {
+		src     string
+		want    Type
+		wantIdx int
+	}{
+		{
+			`type foo_t bar(1, N = 2)
   const A = "a"
   init-value = A
-  type cfg_t config`))
-	want := Type{
-		Name: toks[1].(token.Ident),
-		Type: toks[2].(token.Ident),
-		Args: ArgList{
-			LParen: toks[3].(token.LParen),
-			Args: []Arg{
-				Arg{nil, Int{toks[4].(token.Int)}, toks[4].(token.Int)},
-				Arg{toks[6].(token.Ident), Int{toks[8].(token.Int)}, toks[8].(token.Int)},
-			},
-			RParen: toks[9].(token.RParen),
-		},
-		Body: Body{
-			Consts: []Const{
-				Const{Name: toks[13].(token.Ident), Value: String{toks[15].(token.String)}},
-			},
-			Props: []Prop{
-				Prop{
-					Name:  toks[17].(token.InitValue),
-					Value: Ident{toks[19].(token.Ident)},
+  type cfg_t config`,
+			Type{
+				Name: token.New[token.Ident](5, 10),
+				Type: token.New[token.Ident](11, 14),
+				Args: ArgList{
+					LParen: token.New[token.LParen](14, 15),
+					Args: []Arg{
+						{nil, Int{token.New[token.Int](15, 16)}, token.New[token.Int](15, 16)},
+						{token.New[token.Ident](18, 19), Int{token.New[token.Int](22, 23)}, token.New[token.Int](22, 23)},
+					},
+					RParen: token.New[token.RParen](23, 24),
+				},
+				Body: Body{
+					Consts: []Const{
+						{Name: token.New[token.Ident](33, 34), Value: String{token.New[token.String](37, 40)}},
+					},
+					Props: []Prop{
+						{
+							Name:  token.New[token.InitValue](43, 53),
+							Value: Ident{token.New[token.Ident](56, 57)},
+						},
+					},
+					Types: []Type{{Name: token.New[token.Ident](65, 70), Type: token.New[token.Config](71, 77)}},
 				},
 			},
-			Types: []Type{Type{Name: toks[22].(token.Ident), Type: toks[23].(token.Config)}},
+			24,
 		},
 	}
 
-	ctx := tokenStream{toks: toks}
-	got, err := buildType(&ctx)
-	if err != nil {
-		t.Fatalf("err != nil: %v", err)
-	}
-	if ctx.idx != 24 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
-	}
-
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("\ngot:\n%+v,\nwant\n%+v", got, want)
+	for _, test := range tests {
+		toks, err := token.Parse([]byte(test.src))
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\ntoken.Parse: %v",
+				test.src, err,
+			)
+		}
+		tokStream := tokenStream{toks: toks}
+		got, err := buildType(&tokStream)
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\nbuildType: %v",
+				test.src, err,
+			)
+		}
+		if tokStream.idx != test.wantIdx {
+			t.Fatalf(
+				"Input:\n%s\n\ntokStream.idx = %d, want %d",
+				test.src, tokStream.idx, test.wantIdx,
+			)
+		}
+		if !reflect.DeepEqual(got, test.want) {
+			t.Fatalf(
+				"Input:\n%s\n\ngot: %+v\nwant: %+v",
+				test.src, got, test.want,
+			)
+		}
 	}
 }
