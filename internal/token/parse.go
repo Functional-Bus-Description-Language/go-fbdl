@@ -242,7 +242,7 @@ func parseIndent(ctx *context) ([]Token, error) {
 func parseTab(ctx *context) ([]Token, error) {
 	tab := Indent{ctx.span()}
 	return nil, Error{
-		"tab character '\\t' allowed only in comments, use spaces",
+		"tab character '\\t' allowed only in comments and strings, use spaces",
 		[]Token{tab},
 	}
 }

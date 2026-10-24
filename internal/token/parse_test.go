@@ -783,7 +783,7 @@ func TestParseError(t *testing.T) {
 		{
 			15,
 			"\t",
-			"tab character '\\t' allowed only in comments, use spaces",
+			"tab character '\\t' allowed only in comments and strings, use spaces",
 		},
 		{
 			16,
@@ -793,7 +793,7 @@ func TestParseError(t *testing.T) {
 		{
 			17,
 			"Main bus\n\t c config",
-			"tab character '\\t' allowed only in comments, use spaces",
+			"tab character '\\t' allowed only in comments and strings, use spaces",
 		},
 		{
 			18,
