@@ -24,9 +24,15 @@ func buildParamList(tokens *tokenStream) ([]Param, error) {
 	tokens.next()
 	params := []Param{}
 	for {
-		t := tokens.next()
-		name, ok := t.(token.Ident)
-		if !ok {
+		var name token.Ident
+		switch t := tokens.next().(type) {
+		case token.Ident:
+			name = t
+		case token.Functionality:
+			name = t.Ident()
+		case token.WordProperty:
+			name = t.Ident()
+		default:
 			return nil, unexpected(t, "identifier")
 		}
 		p := Param{Name: name}
