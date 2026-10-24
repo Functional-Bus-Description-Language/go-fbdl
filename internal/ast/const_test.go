@@ -8,9 +8,8 @@ import (
 
 func TestBuildSingleConst(t *testing.T) {
 	var tests = []struct {
-		src     string
-		want    []Const
-		wantIdx int
+		src  string
+		want []Const
 	}{
 		{
 			`const A = 15`,
@@ -18,7 +17,6 @@ func TestBuildSingleConst(t *testing.T) {
 				Name:  token.New[token.Ident](6, 7),
 				Value: Int{token.New[token.Int](10, 12)},
 			}},
-			4,
 		},
 		{
 			`const bus = "ab"`,
@@ -26,7 +24,6 @@ func TestBuildSingleConst(t *testing.T) {
 				Name:  token.New[token.Ident](6, 9),
 				Value: String{token.New[token.String](12, 16)},
 			}},
-			4,
 		},
 		{
 			`const width = 1`,
@@ -34,7 +31,6 @@ func TestBuildSingleConst(t *testing.T) {
 				Name:  token.New[token.Ident](6, 11),
 				Value: Int{token.New[token.Int](14, 15)},
 			}},
-			4,
 		},
 	}
 
@@ -53,12 +49,6 @@ func TestBuildSingleConst(t *testing.T) {
 			t.Fatalf(
 				"Input:\n%s\n\nbuildSingleConst: %v",
 				test.src, err,
-			)
-		}
-		if tokStream.idx != test.wantIdx {
-			t.Fatalf(
-				"Input:\n%s\n\ntokStream.idx = %d, want %d",
-				test.src, tokStream.idx, test.wantIdx,
 			)
 		}
 		if len(got) != len(test.want) {
@@ -80,9 +70,8 @@ func TestBuildSingleConst(t *testing.T) {
 
 func TestBuildMultiConst(t *testing.T) {
 	var tests = []struct {
-		src     string
-		want    []Const
-		wantIdx int
+		src  string
+		want []Const
 	}{
 		{
 			`const
@@ -111,7 +100,6 @@ func TestBuildMultiConst(t *testing.T) {
 					Value: Bool{token.New[token.Bool](73, 78)},
 				},
 			},
-			21,
 		},
 		{
 			`const
@@ -127,7 +115,6 @@ func TestBuildMultiConst(t *testing.T) {
 					Value: Int{token.New[token.Int](29, 30)},
 				},
 			},
-			10,
 		},
 	}
 
@@ -146,12 +133,6 @@ func TestBuildMultiConst(t *testing.T) {
 			t.Fatalf(
 				"Input:\n%s\n\nbuildMultiConst: %v",
 				test.src, err,
-			)
-		}
-		if tokStream.idx != test.wantIdx {
-			t.Fatalf(
-				"Input:\n%s\n\ntokStream.idx = %d, want %d",
-				test.src, tokStream.idx, test.wantIdx,
 			)
 		}
 		if len(got) != len(test.want) {

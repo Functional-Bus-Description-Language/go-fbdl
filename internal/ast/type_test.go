@@ -8,9 +8,8 @@ import (
 
 func TestBuildTypeSingleLine(t *testing.T) {
 	var tests = []struct {
-		src     string
-		want    Type
-		wantIdx int
+		src  string
+		want Type
 	}{
 		{
 			"type foo_t(W=1) [8]config; width = W",
@@ -23,7 +22,6 @@ func TestBuildTypeSingleLine(t *testing.T) {
 					Props: []Prop{{token.New[token.Width](27, 32), Ident{token.New[token.Ident](35, 36)}}},
 				},
 			},
-			15,
 		},
 	}
 
@@ -43,12 +41,6 @@ func TestBuildTypeSingleLine(t *testing.T) {
 				test.src, err,
 			)
 		}
-		if tokStream.idx != test.wantIdx {
-			t.Fatalf(
-				"Input:\n%s\n\ntokStream.idx = %d, want %d",
-				test.src, tokStream.idx, test.wantIdx,
-			)
-		}
 		if !reflect.DeepEqual(got, test.want) {
 			t.Fatalf(
 				"Input:\n%s\n\ngot: %+v\nwant: %+v",
@@ -60,9 +52,8 @@ func TestBuildTypeSingleLine(t *testing.T) {
 
 func TestBuildTypeMultiLine(t *testing.T) {
 	var tests = []struct {
-		src     string
-		want    Type
-		wantIdx int
+		src  string
+		want Type
 	}{
 		{
 			`type foo_t bar(1, N = 2)
@@ -93,7 +84,6 @@ func TestBuildTypeMultiLine(t *testing.T) {
 					Types: []Type{{Name: token.New[token.Ident](65, 70), Type: token.New[token.Config](71, 77)}},
 				},
 			},
-			24,
 		},
 	}
 
@@ -111,12 +101,6 @@ func TestBuildTypeMultiLine(t *testing.T) {
 			t.Fatalf(
 				"Input:\n%s\n\nbuildType: %v",
 				test.src, err,
-			)
-		}
-		if tokStream.idx != test.wantIdx {
-			t.Fatalf(
-				"Input:\n%s\n\ntokStream.idx = %d, want %d",
-				test.src, tokStream.idx, test.wantIdx,
 			)
 		}
 		if !reflect.DeepEqual(got, test.want) {

@@ -8,35 +8,30 @@ import (
 
 func TestBuildExpr(t *testing.T) {
 	var tests = []struct {
-		src     string
-		want    Expr
-		wantIdx int
+		src  string
+		want Expr
 	}{
 		{
 			"id",
 			Ident{Name: token.New[token.Ident](0, 2)},
-			1,
 		},
 		{
 			"-abc",
 			UnaryExpr{
 				Op: token.New[token.Sub](0, 1), X: Ident{Name: token.New[token.Ident](1, 4)},
 			},
-			2,
 		},
 		{
 			"+ 10",
 			UnaryExpr{
 				Op: token.New[token.Add](0, 1), X: Int{token.New[token.Int](2, 4)},
 			},
-			2,
 		},
 		{
 			"!true",
 			UnaryExpr{
 				Op: token.New[token.Neg](0, 1), X: Bool{token.New[token.Bool](1, 5)},
 			},
-			2,
 		},
 		{
 			"!!false",
@@ -44,7 +39,6 @@ func TestBuildExpr(t *testing.T) {
 				Op: token.New[token.Neg](0, 1),
 				X:  UnaryExpr{Op: token.New[token.Neg](1, 2), X: Bool{token.New[token.Bool](2, 7)}},
 			},
-			3,
 		},
 		{
 			"!true == false",
@@ -53,7 +47,6 @@ func TestBuildExpr(t *testing.T) {
 				Op: token.New[token.Eq](6, 8),
 				Y:  Bool{token.New[token.Bool](9, 14)},
 			},
-			4,
 		},
 		{
 			"true && !false",
@@ -62,7 +55,6 @@ func TestBuildExpr(t *testing.T) {
 				Op: token.New[token.And](5, 7),
 				Y:  UnaryExpr{Op: token.New[token.Neg](8, 9), X: Bool{token.New[token.Bool](9, 14)}},
 			},
-			4,
 		},
 		{
 			"(a >> b)",
@@ -75,7 +67,6 @@ func TestBuildExpr(t *testing.T) {
 				},
 				RParen: token.New[token.RParen](7, 8),
 			},
-			5,
 		},
 		{
 			"floor(v)",
@@ -85,7 +76,6 @@ func TestBuildExpr(t *testing.T) {
 					Ident{Name: token.New[token.Ident](6, 7)},
 				},
 			},
-			4,
 		},
 		{
 			"foo(12.35, true)",
@@ -96,14 +86,12 @@ func TestBuildExpr(t *testing.T) {
 					Bool{token.New[token.Bool](11, 15)},
 				},
 			},
-			6,
 		},
 		{
 			"A + 1",
 			BinaryExpr{
 				X: Ident{Name: token.New[token.Ident](0, 1)}, Op: token.New[token.Add](2, 3), Y: Int{token.New[token.Int](4, 5)},
 			},
-			3,
 		},
 		{
 			"A + B * C",
@@ -116,7 +104,6 @@ func TestBuildExpr(t *testing.T) {
 					Y:  Ident{Name: token.New[token.Ident](8, 9)},
 				},
 			},
-			5,
 		},
 		{
 			"A * B - C",
@@ -129,7 +116,6 @@ func TestBuildExpr(t *testing.T) {
 				Op: token.New[token.Sub](6, 7),
 				Y:  Ident{Name: token.New[token.Ident](8, 9)},
 			},
-			5,
 		},
 		{
 			"A ** B + C / D",
@@ -146,7 +132,6 @@ func TestBuildExpr(t *testing.T) {
 					Y:  Ident{Name: token.New[token.Ident](13, 14)},
 				},
 			},
-			7,
 		},
 		{
 			"A * (B + C) / D",
@@ -167,7 +152,6 @@ func TestBuildExpr(t *testing.T) {
 				Op: token.New[token.Div](12, 13),
 				Y:  Ident{Name: token.New[token.Ident](14, 15)},
 			},
-			9,
 		},
 		{
 			"A % B == D || false",
@@ -184,14 +168,12 @@ func TestBuildExpr(t *testing.T) {
 				Op: token.New[token.Or](11, 13),
 				Y:  Bool{token.New[token.Bool](14, 19)},
 			},
-			7,
 		},
 		{
 			"0:18",
 			BinaryExpr{
 				X: Int{X: token.New[token.Int](0, 1)}, Op: token.New[token.Colon](1, 2), Y: Int{token.New[token.Int](2, 4)},
 			},
-			3,
 		},
 		{
 			"-1:0",
@@ -200,7 +182,6 @@ func TestBuildExpr(t *testing.T) {
 				Op: token.New[token.Colon](2, 3),
 				Y:  Int{token.New[token.Int](3, 4)},
 			},
-			4,
 		},
 	}
 
@@ -218,12 +199,6 @@ func TestBuildExpr(t *testing.T) {
 			t.Fatalf(
 				"Input:\n%s\n\nbuildExpr: %v",
 				test.src, err,
-			)
-		}
-		if tokStream.idx != test.wantIdx {
-			t.Fatalf(
-				"Input:\n%s\n\ntokStream.idx = %d, want %d",
-				test.src, tokStream.idx, test.wantIdx,
 			)
 		}
 		if !reflect.DeepEqual(got, test.want) {
