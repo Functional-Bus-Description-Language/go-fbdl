@@ -1,122 +1,239 @@
 package ast
 
 import (
-	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"reflect"
 	"testing"
 )
 
-func checkExpr(ctx tokenStream, i int, got Expr, want Expr, err error) error {
-	if err != nil {
-		return err
-	}
-
-	errMsg := "context.i = %d, i = %d\n\ngot:  %+v\nwant: %+v"
-	switch want := want.(type) {
-	case Call:
-		if !reflect.DeepEqual(got, want) {
-			return fmt.Errorf(errMsg, ctx.idx, i, got, want)
-		}
-	default:
-		if !reflect.DeepEqual(got, want) {
-			return fmt.Errorf(errMsg, ctx.idx, i, got, want)
-		}
-	}
-
-	return nil
-}
-
-func TestBuildIdent(t *testing.T) {
-	toks, _ := token.Parse([]byte("id"))
-	want := Ident{Name: toks[0]}
-	ctx := tokenStream{toks: toks}
-	got, err := buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 1, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestBuildUnaryExpr(t *testing.T) {
-	toks, _ := token.Parse([]byte("-abc"))
-	want := UnaryExpr{
-		Op: toks[0], X: Ident{Name: toks[1]},
-	}
-	ctx := tokenStream{toks: toks}
-	got, err := buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 2, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("+ 10"))
-	want = UnaryExpr{
-		Op: toks[0], X: Int{toks[1].(token.Int)},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 2, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestBuildNegation(t *testing.T) {
-	tests := []struct {
-		src  string
-		want Expr
+func TestBuildExpr(t *testing.T) {
+	var tests = []struct {
+		src     string
+		want    Expr
+		wantIdx int
 	}{
 		{
-			src: "!true",
-			want: UnaryExpr{
-				Op: token.New[token.Neg](0, 1), X: Bool{token.New[token.Bool](1, 5)},
-			},
+			"id",
+			Ident{Name: token.New[token.Ident](0, 2)},
+			1,
 		},
 		{
-			src: "!!false",
-			want: UnaryExpr{
+			"-abc",
+			UnaryExpr{
+				Op: token.New[token.Sub](0, 1), X: Ident{Name: token.New[token.Ident](1, 4)},
+			},
+			2,
+		},
+		{
+			"+ 10",
+			UnaryExpr{
+				Op: token.New[token.Add](0, 1), X: Int{token.New[token.Int](2, 4)},
+			},
+			2,
+		},
+		{
+			"!true",
+			UnaryExpr{
+				Op: token.New[token.Neg](0, 1), X: Bool{token.New[token.Bool](1, 5)},
+			},
+			2,
+		},
+		{
+			"!!false",
+			UnaryExpr{
 				Op: token.New[token.Neg](0, 1),
 				X:  UnaryExpr{Op: token.New[token.Neg](1, 2), X: Bool{token.New[token.Bool](2, 7)}},
 			},
+			3,
 		},
 		{
-			src: "!true == false",
-			want: BinaryExpr{
+			"!true == false",
+			BinaryExpr{
 				X:  UnaryExpr{Op: token.New[token.Neg](0, 1), X: Bool{token.New[token.Bool](1, 5)}},
 				Op: token.New[token.Eq](6, 8),
 				Y:  Bool{token.New[token.Bool](9, 14)},
 			},
+			4,
 		},
 		{
-			src: "true && !false",
-			want: BinaryExpr{
+			"true && !false",
+			BinaryExpr{
 				X:  Bool{token.New[token.Bool](0, 4)},
 				Op: token.New[token.And](5, 7),
 				Y:  UnaryExpr{Op: token.New[token.Neg](8, 9), X: Bool{token.New[token.Bool](9, 14)}},
 			},
+			4,
+		},
+		{
+			"(a >> b)",
+			ParenExpr{
+				LParen: token.New[token.LParen](0, 1),
+				X: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](1, 2)},
+					Op: token.New[token.RShift](3, 5),
+					Y:  Ident{Name: token.New[token.Ident](6, 7)},
+				},
+				RParen: token.New[token.RParen](7, 8),
+			},
+			5,
+		},
+		{
+			"floor(v)",
+			Call{
+				Name: token.New[token.Ident](0, 5),
+				Args: []Expr{
+					Ident{Name: token.New[token.Ident](6, 7)},
+				},
+			},
+			4,
+		},
+		{
+			"foo(12.35, true)",
+			Call{
+				Name: token.New[token.Ident](0, 3),
+				Args: []Expr{
+					Float{token.New[token.Float](4, 9)},
+					Bool{token.New[token.Bool](11, 15)},
+				},
+			},
+			6,
+		},
+		{
+			"A + 1",
+			BinaryExpr{
+				X: Ident{Name: token.New[token.Ident](0, 1)}, Op: token.New[token.Add](2, 3), Y: Int{token.New[token.Int](4, 5)},
+			},
+			3,
+		},
+		{
+			"A + B * C",
+			BinaryExpr{
+				X:  Ident{Name: token.New[token.Ident](0, 1)},
+				Op: token.New[token.Add](2, 3),
+				Y: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](4, 5)},
+					Op: token.New[token.Mul](6, 7),
+					Y:  Ident{Name: token.New[token.Ident](8, 9)},
+				},
+			},
+			5,
+		},
+		{
+			"A * B - C",
+			BinaryExpr{
+				X: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](0, 1)},
+					Op: token.New[token.Mul](2, 3),
+					Y:  Ident{Name: token.New[token.Ident](4, 5)},
+				},
+				Op: token.New[token.Sub](6, 7),
+				Y:  Ident{Name: token.New[token.Ident](8, 9)},
+			},
+			5,
+		},
+		{
+			"A ** B + C / D",
+			BinaryExpr{
+				X: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](0, 1)},
+					Op: token.New[token.Exp](2, 4),
+					Y:  Ident{Name: token.New[token.Ident](5, 6)},
+				},
+				Op: token.New[token.Add](7, 8),
+				Y: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](9, 10)},
+					Op: token.New[token.Div](11, 12),
+					Y:  Ident{Name: token.New[token.Ident](13, 14)},
+				},
+			},
+			7,
+		},
+		{
+			"A * (B + C) / D",
+			BinaryExpr{
+				X: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](0, 1)},
+					Op: token.New[token.Mul](2, 3),
+					Y: ParenExpr{
+						LParen: token.New[token.LParen](4, 5),
+						X: BinaryExpr{
+							X:  Ident{Name: token.New[token.Ident](5, 6)},
+							Op: token.New[token.Add](7, 8),
+							Y:  Ident{Name: token.New[token.Ident](9, 10)},
+						},
+						RParen: token.New[token.RParen](10, 11),
+					},
+				},
+				Op: token.New[token.Div](12, 13),
+				Y:  Ident{Name: token.New[token.Ident](14, 15)},
+			},
+			9,
+		},
+		{
+			"A % B == D || false",
+			BinaryExpr{
+				X: BinaryExpr{
+					X: BinaryExpr{
+						X:  Ident{Name: token.New[token.Ident](0, 1)},
+						Op: token.New[token.Rem](2, 3),
+						Y:  Ident{Name: token.New[token.Ident](4, 5)},
+					},
+					Op: token.New[token.Eq](6, 8),
+					Y:  Ident{Name: token.New[token.Ident](9, 10)},
+				},
+				Op: token.New[token.Or](11, 13),
+				Y:  Bool{token.New[token.Bool](14, 19)},
+			},
+			7,
+		},
+		{
+			"0:18",
+			BinaryExpr{
+				X: Int{X: token.New[token.Int](0, 1)}, Op: token.New[token.Colon](1, 2), Y: Int{token.New[token.Int](2, 4)},
+			},
+			3,
+		},
+		{
+			"-1:0",
+			BinaryExpr{
+				X:  UnaryExpr{Op: token.New[token.Sub](0, 1), X: Int{X: token.New[token.Int](1, 2)}},
+				Op: token.New[token.Colon](2, 3),
+				Y:  Int{token.New[token.Int](3, 4)},
+			},
+			4,
 		},
 	}
 
 	for _, test := range tests {
-		t.Run(test.src, func(t *testing.T) {
-			toks, err := token.Parse([]byte(test.src))
-			if err != nil {
-				t.Fatal(err)
-			}
-			ctx := tokenStream{toks: toks}
-			got, err := buildExpr(&ctx, nil)
-			if err := checkExpr(ctx, len(toks)-1, got, test.want, err); err != nil {
-				t.Fatal(err)
-			}
-			if ctx.idx != len(toks)-1 {
-				t.Fatalf("consumed %d tokens, want %d", ctx.idx, len(toks)-1)
-			}
-		})
+		toks, err := token.Parse([]byte(test.src))
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\ntoken.Parse: %v",
+				test.src, err,
+			)
+		}
+		tokStream := tokenStream{toks: toks}
+		got, err := buildExpr(&tokStream, nil)
+		if err != nil {
+			t.Fatalf(
+				"Input:\n%s\n\nbuildExpr: %v",
+				test.src, err,
+			)
+		}
+		if tokStream.idx != test.wantIdx {
+			t.Fatalf(
+				"Input:\n%s\n\ntokStream.idx = %d, want %d",
+				test.src, tokStream.idx, test.wantIdx,
+			)
+		}
+		if !reflect.DeepEqual(got, test.want) {
+			t.Fatalf(
+				"Input:\n%s\n\ngot: %+v\nwant: %+v",
+				test.src, got, test.want,
+			)
+		}
 	}
-}
 
-func TestBuildInvalidNegation(t *testing.T) {
 	for _, src := range []string{"const A = !", "const A = true ! false"} {
 		t.Run(src, func(t *testing.T) {
 			toks, err := token.Parse([]byte(src))
@@ -127,193 +244,5 @@ func TestBuildInvalidNegation(t *testing.T) {
 				t.Fatal("expected an error")
 			}
 		})
-	}
-}
-
-func TestBuildParenExpr(t *testing.T) {
-	toks, _ := token.Parse([]byte("(a >> b)"))
-	want := ParenExpr{
-		LParen: toks[0].(token.LParen),
-		X: BinaryExpr{
-			X:  Ident{Name: toks[1]},
-			Op: toks[2].(token.Operator),
-			Y:  Ident{Name: toks[3]},
-		},
-		RParen: toks[4].(token.RParen),
-	}
-	ctx := tokenStream{toks: toks}
-	got, err := buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 5, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestBuildCall(t *testing.T) {
-	toks, _ := token.Parse([]byte("floor(v)"))
-	want := Call{
-		Name: toks[0].(token.Ident),
-		Args: []Expr{
-			Ident{Name: toks[2].(token.Ident)},
-		},
-	}
-	ctx := tokenStream{toks: toks}
-	got, err := buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 4, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("foo(12.35, true)"))
-	want = Call{
-		Name: toks[0].(token.Ident),
-		Args: []Expr{
-			Float{toks[2].(token.Float)},
-			Bool{toks[4].(token.Bool)},
-		},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 6, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-}
-
-func TestBuildBinaryExpr(t *testing.T) {
-	toks, _ := token.Parse([]byte("A + 1"))
-	want := BinaryExpr{
-		X: Ident{Name: toks[0]}, Op: toks[1].(token.Operator), Y: Int{toks[2].(token.Int)},
-	}
-	ctx := tokenStream{toks: toks}
-	got, err := buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 5, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("A + B * C"))
-	want = BinaryExpr{
-		X:  Ident{Name: toks[0]},
-		Op: toks[1].(token.Operator),
-		Y: BinaryExpr{
-			X:  Ident{Name: toks[2]},
-			Op: toks[3].(token.Operator),
-			Y:  Ident{Name: toks[4]},
-		},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 5, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("A * B - C"))
-	want = BinaryExpr{
-		X: BinaryExpr{
-			X:  Ident{Name: toks[0]},
-			Op: toks[1].(token.Operator),
-			Y:  Ident{Name: toks[2]},
-		},
-		Op: toks[3].(token.Operator),
-		Y:  Ident{Name: toks[4]},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 5, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("A ** B + C / D"))
-	want = BinaryExpr{
-		X: BinaryExpr{
-			X:  Ident{Name: toks[0]},
-			Op: toks[1].(token.Operator),
-			Y:  Ident{Name: toks[2]},
-		},
-		Op: toks[3].(token.Operator),
-		Y: BinaryExpr{
-			X:  Ident{Name: toks[4]},
-			Op: toks[5].(token.Operator),
-			Y:  Ident{Name: toks[6]},
-		},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 7, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("A * (B + C) / D"))
-	want = BinaryExpr{
-		X: BinaryExpr{
-			X:  Ident{Name: toks[0]},
-			Op: toks[1].(token.Operator),
-			Y: ParenExpr{
-				LParen: toks[2].(token.LParen),
-				X: BinaryExpr{
-					X:  Ident{Name: toks[3]},
-					Op: toks[4].(token.Operator),
-					Y:  Ident{Name: toks[5]},
-				},
-				RParen: toks[6].(token.RParen),
-			},
-		},
-		Op: toks[7].(token.Operator),
-		Y:  Ident{Name: toks[8]},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 9, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("A % B == D || false"))
-	want = BinaryExpr{
-		X: BinaryExpr{
-			X: BinaryExpr{
-				X:  Ident{Name: toks[0]},
-				Op: toks[1].(token.Operator),
-				Y:  Ident{Name: toks[2]},
-			},
-			Op: toks[3].(token.Operator),
-			Y:  Ident{Name: toks[4]},
-		},
-		Op: toks[5].(token.Operator),
-		Y:  Bool{toks[6].(token.Bool)},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 7, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("0:18"))
-	want = BinaryExpr{
-		X: Int{X: toks[0].(token.Int)}, Op: toks[1].(token.Colon), Y: Int{toks[2].(token.Int)},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 5, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
-	}
-
-	toks, _ = token.Parse([]byte("-1:0"))
-	want = BinaryExpr{
-		X:  UnaryExpr{Op: toks[0], X: Int{X: toks[1].(token.Int)}},
-		Op: toks[2].(token.Operator),
-		Y:  Int{toks[3].(token.Int)},
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildExpr(&ctx, nil)
-	err = checkExpr(ctx, 5, got, want, err)
-	if err != nil {
-		t.Fatalf("%v", err)
 	}
 }
