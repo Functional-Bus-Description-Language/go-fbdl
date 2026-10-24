@@ -183,6 +183,46 @@ func TestBuildExpr(t *testing.T) {
 				Y:  Int{token.New[token.Int](3, 4)},
 			},
 		},
+		{
+			"bus + atomic",
+			BinaryExpr{
+				X:  Ident{Name: token.New[token.Ident](0, 3)},
+				Op: token.New[token.Add](4, 5),
+				Y:  Ident{Name: token.New[token.Ident](6, 12)},
+			},
+		},
+		{
+			"init-value",
+			BinaryExpr{
+				X:  Ident{Name: token.New[token.Ident](0, 4)},
+				Op: token.New[token.Sub](4, 5),
+				Y:  Ident{Name: token.New[token.Ident](5, 10)},
+			},
+		},
+		{
+			"enable-init-value",
+			BinaryExpr{
+				X: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](0, 6)},
+					Op: token.New[token.Sub](6, 7),
+					Y:  Ident{Name: token.New[token.Ident](7, 11)},
+				},
+				Op: token.New[token.Sub](11, 12),
+				Y:  Ident{Name: token.New[token.Ident](12, 17)},
+			},
+		},
+		{
+			"width - init-value",
+			BinaryExpr{
+				X: BinaryExpr{
+					X:  Ident{Name: token.New[token.Ident](0, 5)},
+					Op: token.New[token.Sub](6, 7),
+					Y:  Ident{Name: token.New[token.Ident](8, 12)},
+				},
+				Op: token.New[token.Sub](12, 13),
+				Y:  Ident{Name: token.New[token.Ident](13, 18)},
+			},
+		},
 	}
 
 	for _, test := range tests {
