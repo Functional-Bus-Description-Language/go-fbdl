@@ -248,7 +248,9 @@ func TestBuildExpr(t *testing.T) {
 			)
 		}
 	}
+}
 
+func TestBuildExprError(t *testing.T) {
 	for _, src := range []string{"const A = !", "const A = true ! false"} {
 		t.Run(src, func(t *testing.T) {
 			toks, err := token.Parse([]byte(src))
