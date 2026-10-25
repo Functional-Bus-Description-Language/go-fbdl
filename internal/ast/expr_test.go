@@ -28,6 +28,45 @@ func TestBuildExpr(t *testing.T) {
 			},
 		},
 		{
+			"-1 & 1",
+			BinaryExpr{
+				X:  UnaryExpr{Op: token.New[token.Sub](0, 1), X: Int{token.New[token.Int](1, 2)}},
+				Op: token.New[token.BitAnd](3, 4),
+				Y:  Int{token.New[token.Int](5, 6)},
+			},
+		},
+		{
+			"+2 * 3",
+			BinaryExpr{
+				X:  UnaryExpr{Op: token.New[token.Add](0, 1), X: Int{token.New[token.Int](1, 2)}},
+				Op: token.New[token.Mul](3, 4),
+				Y:  Int{token.New[token.Int](5, 6)},
+			},
+		},
+		{
+			"1 & -1",
+			BinaryExpr{
+				X:  Int{token.New[token.Int](0, 1)},
+				Op: token.New[token.BitAnd](2, 3),
+				Y:  UnaryExpr{Op: token.New[token.Sub](4, 5), X: Int{token.New[token.Int](5, 6)}},
+			},
+		},
+		{
+			"-(1 & 1)",
+			UnaryExpr{
+				Op: token.New[token.Sub](0, 1),
+				X: ParenExpr{
+					LParen: token.New[token.LParen](1, 2),
+					X: BinaryExpr{
+						X:  Int{token.New[token.Int](2, 3)},
+						Op: token.New[token.BitAnd](4, 5),
+						Y:  Int{token.New[token.Int](6, 7)},
+					},
+					RParen: token.New[token.RParen](7, 8),
+				},
+			},
+		},
+		{
 			"!true",
 			UnaryExpr{
 				Op: token.New[token.Neg](0, 1), X: Bool{token.New[token.Bool](1, 5)},

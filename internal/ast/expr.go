@@ -352,7 +352,8 @@ func buildUnaryExpr(tokens *tokenStream) (UnaryExpr, error) {
 	op := tokens.peek(0).(token.Operator)
 	un := UnaryExpr{Op: op}
 	tokens.next()
-	x, err := buildExpr(tokens, op)
+	// All unary operators use the prefix precedence of '!'.
+	x, err := buildExpr(tokens, token.Neg{})
 	if err != nil {
 		return un, err
 	}
