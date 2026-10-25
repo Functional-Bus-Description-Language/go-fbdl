@@ -214,3 +214,74 @@ func TestBuildDeclarationLineEnds(t *testing.T) {
 		})
 	}
 }
+
+func TestBuildDocDoesNotLeak(t *testing.T) {
+	for _, test := range []struct {
+		src       string
+		constDocs []string
+		instDocs  []string
+	}{
+		{
+			"# Documentation for a\nconst a = 1\n\nconst b = 2",
+			[]string{"Documentation for a", ""}, nil,
+		},
+		{
+			"# Documentation for a\nconst a = 1\nconst b = 2",
+			[]string{"Documentation for a", ""}, nil,
+		},
+		{
+			"# Group documentation\nconst\n  a = 1\n  b = 2\nconst c = 3",
+			[]string{"Group documentation", "", ""}, nil,
+		},
+		{
+			"# Instance documentation\na config\nb config",
+			nil, []string{"Instance documentation", ""},
+		},
+		{
+			"# Instance documentation\na config\n  width = 1\nconst b = 2",
+			[]string{""}, []string{"Instance documentation"},
+		},
+		{
+			"# Import comment\nimport \"a\"\nconst b = 2",
+			[]string{""}, nil,
+		},
+		{
+			"# Type comment\ntype T config\nconst b = 2",
+			[]string{""}, nil,
+		},
+		{
+			"# Detached comment\n\nconst a = 1",
+			[]string{""}, nil,
+		},
+		{
+			"# Documentation for a\nconst a = 1\n# Documentation for b\nconst b = 2",
+			[]string{"Documentation for a", "Documentation for b"}, nil,
+		},
+	} {
+		t.Run(test.src, func(t *testing.T) {
+			src := []byte(test.src)
+			toks, err := token.Parse(src)
+			if err != nil {
+				t.Fatal(err)
+			}
+			file, err := Build(toks)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(file.Consts) != len(test.constDocs) || len(file.Insts) != len(test.instDocs) {
+				t.Fatalf("got %d constants and %d instances, want %d constants and %d instances",
+					len(file.Consts), len(file.Insts), len(test.constDocs), len(test.instDocs))
+			}
+			for i, con := range file.Consts {
+				if got := con.Doc.Text(src); got != test.constDocs[i] {
+					t.Errorf("constant %s: got doc %q, want %q", con.Name.Text(src), got, test.constDocs[i])
+				}
+			}
+			for i, inst := range file.Insts {
+				if got := inst.Doc.Text(src); got != test.instDocs[i] {
+					t.Errorf("instance %s: got doc %q, want %q", inst.Name.Text(src), got, test.instDocs[i])
+				}
+			}
+		})
+	}
+}

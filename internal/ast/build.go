@@ -26,6 +26,7 @@ tokenLoop:
 			tokens.next()
 		case token.Comment:
 			doc = buildDoc(&tokens)
+			continue
 		case token.Const:
 			consts, err = buildConst(&tokens)
 			if len(consts) > 0 {
@@ -51,6 +52,8 @@ tokenLoop:
 		default:
 			return f, unexpected(t, "'const', 'import', 'type', identifier, or comment")
 		}
+
+		doc = emptyDoc()
 
 		if err != nil {
 			return f, err
