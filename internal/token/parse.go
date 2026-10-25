@@ -127,7 +127,7 @@ func Parse(src []byte) ([]Token, error) {
 			if isLetter(b) || b == '_' {
 				toks, err = parseWord(&ctx)
 			} else {
-				return nil, Error{
+				return tokens, Error{
 					Msg:  fmt.Sprintf("invalid byte 0x%x ('%c')", b, b),
 					Toks: []Token{None{span: ctx.span()}},
 				}
@@ -142,6 +142,10 @@ func Parse(src []byte) ([]Token, error) {
 		if len(toks) > 0 {
 			ctx.lastTok = toks[len(toks)-1]
 		}
+	}
+
+	if _, ok := ctx.lastTok.(Semicolon); ok {
+		return tokens, Error{"extra ';' at line end", []Token{ctx.lastTok}}
 	}
 
 	tokens = append(tokens, Eof{ctx.span()})
