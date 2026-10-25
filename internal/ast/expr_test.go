@@ -78,6 +78,15 @@ func TestBuildExpr(t *testing.T) {
 			},
 		},
 		{
+			"pkg.foo(1)",
+			Call{
+				Name: token.New[token.QualIdent](0, 7),
+				Args: []Expr{
+					Int{token.New[token.Int](8, 9)},
+				},
+			},
+		},
+		{
 			"foo(12.35, true)",
 			Call{
 				Name: token.New[token.Ident](0, 3),

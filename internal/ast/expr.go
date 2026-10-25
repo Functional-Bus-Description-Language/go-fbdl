@@ -34,7 +34,7 @@ type (
 
 	// Function Call
 	Call struct {
-		Name token.Ident
+		Name token.Token // token.Ident or token.QualIdent
 		Args []Expr
 	}
 
@@ -310,7 +310,7 @@ tokenLoop:
 }
 
 func buildCallExpr(tokens *tokenStream) (Call, error) {
-	call := Call{Name: tokens.next().(token.Ident)}
+	call := Call{Name: tokens.next()}
 	tokens.next()
 
 	prevExpr := false
