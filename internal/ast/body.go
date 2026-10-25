@@ -31,10 +31,10 @@ tokenLoop:
 
 		switch tok := tokens.peek(0).(type) {
 		case token.Newline:
-			doc = emptyDoc()
 			tokens.next()
 		case token.Comment:
 			doc = buildDoc(tokens)
+			continue
 		case token.Const:
 			consts, err = buildConst(tokens)
 			if len(consts) > 0 {
@@ -45,6 +45,7 @@ tokenLoop:
 			}
 		case token.Ident:
 			ins, err = buildInst(tokens)
+			ins.Doc = doc
 			body.Insts = append(body.Insts, ins)
 		case token.Property:
 			props, err = buildPropAssignments(tokens)
@@ -63,6 +64,8 @@ tokenLoop:
 		default:
 			return body, unexpected(tok, "'const', 'type', identifier, or comment")
 		}
+
+		doc = emptyDoc()
 
 		if err != nil {
 			return body, err
