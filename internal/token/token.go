@@ -180,7 +180,7 @@ func (bs BitString) Name() string { return "bit string" }
 
 func (t Time) Name() string { return "time" }
 
-func (n Neg) Name() string    { return "!" }
+func (n Neg) Name() string    { return "'!'" }
 func (n Neg) Precedence() int { return 7 }
 
 func (a Ass) Name() string { return "'='" }
