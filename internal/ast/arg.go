@@ -42,7 +42,14 @@ func buildArgList(tokens *tokenStream) (ArgList, error) {
 
 	for {
 		arg := Arg{}
-		if name, ok := tokens.peek(0).(token.Ident); ok {
+		name := tokens.peek(0)
+		switch t := name.(type) {
+		case token.Functionality:
+			name = t.Ident()
+		case token.WordProperty:
+			name = t.Ident()
+		}
+		if name, ok := name.(token.Ident); ok {
 			if _, ok := tokens.peek(1).(token.Ass); ok {
 				arg.Name = name
 				tokens.next()
