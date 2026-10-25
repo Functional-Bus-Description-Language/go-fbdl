@@ -47,6 +47,12 @@ func buildSingleConst(tokens *tokenStream) ([]Const, error) {
 		return nil, err
 	}
 
+	switch t := tokens.peek(0).(type) {
+	case token.Newline, token.Eof:
+	default:
+		return nil, unexpected(t, "newline or end of file")
+	}
+
 	return []Const{{Name: name, Value: expr}}, nil
 }
 

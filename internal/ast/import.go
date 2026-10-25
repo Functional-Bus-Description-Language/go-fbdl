@@ -41,6 +41,12 @@ func buildSingleImport(tokens *tokenStream) ([]Import, error) {
 		tokens.next()
 	}
 
+	switch t := tokens.peek(0).(type) {
+	case token.Newline, token.Eof:
+	default:
+		return nil, unexpected(t, "newline or end of file")
+	}
+
 	return []Import{i}, nil
 }
 
@@ -58,7 +64,7 @@ func buildMultiImport(tokens *tokenStream) ([]Import, error) {
 
 		switch t := tokens.peek(0).(type) {
 		case token.Newline:
-			// Go to next line
+			continue
 		case token.Dedent:
 			tokens.next()
 			return imps, nil
@@ -75,6 +81,12 @@ func buildMultiImport(tokens *tokenStream) ([]Import, error) {
 			imps = append(imps, Import{Name: t, Path: path})
 		default:
 			return nil, unexpected(t, "identifier or string")
+		}
+
+		switch t := tokens.peek(1).(type) {
+		case token.Newline, token.Eof:
+		default:
+			return nil, unexpected(t, "newline or end of file")
 		}
 	}
 }
