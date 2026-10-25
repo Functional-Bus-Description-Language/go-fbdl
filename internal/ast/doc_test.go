@@ -23,3 +23,29 @@ Line 4`
 		t.Fatalf("\ngot:\n%s\nwant:\n%s", got, want)
 	}
 }
+
+func TestDocTextShortComments(t *testing.T) {
+	for _, test := range []struct {
+		src  string
+		want string
+	}{
+		{"#x", "x"},
+		{"# x", "x"},
+		{"#", ""},
+		{"# ", ""},
+		{"#x\n#\n# y", "x\n\ny"},
+	} {
+		t.Run(test.src, func(t *testing.T) {
+			src := []byte(test.src)
+			toks, err := token.Parse(src)
+			if err != nil {
+				t.Fatal(err)
+			}
+			tokens := tokenStream{toks: toks}
+			doc := buildDoc(&tokens)
+			if got := doc.Text(src); got != test.want {
+				t.Fatalf("got doc %q, want %q", got, test.want)
+			}
+		})
+	}
+}

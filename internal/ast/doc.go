@@ -20,7 +20,7 @@ func (d Doc) Text(src []byte) string {
 			}
 		}
 
-		if len(t) > 2 {
+		if len(t) > start {
 			text += t[start:]
 		}
 
