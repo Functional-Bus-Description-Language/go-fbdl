@@ -34,7 +34,7 @@ tokenLoop:
 		case token.Const:
 			consts, err = buildConst(&tokens)
 			if len(consts) > 0 {
-				if !doc.isEmpty() {
+				if consts[0].Doc.isEmpty() && !doc.isEmpty() {
 					consts[0].Doc = doc
 				}
 				f.Consts = append(f.Consts, consts...)

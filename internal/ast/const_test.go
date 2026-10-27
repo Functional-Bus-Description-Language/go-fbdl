@@ -1,9 +1,10 @@
 package ast
 
 import (
-	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"reflect"
 	"testing"
+
+	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
 func TestBuildSingleConst(t *testing.T) {
@@ -183,6 +184,84 @@ func TestBuildMultiConstDocs(t *testing.T) {
 	}
 	if !file.Consts[2].Doc.isEmpty() {
 		t.Errorf("C: got doc %q, want no doc", file.Consts[2].Doc.Text(src))
+	}
+}
+
+func TestBuildConstGroupDocFallback(t *testing.T) {
+	src := []byte(`# Group documentation
+const
+  # Specific documentation
+  A = 1
+  # Documentation for B
+  B = 2
+# Fallback documentation
+const
+  C = 3
+  D = 4
+const E = 5
+
+main bus
+  # Group documentation
+  const
+    # Specific documentation
+    A = 1
+    # Documentation for B
+    B = 2
+  # Fallback documentation
+  const
+    C = 3
+    D = 4
+  const E = 5
+
+type Container block
+  # Group documentation
+  const
+    # Specific documentation
+    A = 1
+    # Documentation for B
+    B = 2
+  # Fallback documentation
+  const
+    C = 3
+    D = 4
+  const E = 5`)
+	toks, err := token.Parse(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	file, err := Build(toks)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(file.Insts) != 1 || len(file.Types) != 1 {
+		t.Fatal("expected one instance and one type")
+	}
+
+	wantDocs := []string{
+		"Specific documentation", // A keeps its own documentation.
+		"Documentation for B",    // B keeps its own documentation too.
+		"Fallback documentation", // C uses its group's documentation.
+		"",                       // D does not inherit the group documentation.
+		"",                       // E is outside the group.
+	}
+	for _, test := range []struct {
+		name   string
+		consts []Const
+	}{
+		{"file", file.Consts},
+		{"instance", file.Insts[0].Body.Consts},
+		{"type", file.Types[0].Body.Consts},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			if len(test.consts) != len(wantDocs) {
+				t.Fatalf("got %d constants, want %d", len(test.consts), len(wantDocs))
+			}
+			for i, con := range test.consts {
+				if got := con.Doc.Text(src); got != wantDocs[i] {
+					t.Errorf("constant %s: got doc %q, want %q", con.Name.Text(src), got, wantDocs[i])
+				}
+			}
+		})
 	}
 }
 
