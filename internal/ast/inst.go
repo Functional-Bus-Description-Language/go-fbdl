@@ -15,8 +15,15 @@ type Inst struct {
 }
 
 func buildInst(tokens *tokenStream) (Inst, error) {
-	inst := Inst{Name: tokens.peek(0).(token.Ident)}
-	tokens.next()
+	inst := Inst{}
+	switch name := tokens.next().(type) {
+	case token.Ident:
+		inst.Name = name
+	case token.WordProperty:
+		inst.Name = name.Ident()
+	default:
+		return inst, unexpected(name, "identifier")
+	}
 
 	// Count
 	if _, ok := tokens.peek(0).(token.LBracket); ok {

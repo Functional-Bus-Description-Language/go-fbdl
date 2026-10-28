@@ -56,6 +56,24 @@ func TestBuildInstSingleLine(t *testing.T) {
 				Type: token.New[token.Ident](2, 8),
 			},
 		},
+		{
+			"width config",
+			Inst{
+				Name: token.New[token.Ident](0, 5),
+				Type: token.New[token.Config](6, 12),
+			},
+		},
+		{
+			"atomic[2] config; width = 1",
+			Inst{
+				Name:  token.New[token.Ident](0, 6),
+				Count: Int{token.New[token.Int](7, 8)},
+				Type:  token.New[token.Config](10, 16),
+				Body: Body{
+					Props: []Prop{{token.New[token.Width](18, 23), Int{token.New[token.Int](26, 27)}}},
+				},
+			},
+		},
 	} {
 		t.Run(test.src, func(t *testing.T) {
 			toks, err := token.Parse([]byte(test.src))

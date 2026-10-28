@@ -35,7 +35,7 @@ tokenLoop:
 				}
 				f.Consts = append(f.Consts, consts...)
 			}
-		case token.Ident:
+		case token.Ident, token.WordProperty:
 			ins, err = buildInst(&tokens)
 			if !doc.isEmpty() {
 				ins.Doc = doc

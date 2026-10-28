@@ -11,6 +11,7 @@ func TestBuildNestedDocs(t *testing.T) {
 		"main bus",
 		"main bus\n",
 		"main bus\n\n",
+		"width bus",
 		"type Container block",
 		"type Container block\n",
 		"type Container block\n\n",
@@ -18,16 +19,16 @@ func TestBuildNestedDocs(t *testing.T) {
 		t.Run(parent, func(t *testing.T) {
 			src := []byte("# Parent documentation\n" + parent + `
   # First child
-  first config
+  width config
 
     width = 1
-  sibling status
+  atomic[2] status
   # Nested group
-  nested group
+  align group
 
 
     # Leaf documentation
-    leaf status
+    reset status
   after status
   # Detached comment
 
@@ -36,7 +37,7 @@ func TestBuildNestedDocs(t *testing.T) {
   type Inner group
 
     # Type member documentation
-    member status
+    size status
   type Undocumented group
   # Detached type comment
 

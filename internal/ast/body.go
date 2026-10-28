@@ -48,6 +48,14 @@ tokenLoop:
 			ins.Doc = doc
 			body.Insts = append(body.Insts, ins)
 		case token.Property:
+			if _, ok := tok.(token.WordProperty); ok {
+				if _, assignment := tokens.peek(1).(token.Ass); !assignment {
+					ins, err = buildInst(tokens)
+					ins.Doc = doc
+					body.Insts = append(body.Insts, ins)
+					break
+				}
+			}
 			props, err = buildPropAssignments(tokens)
 			if err != nil {
 				return body, err
