@@ -222,50 +222,63 @@ func TestBuildDocDoesNotLeak(t *testing.T) {
 		src       string
 		constDocs []string
 		instDocs  []string
+		typeDocs  []string
 	}{
 		{
 			"# Documentation for a\nconst a = 1\n\nconst b = 2",
-			[]string{"Documentation for a", ""}, nil,
+			[]string{"Documentation for a", ""}, nil, nil,
 		},
 		{
 			"# Documentation for a\nconst a = 1\nconst b = 2",
-			[]string{"Documentation for a", ""}, nil,
+			[]string{"Documentation for a", ""}, nil, nil,
 		},
 		{
 			"# Group documentation\nconst\n  a = 1\n  b = 2\nconst c = 3",
-			[]string{"Group documentation", "", ""}, nil,
+			[]string{"Group documentation", "", ""}, nil, nil,
 		},
 		{
 			"# Instance documentation\na config\nb config",
-			nil, []string{"Instance documentation", ""},
+			nil, []string{"Instance documentation", ""}, nil,
 		},
 		{
 			"# Instance documentation\na config\n\n# Documentation for b\nb config",
-			nil, []string{"Instance documentation", "Documentation for b"},
+			nil, []string{"Instance documentation", "Documentation for b"}, nil,
 		},
 		{
 			"a config\n\n\n",
-			nil, []string{""},
+			nil, []string{""}, nil,
 		},
 		{
 			"# Instance documentation\na config\n  width = 1\nconst b = 2",
-			[]string{""}, []string{"Instance documentation"},
+			[]string{""}, []string{"Instance documentation"}, nil,
 		},
 		{
 			"# Import comment\nimport \"a\"\nconst b = 2",
-			[]string{""}, nil,
+			[]string{""}, nil, nil,
 		},
 		{
 			"# Type comment\ntype T config\nconst b = 2",
-			[]string{""}, nil,
+			[]string{""}, nil, []string{"Type comment"},
+		},
+		{
+			"# Type comment\ntype T config; width = 1\ntype U config",
+			nil, nil, []string{"Type comment", ""},
+		},
+		{
+			"# First type\ntype T config\n# Second type\ntype U config",
+			nil, nil, []string{"First type", "Second type"},
+		},
+		{
+			"# Detached type comment\n\ntype T config",
+			nil, nil, []string{""},
 		},
 		{
 			"# Detached comment\n\nconst a = 1",
-			[]string{""}, nil,
+			[]string{""}, nil, nil,
 		},
 		{
 			"# Documentation for a\nconst a = 1\n# Documentation for b\nconst b = 2",
-			[]string{"Documentation for a", "Documentation for b"}, nil,
+			[]string{"Documentation for a", "Documentation for b"}, nil, nil,
 		},
 	} {
 		t.Run(test.src, func(t *testing.T) {
@@ -282,6 +295,9 @@ func TestBuildDocDoesNotLeak(t *testing.T) {
 				t.Fatalf("got %d constants and %d instances, want %d constants and %d instances",
 					len(file.Consts), len(file.Insts), len(test.constDocs), len(test.instDocs))
 			}
+			if len(file.Types) != len(test.typeDocs) {
+				t.Fatalf("got %d types, want %d", len(file.Types), len(test.typeDocs))
+			}
 			for i, con := range file.Consts {
 				if got := con.Doc.Text(src); got != test.constDocs[i] {
 					t.Errorf("constant %s: got doc %q, want %q", con.Name.Text(src), got, test.constDocs[i])
@@ -290,6 +306,11 @@ func TestBuildDocDoesNotLeak(t *testing.T) {
 			for i, inst := range file.Insts {
 				if got := inst.Doc.Text(src); got != test.instDocs[i] {
 					t.Errorf("instance %s: got doc %q, want %q", inst.Name.Text(src), got, test.instDocs[i])
+				}
+			}
+			for i, typ := range file.Types {
+				if got := typ.Doc.Text(src); got != test.typeDocs[i] {
+					t.Errorf("type %s: got doc %q, want %q", typ.Name.Text(src), got, test.typeDocs[i])
 				}
 			}
 		})

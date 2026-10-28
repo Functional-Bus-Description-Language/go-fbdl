@@ -6,7 +6,7 @@ import (
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
-func TestBuildNestedInstanceDocs(t *testing.T) {
+func TestBuildNestedDocs(t *testing.T) {
 	for _, parent := range []string{
 		"main bus",
 		"main bus\n",
@@ -32,11 +32,15 @@ func TestBuildNestedInstanceDocs(t *testing.T) {
   # Detached comment
 
   detached status
-  # Discarded type documentation
+  # Nested type documentation
   type Inner group
 
     # Type member documentation
     member status
+  type Undocumented group
+  # Detached type comment
+
+  type Detached group
   trailing status`)
 			toks, err := token.Parse(src)
 			if err != nil {
@@ -54,8 +58,8 @@ func TestBuildNestedInstanceDocs(t *testing.T) {
 				}
 			} else if len(file.Types) == 1 {
 				body = file.Types[0].Body
-				if !file.Types[0].Doc.isEmpty() {
-					t.Error("type documentation should be discarded")
+				if got := file.Types[0].Doc.Text(src); got != "Parent documentation" {
+					t.Errorf("parent type: got doc %q, want %q", got, "Parent documentation")
 				}
 			} else {
 				t.Fatal("expected one parent instance or type")
@@ -77,11 +81,14 @@ func TestBuildNestedInstanceDocs(t *testing.T) {
 			if got := leaves[0].Doc.Text(src); got != "Leaf documentation" {
 				t.Errorf("leaf: got doc %q, want %q", got, "Leaf documentation")
 			}
-			if len(body.Types) != 1 {
-				t.Fatalf("got %d nested types, want 1", len(body.Types))
+			wantTypeDocs := []string{"Nested type documentation", "", ""}
+			if len(body.Types) != len(wantTypeDocs) {
+				t.Fatalf("got %d nested types, want %d", len(body.Types), len(wantTypeDocs))
 			}
-			if !body.Types[0].Doc.isEmpty() {
-				t.Error("nested type documentation should be discarded")
+			for i, typ := range body.Types {
+				if got := typ.Doc.Text(src); got != wantTypeDocs[i] {
+					t.Errorf("type %s: got doc %q, want %q", typ.Name.Text(src), got, wantTypeDocs[i])
+				}
 			}
 			members := body.Types[0].Body.Insts
 			if len(members) != 1 {

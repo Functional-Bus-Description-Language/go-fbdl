@@ -52,6 +52,7 @@ tokenLoop:
 			}
 		case token.Type:
 			typ, err = buildType(&tokens)
+			typ.Doc = doc
 			f.Types = append(f.Types, typ)
 		default:
 			return f, unexpected(t, "'const', 'import', 'type', identifier, or comment")

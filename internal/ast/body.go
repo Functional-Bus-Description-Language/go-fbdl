@@ -57,6 +57,7 @@ tokenLoop:
 			}
 		case token.Type:
 			typ, err = buildType(tokens)
+			typ.Doc = doc
 			body.Types = append(body.Types, typ)
 		case token.Dedent:
 			tokens.next()
