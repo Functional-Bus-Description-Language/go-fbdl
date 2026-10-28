@@ -63,7 +63,7 @@ func buildMultiImport(tokens *tokenStream) ([]Import, error) {
 		tokens.next()
 
 		switch t := tokens.peek(0).(type) {
-		case token.Newline:
+		case token.Newline, token.Comment:
 			continue
 		case token.Dedent:
 			tokens.next()
