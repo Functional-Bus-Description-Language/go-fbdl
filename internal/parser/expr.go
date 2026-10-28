@@ -129,7 +129,7 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 			default:
 				return nil, Error{token.Error{
 					Msg:  fmt.Sprintf("right operand of left shift must be of type integer, current type %s", y.Type()),
-					Toks: []token.Token{be.ast.Y.Tok()},
+					Toks: []token.Token{be.ast.Y.Token()},
 				}, be.file}
 			}
 		case token.RShift:
@@ -145,7 +145,7 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 			default:
 				return nil, Error{token.Error{
 					Msg:  fmt.Sprintf("right operand of right shift must be of type integer, current type %s", y.Type()),
-					Toks: []token.Token{be.ast.Y.Tok()},
+					Toks: []token.Token{be.ast.Y.Token()},
 				}, be.file}
 			}
 		case token.Colon:
@@ -155,7 +155,7 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 			default:
 				return nil, Error{token.Error{
 					Msg:  fmt.Sprintf("right bound of range must be of type integer, current type %s", y.Type()),
-					Toks: []token.Token{be.ast.Y.Tok()},
+					Toks: []token.Token{be.ast.Y.Token()},
 				}, be.file}
 			}
 		}
@@ -164,7 +164,7 @@ func (be BinaryExpr) Eval() (types.Value, error) {
 		case token.Colon:
 			return nil, Error{token.Error{
 				Msg:  "left bound of range must be of type integer, current type range",
-				Toks: []token.Token{be.ast.X.Tok()},
+				Toks: []token.Token{be.ast.X.Token()},
 			}, be.file}
 		}
 	}

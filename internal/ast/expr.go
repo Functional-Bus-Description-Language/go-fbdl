@@ -6,12 +6,10 @@ import (
 
 // The Expr interface represents generic expression.
 //
-// The Tok method returns token which position spans the whole expression.
-// It is useful for error messages.
-// No assumptions shall be made on the returned token type.
+// The Token method returns a single token which represents the expression.
 type Expr interface {
 	expr()
-	Tok() token.Token
+	Token() token.Token
 }
 
 // Expression nodes
@@ -78,44 +76,44 @@ type (
 	}
 )
 
-func (be BinaryExpr) expr()            {}
-func (be BinaryExpr) Tok() token.Token { return be.Op }
+func (be BinaryExpr) expr()              {}
+func (be BinaryExpr) Token() token.Token { return be.Op }
 
-func (bs BitString) expr()            {}
-func (bs BitString) Tok() token.Token { return bs.X }
+func (bs BitString) expr()              {}
+func (bs BitString) Token() token.Token { return bs.X }
 
-func (b Bool) expr()            {}
-func (b Bool) Tok() token.Token { return b.X }
+func (b Bool) expr()              {}
+func (b Bool) Token() token.Token { return b.X }
 
-func (c Call) expr()            {}
-func (c Call) Tok() token.Token { return c.Name }
+func (c Call) expr()              {}
+func (c Call) Token() token.Token { return c.Name }
 
-func (l List) expr()            {}
-func (l List) Tok() token.Token { return l.LBracket }
+func (l List) expr()              {}
+func (l List) Token() token.Token { return l.LBracket }
 
-func (i Ident) expr()            {}
-func (i Ident) Tok() token.Token { return i.Name }
+func (i Ident) expr()              {}
+func (i Ident) Token() token.Token { return i.Name }
 
-func (qi QualIdent) expr()            {}
-func (qi QualIdent) Tok() token.Token { return qi.Name }
+func (qi QualIdent) expr()              {}
+func (qi QualIdent) Token() token.Token { return qi.Name }
 
-func (i Int) expr()            {}
-func (i Int) Tok() token.Token { return i.X }
+func (i Int) expr()              {}
+func (i Int) Token() token.Token { return i.X }
 
-func (f Float) expr()            {}
-func (f Float) Tok() token.Token { return f.X }
+func (f Float) expr()              {}
+func (f Float) Token() token.Token { return f.X }
 
-func (s String) expr()            {}
-func (s String) Tok() token.Token { return s.X }
+func (s String) expr()              {}
+func (s String) Token() token.Token { return s.X }
 
-func (t Time) expr()            {}
-func (t Time) Tok() token.Token { return t.X }
+func (t Time) expr()              {}
+func (t Time) Token() token.Token { return t.X }
 
-func (ue UnaryExpr) expr()            {}
-func (ue UnaryExpr) Tok() token.Token { return ue.Op }
+func (ue UnaryExpr) expr()              {}
+func (ue UnaryExpr) Token() token.Token { return ue.Op }
 
-func (pe ParenExpr) expr()            {}
-func (pe ParenExpr) Tok() token.Token { return pe.LParen }
+func (pe ParenExpr) expr()              {}
+func (pe ParenExpr) Token() token.Token { return pe.LParen }
 
 // leftOp is the operator on the left side of the expression.
 func buildExpr(tokens *tokenStream, leftOp token.Operator) (Expr, error) {

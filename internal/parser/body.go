@@ -21,7 +21,7 @@ func buildBody(astBody ast.Body, file *File, scope Scope) (PropContainer, symbol
 			return nil, sc, err
 		}
 		p.Value = v
-		p.ValueTok = ap.Value.Tok()
+		p.ValueTok = ap.Value.Token()
 
 		if ok := pc.Add(p); !ok {
 			return nil, sc, token.Error{
