@@ -1,8 +1,6 @@
 package ast
 
 import (
-	"slices"
-
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
@@ -129,11 +127,14 @@ func buildExpr(tokens *tokenStream, leftOp token.Operator) (Expr, error) {
 	// Interpret functionality and property names as identifiers in expressions.
 	switch t := tokens.peek(0).(type) {
 	case token.Functionality:
-		tokens.toks[tokens.idx] = t.Ident()
+		tokens.next()
+		tokens.addPending(t.Ident())
 	case token.WordProperty:
-		tokens.toks[tokens.idx] = t.Ident()
+		tokens.next()
+		tokens.addPending(t.Ident())
 	case token.HyphenProperty:
-		tokens.toks = slices.Replace(tokens.toks, tokens.idx, tokens.idx+1, t.Split()...)
+		tokens.next()
+		tokens.addPending(t.Split()...)
 	}
 
 	switch t := tokens.peek(0).(type) {

@@ -1,8 +1,10 @@
 package ast
 
 import (
+	"fmt"
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -260,6 +262,44 @@ func TestBuildExpr(t *testing.T) {
 			},
 		},
 		{
+			"reset-value(1)",
+			BinaryExpr{
+				X:  Ident{Name: token.New[token.Ident](0, 5)},
+				Op: token.New[token.Sub](5, 6),
+				Y: Call{
+					Name: token.New[token.Ident](6, 11),
+					Args: []Expr{Int{token.New[token.Int](12, 13)}},
+				},
+			},
+		},
+		{
+			"-init-value",
+			BinaryExpr{
+				X: UnaryExpr{
+					Op: token.New[token.Sub](0, 1),
+					X:  Ident{Name: token.New[token.Ident](1, 5)},
+				},
+				Op: token.New[token.Sub](5, 6),
+				Y:  Ident{Name: token.New[token.Ident](6, 11)},
+			},
+		},
+		{
+			"init-value + reset-value",
+			BinaryExpr{
+				X: BinaryExpr{
+					X: BinaryExpr{
+						X:  Ident{Name: token.New[token.Ident](0, 4)},
+						Op: token.New[token.Sub](4, 5),
+						Y:  Ident{Name: token.New[token.Ident](5, 10)},
+					},
+					Op: token.New[token.Add](11, 12),
+					Y:  Ident{Name: token.New[token.Ident](13, 18)},
+				},
+				Op: token.New[token.Sub](18, 19),
+				Y:  Ident{Name: token.New[token.Ident](19, 24)},
+			},
+		},
+		{
 			"enable-init-value",
 			BinaryExpr{
 				X: BinaryExpr{
@@ -307,11 +347,14 @@ func TestBuildExpr(t *testing.T) {
 				test.src, got, test.want,
 			)
 		}
+		if _, ok := tokStream.peek(0).(token.Eof); !ok {
+			t.Fatalf("unexpected token after expression %q: %T", test.src, tokStream.peek(0))
+		}
 	}
 }
 
 func TestBuildExprError(t *testing.T) {
-	for _, src := range []string{"const A = !", "const A = true ! false"} {
+	for _, src := range []string{"const A = !", "const A = true ! false", "const A = init-value +"} {
 		t.Run(src, func(t *testing.T) {
 			toks, err := token.Parse([]byte(src))
 			if err != nil {
@@ -319,6 +362,27 @@ func TestBuildExprError(t *testing.T) {
 			}
 			if _, err := Build(toks); err == nil {
 				t.Fatal("expected an error")
+			}
+		})
+	}
+}
+
+func BenchmarkBuildHyphenProperties(b *testing.B) {
+	for _, count := range []int{2000, 4000, 8000} {
+		b.Run(fmt.Sprint(count), func(b *testing.B) {
+			var src strings.Builder
+			for i := range count {
+				fmt.Fprintf(&src, "const A%d = reset-value\n", i)
+			}
+			toks, err := token.Parse([]byte(src.String()))
+			if err != nil {
+				b.Fatal(err)
+			}
+			b.ResetTimer()
+			for range b.N {
+				if _, err := Build(toks); err != nil {
+					b.Fatal(err)
+				}
 			}
 		})
 	}

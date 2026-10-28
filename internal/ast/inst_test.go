@@ -26,6 +26,23 @@ func TestBuildInstSingleLine(t *testing.T) {
 			},
 		},
 		{
+			"S config; reset-value = init-value",
+			Inst{
+				Name: token.New[token.Ident](0, 1),
+				Type: token.New[token.Config](2, 8),
+				Body: Body{
+					Props: []Prop{{
+						Name: token.New[token.ResetValue](10, 21),
+						Value: BinaryExpr{
+							X:  Ident{Name: token.New[token.Ident](24, 28)},
+							Op: token.New[token.Sub](28, 29),
+							Y:  Ident{Name: token.New[token.Ident](29, 34)},
+						},
+					}},
+				},
+			},
+		},
+		{
 			"S width",
 			Inst{
 				Name: token.New[token.Ident](0, 1),

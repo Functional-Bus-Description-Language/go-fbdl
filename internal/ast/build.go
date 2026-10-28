@@ -5,10 +5,6 @@ import (
 )
 
 // Build builds an AST from a non-empty token stream ending in token.Eof.
-//
-// Build consumes toks and may modify its elements and backing array, including
-// when it returns an error. Callers must not rely on the contents of toks or
-// slices sharing its backing array after the call.
 func Build(toks []token.Token) (File, error) {
 	var (
 		err    error

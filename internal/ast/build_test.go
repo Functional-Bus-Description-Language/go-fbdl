@@ -192,6 +192,8 @@ func TestBuildDeclarationLineEnds(t *testing.T) {
 		imports int
 	}{
 		{"const a = 1\nconst b = 2", 2, 0},
+		{"const a = reset-value\nconst b = init-value\nconst c = bus + width", 3, 0},
+		{"const a = enable-init-value\nmain bus\n  reset-value = a", 1, 0},
 		{"const a = 1 # Inline comment\nconst b = 2\n", 2, 0},
 		{"const\n  a = 1\n  b = 2\nconst c = 3", 3, 0},
 		{"import \"a\"\nimport pkg \"b\"", 0, 2},
