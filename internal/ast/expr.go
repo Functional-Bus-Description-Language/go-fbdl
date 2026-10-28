@@ -284,7 +284,7 @@ tokenLoop:
 			tokens.next()
 			break tokenLoop
 		case token.Comma:
-			if len(l.Xs) == 0 {
+			if !prevExpr {
 				return l, unexpected(t, "expression")
 			}
 			prevExpr = false
@@ -323,7 +323,7 @@ tokenLoop:
 			tokens.next()
 			break tokenLoop
 		case token.Comma:
-			if len(call.Args) == 0 {
+			if !prevExpr {
 				return call, unexpected(t, "expression")
 			}
 			prevExpr = false

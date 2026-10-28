@@ -138,6 +138,40 @@ func TestBuildExpr(t *testing.T) {
 			},
 		},
 		{
+			"foo()",
+			Call{Name: token.New[token.Ident](0, 3)},
+		},
+		{
+			"foo(1,)",
+			Call{
+				Name: token.New[token.Ident](0, 3),
+				Args: []Expr{Int{token.New[token.Int](4, 5)}},
+			},
+		},
+		{
+			"[]",
+			List{
+				LBracket: token.New[token.LBracket](0, 1),
+				RBracket: token.New[token.RBracket](1, 2),
+			},
+		},
+		{
+			"[1, 2]",
+			List{
+				LBracket: token.New[token.LBracket](0, 1),
+				Xs:       []Expr{Int{token.New[token.Int](1, 2)}, Int{token.New[token.Int](4, 5)}},
+				RBracket: token.New[token.RBracket](5, 6),
+			},
+		},
+		{
+			"[1,]",
+			List{
+				LBracket: token.New[token.LBracket](0, 1),
+				Xs:       []Expr{Int{token.New[token.Int](1, 2)}},
+				RBracket: token.New[token.RBracket](3, 4),
+			},
+		},
+		{
 			"A + 1",
 			BinaryExpr{
 				X: Ident{Name: token.New[token.Ident](0, 1)}, Op: token.New[token.Add](2, 3), Y: Int{token.New[token.Int](4, 5)},
@@ -362,6 +396,43 @@ func TestBuildExprError(t *testing.T) {
 			}
 			if _, err := Build(toks); err == nil {
 				t.Fatal("expected an error")
+			}
+		})
+	}
+
+	for _, src := range []string{
+		"const A = [1, 2]",
+		"const A = [1,]",
+		"const A = foo(1, 2)",
+		"const A = foo(1,)",
+	} {
+		t.Run("repeated comma in "+src, func(t *testing.T) {
+			toks, err := token.Parse([]byte(src))
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// Construct repeated commas directly because the lexer rejects them.
+			var malformed []token.Token
+			var comma token.Comma
+			for _, tok := range toks {
+				malformed = append(malformed, tok)
+				if c, ok := tok.(token.Comma); ok {
+					comma = c
+					malformed = append(malformed, c)
+				}
+			}
+
+			_, err = Build(malformed)
+			tokErr, ok := err.(token.Error)
+			if !ok {
+				t.Fatalf("got error %v, want token.Error", err)
+			}
+			if tokErr.Msg != "unexpected ',', expected expression" {
+				t.Fatalf("unexpected error message: %s", tokErr.Msg)
+			}
+			if len(tokErr.Toks) != 1 || tokErr.Toks[0] != comma {
+				t.Fatalf("got error tokens %v, want offending comma %v", tokErr.Toks, comma)
 			}
 		})
 	}
