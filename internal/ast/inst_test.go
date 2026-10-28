@@ -7,30 +7,56 @@ import (
 )
 
 func TestBuildInstSingleLine(t *testing.T) {
-	toks, _ := token.Parse([]byte("S [5]status; atomic = false; width = 10"))
-	want := Inst{
-		Name:  toks[0].(token.Ident),
-		Count: Int{toks[2].(token.Int)},
-		Type:  toks[4].(token.Status),
-		Body: Body{
-			Props: []Prop{
-				Prop{toks[6].(token.Atomic), Bool{toks[8].(token.Bool)}},
-				Prop{toks[10].(token.Width), Int{toks[12].(token.Int)}},
+	for _, test := range []struct {
+		src  string
+		want Inst
+	}{
+		{
+			"S [5]status; atomic = false; width = 10",
+			Inst{
+				Name:  token.New[token.Ident](0, 1),
+				Count: Int{token.New[token.Int](3, 4)},
+				Type:  token.New[token.Status](5, 11),
+				Body: Body{
+					Props: []Prop{
+						{token.New[token.Atomic](13, 19), Bool{token.New[token.Bool](22, 27)}},
+						{token.New[token.Width](29, 34), Int{token.New[token.Int](37, 39)}},
+					},
+				},
 			},
 		},
-	}
-
-	ctx := tokenStream{toks: toks}
-	got, err := buildInst(&ctx)
-	if err != nil {
-		t.Fatalf("err != nil: %v", err)
-	}
-	if ctx.idx != 13 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
-	}
-
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("\ngot:\n%+v,\nwant\n%+v", got, want)
+		{
+			"S width",
+			Inst{
+				Name: token.New[token.Ident](0, 1),
+				Type: token.New[token.Ident](2, 7),
+			},
+		},
+		{
+			"S atomic",
+			Inst{
+				Name: token.New[token.Ident](0, 1),
+				Type: token.New[token.Ident](2, 8),
+			},
+		},
+	} {
+		t.Run(test.src, func(t *testing.T) {
+			toks, err := token.Parse([]byte(test.src))
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := tokenStream{toks: toks}
+			got, err := buildInst(&ctx)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if ctx.idx != len(toks)-1 {
+				t.Fatalf("ctx.idx = %d, want %d", ctx.idx, len(toks)-1)
+			}
+			if !reflect.DeepEqual(got, test.want) {
+				t.Fatalf("\ngot:\n%+v,\nwant\n%+v", got, test.want)
+			}
+		})
 	}
 }
 

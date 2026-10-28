@@ -20,10 +20,13 @@ func buildType(tokens *tokenStream) (Type, error) {
 	tokens.next()
 
 	// Name
-	if t, ok := tokens.peek(0).(token.Ident); ok {
+	switch t := tokens.peek(0).(type) {
+	case token.Ident:
 		typ.Name = t
-	} else {
-		return typ, unexpected(tokens.peek(0), "identifier")
+	case token.WordProperty:
+		typ.Name = t.Ident()
+	default:
+		return typ, unexpected(t, "identifier")
 	}
 	tokens.next()
 
@@ -52,10 +55,12 @@ func buildType(tokens *tokenStream) (Type, error) {
 	switch t := tokens.peek(0).(type) {
 	case token.Functionality, token.Ident, token.QualIdent:
 		typ.Type = t
-		tokens.next()
+	case token.WordProperty:
+		typ.Type = t.Ident()
 	default:
 		return typ, unexpected(t, "functionality type")
 	}
+	tokens.next()
 
 	// Argument List
 	args, err := buildArgList(tokens)

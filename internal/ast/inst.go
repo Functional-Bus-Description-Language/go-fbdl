@@ -36,10 +36,12 @@ func buildInst(tokens *tokenStream) (Inst, error) {
 	switch t := tokens.peek(0).(type) {
 	case token.Functionality, token.Ident, token.QualIdent:
 		inst.Type = t
-		tokens.next()
+	case token.WordProperty:
+		inst.Type = t.Ident()
 	default:
 		return inst, unexpected(t, "functionality type")
 	}
+	tokens.next()
 
 	// Argument List
 	argList, err := buildArgList(tokens)

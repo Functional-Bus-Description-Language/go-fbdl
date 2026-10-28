@@ -12,6 +12,34 @@ func TestBuildTypeSingleLine(t *testing.T) {
 		want Type
 	}{
 		{
+			"type width config",
+			Type{
+				Name: token.New[token.Ident](5, 10),
+				Type: token.New[token.Config](11, 17),
+			},
+		},
+		{
+			"type atomic config",
+			Type{
+				Name: token.New[token.Ident](5, 11),
+				Type: token.New[token.Config](12, 18),
+			},
+		},
+		{
+			"type Other width",
+			Type{
+				Name: token.New[token.Ident](5, 10),
+				Type: token.New[token.Ident](11, 16),
+			},
+		},
+		{
+			"type width atomic",
+			Type{
+				Name: token.New[token.Ident](5, 10),
+				Type: token.New[token.Ident](11, 17),
+			},
+		},
+		{
 			"type foo_t(W=1) [8]config; width = W",
 			Type{
 				Name:   token.New[token.Ident](5, 10),
