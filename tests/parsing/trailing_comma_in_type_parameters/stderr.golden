@@ -1,0 +1,5 @@
+error: unexpected ')', expected identifier
+bus.fbd +1:19
+   |
+ 1 | type Config(width,) config
+   |                   ^

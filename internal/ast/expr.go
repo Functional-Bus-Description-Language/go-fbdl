@@ -280,6 +280,9 @@ tokenLoop:
 	for {
 		switch t := tokens.peek(0).(type) {
 		case token.RBracket:
+			if !prevExpr && len(l.Xs) > 0 {
+				return l, unexpected(t, "expression")
+			}
 			l.RBracket = t
 			tokens.next()
 			break tokenLoop
@@ -320,6 +323,9 @@ tokenLoop:
 	for {
 		switch t := tokens.peek(0).(type) {
 		case token.RParen:
+			if !prevExpr && len(call.Args) > 0 {
+				return call, unexpected(t, "expression")
+			}
 			tokens.next()
 			break tokenLoop
 		case token.Comma:

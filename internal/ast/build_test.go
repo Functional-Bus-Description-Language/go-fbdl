@@ -161,6 +161,46 @@ func TestBuildError(t *testing.T) {
 			"import\n  pkg \"a\" other \"b\"",
 			"unexpected identifier, expected newline or end of file",
 		},
+		{
+			30,
+			"const A = [1,]",
+			"unexpected ']', expected expression",
+		},
+		{
+			31,
+			"const A = [1, 2,]",
+			"unexpected ']', expected expression",
+		},
+		{
+			32,
+			"const A = foo(1,)",
+			"unexpected ')', expected expression",
+		},
+		{
+			33,
+			"const A = pkg.foo(1, 2,)",
+			"unexpected ')', expected expression",
+		},
+		{
+			34,
+			"const A = foo([1,])",
+			"unexpected ']', expected expression",
+		},
+		{
+			35,
+			"const A = [foo(1,)]",
+			"unexpected ')', expected expression",
+		},
+		{
+			36,
+			"x T(1,)",
+			"unexpected ')', expected expression",
+		},
+		{
+			37,
+			"type T(x,) config",
+			"unexpected ')', expected identifier",
+		},
 	}
 
 	for i, test := range tests {

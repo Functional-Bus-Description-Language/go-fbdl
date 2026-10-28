@@ -142,13 +142,6 @@ func TestBuildExpr(t *testing.T) {
 			Call{Name: token.New[token.Ident](0, 3)},
 		},
 		{
-			"foo(1,)",
-			Call{
-				Name: token.New[token.Ident](0, 3),
-				Args: []Expr{Int{token.New[token.Int](4, 5)}},
-			},
-		},
-		{
 			"[]",
 			List{
 				LBracket: token.New[token.LBracket](0, 1),
@@ -161,14 +154,6 @@ func TestBuildExpr(t *testing.T) {
 				LBracket: token.New[token.LBracket](0, 1),
 				Xs:       []Expr{Int{token.New[token.Int](1, 2)}, Int{token.New[token.Int](4, 5)}},
 				RBracket: token.New[token.RBracket](5, 6),
-			},
-		},
-		{
-			"[1,]",
-			List{
-				LBracket: token.New[token.LBracket](0, 1),
-				Xs:       []Expr{Int{token.New[token.Int](1, 2)}},
-				RBracket: token.New[token.RBracket](3, 4),
 			},
 		},
 		{

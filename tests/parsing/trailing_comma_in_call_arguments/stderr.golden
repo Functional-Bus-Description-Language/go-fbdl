@@ -1,0 +1,5 @@
+error: unexpected ')', expected expression
+bus.fbd +1:22
+   |
+ 1 | const WIDTH = log2(8,)
+   |                      ^
