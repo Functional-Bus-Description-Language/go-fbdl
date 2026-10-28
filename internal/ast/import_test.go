@@ -84,6 +84,34 @@ func TestBuildMultiImport(t *testing.T) {
 			t.Fatalf("i: %d\ngot:\n%+v,\nwant\n%+v", i, got[i], want[i])
 		}
 	}
+
+	for _, test := range []struct {
+		src         string
+		importStart int
+	}{
+		{"import\n", 0},
+		{"import\n\n", 0},
+		{"import\n  # No packages", 0},
+		{"import\n  # No packages\n", 0},
+		{"import\n\n  # No packages\n\n  # Still empty\n", 0},
+		{"import\n  # No packages\nconst A = 1", 0},
+		{"# Header\nimport\n  # No packages\nmain bus", 9},
+	} {
+		t.Run(test.src, func(t *testing.T) {
+			toks, err := token.Parse([]byte(test.src))
+			if err != nil {
+				t.Fatal(err)
+			}
+			_, err = Build(toks)
+			wantErr := token.Error{
+				Msg:  "empty import list",
+				Toks: []token.Token{token.New[token.Import](test.importStart, test.importStart+6)},
+			}
+			if !reflect.DeepEqual(err, wantErr) {
+				t.Fatalf("got error %#v, want %#v", err, wantErr)
+			}
+		})
+	}
 }
 
 func TestBuildMultiImportIgnoresComments(t *testing.T) {

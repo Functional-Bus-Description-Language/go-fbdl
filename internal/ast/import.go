@@ -58,8 +58,15 @@ func buildSingleImport(tokens *tokenStream) ([]Import, error) {
 }
 
 func buildMultiImport(tokens *tokenStream) ([]Import, error) {
-	tokens.next()
+	importTok := tokens.next().(token.Import)
+	emptyErr := token.Error{
+		Msg:  "empty import list",
+		Toks: []token.Token{importTok},
+	}
 	tokens.skipNewlines()
+	if _, ok := tokens.peek(0).(token.Eof); ok {
+		return nil, emptyErr
+	}
 	if _, ok := tokens.peek(0).(token.Indent); !ok {
 		return nil, unexpected(tokens.peek(0), "indent increase")
 	}
@@ -79,10 +86,13 @@ func buildMultiImport(tokens *tokenStream) ([]Import, error) {
 		switch t := tok.(type) {
 		case token.Newline, token.Comment:
 			continue
-		case token.Dedent:
-			tokens.next()
-			return imps, nil
-		case token.Eof:
+		case token.Dedent, token.Eof:
+			if len(imps) == 0 {
+				return nil, emptyErr
+			}
+			if _, ok := t.(token.Dedent); ok {
+				tokens.next()
+			}
 			return imps, nil
 		case token.String:
 			imps = append(imps, Import{Path: t})

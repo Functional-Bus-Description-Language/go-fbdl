@@ -1,0 +1,5 @@
+error: empty import list
+bus.fbd +2:1
+   |
+ 2 | import
+   | ^^^^^^
