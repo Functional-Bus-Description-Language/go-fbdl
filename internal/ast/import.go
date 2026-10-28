@@ -52,7 +52,7 @@ func buildSingleImport(tokens *tokenStream) ([]Import, error) {
 
 func buildMultiImport(tokens *tokenStream) ([]Import, error) {
 	tokens.next()
-	tokens.next()
+	tokens.skipNewlines()
 	if _, ok := tokens.peek(0).(token.Indent); !ok {
 		return nil, unexpected(tokens.peek(0), "indent increase")
 	}

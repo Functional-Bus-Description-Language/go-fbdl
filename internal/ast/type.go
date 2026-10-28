@@ -74,8 +74,8 @@ func buildType(tokens *tokenStream) (Type, error) {
 		}
 		typ.Body.Props = props
 	case token.Newline:
-		if _, ok := tokens.peek(1).(token.Indent); ok {
-			tokens.next()
+		tokens.skipNewlines()
+		if _, ok := tokens.peek(0).(token.Indent); ok {
 			tokens.next()
 			body, err := buildBody(tokens)
 			if err != nil {

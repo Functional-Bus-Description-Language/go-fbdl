@@ -7,15 +7,25 @@ import (
 )
 
 func TestBuildNestedInstanceDocs(t *testing.T) {
-	for _, parent := range []string{"main bus", "type Container block"} {
+	for _, parent := range []string{
+		"main bus",
+		"main bus\n",
+		"main bus\n\n",
+		"type Container block",
+		"type Container block\n",
+		"type Container block\n\n",
+	} {
 		t.Run(parent, func(t *testing.T) {
 			src := []byte("# Parent documentation\n" + parent + `
   # First child
   first config
+
     width = 1
   sibling status
   # Nested group
   nested group
+
+
     # Leaf documentation
     leaf status
   after status
@@ -24,6 +34,7 @@ func TestBuildNestedInstanceDocs(t *testing.T) {
   detached status
   # Discarded type documentation
   type Inner group
+
     # Type member documentation
     member status
   trailing status`)

@@ -15,6 +15,15 @@ func (ts *tokenStream) next() token.Token {
 	return tok
 }
 
+func (ts *tokenStream) skipNewlines() {
+	for {
+		if _, ok := ts.peek(0).(token.Newline); !ok {
+			return
+		}
+		ts.next()
+	}
+}
+
 func (ts *tokenStream) peek(offset int) token.Token {
 	if ts.idx+offset < len(ts.toks) {
 		return ts.toks[ts.idx+offset]

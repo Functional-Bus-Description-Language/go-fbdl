@@ -196,6 +196,8 @@ func TestBuildDeclarationLineEnds(t *testing.T) {
 		{"const\n  a = 1\n  b = 2\nconst c = 3", 3, 0},
 		{"import \"a\"\nimport pkg \"b\"", 0, 2},
 		{"import\n  \"a\"\n  pkg \"b\"\nconst c = 3", 1, 2},
+		{"import\n\n  \"a\"\n  pkg \"b\"\nconst c = 3", 1, 2},
+		{"import\n\n\n  \"a\"\n  pkg \"b\"\nconst c = 3", 1, 2},
 		{"import\n  \"a\" # Inline comment\n\n  pkg \"b\"", 0, 2},
 	} {
 		t.Run(test.src, func(t *testing.T) {
@@ -236,6 +238,14 @@ func TestBuildDocDoesNotLeak(t *testing.T) {
 		{
 			"# Instance documentation\na config\nb config",
 			nil, []string{"Instance documentation", ""},
+		},
+		{
+			"# Instance documentation\na config\n\n# Documentation for b\nb config",
+			nil, []string{"Instance documentation", "Documentation for b"},
+		},
+		{
+			"a config\n\n\n",
+			nil, []string{""},
 		},
 		{
 			"# Instance documentation\na config\n  width = 1\nconst b = 2",
