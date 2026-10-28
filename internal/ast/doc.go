@@ -1,6 +1,8 @@
 package ast
 
 import (
+	"strings"
+
 	"github.com/Functional-Bus-Description-Language/go-fbdl/internal/token"
 )
 
@@ -10,7 +12,7 @@ type Doc struct {
 }
 
 func (d Doc) Text(src []byte) string {
-	text := ""
+	var text strings.Builder
 	for i, l := range d.Lines {
 		t := l.Text(src)
 		start := 1
@@ -21,14 +23,14 @@ func (d Doc) Text(src []byte) string {
 		}
 
 		if len(t) > start {
-			text += t[start:]
+			text.WriteString(t[start:])
 		}
 
 		if i < len(d.Lines)-1 {
-			text += "\n"
+			text.WriteByte('\n')
 		}
 	}
-	return text
+	return text.String()
 }
 
 func (d Doc) isEmpty() bool {
