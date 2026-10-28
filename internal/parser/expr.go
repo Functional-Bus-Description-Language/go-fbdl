@@ -36,6 +36,8 @@ func MakeExpr(astExpr ast.Expr, file *File, s Scope) (Expr, error) {
 		expr, err = MakeInt(e, file)
 	case ast.List:
 		expr, err = MakeList(e, file, s)
+	case ast.ParenExpr:
+		expr, err = MakeExpr(e.X, file, s)
 	case ast.Bool:
 		expr = MakeBool(e, file)
 	case ast.Float:
