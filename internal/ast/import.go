@@ -12,7 +12,7 @@ type Import struct {
 
 func buildImport(tokens *tokenStream) ([]Import, error) {
 	switch t := tokens.peek(1).(type) {
-	case token.Ident, token.String:
+	case token.Ident, token.Functionality, token.WordProperty, token.String:
 		return buildSingleImport(tokens)
 	case token.Newline:
 		return buildMultiImport(tokens)
@@ -25,7 +25,14 @@ func buildSingleImport(tokens *tokenStream) ([]Import, error) {
 	i := Import{}
 
 	tokens.next()
-	switch t := tokens.peek(0).(type) {
+	tok := tokens.peek(0)
+	switch t := tok.(type) {
+	case token.Functionality:
+		tok = t.Ident()
+	case token.WordProperty:
+		tok = t.Ident()
+	}
+	switch t := tok.(type) {
 	case token.Ident:
 		i.Name = t
 		tokens.next()
@@ -62,7 +69,14 @@ func buildMultiImport(tokens *tokenStream) ([]Import, error) {
 	for {
 		tokens.next()
 
-		switch t := tokens.peek(0).(type) {
+		tok := tokens.peek(0)
+		switch t := tok.(type) {
+		case token.Functionality:
+			tok = t.Ident()
+		case token.WordProperty:
+			tok = t.Ident()
+		}
+		switch t := tok.(type) {
 		case token.Newline, token.Comment:
 			continue
 		case token.Dedent:

@@ -7,51 +7,64 @@ import (
 )
 
 func TestBuildSingleImport(t *testing.T) {
-	toks, _ := token.Parse([]byte(`import "some/path"`))
-	want := Import{
-		Name: nil,
-		Path: toks[1].(token.String),
-	}
-	ctx := tokenStream{toks: toks}
-	got, err := buildSingleImport(&ctx)
-	if err != nil {
-		t.Fatalf("err != nil: %v", err)
-	}
-	if ctx.idx != 2 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
-	}
-	if !reflect.DeepEqual(got[0], want) {
-		t.Fatalf("got: %+v, want %+v", got[0], want)
-	}
-
-	toks, _ = token.Parse([]byte(`import pkg "path"`))
-	want = Import{
-		Name: toks[1].(token.Ident),
-		Path: toks[2].(token.String),
-	}
-	ctx = tokenStream{toks: toks}
-	got, err = buildSingleImport(&ctx)
-	if err != nil {
-		t.Fatalf("err != nil: %v", err)
-	}
-	if ctx.idx != 3 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
-	}
-	if !reflect.DeepEqual(got[0], want) {
-		t.Fatalf("got: %+v, want %+v", got[0], want)
+	for _, test := range []struct {
+		src  string
+		want Import
+	}{
+		{
+			`import "some/path"`,
+			Import{Path: token.New[token.String](7, 18)},
+		},
+		{
+			`import pkg "path"`,
+			Import{Name: token.New[token.Ident](7, 10), Path: token.New[token.String](11, 17)},
+		},
+		{
+			`import bus "path"`,
+			Import{Name: token.New[token.Ident](7, 10), Path: token.New[token.String](11, 17)},
+		},
+		{
+			`import width "path"`,
+			Import{Name: token.New[token.Ident](7, 12), Path: token.New[token.String](13, 19)},
+		},
+	} {
+		t.Run(test.src, func(t *testing.T) {
+			toks, err := token.Parse([]byte(test.src))
+			if err != nil {
+				t.Fatal(err)
+			}
+			ctx := tokenStream{toks: toks}
+			got, err := buildImport(&ctx)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if ctx.idx != len(toks)-1 {
+				t.Fatalf("ctx.idx = %d, want %d", ctx.idx, len(toks)-1)
+			}
+			if !reflect.DeepEqual(got, []Import{test.want}) {
+				t.Fatalf("got: %+v, want %+v", got, []Import{test.want})
+			}
+		})
 	}
 }
 
 func TestBuildMultiImport(t *testing.T) {
-	toks, _ := token.Parse([]byte(`import
+	toks, err := token.Parse([]byte(`import
   "path1"
   pkg "path2"
 
-  "path3"`))
+  "path3"
+  bus "path4"
+  width "path5"`))
+	if err != nil {
+		t.Fatal(err)
+	}
 	want := []Import{
 		Import{Path: toks[3].(token.String)},
 		Import{Name: toks[5].(token.Ident), Path: toks[6].(token.String)},
 		Import{Path: toks[9].(token.String)},
+		Import{Name: token.New[token.Ident](44, 47), Path: toks[12].(token.String)},
+		Import{Name: token.New[token.Ident](58, 63), Path: toks[15].(token.String)},
 	}
 
 	ctx := tokenStream{toks: toks}
@@ -59,8 +72,11 @@ func TestBuildMultiImport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err != nil: %v", err)
 	}
-	if ctx.idx != 10 {
-		t.Fatalf("ctx.idx = %d", ctx.idx)
+	if ctx.idx != len(toks)-1 {
+		t.Fatalf("ctx.idx = %d, want %d", ctx.idx, len(toks)-1)
+	}
+	if len(got) != len(want) {
+		t.Fatalf("got %d imports, want %d", len(got), len(want))
 	}
 
 	for i := range want {
