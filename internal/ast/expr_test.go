@@ -166,6 +166,18 @@ func TestBuildExpr(t *testing.T) {
 			},
 		},
 		{
+			"2 ** 3 ** 2",
+			BinaryExpr{
+				X:  Int{token.New[token.Int](0, 1)},
+				Op: token.New[token.Exp](2, 4),
+				Y: BinaryExpr{
+					X:  Int{token.New[token.Int](5, 6)},
+					Op: token.New[token.Exp](7, 9),
+					Y:  Int{token.New[token.Int](10, 11)},
+				},
+			},
+		},
+		{
 			"A ** B + C / D",
 			BinaryExpr{
 				X: BinaryExpr{

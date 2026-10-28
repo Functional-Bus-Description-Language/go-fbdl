@@ -189,8 +189,10 @@ func buildExpr(tokens *tokenStream, leftOp token.Operator) (Expr, error) {
 			return expr, nil
 		}
 
-		if (leftOp == nil) ||
-			(leftOp != nil && (leftOp.Precedence() < rightOp.Precedence())) {
+		// Exponentiation groups to the right when precedence is equal.
+		_, rightAssociative := rightOp.(token.Exp)
+		if leftOp == nil || leftOp.Precedence() < rightOp.Precedence() ||
+			(rightAssociative && leftOp.Precedence() == rightOp.Precedence()) {
 			be := BinaryExpr{X: expr, Op: rightOp}
 			tokens.next()
 			expr, err = buildExpr(tokens, rightOp)
@@ -199,7 +201,7 @@ func buildExpr(tokens *tokenStream, leftOp token.Operator) (Expr, error) {
 			}
 			be.Y = expr
 			expr = be
-		} else if leftOp.Precedence() >= rightOp.Precedence() {
+		} else {
 			return expr, nil
 		}
 	}
