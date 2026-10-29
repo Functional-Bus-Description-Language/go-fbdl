@@ -201,6 +201,11 @@ func TestBuildError(t *testing.T) {
 			"type T(x,) config",
 			"unexpected ')', expected identifier",
 		},
+		{
+			38,
+			`const "name" = 1`,
+			"unexpected string, expected identifier or newline",
+		},
 	}
 
 	for i, test := range tests {

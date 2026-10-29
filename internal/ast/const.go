@@ -20,7 +20,7 @@ func buildConst(tokens *tokenStream) ([]Const, error) {
 	case token.Newline:
 		return buildMultiConst(tokens)
 	default:
-		return nil, unexpected(t, "identifier, string or newline")
+		return nil, unexpected(t, "identifier or newline")
 	}
 }
 
